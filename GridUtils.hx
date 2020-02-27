@@ -5,7 +5,8 @@ import haxe.ds.Vector;
 import haxe.ds.List;
 
 class GridUtils {
-    public static function getAround<T>(grid: Vector<Vector<T>>, coord: Point2i, width:Int = 1, includeSelf: Bool = true): Array<T> {
+    public static function getAround<T>
+            (grid: Vector<Vector<T>>, coord: Point2i, width:Int = 1, includeSelf: Bool = true): Array<T> {
         var cellList: Array<T> = new Array<T>();
         for (x in -(width)...(width+1)) {
             for (y in -(width)...(width+1)) {
@@ -18,7 +19,8 @@ class GridUtils {
         }
         return cellList;
     }
-    public static function getPointsAround(coord: Point2i, width:Int = 1, bound: Recti, includeSelf: Bool = true): Array<Point2i> {
+    public static function getPointsAround
+            (coord: Point2i, width:Int = 1, bound: Recti, includeSelf: Bool = true): Array<Point2i> {
         var cellList: Array<Point2i> = new Array<Point2i>();
         for (x in -(width)...(width+1)) {
             for (y in -(width)...(width+1)) {
@@ -30,5 +32,27 @@ class GridUtils {
             }
         }
         return cellList;
+    }
+
+    public static inline function translateMouseToWorld(mousePosition: Point2f, camera: h2d.Camera): Point2f {
+        return mousePosition - [ camera.x, camera.y ];
+    }
+
+    public static inline function translateMouseToWorldGrid
+            (size: Int, screenCoord: Point2f, camera: h2d.Camera = null): Point2i {
+        if (camera == null) {
+            return [ Math.floor(screenCoord.x / size), Math.floor(screenCoord.y / size) ];
+        }
+        var pos = translateMouseToWorld(screenCoord, camera);
+        return [ Math.floor(pos.x / size*camera.scaleX), Math.floor(pos.y / size*camera.scaleY) ];
+
+    }
+
+    public static inline function inGrid(pos: Point2i, size: Point2i): Bool {
+        return pos.x >= 0 && pos.x < size.x && pos.y >= 0 && pos.y < size.y;
+    }
+
+    public static inline function inGridArray<T>(pos: Point2i, grid: Vector<Vector<T>>): Bool {
+        return pos.x >= 0 && pos.x < grid.length && pos.y >= 0 && pos.y < grid[0].length;
     }
 }
