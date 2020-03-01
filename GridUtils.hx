@@ -55,4 +55,8 @@ class GridUtils {
     public static inline function inGridArray<T>(pos: Point2i, grid: Vector<Vector<T>>): Bool {
         return pos.x >= 0 && pos.x < grid.length && pos.y >= 0 && pos.y < grid[0].length;
     }
+
+    public static inline function getItemIn2DArray<T>(pos: Point2i, grid: Vector<Vector<T>>): T {
+        return (inGridArray(pos, grid)) ? grid[pos.x][pos.y] : null;
+    }
 }
