@@ -44,6 +44,10 @@ abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
         return this[0] == rhs.x && this[1] == rhs.y && this[2] == rhs.z;
     }
 
+    inline public function copy(): Point3i {
+        return [this[0], this[1], this[2]];
+    }
+
     inline public function get_x(): Int {
         return this[0];
     }

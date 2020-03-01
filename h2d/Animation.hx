@@ -3,32 +3,38 @@ package common.h2d;
 
 import common.Updater;
 import common.Point2f;
+import common.MathUtils;
 
 /**
   Animation provide the common "animation" for h2d.Objects
 **/
 
+class Animation implements Updatable {
 
-class MoveToAnimation implements Updatable {
+    public var onFinish: () -> Void;
+
+    public function new() {}
+    public function finish() { if (this.onFinish != null) { onFinish(); }}
+    public function isDone(): Bool { return true; }
+    public function update(dt: Float) {}
+}
+
+class MoveToAnimation extends Animation {
 
     var object: h2d.Object;
     var position: Point2f;
     var speed: Point2f;
 
     public function new(object: h2d.Object, position: Point2f, speeds: Point2f = null, speed: Float = 1) {
+        super();
         this.object = object;
         this.position = position;
-        if (speeds != null) {
-            this.speed = speeds;
-        } else {
-            this.speed = [ speed, speed ];
-        }
+        this.speed = speeds != null ? speeds : [ speed, speed ];
     }
 
-    public function onStart() {}
-    public function onDestroy() {}
-    public function isDone() { return this.position == [ this.object.x, this.object.y ]; }
-    public function update(dt: Float) {
+    override public function isDone(): Bool { return this.position == [ this.object.x, this.object.y ]; }
+
+    override public function update(dt: Float) {
         if (this.isDone()) { return; }
 
         if (this.object.x != this.position.x) {
@@ -55,6 +61,47 @@ class MoveToAnimation implements Updatable {
 
 }
 
+class MoveByAnimation extends Animation {
+
+    var object: h2d.Object;
+    var amount: Point2f;
+    var amountLeft: Point2f;
+    var speed: Point2f;
+
+    public function new(object: h2d.Object, moveAmount: Point2f, speeds: Point2f = null, speed: Float = 1) {
+        super();
+        this.object = object;
+        this.amount = moveAmount.copy();
+        this.amountLeft = moveAmount.copy();
+        this.speed = speeds != null ? speeds : [ speed, speed ];
+    }
+
+    override public function isDone(): Bool { return (this.amountLeft.x == 0 && this.amountLeft.y == 0); }
+
+    override public function update(dt: Float) {
+        if (this.isDone()) { return; }
+
+        var moveX = dt * this.speed.x * MathUtils.sign(this.amountLeft.x);
+        if (moveX < 0) {
+            moveX = Math.max(this.amountLeft.x, moveX);
+        } else {
+            moveX = Math.min(this.amountLeft.x, moveX);
+        }
+        this.amountLeft.x -= moveX;
+        this.object.x += moveX;
+
+        var moveY = dt * this.speed.y * MathUtils.sign(this.amountLeft.y);
+        if (moveY < 0) {
+            moveY = Math.max(this.amountLeft.y, moveY);
+        } else {
+            moveY = Math.min(this.amountLeft.y, moveY);
+        }
+        this.amountLeft.y -= moveY;
+        this.object.y += moveY;
+    }
+
+}
+
 class Animator extends common.Updater { // extends the Updater since most of it is the same
 
     public function new() {
@@ -62,8 +109,23 @@ class Animator extends common.Updater { // extends the Updater since most of it 
     }
 
     // mirrors MoveToAnimation constructor
-    public function moveTo(object: h2d.Object, position: Point2f, speeds: Point2f=null, speed: Float = 1) {
-        this.run(new MoveToAnimation(object, position, speeds, speed));
+    public function moveTo(
+            object: h2d.Object, position: Point2f, speeds: Point2f=null, speed: Float = 1,
+            onFinish: () -> Void = null
+        ) {
+        var anim = new MoveToAnimation(object, position, speeds, speed);
+        if (onFinish != null) { anim.onFinish = onFinish; }
+        this.run(anim);
+    }
+
+    // mirrors MoveByAnimation constructor
+    public function moveBy(
+            object: h2d.Object, moveAmount: Point2f, speeds: Point2f=null, speed: Float = 1,
+            onFinish: () -> Void = null
+        ) {
+        var anim = new MoveByAnimation(object, moveAmount, speeds, speed);
+        if (onFinish != null) { anim.onFinish = onFinish; }
+        this.run(anim);
     }
 }
 

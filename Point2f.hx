@@ -55,6 +55,10 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
         return this[0] == rhs.x && this[1] == rhs.y;
     }
 
+    inline public function copy(): Point2f {
+        return [this[0], this[1]];
+    }
+
     inline public function get_x(): Float {
         return this[0];
     }
