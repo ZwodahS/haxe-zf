@@ -50,6 +50,11 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
         return new Point2f(this[0]*rhs, this[1]*rhs);
     }
 
+    @:op(A == B)
+    public function _equal(rhs: Point2f): Bool {
+        return this[0] == rhs.x && this[1] == rhs.y;
+    }
+
     inline public function get_x(): Float {
         return this[0];
     }

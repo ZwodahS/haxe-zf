@@ -52,6 +52,11 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
         return new Point3f(this[0]*rhs, this[1]*rhs, this[2]*rhs);
     }
 
+    @:op(A == B)
+    public function _equal(rhs: Point3f): Bool {
+        return this[0] == rhs.x && this[1] == rhs.y && this[2] == rhs.z;
+    }
+
     inline public function get_x(): Float {
         return this[0];
     }

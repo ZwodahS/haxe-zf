@@ -39,6 +39,11 @@ abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
         return new Point3i(this[0]-rhs[0], this[1]-rhs[1], this[2]-rhs[2]);
     }
 
+    @:op(A == B)
+    public function _equal(rhs: Point3i): Bool {
+        return this[0] == rhs.x && this[1] == rhs.y && this[2] == rhs.z;
+    }
+
     inline public function get_x(): Int {
         return this[0];
     }
