@@ -57,5 +57,13 @@ class MoveToAnimation implements Updatable {
 
 class Animator extends common.Updater { // extends the Updater since most of it is the same
 
+    public function new() {
+        super();
+    }
+
+    // mirrors MoveToAnimation constructor
+    public function moveTo(object: h2d.Object, position: Point2f, speeds: Point2f=null, speed: Float = 1) {
+        this.run(new MoveToAnimation(object, position, speeds, speed));
+    }
 }
 
