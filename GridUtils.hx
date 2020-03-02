@@ -35,7 +35,10 @@ class GridUtils {
     }
 
     public static inline function translateMouseToWorld(mousePosition: Point2f, camera: h2d.Camera): Point2f {
-        return mousePosition - [ camera.x, camera.y ];
+        var pos = mousePosition - [ camera.x, camera.y ];
+        pos.x = pos.x / camera.scaleX;
+        pos.y = pos.y / camera.scaleY;
+        return pos;
     }
 
     public static inline function translateMouseToWorldGrid
@@ -44,7 +47,7 @@ class GridUtils {
             return [ Math.floor(screenCoord.x / size), Math.floor(screenCoord.y / size) ];
         }
         var pos = translateMouseToWorld(screenCoord, camera);
-        return [ Math.floor(pos.x / size*camera.scaleX), Math.floor(pos.y / size*camera.scaleY) ];
+        return [ Math.floor(pos.x / size), Math.floor(pos.y / size) ];
 
     }
 
