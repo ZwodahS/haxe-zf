@@ -102,6 +102,73 @@ class MoveByAnimation extends Animation {
 
 }
 
+// need "anchor" while scaling, or this will always scale relative to top left
+class ScaleToAnimation extends Animation {
+
+    var object: h2d.Object;
+    var scaleTo: Point2f;
+    var scaleSpeed: Point2f;
+
+    public function new(object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1) {
+        super();
+        this.object = object;
+        this.scaleTo = scaleTo;
+        this.scaleSpeed = speeds != null ? speeds : [ speed, speed ];
+    }
+
+    override public function isDone(): Bool { return this.scaleTo == [ this.object.scaleX, this.object.scaleY ]; }
+
+    override public function update(dt: Float) {
+        if (this.isDone()) { return; }
+
+        if (this.object.scaleX != this.scaleTo.x) {
+            var direction = this.object.scaleX > this.scaleTo.x ? -1 : 1;
+            var scaleX = this.scaleSpeed.x * dt * direction;
+            if (scaleX < 0) {
+                this.object.scaleX = Math.max(this.object.scaleX + scaleX, this.scaleTo.x);
+            } else {
+                this.object.scaleX = Math.min(this.object.scaleX + scaleX, this.scaleTo.x);
+            }
+        }
+
+        if (this.object.scaleY != this.scaleTo.y) {
+            var direction = this.object.scaleY > this.scaleTo.y ? -1 : 1;
+            var scaleY = this.scaleSpeed.y * dt * direction;
+            if (scaleY < 0) {
+                this.object.scaleY = Math.max(this.object.scaleY + scaleY, this.scaleTo.y);
+            } else {
+                this.object.scaleY = Math.min(this.object.scaleY + scaleY, this.scaleTo.y);
+            }
+        }
+    }
+}
+
+class AlphaToAnimation extends Animation {
+    var object: h2d.Object;
+    var alphaTo: Float;
+    var alphaSpeed: Float;
+
+    public function new(object: h2d.Object, alphaTo: Float, alphaSpeed: Float = 1.0) {
+        super();
+        this.object = object;
+        this.alphaTo = alphaTo;
+        this.alphaSpeed = alphaSpeed;
+    }
+
+    override public function isDone(): Bool { return this.object.alpha == this.alphaTo; }
+    override public function update(dt: Float) {
+        if (this.isDone()) { return; }
+
+        var sign = this.object.alpha > this.alphaTo ? -1 : 1;
+        var delta = this.alphaSpeed * dt * sign;
+        if (delta < 0) {
+            this.object.alpha = Math.max(this.object.alpha + delta, this.alphaTo);
+        } else {
+            this.object.alpha = Math.min(this.object.alpha + delta, this.alphaTo);
+        }
+    }
+}
+
 class Animator extends common.Updater { // extends the Updater since most of it is the same
 
     public function new() {
@@ -124,6 +191,24 @@ class Animator extends common.Updater { // extends the Updater since most of it 
             onFinish: () -> Void = null
         ) {
         var anim = new MoveByAnimation(object, moveAmount, speeds, speed);
+        if (onFinish != null) { anim.onFinish = onFinish; }
+        this.run(anim);
+    }
+
+    public function scaleTo(
+            object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1,
+            onFinish: () -> Void = null
+        ) {
+        var anim = new ScaleToAnimation(object, scaleTo, speeds, speed);
+        if (onFinish != null) { anim.onFinish = onFinish; }
+        this.run(anim);
+    }
+
+    public function alphaTo(
+            object: h2d.Object, alphaTo: Float, alphaSpeed:Float = 1.0,
+            onFinish: () -> Void = null
+        ) {
+        var anim = new AlphaToAnimation(object, alphaTo, alphaSpeed);
         if (onFinish != null) { anim.onFinish = onFinish; }
         this.run(anim);
     }
