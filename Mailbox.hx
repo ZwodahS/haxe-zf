@@ -8,7 +8,7 @@ This is also useful for sending events or building event based architecture.
 
 Usage:
 
-    Mailbox.get().listen(Message, function(m: Message) {
+    Mailbox.get().listen(Message.TYPE, function(m: Message) {
         trace("I received a message");
     });
 
@@ -20,10 +20,11 @@ Usage:
   Common Message for all messages
 **/
 class Message {
-    public var type(get, never): String;
+    public static final TYPE = "Message";
+    public var type(get, null): String;
     public function new() {}
     public function get_type(): String {
-        return Type.getClassName(Type.getClass(this));
+        return Message.TYPE;
     }
 }
 
@@ -114,10 +115,7 @@ class Mailbox {
     /**
       listen to a message and provide a callback for handling the message
     **/
-    public function listen(messageType: String = "", messageClass: Class<Message> = null, callback: Message->Void): Int {
-        messageType = messageClass!=null ? Type.getClassName(messageClass) : messageType;
-        if (messageType == "") return -1;
-
+    public function listen(messageType: String = "", callback: Message->Void): Int {
         var listener = {
             id: COUNTER++,
             messageType: messageType,
