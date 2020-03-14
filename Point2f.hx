@@ -88,4 +88,11 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
         return new Point3f(this[0], this[1], 0);
     }
 
+    @:to public function toh2dPoint(): h2d.col.Point {
+        return new h2d.col.Point(this[0], this[1]);
+    }
+
+    @:from static public function fromh2dPoint(p: h2d.col.Point): Point2f {
+        return new Point2f(p.x, p.y);
+    }
 }
