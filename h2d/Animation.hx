@@ -102,6 +102,35 @@ class MoveByAnimation extends Animation {
 
 }
 
+class MoveAnimation extends Animation {
+    var object: h2d.Object;
+    var moveSpeed: Point2f;
+    var moveDuration: Float;
+    var moveLeft: Float;
+
+    public function new(object: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null, moveSpeed: Float = 1) {
+        super();
+        this.object = object;
+        this.moveSpeed = moveSpeeds != null ? moveSpeeds : [moveSpeed, moveSpeed];
+        this.moveDuration = moveDuration;
+        this.moveLeft = moveDuration >= 0 ? moveDuration : 0;
+    }
+
+    override public function isDone(): Bool { return (this.moveDuration >= 0 && this.moveLeft == 0); }
+
+    override public function update(dt: Float) {
+        if (this.isDone()) { return; }
+
+        if (this.moveDuration >= 0) {
+            dt = Math.min(this.moveDuration, dt);
+        }
+
+        this.object.x += dt * this.moveSpeed.x;
+        this.object.y += dt * this.moveSpeed.y;
+        this.moveDuration -= dt;
+    }
+}
+
 // need "anchor" while scaling, or this will always scale relative to top left
 class ScaleToAnimation extends Animation {
 
@@ -191,6 +220,15 @@ class Animator extends common.Updater { // extends the Updater since most of it 
             onFinish: () -> Void = null
         ) {
         var anim = new MoveByAnimation(object, moveAmount, speeds, speed);
+        if (onFinish != null) { anim.onFinish = onFinish; }
+        this.run(anim);
+    }
+
+    public function move(
+            object: h2d.Object, duration: Float, moveSpeeds: Point2f=null, moveSpeed=1,
+            onFinish: () -> Void = null
+        ) {
+        var anim = new MoveAnimation(object, duration, moveSpeeds, moveSpeed);
         if (onFinish != null) { anim.onFinish = onFinish; }
         this.run(anim);
     }
