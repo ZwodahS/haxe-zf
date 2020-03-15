@@ -11,4 +11,10 @@ class Component {
     public function get_type(): String {
         return TYPE;
     }
+
+    public var entity(default, set): Entity;
+    public function set_entity(e: Entity): Entity {
+        this.entity = e;
+        return e;
+    }
 }

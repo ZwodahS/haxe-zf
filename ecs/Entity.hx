@@ -42,6 +42,8 @@ class Entity extends h2d.Layers{
 
         var existing = this.getComponent(name);
         this.components[name] = component;
+        if (existing != null) { existing.entity = null; }
+        component.entity = this;
     }
 
     public function addComponents(components: Array<Component>) {
