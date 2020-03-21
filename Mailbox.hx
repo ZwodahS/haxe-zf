@@ -30,6 +30,13 @@ typedef Listener = {
   Use this to dispatch messages or listen to messages.
 **/
 
+enum DispatchMode {
+    Immediately;
+    StartOfQueue;
+    EndOfQueue;
+
+}
+
 class Mailbox {
 
     static var MAILBOXES: Map<String, Mailbox> = new Map<String, Mailbox>();
@@ -51,6 +58,8 @@ class Mailbox {
     var queuedMessage: List<Message>;
     var dispatchStack: List<Message>;
 
+    var clearing: Bool;
+
     public function new() {
         this.listeners = new Map<Int, Listener>();
         this.listenersMap = new Map<String, List<Listener>>();
@@ -63,28 +72,53 @@ class Mailbox {
 
       if delayed is true, then the message will be queued and dispatched when the dispatchStack is empty.
     **/
-    public function dispatch(message: Message, delayed: Bool=false) {
+    public function dispatch(message: Message, dispatchMode: DispatchMode = DispatchMode.Immediately) {
+        /**
+
+            In theory there are 3 types of dispatch.
+
+            1. Dispatch immediately as part of the current dispatch, without waiting for the other listeners to finish.
+            2. Dispatch after the current dispatch is done, i.e. when all the listeners is done.
+            3. Add it to the end of the queue and dispatch after
+
+        [<Message 1 listener 1>, <Message 1 listener 2>, <Message 2>]
+
+        if a new message is dispatched as part of listener 1.
+
+        1. run it now, without waiting for listener 1 to finish, or 2 to start.
+        2. run it after listener 2 is done
+        3. run it after message 2
+
+        currently, only 1 and 3 are implemented.
+
+        This is the problem with a event/callback system. need to be extremely careful.
+
+        **/
         // If delay is true and the stack is not empty, then we will queue it
-        if (delayed && this.dispatchStack.length > 0) {
-            this.queuedMessage.add(message);
+        if (this.dispatchStack.length == 0) {
+            dispatchMode = DispatchMode.Immediately;
+        }
+
+        if (dispatchMode == DispatchMode.StartOfQueue) {
+            this.queuedMessage.push(message);
             return;
         }
+        else if (dispatchMode == DispatchMode.StartOfQueue) {
+            this.queuedMessage.add(message);
+            return;
 
-        // if delay is false or if the stack is already empty, we dispatch the message
-        _dispatchMessage(message);
+        } else { // Immediately
+            _dispatchMessage(message);
 
-        // in theory, at this point the stack should be empty.
-        // let's do a debug check just in case
-        #if debug
-        if (this.dispatchStack.length != 0) {
-            throw "dispatchStack size should be 0";
-        }
-        #end
-
-        if (this.dispatchStack.length == 0 && this.queuedMessage.length > 0){
-            while (this.queuedMessage.length > 0) {
-                var m = this.queuedMessage.pop();
-                this._dispatchMessage(m);
+            // if this message was the last message in the current dispatch stack,
+            // dispatched the queued message.
+            if (this.dispatchStack.length == 0 && this.queuedMessage.length > 0 && !this.clearing){ //
+                this.clearing = true;
+                while (this.queuedMessage.length > 0) {
+                    var m = this.queuedMessage.pop();
+                    this._dispatchMessage(m);
+                }
+                this.clearing = false;
             }
         }
     }
