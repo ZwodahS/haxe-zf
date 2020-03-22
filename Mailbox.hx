@@ -34,7 +34,6 @@ enum DispatchMode {
     Immediately;
     StartOfQueue;
     EndOfQueue;
-
 }
 
 class Mailbox {
@@ -54,6 +53,8 @@ class Mailbox {
 
     var listeners: Map<Int, Listener>;
     var listenersMap: Map<String, List<Listener>>;
+     // listeners that listen to all types of messages, example: logger
+    var allListeners: Map<Int, Listener>;
 
     var queuedMessage: List<Message>;
     var dispatchStack: List<Message>;
@@ -65,6 +66,7 @@ class Mailbox {
         this.listenersMap = new Map<String, List<Listener>>();
         this.dispatchStack = new List<Message>();
         this.queuedMessage = new List<Message>();
+        this.allListeners = new Map<Int, Listener>();
     }
 
     /**
@@ -129,11 +131,17 @@ class Mailbox {
     function _dispatchMessage(message: Message) {
         this.dispatchStack.push(message);
         var listeners = this.listenersMap.get(message.type);
+
+        for (listener in this.allListeners) {
+            listener.callback(message);
+        }
+
         if (listeners != null) {
             for (listener in listeners) {
                 listener.callback(message);
             }
         }
+
         this.dispatchStack.pop();
     }
 
@@ -164,11 +172,24 @@ class Mailbox {
             return;
         }
 
-        // should never be null
-        var functionList = this.listenersMap.get(listener.messageType);
-
-        functionList.remove(listener);
+        if (listener.messageType == null) {
+            this.allListeners.remove(listener.id);
+        } else {
+            var functionList = this.listenersMap.get(listener.messageType);
+            functionList.remove(listener);
+        }
         this.listeners.remove(id);
+    }
+
+    public function listenAll(callback: Message->Void): Int {
+        var listener = {
+            id: COUNTER++,
+            messageType: null,
+            callback: callback,
+        }
+        this.allListeners[listener.id] = listener;
+        this.listeners[listener.id] = listener;
+        return listener.id;
     }
 }
 

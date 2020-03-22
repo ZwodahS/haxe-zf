@@ -58,7 +58,7 @@ class World {
     **/
     public function removeEntityById(id: Int) {
         var existing = this.entities[id];
-        if (existing != null) {
+        if (existing == null) {
             return;
         }
         this.entities.remove(id);
