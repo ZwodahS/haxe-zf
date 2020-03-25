@@ -20,13 +20,14 @@ class GridUtils {
         return cellList;
     }
     public static function getPointsAround
-            (coord: Point2i, width:Int = 1, bound: Recti, includeSelf: Bool = true): Array<Point2i> {
+            (coord: Point2i, width:Int = 1, bound: Recti = null, includeSelf: Bool = true): Array<Point2i> {
         var cellList: Array<Point2i> = new Array<Point2i>();
         for (x in -(width)...(width+1)) {
             for (y in -(width)...(width+1)) {
                 if (x == 0 && y == 0 && !includeSelf) continue;
                 var c = coord + [x, y];
-                if (c.x >= bound.xMin && c.x <= bound.xMax && c.y >= bound.yMin && c.y <= bound.yMax) {
+                if (bound == null ||
+                        (c.x >= bound.xMin && c.x <= bound.xMax && c.y >= bound.yMin && c.y <= bound.yMax)) {
                     cellList.push(c);
                 }
             }
