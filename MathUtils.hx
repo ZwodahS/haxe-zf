@@ -17,4 +17,9 @@ class MathUtils {
         return number > 0 ? 1 : number < 0 ? -1 : 0;
     }
 
+    inline public static function clampF(value: Float, min: Float, max: Float) {
+        // just delegate
+        return hxd.Math.clamp(value, min, max);
+    }
+
 }

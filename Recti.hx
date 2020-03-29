@@ -43,4 +43,10 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
     public function get_yMax(): Int {
         return this[3];
     }
+
+    public function intersect(rect: Recti): Bool {
+        if (this[0] > rect.xMax || rect.xMin > this[2]) { return false; }
+        if (this[1] > rect.yMax || rect.yMin > this[3]) { return false; }
+        return true;
+    }
 }
