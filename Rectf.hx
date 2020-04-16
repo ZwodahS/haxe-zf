@@ -45,6 +45,12 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
     }
 
     public function intersect(rect: Rectf): Bool {
+        if (this[0] >= rect.xMax || rect.xMin >= this[2]) { return false; }
+        if (this[1] >= rect.yMax || rect.yMin >= this[3]) { return false; }
+        return true;
+    }
+
+    public function intersectWithBorder(rect: Rectf): Bool {
         if (this[0] > rect.xMax || rect.xMin > this[2]) { return false; }
         if (this[1] > rect.yMax || rect.yMin > this[3]) { return false; }
         return true;
