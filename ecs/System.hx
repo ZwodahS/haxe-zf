@@ -14,12 +14,14 @@ class System {
     public var type(get, null): String;
 
     public function get_type(): String {
-        return TYPE;
+        return this.type;
     }
 
     var world: World;
 
-    public function new() {}
+    public function new(type: String = "System") {
+        this.type = type;
+    }
 
     /**
       init function is called when the system is added to the system
