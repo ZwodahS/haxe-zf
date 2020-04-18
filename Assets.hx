@@ -104,6 +104,7 @@ typedef Rect = {
 
 typedef Data = {
     var rect: Rect;
+    var rects: Array<Rect>;
     var frame: Frame;
     var frames: Array<Frame>;
     var scale: Null<Float>;
@@ -185,15 +186,11 @@ class Assets {
                     tiles.push(_assets.makeTile(frame));
                 }
             } else if (data.rect != null) {
-                var color = new h3d.Vector(
-                    data.rect.color[0]/255,
-                    data.rect.color[1]/255,
-                    data.rect.color[2]/255,
-                    data.rect.color[3]/255
-                );
-                tiles.push(new Tile(
-                    h2d.Tile.fromColor(0xFFFFFF, data.rect.width, data.rect.height), color
-                ));
+                tiles.push(parseRect(data.rect));
+            } else if (data.rects != null) {
+                for (rect in data.rects) {
+                    tiles.push(parseRect(rect));
+                }
             }
             if (data.scale != null) {
                 scale = data.scale;
@@ -202,6 +199,16 @@ class Assets {
         }
 
         return _assets;
+    }
+
+    static function parseRect(rect: Rect): Tile{
+        var color = new h3d.Vector(
+            rect.color[0]/255,
+            rect.color[1]/255,
+            rect.color[2]/255,
+            rect.color[3]/255
+        );
+        return new Tile(h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height), color);
     }
 
     public function getAsset(name: String): Asset2D {
