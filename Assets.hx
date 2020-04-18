@@ -79,12 +79,36 @@ class Asset2D {
         return out;
     }
 
-    public function getTiles(): Array<h2d.Tile> {
+    public function getTiles(start: Int = 0, end: Int = -1): Array<h2d.Tile> {
+        if (end == -1) {
+            end = this.tiles.length;
+        }
         var out = new Array<h2d.Tile>();
-        for (i in 0...this.tiles.length) {
+        var ind = 0;
+        for (i in start...end) {
             out.push(this.tiles[i].tile);
         }
         return out;
+    }
+
+    public function getAnim(speed: Float, sort: (h2d.Tile, h2d.Tile) -> Int,
+            start: Int = 0, end: Int = -1): h2d.Anim {
+        if (end == -1) {
+            end = this.tiles.length;
+        }
+        var frames = new Array<h2d.Tile>();
+        var ind = 0;
+        for (i in start...end) {
+            frames.push(this.tiles[i].tile);
+        }
+        if (sort != null) {
+            frames.sort(sort);
+        }
+
+        var anim = new h2d.Anim(frames, speed);
+        anim.scaleX = this.tiles[0].scale;
+        anim.scaleY = this.tiles[0].scale;
+        return anim;
     }
 
 }
