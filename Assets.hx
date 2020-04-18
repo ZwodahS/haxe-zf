@@ -18,22 +18,24 @@ class Tile {
 
     public var tile: h2d.Tile;
     public var color: h3d.Vector;
+    public var scale: Float;
 
-    public function new(t: h2d.Tile, color: h3d.Vector) {
+    public function new(t: h2d.Tile, color: h3d.Vector, scale: Float) {
         this.tile = t;
         this.color = color;
+        this.scale = scale;
     }
 
-    public function getBitmap(scale: Float = 1): h2d.Bitmap {
+    public function getBitmap(): h2d.Bitmap {
         var bm: h2d.Bitmap = new h2d.Bitmap(this.tile);
         bm.color = this.color;
-        bm.scaleX = scale;
-        bm.scaleY = scale;
+        bm.scaleX = this.scale;
+        bm.scaleY = this.scale;
         return bm;
     }
 
     public function copy(): Tile {
-        var t = new Tile(this.tile, this.color);
+        var t = new Tile(this.tile, this.color, this.scale);
         return t;
     }
 }
@@ -46,7 +48,6 @@ class Asset2D {
 
     public var key: String;
     public var tiles: Array<Tile>;
-    public var scale: Float;
 
     public var count(get, null): Int;
 
@@ -54,17 +55,16 @@ class Asset2D {
         return this.tiles.length;
     }
 
-    public function new(key, tiles, scale: Float=1) {
+    public function new(key, tiles) {
         this.key = key;
         this.tiles = tiles;
-        this.scale = scale;
     }
 
     public function getBitmap(pos: Int = 0): h2d.Bitmap{
         if (pos < 0 || pos >= this.tiles.length) {
             pos = 0;
         }
-        return this.tiles[pos].getBitmap(this.scale);
+        return this.tiles[pos].getBitmap();
     }
 
     public function getBitmaps(start: Int = 0, end: Int = -1): Vector<h2d.Bitmap> {
@@ -74,7 +74,7 @@ class Asset2D {
         var out = new Vector<h2d.Bitmap>(end - start);
         var ind = 0;
         for (i in start...end) {
-            out[ind++] = this.tiles[i].getBitmap(this.scale);
+            out[ind++] = this.tiles[i].getBitmap();
         }
         return out;
     }
@@ -100,6 +100,7 @@ typedef Rect = {
     var width: Int;
     var height: Int;
     var color: Array<Int>;
+    var scale: Null<Float>;
 }
 
 typedef Data = {
@@ -107,7 +108,6 @@ typedef Data = {
     var rects: Array<Rect>;
     var frame: Frame;
     var frames: Array<Frame>;
-    var scale: Null<Float>;
 }
 
 
@@ -164,7 +164,11 @@ class Assets {
         } else {
             color = new h3d.Vector(1.0, 1.0, 1.0, 1.0);
         }
-        return new Tile(this.getTile(frame.src, frame.key), color);
+        return new Tile(
+                this.getTile(frame.src, frame.key),
+                color,
+                frame.scale == null ? 1.0 : frame.scale
+        );
     }
 
     public static function parseAssets(assetPath: String): Assets {
@@ -175,12 +179,8 @@ class Assets {
         for (key in Reflect.fields(parsed)) {
             var data: Data = Reflect.field(parsed, key);
             var tiles = new Array<Tile>();
-            var scale = 1.0;
             if (data.frame != null) {
                 tiles.push(_assets.makeTile(data.frame));
-                if (data.frame.scale != null) {
-                    scale = data.frame.scale;
-                }
             } else if (data.frames != null) {
                 for (frame in data.frames) {
                     tiles.push(_assets.makeTile(frame));
@@ -192,10 +192,7 @@ class Assets {
                     tiles.push(parseRect(rect));
                 }
             }
-            if (data.scale != null) {
-                scale = data.scale;
-            }
-            _assets.assets2D[key] = new Asset2D(key, tiles, scale);
+            _assets.assets2D[key] = new Asset2D(key, tiles);
         }
 
         return _assets;
@@ -208,7 +205,11 @@ class Assets {
             rect.color[2]/255,
             rect.color[3]/255
         );
-        return new Tile(h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height), color);
+        return new Tile(
+                h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height),
+                color,
+                rect.scale == null ? 1.0 : rect.scale
+        );
     }
 
     public function getAsset(name: String): Asset2D {
