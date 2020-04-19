@@ -8,6 +8,9 @@ class World {
     private var entities: Map<Int, Entity>;
     private var systems: List<System>;
 
+    // this is to be used by System to decide if they want to update.
+    public var paused: Bool = false;
+
     public function new() {
         this.entities = new Map<Int, Entity>();
         this.systems = new List<System>();
