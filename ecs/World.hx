@@ -78,4 +78,9 @@ class World {
             sys.update(dt);
         }
     }
+    public function onEvent(event: hxd.Event) {
+        for (sys in this.systems) {
+            if(sys.onEvent(event)) { break; }
+        }
+    }
 }

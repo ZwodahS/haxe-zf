@@ -46,4 +46,10 @@ class System {
       update is the main function called by the world.
     **/
     public function update(dt: Float) {}
+
+    /**
+      the event handling of the system.
+      if the event is handled or the event should stop propagating to the rest of the systems, return true
+    **/
+    public function onEvent(event: hxd.Event): Bool { return false; }
 }
