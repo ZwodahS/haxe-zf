@@ -68,7 +68,10 @@ class World {
         for (sys in this.systems) {
             sys.removeEntity(existing);
         }
+        this.onEntityRemoved(existing);
     }
+
+    public function onEntityRemoved(ent: Entity) {}
 
     /**
       update is the main function that should be called on every update loop
