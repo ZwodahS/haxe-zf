@@ -66,4 +66,8 @@ class Entity extends h2d.Layers{
     public static function newEntity(): Entity {
         return new Entity(counter++);
     }
+
+    override public function toString(): String {
+        return 'Entity: ${this.id}';
+    }
 }
