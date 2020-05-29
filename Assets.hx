@@ -114,6 +114,7 @@ class Asset2D {
 }
 
 typedef Frame = {
+    var img: String;
     var src: String;
     var key: String;
     var color: Array<Int>;
@@ -191,7 +192,14 @@ class Assets {
         } else {
             color = new h3d.Vector(1.0, 1.0, 1.0, 1.0);
         }
-        var t = this.getTile(frame.src, frame.key);
+        var t: h2d.Tile = null;
+        if (frame.img != null) {
+            t = hxd.Res.load(frame.img).toTile();
+        }
+        else {
+            t = this.getTile(frame.src, frame.key);
+        }
+
         if (t == null) {
 #if debug
             trace('Unable to load assets: ${frame.key}');
@@ -209,6 +217,7 @@ class Assets {
         for (key in Reflect.fields(parsed)) {
             var data: Data = Reflect.field(parsed, key);
             var tiles = new Array<Tile>();
+
             if (data.frame != null) {
                 var t = _assets.makeTile(data.frame);
                 if (t != null) {
@@ -250,6 +259,10 @@ class Assets {
     }
 
     public function getAsset(name: String): Asset2D {
+        return this.get(name);
+    }
+
+    public function get(name: String): Asset2D {
         return this.assets2D[name];
     }
 }
