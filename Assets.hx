@@ -176,6 +176,9 @@ class Assets {
 
     private function getTile(src: String, key: String): h2d.Tile {
         var map = this.getAssetsMap(src);
+        if (map[key] == null) {
+            return null;
+        }
         return map[key].image;
     }
 
@@ -188,11 +191,14 @@ class Assets {
         } else {
             color = new h3d.Vector(1.0, 1.0, 1.0, 1.0);
         }
-        return new Tile(
-                this.getTile(frame.src, frame.key),
-                color,
-                frame.scale == null ? 1.0 : frame.scale
-        );
+        var t = this.getTile(frame.src, frame.key);
+        if (t == null) {
+#if debug
+            trace('Unable to load assets: ${frame.key}');
+#end
+            return null;
+        }
+        return new Tile(t, color, frame.scale == null ? 1.0 : frame.scale);
     }
 
     public static function parseAssets(assetPath: String): Assets {
@@ -204,10 +210,16 @@ class Assets {
             var data: Data = Reflect.field(parsed, key);
             var tiles = new Array<Tile>();
             if (data.frame != null) {
-                tiles.push(_assets.makeTile(data.frame));
+                var t = _assets.makeTile(data.frame);
+                if (t != null) {
+                    tiles.push(t);
+                }
             } else if (data.frames != null) {
                 for (frame in data.frames) {
-                    tiles.push(_assets.makeTile(frame));
+                    var t = _assets.makeTile(frame);
+                    if (t != null) {
+                        tiles.push(t);
+                    }
                 }
             } else if (data.rect != null) {
                 tiles.push(parseRect(data.rect));
@@ -215,10 +227,11 @@ class Assets {
                 for (rect in data.rects) {
                     tiles.push(parseRect(rect));
                 }
+            } else {
+                continue;
             }
             _assets.assets2D[key] = new Asset2D(key, tiles);
         }
-
         return _assets;
     }
 
