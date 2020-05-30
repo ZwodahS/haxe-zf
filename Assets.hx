@@ -263,6 +263,9 @@ class Assets {
     }
 
     public function get(name: String): Asset2D {
+#if debug
+        if (this.assets2D[name] == null) trace('Unable to find assets: "${name}"');
+#end
         return this.assets2D[name];
     }
 }
