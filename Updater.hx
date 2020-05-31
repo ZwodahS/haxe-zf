@@ -76,5 +76,10 @@ class Updater {
     public function get_count(): Int {
         return this.updates.length;
     }
+
+    public function stop(u: Updatable): Bool {
+        var v = this.updates.remove(u);
+        return v;
+    }
 }
 

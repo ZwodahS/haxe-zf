@@ -12,11 +12,16 @@ import common.MathUtils;
 class Animation implements Updatable {
 
     public var onFinish: () -> Void;
+    public var animator: Animator;
 
     public function new() {}
     public function finish() { if (this.onFinish != null) { onFinish(); }}
     public function isDone(): Bool { return true; }
     public function update(dt: Float) {}
+    public function stop(): Bool {
+        if (this.animator == null) return false;
+        return this.animator.stop(this);
+    }
 }
 
 class MoveToAnimation extends Animation {
@@ -198,57 +203,102 @@ class AlphaToAnimation extends Animation {
     }
 }
 
+class RotateAnimation extends Animation {
+
+    var object: h2d.Object;
+    var rotateSpeed: Float; // in radians
+    var duration: Null<Float>; // in seconds
+    var timeElapsed: Float;
+
+    public function new(object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null) {
+        super();
+        this.object = object;
+        this.rotateSpeed = rotateSpeed;
+        this.duration = duration;
+        this.timeElapsed = 0;
+    }
+
+    override public function isDone(): Bool { return this.duration != null && this.duration <= this.timeElapsed; }
+
+    override public function update(dt: Float) {
+        if (this.isDone()) return;
+        this.timeElapsed += dt;
+        if (this.duration != null && this.timeElapsed >= this.duration) { this.timeElapsed = duration; }
+        this.object.rotation = (this.timeElapsed * Math.PI * this.rotateSpeed);
+    }
+}
+
 class Animator extends common.Updater { // extends the Updater since most of it is the same
 
     public function new() {
         super();
     }
 
+    function runAnim(anim: Animation) {
+        this.run(anim);
+        anim.animator = this;
+    }
+
     // mirrors MoveToAnimation constructor
     public function moveTo(
             object: h2d.Object, position: Point2f, speeds: Point2f=null, speed: Float = 1,
             onFinish: () -> Void = null
-        ) {
+        ): Animation {
         var anim = new MoveToAnimation(object, position, speeds, speed);
         if (onFinish != null) { anim.onFinish = onFinish; }
-        this.run(anim);
+        this.runAnim(anim);
+        return anim;
     }
 
     // mirrors MoveByAnimation constructor
     public function moveBy(
             object: h2d.Object, moveAmount: Point2f, speeds: Point2f=null, speed: Float = 1,
             onFinish: () -> Void = null
-        ) {
+        ): Animation {
         var anim = new MoveByAnimation(object, moveAmount, speeds, speed);
         if (onFinish != null) { anim.onFinish = onFinish; }
-        this.run(anim);
+        this.runAnim(anim);
+        return anim;
     }
 
     public function move(
             object: h2d.Object, duration: Float, moveSpeeds: Point2f=null, moveSpeed=1,
             onFinish: () -> Void = null
-        ) {
+        ): Animation {
         var anim = new MoveAnimation(object, duration, moveSpeeds, moveSpeed);
         if (onFinish != null) { anim.onFinish = onFinish; }
-        this.run(anim);
+        this.runAnim(anim);
+        return anim;
     }
 
     public function scaleTo(
             object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1,
             onFinish: () -> Void = null
-        ) {
+        ): Animation {
         var anim = new ScaleToAnimation(object, scaleTo, speeds, speed);
         if (onFinish != null) { anim.onFinish = onFinish; }
-        this.run(anim);
+        this.runAnim(anim);
+        return anim;
     }
 
     public function alphaTo(
             object: h2d.Object, alphaTo: Float, alphaSpeed:Float = 1.0,
             onFinish: () -> Void = null
-        ) {
+        ): Animation {
         var anim = new AlphaToAnimation(object, alphaTo, alphaSpeed);
         if (onFinish != null) { anim.onFinish = onFinish; }
-        this.run(anim);
+        this.runAnim(anim);
+        return anim;
+    }
+
+    public function rotate(
+            object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null,
+            onFinish:() -> Void = null
+        ): Animation {
+        var anim = new RotateAnimation(object, rotateSpeed, duration);
+        if (onFinish != null) anim.onFinish = onFinish;
+        this.runAnim(anim);
+        return anim;
     }
 }
 
