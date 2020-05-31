@@ -64,7 +64,11 @@ class Entity extends h2d.Layers{
 
     private static var counter:Int = 0;
     public static function newEntity(): Entity {
-        return new Entity(counter++);
+        return new Entity(newId());
+    }
+
+    public static function newId(): Int {
+        return counter++;
     }
 
     override public function toString(): String {
