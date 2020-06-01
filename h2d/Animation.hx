@@ -24,6 +24,37 @@ class Animation implements Updatable {
     }
 }
 
+class MoveToAnimationByDuration extends Animation {
+
+    var object: h2d.Object;
+    var start: Point2f;
+    var end: Point2f;
+    var duration: Float;
+    var delta: Float;
+    var step: Point2f;
+
+    public function new(object: h2d.Object, position: Point2f, duration: Float) {
+        super();
+        this.object = object;
+        this.start = [object.x, object.y];
+        this.end = position;
+        this.duration = duration;
+        this.delta = 0;
+
+        this.step = (this.end - this.start) * (1/duration);
+    }
+
+    override public function isDone(): Bool { return this.delta >= this.duration; }
+
+    override public function update(dt: Float) {
+        this.delta += dt;
+        if (this.delta > this.duration) this.delta = this.duration;
+        var currentPosition = this.start + (this.step * this.delta);
+        this.object.x = currentPosition.x;
+        this.object.y = currentPosition.y;
+    }
+}
+
 class MoveToAnimation extends Animation {
 
     var object: h2d.Object;
@@ -245,6 +276,15 @@ class Animator extends common.Updater { // extends the Updater since most of it 
             onFinish: () -> Void = null
         ): Animation {
         var anim = new MoveToAnimation(object, position, speeds, speed);
+        if (onFinish != null) { anim.onFinish = onFinish; }
+        this.runAnim(anim);
+        return anim;
+    }
+
+    public function moveToByDuration(
+            object: h2d.Object, position: Point2f, duration: Float, onFinish: () -> Void = null
+        ): Animation {
+        var anim = new MoveToAnimationByDuration(object, position, duration);
         if (onFinish != null) { anim.onFinish = onFinish; }
         this.runAnim(anim);
         return anim;
