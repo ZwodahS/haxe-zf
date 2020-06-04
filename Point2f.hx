@@ -6,6 +6,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
     public var x(get, set): Float;
     public var y(get, set): Float;
     public var unit(get, never): Point2f;
+    public var rad(get, never): Float;
 
     public function new(x: Float = 0, y: Float = 0) {
         this = [x, y];
@@ -111,5 +112,9 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
             hxd.Math.pow(this[1], 2)
         );
         return [this[0] * (1/mag), this[1] * (1/mag)];
+    }
+
+    public function get_rad(): Float {
+        return hxd.Math.atan2(this[1], this[0]);
     }
 }

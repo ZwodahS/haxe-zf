@@ -101,7 +101,6 @@ class Line2f {
         var rad = this.rad;
         rad += r;
         var newUnit: Point2f = [hxd.Math.cos(rad), hxd.Math.sin(rad)];
-        trace(this._unit - newUnit.unit);
         this.setStartEnd(this._start, this._start + newUnit.unit * this._mag);
     }
 
