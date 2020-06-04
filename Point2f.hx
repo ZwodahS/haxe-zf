@@ -5,6 +5,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
     public var x(get, set): Float;
     public var y(get, set): Float;
+    public var unit(get, never): Point2f;
 
     public function new(x: Float = 0, y: Float = 0) {
         this = [x, y];
@@ -101,5 +102,14 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
             hxd.Math.pow(hxd.Math.abs(this[0] - point.x), 2) +
             hxd.Math.pow(hxd.Math.abs(this[1] - point.y), 2)
         );
+    }
+
+    public function get_unit(): Point2f {
+        // return a copy of the unit vector for this point
+        var mag = hxd.Math.sqrt(
+            hxd.Math.pow(this[0], 2) +
+            hxd.Math.pow(this[1], 2)
+        );
+        return [this[0] * (1/mag), this[1] * (1/mag)];
     }
 }
