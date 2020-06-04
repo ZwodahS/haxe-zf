@@ -95,4 +95,11 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
     @:from static public function fromh2dPoint(p: h2d.col.Point): Point2f {
         return new Point2f(p.x, p.y);
     }
+
+    public function distance(point: Point2f): Float {
+        return hxd.Math.sqrt(
+            hxd.Math.pow(hxd.Math.abs(this[0] - point.x), 2) +
+            hxd.Math.pow(hxd.Math.abs(this[1] - point.y), 2)
+        );
+    }
 }
