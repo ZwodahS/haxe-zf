@@ -8,6 +8,7 @@ class Line2f {
     var _end: Point2f;
     var _unit: Point2f;
     var _mag: Float;
+    var _rad: Float;
 
     public var unitVector(get, null): Point2f;
     public var mag(get, set): Float;
@@ -47,8 +48,8 @@ class Line2f {
             hxd.Math.pow(hxd.Math.abs(this._start.y - this._end.y), 2)
         );
         this._unit = (this._end - this._start) * (1/this._mag);
+        this._rad = hxd.Math.atan2(this._unit.y, this._unit.x);
     }
-
 
     public function get_unitVector(): Point2f {
         return this._unit;
@@ -94,11 +95,11 @@ class Line2f {
     }
 
     public function get_rad(): Float {
-        return hxd.Math.atan2(this._unit.y, this._unit.x);
+        return this._rad;
     }
 
     public function rotate(r: Float) {
-        var rad = this.rad;
+        var rad = this._rad;
         rad += r;
         var newUnit: Point2f = [hxd.Math.cos(rad), hxd.Math.sin(rad)];
         this.setStartEnd(this._start, this._start + newUnit.unit * this._mag);
