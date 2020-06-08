@@ -94,12 +94,18 @@ class Vector2D<T> {
         return str;
     }
 
-    public function new(lengthX: Int, lengthY: Int, nullValue: T) {
+    public function new(lengthX: Int, lengthY: Int, nullValue: T, copy: Vector<T> = null) {
         this.lengthX = lengthX;
         this.lengthY = lengthY;
+
         this.data = new Vector<T>(lengthX * lengthY);
         for (i in 0...data.length) {
             this.data[i] = nullValue;
+        }
+        if (copy != null) {
+            for (i in 0...(hxd.Math.imin(this.data.length, copy.length))) {
+                this.data[i] = copy[i];
+            }
         }
     }
 
@@ -177,5 +183,9 @@ class Vector2D<T> {
         }
         this.lengthX = newLengthX;
         this.lengthY = newLengthY;
+    }
+
+    public function copy(): Vector2D<T> {
+        return new Vector2D<T>(this.lengthX, this.lengthY, this.nullValue, this.data);
     }
 }
