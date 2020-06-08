@@ -19,7 +19,7 @@ class Vector2DIteratorXY<T> {
     }
 
     public function hasNext(): Bool {
-        return (this.currX < this.data.lengthX && this.currY < this.data.lengthY);
+        return (this.currX < this.data.size.x && this.currY < this.data.size.y);
     }
 
     public function next(): {key: XY, value: T} {
@@ -27,7 +27,7 @@ class Vector2DIteratorXY<T> {
             key: {x: this.currX, y: this.currY },
             value: this.data.get(this.currX, this.currY)
         }
-        if (this.currX == this.data.lengthX-1) {
+        if (this.currX == this.data.size.x-1) {
             this.currX = 0;
             this.currY += 1;
         } else {
@@ -49,7 +49,7 @@ class Vector2DIteratorYX<T> {
     }
 
     public function hasNext(): Bool {
-        return (this.currX < this.data.lengthX && this.currY < this.data.lengthY);
+        return (this.currX < this.data.size.x && this.currY < this.data.size.y);
     }
 
     public function next(): {key: XY, value: T} {
@@ -57,7 +57,7 @@ class Vector2DIteratorYX<T> {
             key: {x: this.currX, y: this.currY },
             value: this.data.get(this.currX, this.currY)
         }
-        if (this.currY == this.data.lengthY-1) {
+        if (this.currY == this.data.size.y-1) {
             this.currY = 0;
             this.currX += 1;
         } else {
@@ -78,15 +78,15 @@ class Vector2D<T> {
       There shouldn't be a need to know this when using this from outside.
     **/
 
-    public var lengthX(default, null): Int;
-    public var lengthY(default, null): Int;
+    public var size(default, null): Point2i;
+
     var data: Vector<T>;
     var nullValue: T;
 
     public function toString(): String {
         var str = "";
-        for (y in 0...this.lengthY) {
-            for (x in 0...this.lengthX) {
+        for (y in 0...this.size.y) {
+            for (x in 0...this.size.x) {
                 str += this.get(x, y) + " ";
             }
             str += "\n";
@@ -94,11 +94,10 @@ class Vector2D<T> {
         return str;
     }
 
-    public function new(lengthX: Int, lengthY: Int, nullValue: T, copy: Vector<T> = null) {
-        this.lengthX = lengthX;
-        this.lengthY = lengthY;
+    public function new(size: Point2i, nullValue: T, copy: Vector<T> = null) {
+        this.size = size;
 
-        this.data = new Vector<T>(lengthX * lengthY);
+        this.data = new Vector<T>(size.x * size.y);
         for (i in 0...data.length) {
             this.data[i] = nullValue;
         }
@@ -120,7 +119,7 @@ class Vector2D<T> {
     }
 
     inline function pos(x: Int, y: Int): Int { // return -1 if out of bound
-        return x + (y*lengthX);
+        return x + (y*size.x);
     }
 
     public function inBound(x: Int, y: Int): Bool {
@@ -141,15 +140,15 @@ class Vector2D<T> {
 
     // https://stackoverflow.com/questions/18034805/rotate-mn-matrix-90-degrees
     public function rotateCCW() {
-        var newLengthX = this.lengthY;
-        var newLengthY = this.lengthX;
+        var newLengthX = this.size.y;
+        var newLengthY = this.size.x;
         var copy = new Vector<T>(this.data.length);
         var x1 = 0;
         var y1 = 0;
-        var x0 = this.lengthX - 1;
+        var x0 = this.size.x - 1;
         while (x0 >= 0) {
             x1 = 0;
-            for (y0 in 0...this.lengthY) {
+            for (y0 in 0...this.size.y) {
                 copy[(y1*newLengthX)+x1] = this.data[pos(x0, y0)];
                 x1 += 1;
             }
@@ -159,20 +158,20 @@ class Vector2D<T> {
         for (i in 0...data.length) {
             data[i] = copy[i];
         }
-        this.lengthX = newLengthX;
-        this.lengthY = newLengthY;
+        this.size.x = newLengthX;
+        this.size.y = newLengthY;
     }
 
     public function rotateCW() {
-        var newLengthX = this.lengthY;
-        var newLengthY = this.lengthX;
+        var newLengthX = this.size.y;
+        var newLengthY = this.size.x;
         var copy = new Vector<T>(this.data.length);
         var x1 = 0;
         var y1 = 0;
-        var x0 = this.lengthX - 1;
-        for (x0 in 0...this.lengthX) {
+        var x0 = this.size.x - 1;
+        for (x0 in 0...this.size.x) {
             x1 = newLengthX - 1;
-            for (y0 in 0...this.lengthY) {
+            for (y0 in 0...this.size.y) {
                 copy[(y1*newLengthX)+x1] = this.data[pos(x0, y0)];
                 x1 -= 1;
             }
@@ -181,11 +180,11 @@ class Vector2D<T> {
         for (i in 0...data.length) {
             data[i] = copy[i];
         }
-        this.lengthX = newLengthX;
-        this.lengthY = newLengthY;
+        this.size.x = newLengthX;
+        this.size.y = newLengthY;
     }
 
     public function copy(): Vector2D<T> {
-        return new Vector2D<T>(this.lengthX, this.lengthY, this.nullValue, this.data);
+        return new Vector2D<T>(this.size, this.nullValue, this.data);
     }
 }
