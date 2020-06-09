@@ -1,4 +1,3 @@
-
 package common.ecs;
 
 import common.ecs.Entity;
@@ -17,7 +16,7 @@ class World {
     }
 
     /**
-      addSystem add a system to the world
+        addSystem add a system to the world
     **/
     public function addSystem(system: System) {
         this.systems.add(system);
@@ -25,17 +24,17 @@ class World {
     }
 
     /**
-      removeSystem remove a system from the world
+        removeSystem remove a system from the world
     **/
     public function removeSystem(system: System): Bool {
         return this.systems.remove(system);
     }
 
     /**
-      addEntity adds an entity to this world.
-      The entity will be added to all systems if addToSystems if true
+        addEntity adds an entity to this world.
+        The entity will be added to all systems if addToSystems if true
     **/
-    public function addEntity(ent: Entity, addToSystems=true) {
+    public function addEntity(ent: Entity, addToSystems = true) {
         var existing = this.entities[ent.id];
         if (existing != null) {
             // if existing, do nothing
@@ -50,14 +49,14 @@ class World {
     }
 
     /**
-      removeEntity remove the entity from this world and all the systems.
+        removeEntity remove the entity from this world and all the systems.
     **/
     public function removeEntity(ent: Entity) {
         return this.removeEntityById(ent.id);
     }
 
     /**
-      removeEntity remove the entity by id from this world and all the systems.
+        removeEntity remove the entity by id from this world and all the systems.
     **/
     public function removeEntityById(id: Int) {
         var existing = this.entities[id];
@@ -74,16 +73,19 @@ class World {
     public function onEntityRemoved(ent: Entity) {}
 
     /**
-      update is the main function that should be called on every update loop
+        update is the main function that should be called on every update loop
     **/
     public function update(dt: Float) {
         for (sys in this.systems) {
             sys.update(dt);
         }
     }
+
     public function onEvent(event: hxd.Event) {
         for (sys in this.systems) {
-            if(sys.onEvent(event)) { break; }
+            if (sys.onEvent(event)) {
+                break;
+            }
         }
     }
 }

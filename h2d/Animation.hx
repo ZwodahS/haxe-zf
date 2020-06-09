@@ -1,4 +1,3 @@
-
 package common.h2d;
 
 import common.Updater;
@@ -6,18 +5,26 @@ import common.Point2f;
 import common.MathUtils;
 
 /**
-  Animation provide the common "animation" for h2d.Objects
+    Animation provide the common "animation" for h2d.Objects
 **/
-
 class Animation implements Updatable {
-
     public var onFinish: () -> Void;
     public var animator: Animator;
 
     public function new() {}
-    public function finish() { if (this.onFinish != null) { onFinish(); }}
-    public function isDone(): Bool { return true; }
+
+    public function finish() {
+        if (this.onFinish != null) {
+            onFinish();
+        }
+    }
+
+    public function isDone(): Bool {
+        return true;
+    }
+
     public function update(dt: Float) {}
+
     public function stop(): Bool {
         if (this.animator == null) return false;
         return this.animator.stop(this);
@@ -25,7 +32,6 @@ class Animation implements Updatable {
 }
 
 class MoveToAnimationByDuration extends Animation {
-
     var object: h2d.Object;
     var start: Point2f;
     var end: Point2f;
@@ -41,10 +47,12 @@ class MoveToAnimationByDuration extends Animation {
         this.duration = duration;
         this.delta = 0;
 
-        this.step = (this.end - this.start) * (1/duration);
+        this.step = (this.end - this.start) * (1 / duration);
     }
 
-    override public function isDone(): Bool { return this.delta >= this.duration; }
+    override public function isDone(): Bool {
+        return this.delta >= this.duration;
+    }
 
     override public function update(dt: Float) {
         this.delta += dt;
@@ -56,7 +64,6 @@ class MoveToAnimationByDuration extends Animation {
 }
 
 class MoveToAnimation extends Animation {
-
     var object: h2d.Object;
     var position: Point2f;
     var speed: Point2f;
@@ -65,13 +72,17 @@ class MoveToAnimation extends Animation {
         super();
         this.object = object;
         this.position = position;
-        this.speed = speeds != null ? speeds : [ speed, speed ];
+        this.speed = speeds != null ? speeds : [speed, speed];
     }
 
-    override public function isDone(): Bool { return this.position == [ this.object.x, this.object.y ]; }
+    override public function isDone(): Bool {
+        return this.position == [this.object.x, this.object.y];
+    }
 
     override public function update(dt: Float) {
-        if (this.isDone()) { return; }
+        if (this.isDone()) {
+            return;
+        }
 
         if (this.object.x != this.position.x) {
             var direction = this.object.x > this.position.x ? -1 : 1;
@@ -92,13 +103,10 @@ class MoveToAnimation extends Animation {
                 this.object.y = Math.min(this.object.y + moveY, this.position.y);
             }
         }
-
     }
-
 }
 
 class MoveByAnimation extends Animation {
-
     var object: h2d.Object;
     var amount: Point2f;
     var amountLeft: Point2f;
@@ -109,13 +117,17 @@ class MoveByAnimation extends Animation {
         this.object = object;
         this.amount = moveAmount.copy();
         this.amountLeft = moveAmount.copy();
-        this.speed = speeds != null ? speeds : [ speed, speed ];
+        this.speed = speeds != null ? speeds : [speed, speed];
     }
 
-    override public function isDone(): Bool { return (this.amountLeft.x == 0 && this.amountLeft.y == 0); }
+    override public function isDone(): Bool {
+        return (this.amountLeft.x == 0 && this.amountLeft.y == 0);
+    }
 
     override public function update(dt: Float) {
-        if (this.isDone()) { return; }
+        if (this.isDone()) {
+            return;
+        }
 
         var moveX = dt * this.speed.x * MathUtils.sign(this.amountLeft.x);
         if (moveX < 0) {
@@ -135,7 +147,6 @@ class MoveByAnimation extends Animation {
         this.amountLeft.y -= moveY;
         this.object.y += moveY;
     }
-
 }
 
 class MoveAnimation extends Animation {
@@ -144,7 +155,8 @@ class MoveAnimation extends Animation {
     var moveDuration: Float;
     var moveLeft: Float;
 
-    public function new(object: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null, moveSpeed: Float = 1) {
+    public function new(object: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null,
+            moveSpeed: Float = 1) {
         super();
         this.object = object;
         this.moveSpeed = moveSpeeds != null ? moveSpeeds : [moveSpeed, moveSpeed];
@@ -152,10 +164,14 @@ class MoveAnimation extends Animation {
         this.moveLeft = moveDuration >= 0 ? moveDuration : 0;
     }
 
-    override public function isDone(): Bool { return (this.moveDuration >= 0 && this.moveLeft == 0); }
+    override public function isDone(): Bool {
+        return (this.moveDuration >= 0 && this.moveLeft == 0);
+    }
 
     override public function update(dt: Float) {
-        if (this.isDone()) { return; }
+        if (this.isDone()) {
+            return;
+        }
 
         if (this.moveDuration >= 0) {
             dt = Math.min(this.moveDuration, dt);
@@ -169,7 +185,6 @@ class MoveAnimation extends Animation {
 
 // need "anchor" while scaling, or this will always scale relative to top left
 class ScaleToAnimation extends Animation {
-
     var object: h2d.Object;
     var scaleTo: Point2f;
     var scaleSpeed: Point2f;
@@ -178,13 +193,17 @@ class ScaleToAnimation extends Animation {
         super();
         this.object = object;
         this.scaleTo = scaleTo;
-        this.scaleSpeed = speeds != null ? speeds : [ speed, speed ];
+        this.scaleSpeed = speeds != null ? speeds : [speed, speed];
     }
 
-    override public function isDone(): Bool { return this.scaleTo == [ this.object.scaleX, this.object.scaleY ]; }
+    override public function isDone(): Bool {
+        return this.scaleTo == [this.object.scaleX, this.object.scaleY];
+    }
 
     override public function update(dt: Float) {
-        if (this.isDone()) { return; }
+        if (this.isDone()) {
+            return;
+        }
 
         if (this.object.scaleX != this.scaleTo.x) {
             var direction = this.object.scaleX > this.scaleTo.x ? -1 : 1;
@@ -220,9 +239,14 @@ class AlphaToAnimation extends Animation {
         this.alphaSpeed = alphaSpeed;
     }
 
-    override public function isDone(): Bool { return this.object.alpha == this.alphaTo; }
+    override public function isDone(): Bool {
+        return this.object.alpha == this.alphaTo;
+    }
+
     override public function update(dt: Float) {
-        if (this.isDone()) { return; }
+        if (this.isDone()) {
+            return;
+        }
 
         var sign = this.object.alpha > this.alphaTo ? -1 : 1;
         var delta = this.alphaSpeed * dt * sign;
@@ -235,7 +259,6 @@ class AlphaToAnimation extends Animation {
 }
 
 class RotateAnimation extends Animation {
-
     var object: h2d.Object;
     var rotateSpeed: Float; // in radians
     var duration: Null<Float>; // in seconds
@@ -249,18 +272,21 @@ class RotateAnimation extends Animation {
         this.timeElapsed = 0;
     }
 
-    override public function isDone(): Bool { return this.duration != null && this.duration <= this.timeElapsed; }
+    override public function isDone(): Bool {
+        return this.duration != null && this.duration <= this.timeElapsed;
+    }
 
     override public function update(dt: Float) {
         if (this.isDone()) return;
         this.timeElapsed += dt;
-        if (this.duration != null && this.timeElapsed >= this.duration) { this.timeElapsed = duration; }
+        if (this.duration != null && this.timeElapsed >= this.duration) {
+            this.timeElapsed = duration;
+        }
         this.object.rotation = (this.timeElapsed * Math.PI * this.rotateSpeed);
     }
 }
 
 class Animator extends common.Updater { // extends the Updater since most of it is the same
-
     public function new() {
         super();
     }
@@ -271,74 +297,72 @@ class Animator extends common.Updater { // extends the Updater since most of it 
     }
 
     // mirrors MoveToAnimation constructor
-    public function moveTo(
-            object: h2d.Object, position: Point2f, speeds: Point2f=null, speed: Float = 1,
-            onFinish: () -> Void = null
-        ): Animation {
+    public function moveTo(object: h2d.Object, position: Point2f, speeds: Point2f = null, speed: Float = 1,
+            onFinish: () -> Void = null): Animation {
         var anim = new MoveToAnimation(object, position, speeds, speed);
-        if (onFinish != null) { anim.onFinish = onFinish; }
+        if (onFinish != null) {
+            anim.onFinish = onFinish;
+        }
         this.runAnim(anim);
         return anim;
     }
 
-    public function moveToByDuration(
-            object: h2d.Object, position: Point2f, duration: Float, onFinish: () -> Void = null
-        ): Animation {
+    public function moveToByDuration(object: h2d.Object, position: Point2f, duration: Float,
+            onFinish: () -> Void = null): Animation {
         var anim = new MoveToAnimationByDuration(object, position, duration);
-        if (onFinish != null) { anim.onFinish = onFinish; }
+        if (onFinish != null) {
+            anim.onFinish = onFinish;
+        }
         this.runAnim(anim);
         return anim;
     }
 
     // mirrors MoveByAnimation constructor
-    public function moveBy(
-            object: h2d.Object, moveAmount: Point2f, speeds: Point2f=null, speed: Float = 1,
-            onFinish: () -> Void = null
-        ): Animation {
+    public function moveBy(object: h2d.Object, moveAmount: Point2f, speeds: Point2f = null,
+            speed: Float = 1, onFinish: () -> Void = null): Animation {
         var anim = new MoveByAnimation(object, moveAmount, speeds, speed);
-        if (onFinish != null) { anim.onFinish = onFinish; }
+        if (onFinish != null) {
+            anim.onFinish = onFinish;
+        }
         this.runAnim(anim);
         return anim;
     }
 
-    public function move(
-            object: h2d.Object, duration: Float, moveSpeeds: Point2f=null, moveSpeed=1,
-            onFinish: () -> Void = null
-        ): Animation {
+    public function move(object: h2d.Object, duration: Float, moveSpeeds: Point2f = null, moveSpeed = 1,
+            onFinish: () -> Void = null): Animation {
         var anim = new MoveAnimation(object, duration, moveSpeeds, moveSpeed);
-        if (onFinish != null) { anim.onFinish = onFinish; }
+        if (onFinish != null) {
+            anim.onFinish = onFinish;
+        }
         this.runAnim(anim);
         return anim;
     }
 
-    public function scaleTo(
-            object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1,
-            onFinish: () -> Void = null
-        ): Animation {
+    public function scaleTo(object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1,
+            onFinish: () -> Void = null): Animation {
         var anim = new ScaleToAnimation(object, scaleTo, speeds, speed);
-        if (onFinish != null) { anim.onFinish = onFinish; }
+        if (onFinish != null) {
+            anim.onFinish = onFinish;
+        }
         this.runAnim(anim);
         return anim;
     }
 
-    public function alphaTo(
-            object: h2d.Object, alphaTo: Float, alphaSpeed:Float = 1.0,
-            onFinish: () -> Void = null
-        ): Animation {
+    public function alphaTo(object: h2d.Object, alphaTo: Float, alphaSpeed: Float = 1.0,
+            onFinish: () -> Void = null): Animation {
         var anim = new AlphaToAnimation(object, alphaTo, alphaSpeed);
-        if (onFinish != null) { anim.onFinish = onFinish; }
+        if (onFinish != null) {
+            anim.onFinish = onFinish;
+        }
         this.runAnim(anim);
         return anim;
     }
 
-    public function rotate(
-            object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null,
-            onFinish:() -> Void = null
-        ): Animation {
+    public function rotate(object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null,
+            onFinish: () -> Void = null): Animation {
         var anim = new RotateAnimation(object, rotateSpeed, duration);
         if (onFinish != null) anim.onFinish = onFinish;
         this.runAnim(anim);
         return anim;
     }
 }
-

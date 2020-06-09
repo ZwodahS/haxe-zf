@@ -1,5 +1,5 @@
-
 package common;
+
 import haxe.ds.Vector;
 
 typedef XY = {
@@ -8,10 +8,10 @@ typedef XY = {
 }
 
 class Vector2DIteratorXY<T> {
-
     var data: Vector2D<T>;
     var currX: Int;
     var currY: Int;
+
     public function new(data: Vector2D<T>) {
         this.data = data;
         this.currX = 0;
@@ -24,10 +24,10 @@ class Vector2DIteratorXY<T> {
 
     public function next(): {key: XY, value: T} {
         var returnValue = {
-            key: {x: this.currX, y: this.currY },
+            key: {x: this.currX, y: this.currY},
             value: this.data.get(this.currX, this.currY)
         }
-        if (this.currX == this.data.size.x-1) {
+        if (this.currX == this.data.size.x - 1) {
             this.currX = 0;
             this.currY += 1;
         } else {
@@ -38,10 +38,10 @@ class Vector2DIteratorXY<T> {
 }
 
 class Vector2DIteratorYX<T> {
-
     var data: Vector2D<T>;
     var currX: Int;
     var currY: Int;
+
     public function new(data: Vector2D<T>) {
         this.data = data;
         this.currX = 0;
@@ -54,10 +54,10 @@ class Vector2DIteratorYX<T> {
 
     public function next(): {key: XY, value: T} {
         var returnValue = {
-            key: {x: this.currX, y: this.currY },
+            key: {x: this.currX, y: this.currY},
             value: this.data.get(this.currX, this.currY)
         }
-        if (this.currY == this.data.size.y-1) {
+        if (this.currY == this.data.size.y - 1) {
             this.currY = 0;
             this.currX += 1;
         } else {
@@ -69,15 +69,14 @@ class Vector2DIteratorYX<T> {
 
 class Vector2D<T> {
     /**
-      A 2x3 (width * height)
-      [ 0, 1
-        2, 3
-        4, 5
-        ]
-      will be stored as [0, 1, 2, 3, 4, 5]
-      There shouldn't be a need to know this when using this from outside.
+        A 2x3 (width * height)
+        [ 0, 1
+          2, 3
+          4, 5
+          ]
+        will be stored as [0, 1, 2, 3, 4, 5]
+        There shouldn't be a need to know this when using this from outside.
     **/
-
     public var size(default, null): Point2i;
 
     var data: Vector<T>;
@@ -119,7 +118,7 @@ class Vector2D<T> {
     }
 
     inline function pos(x: Int, y: Int): Int { // return -1 if out of bound
-        return x + (y*size.x);
+        return x + (y * size.x);
     }
 
     public function inBound(x: Int, y: Int): Bool {
@@ -149,7 +148,7 @@ class Vector2D<T> {
         while (x0 >= 0) {
             x1 = 0;
             for (y0 in 0...this.size.y) {
-                copy[(y1*newLengthX)+x1] = this.data[pos(x0, y0)];
+                copy[(y1 * newLengthX) + x1] = this.data[pos(x0, y0)];
                 x1 += 1;
             }
             x0 -= 1;
@@ -172,7 +171,7 @@ class Vector2D<T> {
         for (x0 in 0...this.size.x) {
             x1 = newLengthX - 1;
             for (y0 in 0...this.size.y) {
-                copy[(y1*newLengthX)+x1] = this.data[pos(x0, y0)];
+                copy[(y1 * newLengthX) + x1] = this.data[pos(x0, y0)];
                 x1 -= 1;
             }
             y1 += 1;

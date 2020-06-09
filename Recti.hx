@@ -1,8 +1,6 @@
-
 package common;
 
 abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
-
     public var xMin(get, set): Int;
     public var xMax(get, set): Int;
     public var yMin(get, set): Int;
@@ -16,6 +14,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
         this[0] = xMin;
         return this[0];
     }
+
     public function get_xMin(): Int {
         return this[0];
     }
@@ -24,6 +23,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
         this[2] = xMax;
         return this[2];
     }
+
     public function get_xMax(): Int {
         return this[2];
     }
@@ -32,6 +32,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
         this[1] = yMin;
         return this[1];
     }
+
     public function get_yMin(): Int {
         return this[1];
     }
@@ -40,13 +41,18 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
         this[3] = yMax;
         return this[3];
     }
+
     public function get_yMax(): Int {
         return this[3];
     }
 
     public function intersect(rect: Recti): Bool {
-        if (this[0] > rect.xMax || rect.xMin > this[2]) { return false; }
-        if (this[1] > rect.yMax || rect.yMin > this[3]) { return false; }
+        if (this[0] > rect.xMax || rect.xMin > this[2]) {
+            return false;
+        }
+        if (this[1] > rect.yMax || rect.yMin > this[3]) {
+            return false;
+        }
         return true;
     }
 }

@@ -1,10 +1,10 @@
-
 package common;
 
 abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
     public var x(get, set): Float;
     public var y(get, set): Float;
     public var z(get, set): Float;
+
     public function new(x: Float = 0, y: Float = 0, z: Float = 0) {
         this = [x, y, z];
     }
@@ -23,7 +23,7 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
 
     @:op(A + B)
     public function _add(rhs: Array<Float>): Point3f {
-        return new Point3f(this[0]+rhs[0], this[1]+rhs[1], this[2]+rhs[2]);
+        return new Point3f(this[0] + rhs[0], this[1] + rhs[1], this[2] + rhs[2]);
     }
 
     @:op(A -= B)
@@ -36,7 +36,7 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
 
     @:op(A - B)
     public function _sub(rhs: Array<Float>): Point3f {
-        return new Point3f(this[0]-rhs[0], this[1]-rhs[1], this[2]-rhs[2]);
+        return new Point3f(this[0] - rhs[0], this[1] - rhs[1], this[2] - rhs[2]);
     }
 
     @:op(A *= B)
@@ -49,7 +49,7 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
 
     @:op(A * B)
     public function _scale(rhs: Float): Point3f {
-        return new Point3f(this[0]*rhs, this[1]*rhs, this[2]*rhs);
+        return new Point3f(this[0] * rhs, this[1] * rhs, this[2] * rhs);
     }
 
     @:op(A == B)

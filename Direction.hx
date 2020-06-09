@@ -1,4 +1,3 @@
-
 package common;
 
 enum Direction {
@@ -15,7 +14,7 @@ enum Direction {
 
 class Utils {
     public static function directionToCoord(direction: Direction): Point2i {
-        switch(direction) {
+        switch (direction) {
             case Left:
                 return new Point2i(-1, 0);
             case UpLeft:
@@ -73,7 +72,7 @@ class Utils {
     }
 
     public static function opposite(direction: Direction): Direction {
-        switch(direction) {
+        switch (direction) {
             case Left:
                 return Direction.Right;
             case UpLeft:

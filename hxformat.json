@@ -1,0 +1,27 @@
+{
+  "whitespace": {
+    "colonPolicy": "after",
+    "caseColonPolicy": "onlyAfter",
+    "objectFieldColonPolicy": "after",
+    "typeHintColonPolicy": "after",
+    "typeCheckColonPolicy": "after",
+    "ternaryPolicy": "around"
+  },
+  "emptyLines": {
+    "importAndUsing": {
+      "betweenImportsLevel": "firstLevelPackage",
+      "betweenImports": 1,
+      "beforeUsing": 1
+    },
+    "maxAnywhereInFile": "1"
+  },
+  "indentation": {
+    "character": "    "
+  },
+  "sameLine": {
+    "ifBody": "same"
+  },
+  "wrapping": {
+      "maxLineLength": 110
+  }
+}

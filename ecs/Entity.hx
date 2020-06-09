@@ -1,39 +1,44 @@
 package common.ecs;
 
 /**
-  An entity of the world.
+    An entity of the world.
 **/
-class Entity extends h2d.Layers{
+class Entity extends h2d.Layers {
     /**
-      The id of the entity. This is only set on creation.
+        The id of the entity. This is only set on creation.
     **/
     public var id(default, null): Int;
+
     /**
-      Store the list of components of the entity
+        Store the list of components of the entity
     **/
     var components: Map<String, Component>;
+
     /**
-      The mailbox used to communicate between systems
+        The mailbox used to communicate between systems
     **/
     private function new(id: Int) {
         super();
         this.id = id;
         this.components = new Map<String, Component>();
     }
+
     /**
-      hasComponent check if the entity has a component of this name
+        hasComponent check if the entity has a component of this name
     **/
     public function hasComponent(name: String): Bool {
         return this.components.exists(name);
     }
+
     /**
-      getComponent returns the component given a name
+        getComponent returns the component given a name
     **/
     public function getComponent(name: String = ""): Component {
         return this.components.get(name);
     }
+
     /**
-      addComponent adds a component to the entity.
+        addComponent adds a component to the entity.
     **/
     public function addComponent(component: Component, name: String = null) {
         if (name == null) {
@@ -42,7 +47,9 @@ class Entity extends h2d.Layers{
 
         var existing = this.getComponent(name);
         this.components[name] = component;
-        if (existing != null) { existing.entity = null; }
+        if (existing != null) {
+            existing.entity = null;
+        }
         component.entity = this;
     }
 
@@ -51,8 +58,9 @@ class Entity extends h2d.Layers{
             this.addComponent(component, component.type);
         }
     }
+
     /**
-      removeComponent remove a component with the given name from the entity
+        removeComponent remove a component with the given name from the entity
     **/
     public function removeComponent(name: String) {
         var existing = this.getComponent(name);
@@ -62,7 +70,8 @@ class Entity extends h2d.Layers{
         this.components.remove(name);
     }
 
-    private static var counter:Int = 0;
+    private static var counter: Int = 0;
+
     public static function newEntity(): Entity {
         return new Entity(newId());
     }

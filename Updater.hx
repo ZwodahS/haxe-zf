@@ -1,4 +1,3 @@
-
 package common;
 
 import haxe.ds.List;
@@ -6,17 +5,16 @@ import haxe.ds.List;
 /**
     Updater provide a simple mechanism for running updates until it is done
 **/
-
 interface Updatable {
     public function finish(): Void; // call when the update ends
     public function update(dt: Float): Void;
     public function isDone(): Bool;
 }
 
-class Update implements Updatable{
-	public var func: (dt: Float) -> Bool;
+class Update implements Updatable {
+    public var func: (dt: Float) -> Bool;
     public var onFinish: () -> Void;
-	public var done: Bool;
+    public var done: Bool;
 
     public function new(func: (dt: Float) -> Bool, onFinish: () -> Void) {
         this.func = func;
@@ -29,16 +27,20 @@ class Update implements Updatable{
             this.onFinish();
         }
     }
-    public function isDone(): Bool { return this.done; }
-    public function update(dt: Float) {
-        if (this.done) { return; }
-        this.done = this.func(dt);
+
+    public function isDone(): Bool {
+        return this.done;
     }
 
+    public function update(dt: Float) {
+        if (this.done) {
+            return;
+        }
+        this.done = this.func(dt);
+    }
 }
 
 class Updater {
-
     var updates: List<Updatable>;
     var toFinish: List<Updatable>;
 
@@ -82,4 +84,3 @@ class Updater {
         return v;
     }
 }
-

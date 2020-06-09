@@ -1,8 +1,6 @@
-
 package common;
 
 abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
-
     public var x(get, set): Float;
     public var y(get, set): Float;
     public var unit(get, never): Point2f;
@@ -25,7 +23,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
     @:op(A + B)
     public function _add(rhs: Array<Float>): Point2f {
-        return new Point2f(this[0]+rhs[0], this[1]+rhs[1]);
+        return new Point2f(this[0] + rhs[0], this[1] + rhs[1]);
     }
 
     @:op(A -= B)
@@ -37,7 +35,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
     @:op(A - B)
     public function _sub(rhs: Array<Float>): Point2f {
-        return new Point2f(this[0]-rhs[0], this[1]-rhs[1]);
+        return new Point2f(this[0] - rhs[0], this[1] - rhs[1]);
     }
 
     @:op(A *= B)
@@ -49,7 +47,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
     @:op(A * B)
     public function _scale(rhs: Float): Point2f {
-        return new Point2f(this[0]*rhs, this[1]*rhs);
+        return new Point2f(this[0] * rhs, this[1] * rhs);
     }
 
     @:op(A == B)
@@ -99,19 +97,14 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
     }
 
     public function distance(point: Point2f): Float {
-        return hxd.Math.sqrt(
-            hxd.Math.pow(hxd.Math.abs(this[0] - point.x), 2) +
-            hxd.Math.pow(hxd.Math.abs(this[1] - point.y), 2)
-        );
+        return hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(this[0] - point.x), 2)
+            + hxd.Math.pow(hxd.Math.abs(this[1] - point.y), 2));
     }
 
     public function get_unit(): Point2f {
         // return a copy of the unit vector for this point
-        var mag = hxd.Math.sqrt(
-            hxd.Math.pow(this[0], 2) +
-            hxd.Math.pow(this[1], 2)
-        );
-        return [this[0] * (1/mag), this[1] * (1/mag)];
+        var mag = hxd.Math.sqrt(hxd.Math.pow(this[0], 2) + hxd.Math.pow(this[1], 2));
+        return [this[0] * (1 / mag), this[1] * (1 / mag)];
     }
 
     public function get_rad(): Float {

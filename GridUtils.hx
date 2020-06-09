@@ -1,15 +1,14 @@
-
 package common;
 
 import haxe.ds.Vector;
 import haxe.ds.List;
 
 class GridUtils {
-    public static function getAround<T>
-            (grid: Vector<Vector<T>>, coord: Point2i, width:Int = 1, includeSelf: Bool = true): Array<T> {
+    public static function getAround<T>(grid: Vector<Vector<T>>, coord: Point2i, width: Int = 1,
+            includeSelf: Bool = true): Array<T> {
         var cellList: Array<T> = new Array<T>();
-        for (x in -(width)...(width+1)) {
-            for (y in -(width)...(width+1)) {
+        for (x in -(width)...(width + 1)) {
+            for (y in -(width)...(width + 1)) {
                 if (x == 0 && y == 0 && !includeSelf) continue;
                 var c = coord + [x, y];
                 if (c.x >= 0 && c.x < grid.length && c.y >= 0 && c.y < grid[0].length) {
@@ -19,15 +18,16 @@ class GridUtils {
         }
         return cellList;
     }
-    public static function getPointsAround
-            (coord: Point2i, width:Int = 1, bound: Recti = null, includeSelf: Bool = true): Array<Point2i> {
+
+    public static function getPointsAround(coord: Point2i, width: Int = 1, bound: Recti = null,
+            includeSelf: Bool = true): Array<Point2i> {
         var cellList: Array<Point2i> = new Array<Point2i>();
-        for (x in -(width)...(width+1)) {
-            for (y in -(width)...(width+1)) {
+        for (x in -(width)...(width + 1)) {
+            for (y in -(width)...(width + 1)) {
                 if (x == 0 && y == 0 && !includeSelf) continue;
                 var c = coord + [x, y];
-                if (bound == null ||
-                        (c.x >= bound.xMin && c.x <= bound.xMax && c.y >= bound.yMin && c.y <= bound.yMax)) {
+                if (bound == null
+                    || (c.x >= bound.xMin && c.x <= bound.xMax && c.y >= bound.yMin && c.y <= bound.yMax)) {
                     cellList.push(c);
                 }
             }
@@ -35,21 +35,21 @@ class GridUtils {
         return cellList;
     }
 
-    public static inline function translateMouseToWorld(mousePosition: Point2f, camera: h2d.Camera): Point2f {
-        var pos = mousePosition - [ camera.x, camera.y ];
+    public static inline function translateMouseToWorld(mousePosition: Point2f,
+            camera: h2d.Camera): Point2f {
+        var pos = mousePosition - [camera.x, camera.y];
         pos.x = pos.x / camera.scaleX;
         pos.y = pos.y / camera.scaleY;
         return pos;
     }
 
-    public static inline function translateMouseToWorldGrid
-            (size: Int, screenCoord: Point2f, camera: h2d.Camera = null): Point2i {
+    public static inline function translateMouseToWorldGrid(size: Int, screenCoord: Point2f,
+            camera: h2d.Camera = null): Point2i {
         if (camera == null) {
-            return [ Math.floor(screenCoord.x / size), Math.floor(screenCoord.y / size) ];
+            return [Math.floor(screenCoord.x / size), Math.floor(screenCoord.y / size)];
         }
         var pos = translateMouseToWorld(screenCoord, camera);
-        return [ Math.floor(pos.x / size), Math.floor(pos.y / size) ];
-
+        return [Math.floor(pos.x / size), Math.floor(pos.y / size)];
     }
 
     public static inline function inGrid(pos: Point2i, size: Point2i): Bool {
@@ -69,18 +69,26 @@ class GridUtils {
         // modified from python version
         var x1 = start.x, y1 = start.y;
         var x2 = end.x, y2 = end.y;
-        var isSteep = hxd.Math.iabs(y2-y1) > hxd.Math.iabs(x2-x1);
+        var isSteep = hxd.Math.iabs(y2 - y1) > hxd.Math.iabs(x2 - x1);
 
         var tmp: Int = 0;
         if (isSteep) {
-            tmp = x1; x1 = y1; y1 = tmp;
-            tmp = x2; x2 = y2; y2 = tmp;
+            tmp = x1;
+            x1 = y1;
+            y1 = tmp;
+            tmp = x2;
+            x2 = y2;
+            y2 = tmp;
         }
 
         var reversed = false;
         if (x1 > x2) {
-            tmp = x1; x1 = x2; x2 = tmp;
-            tmp = y1; y1 = y2; y2 = tmp;
+            tmp = x1;
+            x1 = x2;
+            x2 = tmp;
+            tmp = y1;
+            y1 = y2;
+            y2 = tmp;
             reversed = true;
         }
 
@@ -96,7 +104,7 @@ class GridUtils {
         var points = new List<Point2i>();
         var insertFunc = reversed ? points.add : points.push;
         var y = y1, x = x1;
-        while (x < x2+1) {
+        while (x < x2 + 1) {
             var point: Point2i = null;
             if (isSteep) {
                 point = new Point2i(y, x);
@@ -136,11 +144,11 @@ class GridUtils {
 
             if (err <= 0) {
                 y++;
-                err += 2*y + 1;
+                err += 2 * y + 1;
             }
             if (err > 0) {
                 x--;
-                err -= 2*x + 1;
+                err -= 2 * x + 1;
             }
         }
 

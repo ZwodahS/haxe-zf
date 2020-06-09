@@ -1,8 +1,6 @@
-
 package common;
 
 abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
-
     public var x(get, set): Int;
     public var y(get, set): Int;
 
@@ -23,7 +21,7 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 
     @:op(A + B)
     public function _add(rhs: Array<Int>): Point2i {
-        return new Point2i(this[0]+rhs[0], this[1]+rhs[1]);
+        return new Point2i(this[0] + rhs[0], this[1] + rhs[1]);
     }
 
     @:op(A -= B)
@@ -35,7 +33,7 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 
     @:op(A - B)
     public function _sub(rhs: Array<Int>): Point2i {
-        return new Point2i(this[0]-rhs[0], this[1]-rhs[1]);
+        return new Point2i(this[0] - rhs[0], this[1] - rhs[1]);
     }
 
     @:op(A == B)
@@ -89,5 +87,4 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
     public function distance(p: Point2i): Int {
         return hxd.Math.iabs(this[0] - p.x) + hxd.Math.iabs(this[1] - p.y);
     }
-
 }

@@ -1,4 +1,3 @@
-
 package common;
 
 import haxe.ds.Vector;
@@ -15,7 +14,6 @@ typedef TileConf = {
     Tile is a combination of Tile:h2d.Tile + color:h3d.Vector
 **/
 class Tile {
-
     public var tile: h2d.Tile;
     public var color: h3d.Vector;
     public var scale: Float;
@@ -41,11 +39,10 @@ class Tile {
 }
 
 /**
-  Asset2D is a single asset
-  It contains a list of tile to create animation if needed.
+    Asset2D is a single asset
+    It contains a list of tile to create animation if needed.
 **/
 class Asset2D {
-
     public var key: String;
     public var tiles: Array<Tile>;
 
@@ -60,7 +57,7 @@ class Asset2D {
         this.tiles = tiles;
     }
 
-    public function getBitmap(pos: Int = 0): h2d.Bitmap{
+    public function getBitmap(pos: Int = 0): h2d.Bitmap {
         if (pos < 0 || pos >= this.tiles.length) {
             pos = 0;
         }
@@ -91,8 +88,8 @@ class Asset2D {
         return out;
     }
 
-    public function getAnim(speed: Float, sort: (h2d.Tile, h2d.Tile) -> Int,
-            start: Int = 0, end: Int = -1): h2d.Anim {
+    public function getAnim(speed: Float, sort: (h2d.Tile, h2d.Tile) -> Int, start: Int = 0,
+            end: Int = -1): h2d.Anim {
         if (end == -1) {
             end = this.tiles.length;
         }
@@ -110,7 +107,6 @@ class Asset2D {
         anim.scaleY = this.tiles[0].scale;
         return anim;
     }
-
 }
 
 typedef Frame = {
@@ -135,12 +131,10 @@ typedef Data = {
     var frames: Array<Frame>;
 }
 
-
 /**
-  Assets is the main loader and assets container.
+    Assets is the main loader and assets container.
 **/
 class Assets {
-
     var assetsMap: Map<String, Map<String, TileConf>>;
 
     var assets2D: Map<String, Asset2D>;
@@ -156,7 +150,7 @@ class Assets {
         }
 
         // open the json file
-        var jsonText = hxd.Res.load(filename+".json").toText();
+        var jsonText = hxd.Res.load(filename + ".json").toText();
         var parsed = haxe.Json.parse(jsonText);
 
         var data = new Map<String, TileConf>();
@@ -166,7 +160,7 @@ class Assets {
         }
 
         // open the image file
-        var image = hxd.Res.load(filename+".png").toTile();
+        var image = hxd.Res.load(filename + ".png").toTile();
         for (k => v in data) {
             v.image = image.sub(v.x, v.y, v.w, v.h);
         }
@@ -186,24 +180,22 @@ class Assets {
     inline function makeTile(frame: Frame): Tile {
         var color: h3d.Vector;
         if (frame.color != null) {
-            color = new h3d.Vector(
-                frame.color[0]/255, frame.color[1]/255, frame.color[2]/255, frame.color[3]/255
-            );
+            color = new h3d.Vector(frame.color[0] / 255, frame.color[1] / 255, frame.color[2] / 255,
+                frame.color[3] / 255);
         } else {
             color = new h3d.Vector(1.0, 1.0, 1.0, 1.0);
         }
         var t: h2d.Tile = null;
         if (frame.img != null) {
             t = hxd.Res.load(frame.img).toTile();
-        }
-        else {
+        } else {
             t = this.getTile(frame.src, frame.key);
         }
 
         if (t == null) {
-#if debug
+            #if debug
             trace('Unable to load assets: ${frame.key}');
-#end
+            #end
             return null;
         }
         return new Tile(t, color, frame.scale == null ? 1.0 : frame.scale);
@@ -244,18 +236,11 @@ class Assets {
         return _assets;
     }
 
-    static function parseRect(rect: Rect): Tile{
-        var color = new h3d.Vector(
-            rect.color[0]/255,
-            rect.color[1]/255,
-            rect.color[2]/255,
-            rect.color[3]/255
-        );
-        return new Tile(
-                h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height),
-                color,
-                rect.scale == null ? 1.0 : rect.scale
-        );
+    static function parseRect(rect: Rect): Tile {
+        var color = new h3d.Vector(rect.color[0] / 255, rect.color[1] / 255, rect.color[2] / 255,
+            rect.color[3] / 255);
+        return new Tile(h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height), color,
+            rect.scale == null ? 1.0 : rect.scale);
     }
 
     public function getAsset(name: String): Asset2D {
@@ -263,9 +248,9 @@ class Assets {
     }
 
     public function get(name: String): Asset2D {
-#if debug
+        #if debug
         if (this.assets2D[name] == null) trace('Unable to find assets: "${name}"');
-#end
+        #end
         return this.assets2D[name];
     }
 }

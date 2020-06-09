@@ -1,12 +1,10 @@
-
 package common;
 
 import haxe.ds.Vector;
 
 /**
-  ChunkMap is a 2D array that allow for infinite coordinates system
+    ChunkMap is a 2D array that allow for infinite coordinates system
 **/
-
 typedef TranslatedCoord = {
     var chunkId: String;
     var x: Int;
@@ -14,8 +12,8 @@ typedef TranslatedCoord = {
 }
 
 class ChunkMap<T> {
-
     public var chunkSize(default, null): Int;
+
     var chunks: Map<String, Vector<Vector<T>>>;
 
     public function new(chunkSize: Int) {
@@ -34,7 +32,8 @@ class ChunkMap<T> {
         chunk[translateCoord.x][translateCoord.y] = value;
         return existing;
     }
-    //TODO: setChunk function to set the entire chunk
+
+    // TODO: setChunk function to set the entire chunk
 
     public function get(x: Int, y: Int): T {
         var translateCoord = this.translateCoord(x, y);
@@ -62,7 +61,6 @@ class ChunkMap<T> {
         var yCoord: Int = y % this.chunkSize;
         if (yCoord < 0) yCoord += this.chunkSize;
 
-        return { chunkId: '$xChunk.$yChunk', x: xCoord, y: yCoord };
+        return {chunkId: '$xChunk.$yChunk', x: xCoord, y: yCoord};
     }
 }
-

@@ -1,10 +1,10 @@
-
 package common;
 
 abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
     public var x(get, set): Int;
     public var y(get, set): Int;
     public var z(get, set): Int;
+
     public function new(x: Int = 0, y: Int = 0, z: Int = 0) {
         this = [x, y, z];
     }
@@ -23,7 +23,7 @@ abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
 
     @:op(A + B)
     public function _add(rhs: Array<Int>): Point3i {
-        return new Point3i(this[0]+rhs[0], this[1]+rhs[1], this[2]+rhs[2]);
+        return new Point3i(this[0] + rhs[0], this[1] + rhs[1], this[2] + rhs[2]);
     }
 
     @:op(A -= B)
@@ -36,7 +36,7 @@ abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
 
     @:op(A - B)
     public function _sub(rhs: Array<Int>): Point3i {
-        return new Point3i(this[0]-rhs[0], this[1]-rhs[1], this[2]-rhs[2]);
+        return new Point3i(this[0] - rhs[0], this[1] - rhs[1], this[2] - rhs[2]);
     }
 
     @:op(A == B)

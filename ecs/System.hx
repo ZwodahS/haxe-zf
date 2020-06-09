@@ -3,13 +3,13 @@ package common.ecs;
 import common.ecs.World;
 
 /**
-  Abstract System class
+    Abstract System class
 **/
 class System {
-
     public static final TYPE = "System";
+
     /**
-      type represent the string type of the system
+        type represent the string type of the system
     **/
     public var type(get, null): String;
 
@@ -24,32 +24,34 @@ class System {
     }
 
     /**
-      init function is called when the system is added to the system
+        init function is called when the system is added to the system
     **/
     public function init(world: World) {
         this.world = world;
     }
 
     /**
-      addEntity adds an entity into the system
+        addEntity adds an entity into the system
     **/
     public function addEntity(ent: Entity) {}
 
     /**
-      removeEntity removes an entity into the system
+        removeEntity removes an entity into the system
     **/
     public function removeEntity(ent: Entity): Entity {
         return ent;
     }
 
     /**
-      update is the main function called by the world.
+        update is the main function called by the world.
     **/
     public function update(dt: Float) {}
 
     /**
-      the event handling of the system.
-      if the event is handled or the event should stop propagating to the rest of the systems, return true
+        the event handling of the system.
+        if the event is handled or the event should stop propagating to the rest of the systems, return true
     **/
-    public function onEvent(event: hxd.Event): Bool { return false; }
+    public function onEvent(event: hxd.Event): Bool {
+        return false;
+    }
 }

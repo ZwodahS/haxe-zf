@@ -1,5 +1,5 @@
-
 package common;
+
 class Line2f {
     public var start(get, set): Point2f;
     public var end(get, set): Point2f;
@@ -43,11 +43,9 @@ class Line2f {
     function setStartEnd(s: Point2f, e: Point2f) {
         this._start = s;
         this._end = e;
-        this._mag = hxd.Math.sqrt(
-            hxd.Math.pow(hxd.Math.abs(this._start.x - this._end.x), 2) +
-            hxd.Math.pow(hxd.Math.abs(this._start.y - this._end.y), 2)
-        );
-        this._unit = (this._end - this._start) * (1/this._mag);
+        this._mag = hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(this._start.x - this._end.x), 2)
+            + hxd.Math.pow(hxd.Math.abs(this._start.y - this._end.y), 2));
+        this._unit = (this._end - this._start) * (1 / this._mag);
         this._rad = hxd.Math.atan2(this._unit.y, this._unit.x);
     }
 
@@ -79,7 +77,7 @@ class Line2f {
 
         // See link above for math
         // get the collision mag respect to target line
-        var c1 = ((u0.x*(p1.y-p0.y)) + (u0.y*(p0.x-p1.x))) / ((u1.x*u0.y)-(u0.x*u1.y));
+        var c1 = ((u0.x * (p1.y - p0.y)) + (u0.y * (p0.x - p1.x))) / ((u1.x * u0.y) - (u0.x * u1.y));
         var c0: Float = 0;
         if (u0.x == 0) { // use y because are going in a specific direction
             c0 = (p1.y + (c1 * u1.y) - p0.y) / u0.y;
@@ -104,6 +102,4 @@ class Line2f {
         var newUnit: Point2f = [hxd.Math.cos(rad), hxd.Math.sin(rad)];
         this.setStartEnd(this._start, this._start + newUnit.unit * this._mag);
     }
-
 }
-
