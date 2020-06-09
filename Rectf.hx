@@ -55,4 +55,10 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
         if (this[1] > rect.yMax || rect.yMin > this[3]) { return false; }
         return true;
     }
+
+    public function contains(point: Point2f): Bool {
+        return (
+            this[0] <= point.x && this[2] >= point.x &&
+            this[1] <= point.y && this[3] >= point.y);
+    }
 }
