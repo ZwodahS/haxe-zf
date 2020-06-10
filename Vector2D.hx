@@ -93,10 +93,10 @@ class Vector2D<T> {
         return str;
     }
 
-    public function new(size: Point2i, nullValue: T, copy: Vector<T> = null) {
-        this.size = size;
+    public function new(s: Point2i, nullValue: T, copy: Vector<T> = null) {
+        this.size = s.copy();
 
-        this.data = new Vector<T>(size.x * size.y);
+        this.data = new Vector<T>(this.size.x * this.size.y);
         for (i in 0...data.length) {
             this.data[i] = nullValue;
         }
