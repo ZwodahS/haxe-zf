@@ -11,10 +11,10 @@ class TimerCircle extends h2d.Layers {
 
     public var onComplete: Void->Void;
 
-    var complete: Bool;
-
+    public var complete(default, null): Bool;
     public var fillColor(default, set): Int;
     public var lineColor(default, set): Int;
+    public var backgroundColor(default, set): Null<Int>;
 
     public function new(maxTime: Float = 1, autoReset: Bool = true, radius: Float = 1, fillColor: Int = 0xFF0000, lineColor: Int = 0xFFFFFF) {
         super();
@@ -26,6 +26,7 @@ class TimerCircle extends h2d.Layers {
         this.time = 0;
         this.fillColor = fillColor;
         this.lineColor = lineColor;
+        this.backgroundColor = null;
         redraw();
     }
 
@@ -51,6 +52,12 @@ class TimerCircle extends h2d.Layers {
         this.lineColor = v;
         redraw();
         return this.lineColor;
+    }
+
+    public function set_backgroundColor(v: Null<Int>): Null<Int> {
+        this.backgroundColor = v;
+        redraw();
+        return this.backgroundColor;
     }
 
     public function set_time(t: Float): Float {
@@ -80,13 +87,18 @@ class TimerCircle extends h2d.Layers {
     function redraw() {
         if (this.g == null) return;
         this.g.clear();
+        if (this.backgroundColor == null) {
+            this.g.beginFill(0x000000, 0);
+        } else {
+            this.g.beginFill(this.backgroundColor, 1.0);
+        }
+        this.g.lineStyle(1, this.lineColor, 1);
+        this.g.drawCircle(0, 0, radius, 0);
+        this.g.endFill();
+
         this.g.lineStyle(1, 0x000000, 0);
         this.g.beginFill(this.fillColor);
         this.g.drawPie(0, 0, radius, 1.5 * Math.PI, this.time / this.maxTime * 2 * Math.PI);
-        this.g.endFill();
-        this.g.beginFill(0x000000, 0);
-        this.g.lineStyle(1, this.lineColor, 1);
-        this.g.drawCircle(0, 0, radius, 0);
         this.g.endFill();
     }
 }
