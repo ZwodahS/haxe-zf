@@ -16,12 +16,13 @@
     "maxAnywhereInFile": "1"
   },
   "indentation": {
-    "character": "    "
+    "character": "    ",
+    "conditionalPolicy": "fixedZero"
   },
   "sameLine": {
     "ifBody": "same"
   },
   "wrapping": {
-      "maxLineLength": 110
+    "maxLineLength": 110
   }
 }

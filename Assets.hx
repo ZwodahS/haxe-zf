@@ -193,9 +193,9 @@ class Assets {
         }
 
         if (t == null) {
-            #if debug
+#if debug
             trace('Unable to load assets: ${frame.key}');
-            #end
+#end
             return null;
         }
         return new Tile(t, color, frame.scale == null ? 1.0 : frame.scale);
@@ -248,9 +248,9 @@ class Assets {
     }
 
     public function get(name: String): Asset2D {
-        #if debug
+#if debug
         if (this.assets2D[name] == null) trace('Unable to find assets: "${name}"');
-        #end
+#end
         return this.assets2D[name];
     }
 }
