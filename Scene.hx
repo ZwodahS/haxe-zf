@@ -7,5 +7,7 @@ class Scene {
 
     public function onEvent(event: hxd.Event): Void {}
 
+    public function resize(x: Int, y: Int): Void {}
+
     public function destroy(): Void {}
 }
