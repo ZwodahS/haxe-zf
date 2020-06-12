@@ -173,13 +173,13 @@ class MoveAnimation extends Animation {
             return;
         }
 
-        if (this.moveDuration >= 0) {
-            dt = Math.min(this.moveDuration, dt);
+        if (this.moveLeft >= 0) {
+            dt = Math.min(this.moveLeft, dt);
         }
 
         this.object.x += dt * this.moveSpeed.x;
         this.object.y += dt * this.moveSpeed.y;
-        this.moveDuration -= dt;
+        this.moveLeft -= dt;
     }
 }
 
