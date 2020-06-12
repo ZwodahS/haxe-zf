@@ -9,4 +9,11 @@ class ListUtils {
         for (item in arr)
             list.push(item);
     }
+
+    public static function contains<T>(list: List<T>, item: T): Bool {
+        for (i in list) {
+            if (i == item) return true;
+        }
+        return false;
+    }
 }
