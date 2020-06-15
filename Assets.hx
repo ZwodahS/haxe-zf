@@ -1,17 +1,10 @@
 package common;
 
+import haxe.DynamicAccess;
 import haxe.ds.Vector;
 
-typedef TileConf = {
-    var x: Int;
-    var y: Int;
-    var w: Int;
-    var h: Int;
-    var image: h2d.Tile;
-}
-
 /**
-    Tile is a combination of Tile:h2d.Tile + color:h3d.Vector
+    Tile is a combination of Tile:h2d.Tile + color:h3d.Vector + Float scale
 **/
 class Tile {
     public var tile: h2d.Tile;
@@ -39,56 +32,54 @@ class Tile {
 }
 
 /**
-    Asset2D is a single asset
-    It contains a list of tile to create animation if needed.
+    Asset is the parent class of all assets
 **/
-class Asset2D {
-    public var key: String;
-    public var tiles: Array<Tile>;
+class Asset {
+    public function new() {}
+}
 
+/**
+    Asset2D defines a 2D graphical asset.
+    This is also the parent class of the Anim2D
+**/
+class Asset2D extends Asset {
+    public var tiles(default, null): Array<Tile>;
     public var count(get, null): Int;
 
     public function get_count(): Int {
         return this.tiles.length;
     }
 
-    public function new(key, tiles) {
-        this.key = key;
+    public function new(tiles) {
+        super();
         this.tiles = tiles;
     }
 
     public function getBitmap(pos: Int = 0): h2d.Bitmap {
-        if (pos < 0 || pos >= this.tiles.length) {
-            pos = 0;
-        }
+        if (pos < 0 || pos >= this.tiles.length) pos = 0;
         return this.tiles[pos].getBitmap();
     }
 
     public function getBitmaps(start: Int = 0, end: Int = -1): Vector<h2d.Bitmap> {
-        if (end == -1) {
-            end = this.tiles.length;
-        }
+        if (end <= 0) end = this.tiles.length;
+        if (start < 0 || start >= end) start = end - 1;
         var out = new Vector<h2d.Bitmap>(end - start);
         var ind = 0;
-        for (i in start...end) {
+        for (i in start...end)
             out[ind++] = this.tiles[i].getBitmap();
-        }
         return out;
     }
 
     public function getTiles(start: Int = 0, end: Int = -1): Array<h2d.Tile> {
-        if (end == -1) {
-            end = this.tiles.length;
-        }
+        if (end == -1) end = this.tiles.length;
         var out = new Array<h2d.Tile>();
         var ind = 0;
-        for (i in start...end) {
+        for (i in start...end)
             out.push(this.tiles[i].tile);
-        }
         return out;
     }
 
-    public function getAnim(speed: Float, sort: (h2d.Tile, h2d.Tile) -> Int, start: Int = 0,
+    public function createAnim(speed: Float = 1.0, sort: (h2d.Tile, h2d.Tile) -> Int = null, start: Int = 0,
             end: Int = -1): h2d.Anim {
         if (end == -1) {
             end = this.tiles.length;
@@ -107,150 +98,327 @@ class Asset2D {
         anim.scaleY = this.tiles[0].scale;
         return anim;
     }
+
+    public function getAnim(): h2d.Anim {
+        return this.createAnim();
+    }
 }
 
-typedef Frame = {
+/**
+    Anim2D stores all the data needed to create a h2d.Anim
+**/
+class Anim2D extends Asset2D {
+    public var loop: Bool;
+    public var speed: Float;
+
+    public function new(frames: Array<Tile>, loop: Bool, speed: Float) {
+        super(frames);
+        this.loop = loop;
+        this.speed = speed;
+    }
+
+    override public function getAnim(): h2d.Anim {
+        var anim = new h2d.Anim(getTiles(), this.speed);
+        anim.loop = this.loop;
+        return anim;
+    }
+}
+
+/**
+    Object2D defines an object-type asset for 2D graphics, storing states and their respective Asset2D
+**/
+class Object2D extends Asset {
+    public var states: Map<String, Asset2D>;
+
+    public function new() {
+        super();
+        this.states = new Map<String, Asset2D>();
+    }
+
+    public function getState(state: String): Asset2D {
+        return states[state];
+    }
+}
+
+/**
+    Image define a single reference to an image
+    There are a few ways to define it.
+    1. img: specify the image path.
+    2. src + key: specify the json path and the key to use. The json is the descriptor for a spritesheet.
+**/
+typedef ImageDefinition = {
     var img: String;
-    var src: String;
-    var key: String;
+    var src: Null<String>;
+    var key: Null<String>;
+
     var color: Array<Int>;
     var scale: Null<Float>;
 }
 
-typedef Rect = {
+/**
+    ImageGroupDefinition defines a list of images.
+    It has a default "src" attribute, which will be used when processing all the images
+    Each of these images can provide their own src or just use the default src with a key
+**/
+typedef ImageGroupDefinition = {
+    var src: Null<String>;
+    var images: Array<ImageDefinition>;
+}
+
+/**
+    Rect define a simple way to create h2d.Tile from a Rectangle.
+    This is usually used for prototyping and allow us to swap out for real assets when it is ready.
+**/
+typedef RectDefinition = {
     var width: Int;
     var height: Int;
     var color: Array<Int>;
     var scale: Null<Float>;
 }
 
-typedef Data = {
-    var rect: Rect;
-    var rects: Array<Rect>;
-    var frame: Frame;
-    var frames: Array<Frame>;
+/**
+    Anim define an animation. This is used to create h2d.Anim
+    It provide a default src value that can be used by all the child node.
+**/
+typedef AnimDefinition = {
+    var src: String;
+    var loop: Null<Bool>;
+    var speed: Null<Float>;
+    var frames: Array<ImageDefinition>;
+}
+
+/**
+    Object define an object with various state
+    it also provide a default src which all the child can use, since most of the time they will below to the same sheet.
+**/
+typedef ObjectDefinition = {
+    var src: Null<String>;
+    var states: DynamicAccess<ObjectStateDefinition>;
+}
+
+/**
+    Provide a definition for a single state, either via an animation or single image
+**/
+typedef ObjectStateDefinition = {
+    var image: ImageDefinition; // single frame
+    var anim: AnimDefinition; // multiple frame
+}
+
+/**
+    GraphicDefinition provide the definition of a node in graphics key
+**/
+typedef GraphicDefinition = {
+    var rect: RectDefinition;
+    var image: ImageDefinition;
+    var images: ImageGroupDefinition;
+    var anim: AnimDefinition;
+}
+
+/**
+    Known limitation
+
+    1. Animation or ImageGroupDefinition cannot use Rect. The main reason is that rect is usually used during prototyping via
+    shapes. After that it will not be used.
+**/
+typedef SpritesheetConfig = {
+    var gridtype: String;
+    var gridsize: {var x: Int; var y: Int;};
+    var frames: DynamicAccess<{
+        var x: Int;
+        var y: Int;
+        var w: Int;
+        var h: Int;
+    }>;
+}
+
+/**
+    AssetsConf
+**/
+typedef AssetsConf = {
+    var includes: Array<String>;
+    var graphics: DynamicAccess<GraphicDefinition>;
+    var objects: DynamicAccess<ObjectDefinition>;
 }
 
 /**
     Assets is the main loader and assets container.
 **/
 class Assets {
-    var assetsMap: Map<String, Map<String, TileConf>>;
-
+    // assetsMap store the key -> config for a spritesheet
+    var assetsMap: Map<String, Map<String, h2d.Tile>>;
+    // assets store the mapping from assets.json
     var assets2D: Map<String, Asset2D>;
+    var objects2D: Map<String, Object2D>;
 
     public function new() {
-        assetsMap = new Map<String, Map<String, TileConf>>();
+        assetsMap = new Map<String, Map<String, h2d.Tile>>();
         assets2D = new Map<String, Asset2D>();
+        objects2D = new Map<String, Object2D>();
     }
 
-    public function getAssetsMap(filename: String): Map<String, TileConf> {
-        if (this.assetsMap[filename] != null) {
-            return this.assetsMap[filename];
-        }
-
+    public static function loadSpritesheet(filename: String): Map<String, h2d.Tile> {
         // open the json file
         var jsonText = hxd.Res.load(filename + ".json").toText();
-        var parsed = haxe.Json.parse(jsonText);
+        var parsed: SpritesheetConfig = haxe.Json.parse(jsonText);
 
-        var data = new Map<String, TileConf>();
-
-        for (key in Reflect.fields(parsed)) {
-            data[key] = Reflect.field(parsed, key);
-        }
-
-        // open the image file
+        var data = new Map<String, h2d.Tile>();
         var image = hxd.Res.load(filename + ".png").toTile();
-        for (k => v in data) {
-            v.image = image.sub(v.x, v.y, v.w, v.h);
+        // parse the config file
+        if (parsed.gridtype == "fixed") {
+            var gridsize = parsed.gridsize;
+            for (key => value in parsed.frames) {
+                data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, gridsize.x, gridsize.y);
+            }
+        } else {
+            for (key => value in parsed.frames) {
+                data[key] = image.sub(value.x, value.y, value.w, value.h);
+            }
         }
-        this.assetsMap[filename] = data;
-
         return data;
     }
 
+    public function getSpritesheet(filename: String): Map<String, h2d.Tile> {
+        if (this.assetsMap[filename] == null) {
+            var data = loadSpritesheet(filename);
+            this.assetsMap[filename] = data;
+        }
+        return this.assetsMap[filename];
+    }
+
     private function getTile(src: String, key: String): h2d.Tile {
-        var map = this.getAssetsMap(src);
+        var map = this.getSpritesheet(src);
         if (map[key] == null) {
             return null;
         }
-        return map[key].image;
+        return map[key];
     }
 
-    inline function makeTile(frame: Frame): Tile {
+    inline function makeTile(image: ImageDefinition, src: String = null): Tile {
         var color: h3d.Vector;
-        if (frame.color != null) {
-            color = new h3d.Vector(frame.color[0] / 255, frame.color[1] / 255, frame.color[2] / 255,
-                frame.color[3] / 255);
+        if (image.color != null) {
+            color = new h3d.Vector(image.color[0] / 255, image.color[1] / 255, image.color[2] / 255,
+                image.color[3] / 255);
         } else {
             color = new h3d.Vector(1.0, 1.0, 1.0, 1.0);
         }
+        if (image.src != null) src = image.src;
         var t: h2d.Tile = null;
-        if (frame.img != null) {
-            t = hxd.Res.load(frame.img).toTile();
+        if (image.img != null) {
+            t = hxd.Res.load(image.img).toTile();
+        } else if (src != null) {
+            t = this.getTile(src, image.key);
         } else {
-            t = this.getTile(frame.src, frame.key);
+#if debug
+            trace('src not specified for ${image.key}');
+#end
         }
 
         if (t == null) {
 #if debug
-            trace('Unable to load assets: ${frame.key}');
+            trace('Unable to load assets: ${image.key} or ${image.img}');
 #end
             return null;
         }
-        return new Tile(t, color, frame.scale == null ? 1.0 : frame.scale);
+        return new Tile(t, color, image.scale == null ? 1.0 : image.scale);
     }
 
     public static function parseAssets(assetPath: String): Assets {
         var _assets = new Assets();
-        var jsonText = hxd.Res.load(assetPath).toText();
-        var parsed = haxe.Json.parse(jsonText);
-
-        for (key in Reflect.fields(parsed)) {
-            var data: Data = Reflect.field(parsed, key);
-            var tiles = new Array<Tile>();
-
-            if (data.frame != null) {
-                var t = _assets.makeTile(data.frame);
-                if (t != null) {
-                    tiles.push(t);
-                }
-            } else if (data.frames != null) {
-                for (frame in data.frames) {
-                    var t = _assets.makeTile(frame);
-                    if (t != null) {
-                        tiles.push(t);
-                    }
-                }
-            } else if (data.rect != null) {
-                tiles.push(parseRect(data.rect));
-            } else if (data.rects != null) {
-                for (rect in data.rects) {
-                    tiles.push(parseRect(rect));
-                }
-            } else {
-                continue;
-            }
-            _assets.assets2D[key] = new Asset2D(key, tiles);
-        }
+        _assets.loadAssetConf(assetPath);
         return _assets;
     }
 
-    static function parseRect(rect: Rect): Tile {
+    private function loadAssetConf(assetPath: String) {
+        var jsonText = hxd.Res.load(assetPath).toText();
+        var parsed: AssetsConf = haxe.Json.parse(jsonText);
+
+        for (key => graphic in parsed.graphics) {
+            this.assets2D[key] = parseGraphicDefinition(graphic);
+        }
+
+        for (key => objectDef in parsed.objects) {
+            var object = new Object2D();
+            for (stateName => objectState in objectDef.states) {
+                object.states[stateName] = parseObjectState(objectState, objectDef.src);
+            }
+            this.objects2D[key] = object;
+        }
+    }
+
+    function parseObjectState(objectState: ObjectStateDefinition, ?src: String): Asset2D {
+        if (objectState.image != null) {
+            return parseImageDefinition(objectState.image, src);
+        } else if (objectState.anim != null) {
+            return parseAnimDefinition(objectState.anim, src);
+        }
+        return null;
+    }
+
+    function parseGraphicDefinition(graphic: GraphicDefinition): Asset2D {
+        if (graphic.image != null) {
+            // typedef ImageDefinition
+            return parseImageDefinition(graphic.image);
+        } else if (graphic.images != null) {
+            // This should likely be deprecated once object comes around.
+            // typedef ImageGroupDefinition
+            var tiles = new Array<Tile>();
+            for (image in graphic.images.images) {
+                var t = makeTile(image, graphic.images.src);
+                if (t != null) {
+                    tiles.push(t);
+                }
+            }
+            return new Asset2D(tiles);
+        } else if (graphic.rect != null) {
+            var t = parseRect(graphic.rect);
+            return new Asset2D([t]);
+        } else if (graphic.anim != null) {
+            return parseAnimDefinition(graphic.anim);
+        } else {
+            return null;
+        }
+    }
+
+    function parseImageDefinition(image: ImageDefinition, ?src: String): Asset2D {
+        var t = makeTile(image, src);
+        if (t == null) return null;
+        return new Asset2D([t]);
+    }
+
+    function parseAnimDefinition(anim: AnimDefinition, ?src: String): Anim2D {
+        if (anim.src != null) src = anim.src;
+        var speed = anim.speed == null ? 1.0 : anim.speed;
+        var loop = anim.loop == null ? true : anim.loop;
+        var tiles = new Array<Tile>();
+        for (frame in anim.frames) {
+            var t = makeTile(frame, src);
+            tiles.push(t);
+        }
+        return new Anim2D(tiles, loop, speed);
+    }
+
+    static function parseRect(rect: RectDefinition): Tile {
         var color = new h3d.Vector(rect.color[0] / 255, rect.color[1] / 255, rect.color[2] / 255,
             rect.color[3] / 255);
         return new Tile(h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height), color,
             rect.scale == null ? 1.0 : rect.scale);
     }
 
-    public function getAsset(name: String): Asset2D {
-        return this.get(name);
-    }
-
-    public function get(name: String): Asset2D {
+    public function getAsset2D(name: String): Asset2D {
 #if debug
         if (this.assets2D[name] == null) trace('Unable to find assets: "${name}"');
 #end
         return this.assets2D[name];
+    }
+
+    public function getAnim2D(name: String): Anim2D {
+        var a = getAsset2D(name);
+        if (a == null) return null;
+        var c = cast(a, Anim2D);
+        return c;
+    }
+
+    public function getObject2D(name: String): Object2D {
+        return this.objects2D[name];
     }
 }
