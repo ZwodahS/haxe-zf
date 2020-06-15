@@ -1,12 +1,10 @@
-
 package common;
 
 class WrappedValue<T> {
-
     public var value(default, set): T;
 
     var listeners: Map<Int, (T, T) -> Void>;
-    var listenerCounter:Int = 0;
+    var listenerCounter: Int = 0;
 
     public function new(defaultValue: T) {
         this.listeners = new Map<Int, (T, T) -> Void>();

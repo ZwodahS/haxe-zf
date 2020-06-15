@@ -16,7 +16,8 @@ class TimerCircle extends h2d.Layers {
     public var lineColor(default, set): Int;
     public var backgroundColor(default, set): Null<Int>;
 
-    public function new(maxTime: Float = 1, autoReset: Bool = true, radius: Float = 1, fillColor: Int = 0xFF0000, lineColor: Int = 0xFFFFFF) {
+    public function new(maxTime: Float = 1, autoReset: Bool = true, radius: Float = 1,
+            fillColor: Int = 0xFF0000, lineColor: Int = 0xFFFFFF) {
         super();
         this.maxTime = maxTime;
         this.autoReset = autoReset;
