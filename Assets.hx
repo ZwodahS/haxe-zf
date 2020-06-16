@@ -18,7 +18,7 @@ class Tile {
     }
 
     public function getBitmap(): h2d.Bitmap {
-        var bm: h2d.Bitmap = new h2d.Bitmap(this.tile);
+        var bm: h2d.Bitmap = new h2d.Bitmap(this.tile.clone());
         bm.color = this.color;
         bm.scaleX = this.scale;
         bm.scaleY = this.scale;
@@ -26,7 +26,7 @@ class Tile {
     }
 
     public function copy(): Tile {
-        var t = new Tile(this.tile, this.color, this.scale);
+        var t = new Tile(this.tile.clone(), this.color, this.scale);
         return t;
     }
 }
@@ -87,7 +87,7 @@ class Asset2D extends Asset {
         var frames = new Array<h2d.Tile>();
         var ind = 0;
         for (i in start...end) {
-            frames.push(this.tiles[i].tile);
+            frames.push(this.tiles[i].tile.clone());
         }
         if (sort != null) {
             frames.sort(sort);
@@ -226,8 +226,8 @@ typedef SpritesheetConfig = {
     var frames: DynamicAccess<{
         var x: Int;
         var y: Int;
-        var w: Int;
-        var h: Int;
+        var w: Null<Int>;
+        var h: Null<Int>;
     }>;
 }
 
@@ -267,11 +267,15 @@ class Assets {
         if (parsed.gridtype == "fixed") {
             var gridsize = parsed.gridsize;
             for (key => value in parsed.frames) {
-                data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, gridsize.x, gridsize.y);
+                var w = value.w == null ? 1 : value.w;
+                var h = value.h == null ? 1 : value.h;
+                data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, w * gridsize.x, h * gridsize.y);
             }
         } else {
             for (key => value in parsed.frames) {
-                data[key] = image.sub(value.x, value.y, value.w, value.h);
+                var w = value.w == null ? 1 : value.w;
+                var h = value.h == null ? 1 : value.h;
+                data[key] = image.sub(value.x, value.y, w, h);
             }
         }
         return data;
@@ -419,6 +423,9 @@ class Assets {
     }
 
     public function getObject2D(name: String): Object2D {
+#if debug
+        if (this.objects2D[name] == null) trace('Unable to find assets: "${name}"');
+#end
         return this.objects2D[name];
     }
 }
