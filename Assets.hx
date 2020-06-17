@@ -3,6 +3,8 @@ package common;
 import haxe.DynamicAccess;
 import haxe.ds.Vector;
 
+import common.h2d.StateObject;
+
 /**
     Tile is a combination of Tile:h2d.Tile + color:h3d.Vector + Float scale
 **/
@@ -110,16 +112,26 @@ class Asset2D extends Asset {
 class Anim2D extends Asset2D {
     public var loop: Bool;
     public var speed: Float;
+    public var center: Point2f;
 
-    public function new(frames: Array<Tile>, loop: Bool, speed: Float) {
+    public function new(frames: Array<Tile>, loop: Bool, speed: Float, center: Point2f) {
         super(frames);
         this.loop = loop;
         this.speed = speed;
+        this.center = center;
     }
 
     override public function getAnim(): h2d.Anim {
         var anim = new h2d.Anim(getTiles(), this.speed);
         anim.loop = this.loop;
+        if (this.center.x != 0 && this.center.y != 0) {
+            for (f in anim.frames) {
+                f.dx = -this.center.x;
+                f.dy = -this.center.y;
+            }
+        }
+        anim.x = this.center.x;
+        anim.y = this.center.y;
         return anim;
     }
 }
@@ -138,6 +150,19 @@ class Object2D extends Asset {
     public function getState(state: String): Asset2D {
         return states[state];
     }
+
+    public function createStateObject(): StateObject {
+        var obj = new StateObject();
+        for (s => asset in this.states) {
+            if (Std.is(asset, Anim2D)) {
+                var a = cast(asset, Anim2D);
+                obj.addState(s, a.getAnim());
+            } else  {
+                obj.addState(s, asset.getBitmap());
+            }
+        }
+        return obj;
+    }
 }
 
 /**
@@ -153,6 +178,7 @@ typedef ImageDefinition = {
 
     var color: Array<Int>;
     var scale: Null<Float>;
+    //TODO: may need to add "center" to image definition in the future.
 }
 
 /**
@@ -185,6 +211,7 @@ typedef AnimDefinition = {
     var loop: Null<Bool>;
     var speed: Null<Float>;
     var frames: Array<ImageDefinition>;
+    var center: {x: Int, y: Int};
 }
 
 /**
@@ -398,7 +425,14 @@ class Assets {
             var t = makeTile(frame, src);
             tiles.push(t);
         }
-        return new Anim2D(tiles, loop, speed);
+
+        var center: Point2f = [0, 0];
+        if (anim.center != null) {
+            center.x = anim.center.x;
+            center.y = anim.center.y;
+        }
+
+        return new Anim2D(tiles, loop, speed, center);
     }
 
     static function parseRect(rect: RectDefinition): Tile {
@@ -418,8 +452,8 @@ class Assets {
     public function getAnim2D(name: String): Anim2D {
         var a = getAsset2D(name);
         if (a == null) return null;
-        var c = cast(a, Anim2D);
-        return c;
+        if (!Std.is(a, Anim2D)) return null;
+        return cast(a, Anim2D);
     }
 
     public function getObject2D(name: String): Object2D {
