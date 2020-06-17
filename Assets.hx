@@ -42,7 +42,6 @@ class Asset {
 
 /**
     Asset2D defines a 2D graphical asset.
-    This is also the parent class of the Anim2D
 **/
 class Asset2D extends Asset {
     public var tiles(default, null): Array<Tile>;
@@ -67,8 +66,7 @@ class Asset2D extends Asset {
         if (start < 0 || start >= end) start = end - 1;
         var out = new Vector<h2d.Bitmap>(end - start);
         var ind = 0;
-        for (i in start...end)
-            out[ind++] = this.tiles[i].getBitmap();
+        for (i in start...end) out[ind++] = this.tiles[i].getBitmap();
         return out;
     }
 
@@ -76,8 +74,7 @@ class Asset2D extends Asset {
         if (end == -1) end = this.tiles.length;
         var out = new Array<h2d.Tile>();
         var ind = 0;
-        for (i in start...end)
-            out.push(this.tiles[i].tile);
+        for (i in start...end) out.push(this.tiles[i].tile);
         return out;
     }
 
@@ -157,13 +154,15 @@ class Object2D extends Asset {
             if (Std.is(asset, Anim2D)) {
                 var a = cast(asset, Anim2D);
                 obj.addState(s, a.getAnim());
-            } else  {
+            } else {
                 obj.addState(s, asset.getBitmap());
             }
         }
         return obj;
     }
 }
+
+////// Definition for json parsing
 
 /**
     Image define a single reference to an image
@@ -178,7 +177,7 @@ typedef ImageDefinition = {
 
     var color: Array<Int>;
     var scale: Null<Float>;
-    //TODO: may need to add "center" to image definition in the future.
+    // TODO: may need to add "center" to image definition in the future.
 }
 
 /**
@@ -220,6 +219,7 @@ typedef AnimDefinition = {
 **/
 typedef ObjectDefinition = {
     var src: Null<String>;
+    var file: Null<String>;
     var states: DynamicAccess<ObjectStateDefinition>;
 }
 
@@ -269,6 +269,11 @@ typedef AssetsConf = {
 
 /**
     Assets is the main loader and assets container.
+
+    Known limitation
+
+    1. Animation or ImageGroupDefinition cannot use Rect. The main reason is that rect is usually used during prototyping via
+    shapes. After that it will not be used.
 **/
 class Assets {
     // assetsMap store the key -> config for a spritesheet
@@ -296,7 +301,8 @@ class Assets {
             for (key => value in parsed.frames) {
                 var w = value.w == null ? 1 : value.w;
                 var h = value.h == null ? 1 : value.h;
-                data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, w * gridsize.x, h * gridsize.y);
+                data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, w * gridsize.x,
+                    h * gridsize.y);
             }
         } else {
             for (key => value in parsed.frames) {
@@ -368,12 +374,21 @@ class Assets {
         }
 
         for (key => objectDef in parsed.objects) {
+            if (objectDef.file != null) {
+                objectDef = parseObjectDefFile(objectDef.file);
+            }
             var object = new Object2D();
             for (stateName => objectState in objectDef.states) {
                 object.states[stateName] = parseObjectState(objectState, objectDef.src);
             }
             this.objects2D[key] = object;
         }
+    }
+
+    function parseObjectDefFile(filename: String): ObjectDefinition {
+        var jsonText = hxd.Res.load(filename).toText();
+        var parsed: ObjectDefinition = haxe.Json.parse(jsonText);
+        return parsed;
     }
 
     function parseObjectState(objectState: ObjectStateDefinition, ?src: String): Asset2D {

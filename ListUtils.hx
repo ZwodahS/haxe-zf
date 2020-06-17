@@ -6,8 +6,7 @@ class ListUtils {
         var arr = [for (item in list) item];
         ArrayUtils.shuffle(arr);
         list.clear();
-        for (item in arr)
-            list.push(item);
+        for (item in arr) list.push(item);
     }
 
     public static function contains<T>(list: List<T>, item: T): Bool {
