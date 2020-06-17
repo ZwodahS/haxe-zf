@@ -26,11 +26,17 @@ class StateObject extends h2d.Layers {
 
     public var state(default, set): String;
 
-    public function new() {
+    public var layer: h2d.Layers;
+
+    public function new(?layer: h2d.Layers) {
+        /**
+          to use StateObject like component rather than a layer, then just provide it with an optional argument layer
+        **/
         super();
         this.tiles = new List<h2d.Tile>();
         this.states = new Map<String, h2d.Object>();
         this.state = "";
+        this.layer = layer == null ? this : layer;
     }
 
     public function set_state(s: String): String {
@@ -54,14 +60,14 @@ class StateObject extends h2d.Layers {
 
     function addBitmap(s: String, bitmap: h2d.Bitmap) {
         this.states[s] = bitmap;
-        this.add(bitmap, 0);
+        this.layer.add(bitmap, 0);
         this.tiles.push(bitmap.tile);
         bitmap.visible = this.state == s;
     }
 
     function addAnim(s: String, anim: h2d.Anim) {
         this.states[s] = anim;
-        this.add(anim, 0);
+        this.layer.add(anim, 0);
         for (f in anim.frames) {
             this.tiles.push(f);
         }
@@ -79,6 +85,7 @@ class StateObject extends h2d.Layers {
         } else if (Std.is(old, h2d.Bitmap)) {
             this.tiles.remove(cast(old, h2d.Bitmap).tile);
         }
+        this.layer.removeChild(old);
         return old;
     }
 
