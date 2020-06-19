@@ -265,6 +265,7 @@ typedef AssetsConf = {
     var includes: Array<String>;
     var graphics: DynamicAccess<GraphicDefinition>;
     var objects: DynamicAccess<ObjectDefinition>;
+    var fonts: Array<String>;
 }
 
 /**
@@ -281,11 +282,13 @@ class Assets {
     // assets store the mapping from assets.json
     var assets2D: Map<String, Asset2D>;
     var objects2D: Map<String, Object2D>;
+    var fonts: Map<String, hxd.res.BitmapFont>;
 
     public function new() {
         assetsMap = new Map<String, Map<String, h2d.Tile>>();
         assets2D = new Map<String, Asset2D>();
         objects2D = new Map<String, Object2D>();
+        fonts = new Map<String, hxd.res.BitmapFont>();
     }
 
     public static function loadSpritesheet(filename: String): Map<String, h2d.Tile> {
@@ -383,6 +386,12 @@ class Assets {
             }
             this.objects2D[key] = object;
         }
+
+        if (parsed.fonts != null) {
+            for (font in parsed.fonts) {
+                this.fonts[font] = hxd.Res.load('fnt_${font}.fnt').to(hxd.res.BitmapFont);
+            }
+        }
     }
 
     function parseObjectDefFile(filename: String): ObjectDefinition {
@@ -476,5 +485,9 @@ class Assets {
         if (this.objects2D[name] == null) trace('Unable to find assets: "${name}"');
 #end
         return this.objects2D[name];
+    }
+
+    public function getFont(name: String): hxd.res.BitmapFont {
+        return this.fonts[name];
     }
 }
