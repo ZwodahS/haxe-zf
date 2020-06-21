@@ -31,7 +31,8 @@ class Animation implements Updatable {
     }
 }
 
-class MoveToAnimationByDuration extends Animation {
+class MoveToByDurationAnimation extends Animation {
+
     var object: h2d.Object;
     var start: Point2f;
     var end: Point2f;
@@ -39,22 +40,30 @@ class MoveToAnimationByDuration extends Animation {
     var delta: Float;
     var step: Point2f;
 
+    var init = false;
+
     public function new(object: h2d.Object, position: Point2f, duration: Float) {
         super();
         this.object = object;
-        this.start = [object.x, object.y];
         this.end = position;
         this.duration = duration;
         this.delta = 0;
-
-        this.step = (this.end - this.start) * (1 / duration);
     }
 
     override public function isDone(): Bool {
         return this.delta >= this.duration;
     }
 
+    function initSteps() {
+        // delay this init for chain, or the position will be based on when it was constructed and not
+        // when the animation start.
+        this.start = [this.object.x, this.object.y];
+        this.step = (this.end - this.start) * (1 / duration);
+        this.init = true;
+    }
+
     override public function update(dt: Float) {
+        if (!this.init) initSteps();
         this.delta += dt;
         if (this.delta > this.duration) this.delta = this.duration;
         var currentPosition = this.start + (this.step * this.delta);
@@ -183,7 +192,6 @@ class MoveAnimation extends Animation {
     }
 }
 
-// need "anchor" while scaling, or this will always scale relative to top left
 class ScaleToAnimation extends Animation {
     var object: h2d.Object;
     var scaleTo: Point2f;
@@ -286,6 +294,60 @@ class RotateAnimation extends Animation {
     }
 }
 
+/**
+  Chain Animation takes in a list of animations, and run them one after another
+**/
+class ChainAnimation extends Animation {
+
+    var currentIndex: Int;
+    var animations: Array<Animation>;
+
+    public function new(animations: Array<Animation>) {
+        super();
+        this.currentIndex = 0;
+        this.animations = animations;
+    }
+
+    override public function isDone(): Bool {
+        return this.currentIndex >= this.animations.length;
+    }
+
+    override public function update(dt: Float) {
+        if (this.isDone()) return;
+        this.animations[this.currentIndex].update(dt);
+        if (this.animations[this.currentIndex].isDone()) {
+            this.currentIndex++;
+        }
+    }
+}
+
+/**
+  Batch Animation takes in a list of animations, run them together.
+**/
+class BatchAnimation extends Animation {
+
+    var animations: Array<Animation>;
+
+    public function new(animations: Array<Animation>) {
+        super();
+        this.animations = animations;
+    }
+
+    override public function isDone(): Bool {
+        for (a in this.animations) {
+            if (!a.isDone()) return false;
+        }
+        return true;
+    }
+
+    override public function update(dt: Float) {
+        for (a in this.animations) {
+            if (a.isDone()) continue;
+            a.update(dt);
+        }
+    }
+}
+
 class Animator extends common.Updater { // extends the Updater since most of it is the same
     public function new() {
         super();
@@ -309,7 +371,7 @@ class Animator extends common.Updater { // extends the Updater since most of it 
 
     public function moveToByDuration(object: h2d.Object, position: Point2f, duration: Float,
             onFinish: () -> Void = null): Animation {
-        var anim = new MoveToAnimationByDuration(object, position, duration);
+        var anim = new MoveToByDurationAnimation(object, position, duration);
         if (onFinish != null) {
             anim.onFinish = onFinish;
         }
@@ -361,6 +423,20 @@ class Animator extends common.Updater { // extends the Updater since most of it 
     public function rotate(object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null,
             onFinish: () -> Void = null): Animation {
         var anim = new RotateAnimation(object, rotateSpeed, duration);
+        if (onFinish != null) anim.onFinish = onFinish;
+        this.runAnim(anim);
+        return anim;
+    }
+
+    public function chain(animations: Array<Animation>, onFinish: () -> Void = null) {
+        var anim = new ChainAnimation(animations);
+        if (onFinish != null) anim.onFinish = onFinish;
+        this.runAnim(anim);
+        return anim;
+    }
+
+    public function batch(animations: Array<Animation>, onFinish: () -> Void = null) {
+        var anim = new BatchAnimation(animations);
         if (onFinish != null) anim.onFinish = onFinish;
         this.runAnim(anim);
         return anim;
