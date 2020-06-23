@@ -29,9 +29,143 @@ class Animation implements Updatable {
         if (this.animator == null) return false;
         return this.animator.stop(this);
     }
+
+    /**
+      For easy chaining construction
+    **/
+
+    public function then(animation: Animation): ChainAnimation {
+        var animations: Array<Animation> = [this, animation];
+        return new ChainAnimation(animations);
+    }
+
+    public function with(animation: Animation): BatchAnimation {
+        var animations: Array<Animation> = [this, animation];
+        return new BatchAnimation(animations);
+    }
+
+    public function whenDone(onFinish: () -> Void): Animation {
+        this.onFinish = onFinish;
+        return this;
+    }
+
+    /******
+      Static Factory function to make this easier to use
+    ******/
+
+    /**
+      moveTo vs moveBy vs move
+      - moveTo is done when we reach the location
+      - moveBy is done when we moved by the amount
+      - move is to move the object by this amount for X duration.
+
+      moveTo
+      - byDuration: move to the position by Duration, this will calculate the path it will be taking
+                    and force the path. It will not do increment.
+      - bySpeed: move by amount per tick and stop eventually when the we reached. The speeds have to be absolute,
+                 and all negative values will be convert to positive.
+
+      moveBy
+      - byDuration: move to a position wihin a set time. Similar to the moveToByDuration, this will also calculate
+                    the pathing to take.
+      - bySpeed: move to position by providing a speed.
+
+      Ideally, do not combine movement animation together.
+
+    **/
+
+    /**
+      Move object by amount within duration
+    **/
+    public static function moveByAmountByDuration(object: h2d.Object, amount: Point2f, duration: Float):
+        Animation {
+            return new MoveByAmountByDuration(object, amount, duration);
+    }
+
+    public static function moveToLocationByDuration(object: h2d.Object, position: Point2f, duration: Float):
+        Animation {
+            return new MoveToLocationByDurationAnimation(object, position, duration);
+    }
+
+
+    /**
+      Batch & Chain
+    **/
+    public static function chain(animations: Array<Animation>): Animation {
+        return new ChainAnimation(animations);
+    }
+
+    public static function batch(animations: Array<Animation>): Animation {
+        return new BatchAnimation(animations);
+    }
 }
 
-class MoveToByDurationAnimation extends Animation {
+/**
+  Chain Animation takes in a list of animations, and run them one after another
+**/
+class ChainAnimation extends Animation {
+
+    var currentIndex: Int;
+    var animations: Array<Animation>;
+
+    public function new(animations: Array<Animation>) {
+        super();
+        this.currentIndex = 0;
+        this.animations = animations;
+    }
+
+    override public function isDone(): Bool {
+        return this.currentIndex >= this.animations.length;
+    }
+
+    override public function update(dt: Float) {
+        if (this.isDone()) return;
+        this.animations[this.currentIndex].update(dt);
+        if (this.animations[this.currentIndex].isDone()) {
+            this.currentIndex++;
+        }
+    }
+
+    override public function then(animation: Animation): ChainAnimation {
+        this.animations.push(animation);
+        return this;
+    }
+}
+
+/**
+  Batch Animation takes in a list of animations, run them together.
+**/
+class BatchAnimation extends Animation {
+
+    var animations: Array<Animation>;
+
+    public function new(animations: Array<Animation>) {
+        super();
+        this.animations = animations;
+    }
+
+    override public function isDone(): Bool {
+        for (a in this.animations) {
+            if (!a.isDone()) return false;
+        }
+        return true;
+    }
+
+    override public function update(dt: Float) {
+        for (a in this.animations) {
+            if (a.isDone()) continue;
+            a.update(dt);
+        }
+    }
+
+    override public function with(animation: Animation): BatchAnimation {
+        this.animations.push(animation);
+        return this;
+    }
+}
+
+
+class MoveToLocationByDurationAnimation extends Animation {
 
     var object: h2d.Object;
     var start: Point2f;
@@ -72,7 +206,7 @@ class MoveToByDurationAnimation extends Animation {
     }
 }
 
-class MoveToAnimation extends Animation {
+class MoveToLocationBySpeedAnimation extends Animation {
     var object: h2d.Object;
     var position: Point2f;
     var speed: Point2f;
@@ -115,7 +249,7 @@ class MoveToAnimation extends Animation {
     }
 }
 
-class MoveByAnimation extends Animation {
+class MoveByAmountBySpeedAnimation extends Animation {
     var object: h2d.Object;
     var amount: Point2f;
     var amountLeft: Point2f;
@@ -158,7 +292,39 @@ class MoveByAnimation extends Animation {
     }
 }
 
-class MoveAnimation extends Animation {
+class MoveByAmountByDuration extends Animation {
+
+    var object: h2d.Object;
+    var start: Point2f;
+    var amount: Point2f;
+    var duration: Float;
+    var delta: Float;
+    var step: Point2f;
+
+    public function new(object: h2d.Object, amount: Point2f, duration: Float) {
+        super();
+        this.object = object;
+        this.amount = amount;
+        this.duration = duration;
+        this.delta = 0;
+        this.start = [this.object.x, this.object.y];
+        this.step = this.amount * (1 / duration);
+    }
+
+    override public function isDone(): Bool {
+        return this.delta >= this.duration;
+    }
+
+    override public function update(dt: Float) {
+        this.delta += dt;
+        if (this.delta > this.duration) this.delta = this.duration;
+        var currentPosition = this.start + (this.step * this.delta);
+        this.object.x = currentPosition.x;
+        this.object.y = currentPosition.y;
+    }
+}
+
+class MoveBySpeedByDuration extends Animation {
     var object: h2d.Object;
     var moveSpeed: Point2f;
     var moveDuration: Float;
@@ -294,74 +460,22 @@ class RotateAnimation extends Animation {
     }
 }
 
-/**
-  Chain Animation takes in a list of animations, and run them one after another
-**/
-class ChainAnimation extends Animation {
-
-    var currentIndex: Int;
-    var animations: Array<Animation>;
-
-    public function new(animations: Array<Animation>) {
-        super();
-        this.currentIndex = 0;
-        this.animations = animations;
-    }
-
-    override public function isDone(): Bool {
-        return this.currentIndex >= this.animations.length;
-    }
-
-    override public function update(dt: Float) {
-        if (this.isDone()) return;
-        this.animations[this.currentIndex].update(dt);
-        if (this.animations[this.currentIndex].isDone()) {
-            this.currentIndex++;
-        }
-    }
-}
-
-/**
-  Batch Animation takes in a list of animations, run them together.
-**/
-class BatchAnimation extends Animation {
-
-    var animations: Array<Animation>;
-
-    public function new(animations: Array<Animation>) {
-        super();
-        this.animations = animations;
-    }
-
-    override public function isDone(): Bool {
-        for (a in this.animations) {
-            if (!a.isDone()) return false;
-        }
-        return true;
-    }
-
-    override public function update(dt: Float) {
-        for (a in this.animations) {
-            if (a.isDone()) continue;
-            a.update(dt);
-        }
-    }
-}
-
 class Animator extends common.Updater { // extends the Updater since most of it is the same
+
     public function new() {
         super();
     }
 
-    function runAnim(anim: Animation) {
+    public function runAnim(anim: Animation, onFinish: () -> Void = null) {
+        if (onFinish != null) anim.onFinish = onFinish;
         this.run(anim);
         anim.animator = this;
     }
 
-    // mirrors MoveToAnimation constructor
+    // mirrors MoveToLocationBySpeedAnimation constructor
     public function moveTo(object: h2d.Object, position: Point2f, speeds: Point2f = null, speed: Float = 1,
             onFinish: () -> Void = null): Animation {
-        var anim = new MoveToAnimation(object, position, speeds, speed);
+        var anim = new MoveToLocationBySpeedAnimation(object, position, speeds, speed);
         if (onFinish != null) {
             anim.onFinish = onFinish;
         }
@@ -371,7 +485,7 @@ class Animator extends common.Updater { // extends the Updater since most of it 
 
     public function moveToByDuration(object: h2d.Object, position: Point2f, duration: Float,
             onFinish: () -> Void = null): Animation {
-        var anim = new MoveToByDurationAnimation(object, position, duration);
+        var anim = new MoveToLocationByDurationAnimation(object, position, duration);
         if (onFinish != null) {
             anim.onFinish = onFinish;
         }
@@ -379,10 +493,10 @@ class Animator extends common.Updater { // extends the Updater since most of it 
         return anim;
     }
 
-    // mirrors MoveByAnimation constructor
+    // mirrors MoveByAmountBySpeedAnimation constructor
     public function moveBy(object: h2d.Object, moveAmount: Point2f, speeds: Point2f = null,
             speed: Float = 1, onFinish: () -> Void = null): Animation {
-        var anim = new MoveByAnimation(object, moveAmount, speeds, speed);
+        var anim = new MoveByAmountBySpeedAnimation(object, moveAmount, speeds, speed);
         if (onFinish != null) {
             anim.onFinish = onFinish;
         }
@@ -392,7 +506,7 @@ class Animator extends common.Updater { // extends the Updater since most of it 
 
     public function move(object: h2d.Object, duration: Float, moveSpeeds: Point2f = null, moveSpeed = 1,
             onFinish: () -> Void = null): Animation {
-        var anim = new MoveAnimation(object, duration, moveSpeeds, moveSpeed);
+        var anim = new MoveBySpeedByDuration(object, duration, moveSpeeds, moveSpeed);
         if (onFinish != null) {
             anim.onFinish = onFinish;
         }
@@ -442,3 +556,4 @@ class Animator extends common.Updater { // extends the Updater since most of it 
         return anim;
     }
 }
+
