@@ -57,6 +57,13 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
         return this[0] == rhs.x && this[1] == rhs.y && this[2] == rhs.z;
     }
 
+    public function update(rhs: Point3f): Point3f {
+        this[0] = rhs[0];
+        this[1] = rhs[1];
+        this[2] = rhs[2];
+        return this;
+    }
+
     inline public function copy(): Point3f {
         return [this[0], this[1], this[2]];
     }

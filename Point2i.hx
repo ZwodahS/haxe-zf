@@ -41,6 +41,12 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
         return this[0] == rhs.x && this[1] == rhs.y;
     }
 
+    public function update(rhs: Point2i): Point2i {
+        this[0] = rhs[0];
+        this[1] = rhs[1];
+        return this;
+    }
+
     inline public function copy(): Point2i {
         return [this[0], this[1]];
     }
