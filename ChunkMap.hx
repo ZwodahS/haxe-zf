@@ -1,7 +1,5 @@
 package common;
 
-import haxe.ds.Vector;
-
 /**
     ChunkMap is a 2D array that allow for infinite coordinates system
 **/
@@ -14,11 +12,13 @@ typedef TranslatedCoord = {
 class ChunkMap<T> {
     public var chunkSize(default, null): Int;
 
-    var chunks: Map<String, Vector<Vector<T>>>;
+    var chunks: Map<String, Vector2D<T>>;
+    var nullValue: T;
 
-    public function new(chunkSize: Int) {
-        this.chunks = new Map<String, Vector<Vector<T>>>();
+    public function new(chunkSize: Int, nullValue: T) {
+        this.chunks = new Map<String, Vector2D<T>>();
         this.chunkSize = chunkSize;
+        this.nullValue = nullValue;
     }
 
     public function set(x: Int, y: Int, value: T): T {
@@ -28,8 +28,8 @@ class ChunkMap<T> {
             chunk = this.createChunk();
             this.chunks[translateCoord.chunkId] = chunk;
         }
-        var existing = chunk[translateCoord.x][translateCoord.y];
-        chunk[translateCoord.x][translateCoord.y] = value;
+        var existing = chunk.get(translateCoord.x, translateCoord.y);
+        chunk.set(translateCoord.x, translateCoord.y, value);
         return existing;
     }
 
@@ -41,15 +41,11 @@ class ChunkMap<T> {
         if (chunk == null) {
             return null;
         }
-        return chunk[translateCoord.x][translateCoord.y];
+        return chunk.get(translateCoord.x, translateCoord.y);
     }
 
-    function createChunk(): Vector<Vector<T>> {
-        var chunk = new Vector<Vector<T>>(this.chunkSize);
-        for (i in 0...this.chunkSize) {
-            chunk[i] = new Vector<T>(this.chunkSize);
-        }
-        return chunk;
+    function createChunk(): Vector2D<T> {
+        return new Vector2D<T>([this.chunkSize, this.chunkSize], this.nullValue);
     }
 
     function translateCoord(x: Int, y: Int): TranslatedCoord {

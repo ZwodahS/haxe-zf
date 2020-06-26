@@ -1,12 +1,11 @@
-
 package common;
+
 /**
-  Parent Game.hx
+    Parent Game.hx
 
 
-  provide screen transition
+    provide screen transition
 **/
-
 enum ScreenState {
     Exiting;
     Entering;
@@ -14,7 +13,6 @@ enum ScreenState {
 }
 
 class Game extends hxd.App {
-
     var framerate: h2d.Text;
     var console: h2d.Console;
 
@@ -84,7 +82,7 @@ class Game extends hxd.App {
                     this.screenState = Ready;
                 }
             }
-        } else if(this.screenState == Entering) {
+        } else if (this.screenState == Entering) {
             if (incomingScreen.doneEntering()) {
                 this.screenState = Ready;
                 this.currentScreen = this.incomingScreen;
@@ -103,6 +101,7 @@ class Game extends hxd.App {
 
     /** Screen management code **/
     var currentScreen: common.Screen;
+
     var incomingScreen: common.Screen;
     var outgoingScreen: common.Screen;
 
@@ -129,6 +128,6 @@ class Game extends hxd.App {
     }
 
     function screenExited(screen: common.Screen) {}
-    function screenEntered(screen: common.Screen) {}
 
+    function screenEntered(screen: common.Screen) {}
 }

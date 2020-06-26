@@ -30,9 +30,10 @@ class StateObject extends h2d.Layers {
 
     public function new(?layer: h2d.Layers) {
         /**
-          to use StateObject like component rather than a layer, then just provide it with an optional argument layer
+            to use StateObject like component rather than a layer, then just provide it with an optional argument layer
         **/
         super();
+
         this.tiles = new List<h2d.Tile>();
         this.states = new Map<String, h2d.Object>();
         this.state = "";

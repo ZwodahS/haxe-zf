@@ -1,4 +1,3 @@
-
 package common.ecs2d;
 
 class SimpleSystem<E: Entity> extends System<E> {

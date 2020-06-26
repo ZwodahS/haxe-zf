@@ -1,8 +1,6 @@
-
 package common;
 
 class Screen extends h2d.Layers {
-
     public function new() {
         super();
     }
@@ -18,10 +16,13 @@ class Screen extends h2d.Layers {
     public function destroy(): Void {}
 
     public function beginScreenEnter() {} // called when the screen is switched in
+
     public function doneEntering(): Bool {
         return true;
     }
+
     public function beginScreenExit() {} // called when the screen is switched out
+
     public function doneExiting(): Bool {
         return true;
     }

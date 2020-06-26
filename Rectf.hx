@@ -19,7 +19,6 @@ typedef IntersectDetail = {
 }
 
 abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
-
     public var xMin(get, set): Float;
     public var xMax(get, set): Float;
     public var yMin(get, set): Float;
@@ -123,33 +122,49 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 
     public function intersectDetail(rect: Rectf): IntersectDetail {
         var xDetail = intersectType(this[0], this[2], rect.xMin, rect.xMax);
-        if (xDetail.type == None) return { x: 0, y: 0, xType: None, yType: None };
+        if (xDetail.type == None) return {
+            x: 0,
+            y: 0,
+            xType: None,
+            yType: None
+        };
         var yDetail = intersectType(this[1], this[3], rect.yMin, rect.yMax);
-        if (xDetail.type == None) return { x: 0, y: 0, xType: None, yType: None };
-        return { x: xDetail.amount, y: yDetail.amount, xType: xDetail.type, yType: yDetail.type };
+        if (xDetail.type == None) return {
+            x: 0,
+            y: 0,
+            xType: None,
+            yType: None
+        };
+        return {
+            x: xDetail.amount,
+            y: yDetail.amount,
+            xType: xDetail.type,
+            yType: yDetail.type
+        };
     }
 
-    static function intersectType(aMin: Float, aMax: Float, bMin: Float, bMax): { amount: Float, type: IntersectType} {
-        if (aMin >= bMax || bMin >= aMax) return { amount: 0, type: None };
+    static function intersectType(aMin: Float, aMax: Float, bMin: Float,
+            bMax): {amount: Float, type: IntersectType} {
+        if (aMin >= bMax || bMin >= aMax) return {amount: 0, type: None};
         // Diagram, we will use a0, a1, b0, b1 to show what each statement does
         // Assumption, a1 >= a0, b1 >= b0
         if (bMin <= aMin) { // test for b0 a0
             // this only have 2 cases, Inside or Position
             if (aMax <= bMax) { // b0 a0 a1 b1
                 // a is inside b.
-                return { amount: aMax - aMin, type: Inside };
+                return {amount: aMax - aMin, type: Inside};
             } else { // b0 a0 b1 a1
                 // a intersect on the positive side of b
-                return { amount: bMax - aMin, type: Positive };
+                return {amount: bMax - aMin, type: Positive};
             }
         } else if (aMin <= bMin) { // test for a0 b0
             if (bMax <= aMax) { // a0 b0 b1 a1
-                return { amount: bMax - bMin, type: Contains };
+                return {amount: bMax - bMin, type: Contains};
             } else { // a0 b0 a1 b1
-                return { amount: aMax - bMin, type: Negative };
+                return {amount: aMax - bMin, type: Negative};
             }
         } // there should never be a else, since on will be
-        return { amount: 0, type: None };
+        return {amount: 0, type: None};
     }
 
     public function intersectWithBorder(rect: Rectf): Bool {

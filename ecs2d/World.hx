@@ -3,8 +3,7 @@ package common.ecs2d;
 import common.ecs2d.System;
 import common.ecs2d.Entity;
 
-class World<E:Entity> {
-
+class World<E: Entity> {
     public var entities: Map<Int, E>;
     public var systems: List<System<E>>;
 

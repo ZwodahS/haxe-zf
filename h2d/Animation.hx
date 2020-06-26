@@ -31,9 +31,8 @@ class Animation implements Updatable {
     }
 
     /**
-      For easy chaining construction
+        For easy chaining construction
     **/
-
     public function then(animation: Animation): ChainAnimation {
         var animations: Array<Animation> = [this, animation];
         return new ChainAnimation(animations);
@@ -50,46 +49,43 @@ class Animation implements Updatable {
     }
 
     /******
-      Static Factory function to make this easier to use
+        Static Factory function to make this easier to use
     ******/
-
     /**
-      moveTo vs moveBy vs move
-      - moveTo is done when we reach the location
-      - moveBy is done when we moved by the amount
-      - move is to move the object by this amount for X duration.
+        moveTo vs moveBy vs move
+        - moveTo is done when we reach the location
+        - moveBy is done when we moved by the amount
+        - move is to move the object by this amount for X duration.
 
-      moveTo
-      - byDuration: move to the position by Duration, this will calculate the path it will be taking
-                    and force the path. It will not do increment.
-      - bySpeed: move by amount per tick and stop eventually when the we reached. The speeds have to be absolute,
-                 and all negative values will be convert to positive.
+        moveTo
+        - byDuration: move to the position by Duration, this will calculate the path it will be taking
+                      and force the path. It will not do increment.
+        - bySpeed: move by amount per tick and stop eventually when the we reached. The speeds have to be absolute,
+                   and all negative values will be convert to positive.
 
-      moveBy
-      - byDuration: move to a position wihin a set time. Similar to the moveToByDuration, this will also calculate
-                    the pathing to take.
-      - bySpeed: move to position by providing a speed.
+        moveBy
+        - byDuration: move to a position wihin a set time. Similar to the moveToByDuration, this will also calculate
+                      the pathing to take.
+        - bySpeed: move to position by providing a speed.
 
-      Ideally, do not combine movement animation together.
+        Ideally, do not combine movement animation together.
 
     **/
-
     /**
-      Move object by amount within duration
+        Move object by amount within duration
     **/
-    public static function moveByAmountByDuration(object: h2d.Object, amount: Point2f, duration: Float):
-        Animation {
-            return new MoveByAmountByDuration(object, amount, duration);
+    public static function moveByAmountByDuration(object: h2d.Object, amount: Point2f,
+            duration: Float): Animation {
+        return new MoveByAmountByDuration(object, amount, duration);
     }
 
-    public static function moveToLocationByDuration(object: h2d.Object, position: Point2f, duration: Float):
-        Animation {
-            return new MoveToLocationByDurationAnimation(object, position, duration);
+    public static function moveToLocationByDuration(object: h2d.Object, position: Point2f,
+            duration: Float): Animation {
+        return new MoveToLocationByDurationAnimation(object, position, duration);
     }
-
 
     /**
-      Batch & Chain
+        Batch & Chain
     **/
     public static function chain(animations: Array<Animation>): Animation {
         return new ChainAnimation(animations);
@@ -101,10 +97,9 @@ class Animation implements Updatable {
 }
 
 /**
-  Chain Animation takes in a list of animations, and run them one after another
+    Chain Animation takes in a list of animations, and run them one after another
 **/
 class ChainAnimation extends Animation {
-
     var currentIndex: Int;
     var animations: Array<Animation>;
 
@@ -133,10 +128,9 @@ class ChainAnimation extends Animation {
 }
 
 /**
-  Batch Animation takes in a list of animations, run them together.
+    Batch Animation takes in a list of animations, run them together.
 **/
 class BatchAnimation extends Animation {
-
     var animations: Array<Animation>;
 
     public function new(animations: Array<Animation>) {
@@ -164,9 +158,7 @@ class BatchAnimation extends Animation {
     }
 }
 
-
 class MoveToLocationByDurationAnimation extends Animation {
-
     var object: h2d.Object;
     var start: Point2f;
     var end: Point2f;
@@ -293,7 +285,6 @@ class MoveByAmountBySpeedAnimation extends Animation {
 }
 
 class MoveByAmountByDuration extends Animation {
-
     var object: h2d.Object;
     var start: Point2f;
     var amount: Point2f;
@@ -461,7 +452,6 @@ class RotateAnimation extends Animation {
 }
 
 class Animator extends common.Updater { // extends the Updater since most of it is the same
-
     public function new() {
         super();
     }
@@ -556,4 +546,3 @@ class Animator extends common.Updater { // extends the Updater since most of it 
         return anim;
     }
 }
-

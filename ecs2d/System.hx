@@ -6,15 +6,16 @@ import common.ecs2d.World;
 /**
     Abstract parent class of all System
 **/
-class System<E:Entity> {
-
+class System<E: Entity> {
     var world: World<E>;
+
     public function new() {}
 
     /**
         inform that an entity is added to the world.
     **/
     public function entityAdded(entity: E) {}
+
     /**
         inform that an entity is removed from the world.
     **/
@@ -25,8 +26,7 @@ class System<E:Entity> {
     /**
         update loop
     **/
-    public function update(dt: Float) {
-    }
+    public function update(dt: Float) {}
 
     /**
         init the system.
