@@ -7,8 +7,6 @@ import common.ecs2d.World;
     Abstract parent class of all System
 **/
 class System<E: Entity> {
-    var world: World<E>;
-
     public function new() {}
 
     /**
@@ -32,9 +30,7 @@ class System<E: Entity> {
         init the system.
         This is called when the system is added to the world.
     **/
-    public function init(world: World<E>) {
-        this.world = world;
-    }
+    public function init(world: World<E>) {}
 
     /**
         handle an event
