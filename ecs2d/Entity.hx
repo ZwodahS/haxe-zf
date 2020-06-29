@@ -8,9 +8,13 @@ class Entity extends h2d.Layers {
 
     private static var idCounter: Int = 0; // global id counter for entity
 
-    public function new() {
+    public function new(id: Null<Int> = null) {
         super();
-        this.id = idCounter++;
+        if (id == null) {
+            this.id = idCounter++;
+        } else {
+            this.id = id;
+        }
     }
 
     override public function toString(): String {
