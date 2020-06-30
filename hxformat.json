@@ -20,8 +20,7 @@
     "conditionalPolicy": "fixedZero"
   },
   "sameLine": {
-    "ifBody": "same",
-    "forBody": "same"
+    "ifBody": "same"
   },
   "wrapping": {
     "maxLineLength": 110

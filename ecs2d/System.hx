@@ -17,9 +17,7 @@ class System<E: Entity> {
     /**
         inform that an entity is removed from the world.
     **/
-    public function entityRemoved(entity: E): E {
-        return entity;
-    }
+    public function entityRemoved(entity: E) {}
 
     /**
         update loop
