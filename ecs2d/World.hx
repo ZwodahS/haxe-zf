@@ -48,7 +48,7 @@ class World<E: Entity> {
     /**
         removeEntity remove the entity from this world and all the systems.
     **/
-    public function removeEntity(ent: Entity) {
+    public function removeEntity(ent: E) {
         return this.removeEntityById(ent.id);
     }
 
@@ -67,7 +67,7 @@ class World<E: Entity> {
         this.onEntityRemoved(existing);
     }
 
-    public function onEntityRemoved(ent: Entity) {}
+    public function onEntityRemoved(ent: E) {}
 
     /**
         update is the main function that should be called on every update loop
