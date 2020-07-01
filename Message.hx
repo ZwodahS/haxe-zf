@@ -15,4 +15,8 @@ class Message {
     public function get_log(): String {
         return '${this.type}';
     }
+
+    public function toString(): String {
+        return '${this.type}';
+    }
 }
