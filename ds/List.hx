@@ -77,4 +77,23 @@ class List<T> extends haxe.ds.List<T> {
         this.q = previous;
         return this;
     }
+
+    public function shuffle() {
+        ListUtils.shuffle(this);
+    }
+
+    public function contains(item: T): Bool {
+        return ListUtils.contains(this, item);
+    }
+
+    public function firstX(count: Int): Array<T> {
+        var items: Array<T> = [];
+        var item = this.h;
+        for (i in 0...count) {
+            if (item == null) break;
+            items.push(item.item);
+            item = item.next;
+        }
+        return items;
+    }
 }
