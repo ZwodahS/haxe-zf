@@ -178,6 +178,7 @@ typedef ImageDefinition = {
     var color: Array<Int>;
     var scale: Null<Float>;
     // TODO: may need to add "center" to image definition in the future.
+    var ?region: { x: Int, y: Int, w: Int, h: Int};
 }
 
 /**
@@ -351,6 +352,10 @@ class Assets {
 #if debug
             trace('src not specified for ${image.key}');
 #end
+        }
+
+        if (image.region != null) {
+            t = t.sub(image.region.x, image.region.y, image.region.w, image.region.h);
         }
 
         if (t == null) {
