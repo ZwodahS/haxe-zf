@@ -21,7 +21,7 @@ class Tile {
 
     public function getBitmap(): h2d.Bitmap {
         var bm: h2d.Bitmap = new h2d.Bitmap(this.tile.clone());
-        bm.color = this.color;
+        bm.color = this.color.clone();
         bm.scaleX = this.scale;
         bm.scaleY = this.scale;
         return bm;
