@@ -397,6 +397,12 @@ class Assets {
                 this.fonts[font] = hxd.Res.load('fnt_${font}.fnt').to(hxd.res.BitmapFont);
             }
         }
+
+        if (parsed.includes != null) {
+            for (include in parsed.includes) {
+                loadAssetConf(include);
+            }
+        }
     }
 
     function parseObjectDefFile(filename: String): ObjectDefinition {
