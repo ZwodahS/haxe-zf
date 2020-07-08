@@ -96,4 +96,13 @@ class List<T> extends haxe.ds.List<T> {
         }
         return items;
     }
+
+    public function copy(): List<T> {
+        // shallow copy
+        var l = new List<T>();
+        for (i in this) {
+            l.add(i);
+        }
+        return l;
+    }
 }
