@@ -102,7 +102,7 @@ class GridUtils {
         }
 
         var points = new List<Point2i>();
-        var insertFunc = reversed ? points.add : points.push;
+        var insertFunc = reversed ? points.push : points.add;
         var y = y1, x = x1;
         while (x < x2 + 1) {
             var point: Point2i = null;
