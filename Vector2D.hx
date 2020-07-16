@@ -108,13 +108,13 @@ class Vector2D<T> {
     }
 
     inline public function get(x, y): T {
-        var p = pos(x, y);
-        return _inBound(p) ? data[p] : nullValue;
+        if (!inBound(x, y)) return nullValue;
+        return this.data[pos(x, y)];
     }
 
     inline public function set(x, y, value: T) {
-        var pos = pos(x, y);
-        if (_inBound(pos)) this.data[pos] = value;
+        if (!inBound(x, y)) return;
+        this.data[pos(x, y)] = value;
     }
 
     inline function pos(x: Int, y: Int): Int { // return -1 if out of bound
@@ -122,11 +122,7 @@ class Vector2D<T> {
     }
 
     public function inBound(x: Int, y: Int): Bool {
-        return _inBound(pos(x, y));
-    }
-
-    inline function _inBound(p: Int): Bool {
-        return p >= 0 && p < data.length;
+        return x >= 0 && x < this.size.x && y >= 0 && y < this.size.y;
     }
 
     public function iterateXY(): Vector2DIteratorXY<T> {
