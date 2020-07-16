@@ -13,14 +13,18 @@
       "betweenImports": 1,
       "beforeUsing": 1
     },
-    "maxAnywhereInFile": "1"
+    "maxAnywhereInFile": "1",
+    "classEmptyLines": {
+        "beginType": 1
+    }
   },
   "indentation": {
     "character": "    ",
     "conditionalPolicy": "fixedZero"
   },
   "sameLine": {
-    "ifBody": "same"
+    "ifBody": "same",
+    "forBody": "same"
   },
   "wrapping": {
     "maxLineLength": 110

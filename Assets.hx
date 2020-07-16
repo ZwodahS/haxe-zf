@@ -178,7 +178,12 @@ typedef ImageDefinition = {
     var color: Array<Int>;
     var scale: Null<Float>;
     // TODO: may need to add "center" to image definition in the future.
-    var ?region: { x: Int, y: Int, w: Int, h: Int};
+    var ?region: {
+        x: Int,
+        y: Int,
+        w: Int,
+        h: Int
+    };
 }
 
 /**
