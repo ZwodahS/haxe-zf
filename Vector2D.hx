@@ -7,6 +7,7 @@ typedef XY = {
     y: Int
 }
 
+@:access(common.Vector2D)
 class Vector2DIteratorXY<T> {
     var data: Vector2D<T>;
     var currX: Int;
@@ -25,7 +26,7 @@ class Vector2DIteratorXY<T> {
     public function next(): {key: XY, value: T} {
         var returnValue = {
             key: {x: this.currX, y: this.currY},
-            value: this.data.get(this.currX, this.currY)
+            value: this.data.data[data.pos(this.currX, this.currY)],
         }
         if (this.currX == this.data.size.x - 1) {
             this.currX = 0;
@@ -37,6 +38,7 @@ class Vector2DIteratorXY<T> {
     }
 }
 
+@:access(common.Vector2D)
 class Vector2DIteratorYX<T> {
     var data: Vector2D<T>;
     var currX: Int;
@@ -55,7 +57,7 @@ class Vector2DIteratorYX<T> {
     public function next(): {key: XY, value: T} {
         var returnValue = {
             key: {x: this.currX, y: this.currY},
-            value: this.data.get(this.currX, this.currY)
+            value: this.data.data[data.pos(this.currX, this.currY)],
         }
         if (this.currY == this.data.size.y - 1) {
             this.currY = 0;
