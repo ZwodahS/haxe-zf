@@ -31,6 +31,10 @@ class Tile {
         var t = new Tile(this.tile.clone(), this.color, this.scale);
         return t;
     }
+
+    public function sub(x: Int, y: Int, w: Int, h: Int) {
+        return new Tile(this.tile.sub(x, y, w, h), this.color.clone(), this.scale);
+    }
 }
 
 /**
@@ -274,6 +278,24 @@ typedef AssetsConf = {
     var fonts: Array<String>;
 }
 
+typedef AseSpritesheetConfig = {
+    frames: Array<{
+        filename: String,
+        frame: { x: Int, y: Int, w: Int, h: Int },
+        rotated: Bool,
+        trimmed: Bool,
+        spriteSourceSize: { x: Int, y: Int, w: Int, h: Int },
+        sourceSize: { w: Int, h: Int },
+        duration: Int,
+    }>,
+    meta: {
+        image: String,
+        frameTags: Array<{
+            name: String, from: Int, to: Int, direction: String
+        }>,
+    }
+}
+
 /**
     Assets is the main loader and assets container.
 
@@ -319,6 +341,30 @@ class Assets {
                 var h = value.h == null ? 1 : value.h;
                 data[key] = image.sub(value.x, value.y, w, h);
             }
+        }
+        return data;
+    }
+
+    // Wed Jul 22 16:12:21 2020
+    // may want to do more with asesprite in the future, i.e. augment it with other configuration.
+    // for now this will do.
+    public static function loadAseSpritesheetConfig(filename: String): Map<String, Asset2D> {
+        var jsonText = hxd.Res.load(filename).toText();
+        var parsed: AseSpritesheetConfig = haxe.Json.parse(jsonText);
+
+        var data = new Map<String, Asset2D>();
+        var directory = haxe.io.Path.directory(filename);
+        var image = hxd.Res.load(haxe.io.Path.join([directory, parsed.meta.image])).toTile();
+
+        // for each frameTags, we export
+        for (frame in parsed.meta.frameTags) {
+            var tiles: Array<Tile> = [];
+            for (i in frame.from...frame.to+1) {
+                var f = parsed.frames[i].frame;
+                var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), 1.0);
+                tiles.push(t);
+            }
+            data[frame.name] = new Asset2D(tiles);
         }
         return data;
     }
