@@ -36,7 +36,7 @@ class Game extends hxd.App {
         framerate.textAlign = Right;
         framerate.x = hxd.Window.getInstance().width - 10;
 
-        this.s2d.add(this.framerate, 0);
+        this.s2d.add(this.framerate, 100);
         framerate.visible = false;
     }
 
