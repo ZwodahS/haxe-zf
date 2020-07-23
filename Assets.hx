@@ -74,6 +74,11 @@ class Asset2D extends Asset {
         return out;
     }
 
+    public function getTile(pos: Int = 0): h2d.Tile {
+        if (pos < 0 || pos >= this.tiles.length) pos = 0;
+        return this.tiles[pos].tile.clone();
+    }
+
     public function getTiles(start: Int = 0, end: Int = -1): Array<h2d.Tile> {
         if (end == -1) end = this.tiles.length;
         var out = new Array<h2d.Tile>();
@@ -281,17 +286,29 @@ typedef AssetsConf = {
 typedef AseSpritesheetConfig = {
     frames: Array<{
         filename: String,
-        frame: { x: Int, y: Int, w: Int, h: Int },
+        frame: {
+            x: Int,
+            y: Int,
+            w: Int,
+            h: Int
+        },
         rotated: Bool,
         trimmed: Bool,
-        spriteSourceSize: { x: Int, y: Int, w: Int, h: Int },
-        sourceSize: { w: Int, h: Int },
+        spriteSourceSize: {
+            x: Int,
+            y: Int,
+            w: Int,
+            h: Int
+        },
+        sourceSize: {w: Int, h: Int},
         duration: Int,
     }>,
     meta: {
-        image: String,
-        frameTags: Array<{
-            name: String, from: Int, to: Int, direction: String
+        image: String, frameTags: Array<{
+            name: String,
+            from: Int,
+            to: Int,
+            direction: String
         }>,
     }
 }
@@ -359,7 +376,7 @@ class Assets {
         // for each frameTags, we export
         for (frame in parsed.meta.frameTags) {
             var tiles: Array<Tile> = [];
-            for (i in frame.from...frame.to+1) {
+            for (i in frame.from...frame.to + 1) {
                 var f = parsed.frames[i].frame;
                 var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), 1.0);
                 tiles.push(t);
