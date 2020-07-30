@@ -67,6 +67,16 @@ class World<E: Entity> {
         this.onEntityRemoved(existing);
     }
 
+    public function removeAllEntities() {
+        for (id => e in this.entities) {
+            for (sys in this.systems) {
+                sys.entityRemoved(e);
+            }
+            this.onEntityRemoved(e);
+        }
+        this.entities.clear();
+    }
+
     public function onEntityRemoved(ent: E) {}
 
     /**
