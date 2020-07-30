@@ -69,6 +69,26 @@ class Vector2DIteratorYX<T> {
     }
 }
 
+@:access(common.Vector2D)
+class LinearIterator<T> {
+    var data: Vector2D<T>;
+    var curr: Int;
+
+    public function new(data: Vector2D<T>) {
+        this.data = data;
+        this.curr = 0;
+    }
+
+    public function hasNext(): Bool {
+        return this.curr < this.data.data.length;
+    }
+
+    public function next(): T {
+        if (this.curr >= this.data.data.length) return null;
+        return this.data.data[curr++];
+    }
+}
+
 class Vector2D<T> {
     /**
         A 2x3 (width * height)
@@ -125,6 +145,10 @@ class Vector2D<T> {
 
     public function inBound(x: Int, y: Int): Bool {
         return x >= 0 && x < this.size.x && y >= 0 && y < this.size.y;
+    }
+
+    public function iterator(): LinearIterator<T> {
+        return new LinearIterator<T>(this);
     }
 
     public function iterateXY(): Vector2DIteratorXY<T> {
