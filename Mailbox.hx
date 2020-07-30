@@ -48,6 +48,15 @@ class Mailbox {
         return mb;
     }
 
+    // Destroy a mailbox.
+    public static function delete(id: String): Bool {
+        var mb = MAILBOXES.get(id);
+        if (mb == null) return false;
+        MAILBOXES.remove(id);
+        mb.clear();
+        return true;
+    }
+
     var listeners: Map<Int, Listener>;
     var listenersMap: Map<String, List<Listener>>;
     // listeners that listen to all types of messages, example: logger
@@ -64,6 +73,14 @@ class Mailbox {
         this.dispatchStack = new List<Message>();
         this.queuedMessage = new List<Message>();
         this.allListeners = new Map<Int, Listener>();
+    }
+
+    function clear() {
+        this.listeners.clear();
+        this.listenersMap.clear();
+        this.allListeners.clear();
+        this.queuedMessage.clear();
+        this.dispatchStack.clear();
     }
 
     /**
