@@ -14,6 +14,7 @@ enum ScreenState {
 
 class Game extends hxd.App {
     var framerate: h2d.Text;
+    var drawCalls: h2d.Text;
     var console: h2d.Console;
 
     override function init() {
@@ -30,14 +31,17 @@ class Game extends hxd.App {
 #if debug
     function setupFramerate() {
         var font: h2d.Font = hxd.res.DefaultFont.get().clone();
-        font.resizeTo(24);
+        font.resizeTo(12);
 
-        this.framerate = new h2d.Text(font);
-        framerate.textAlign = Right;
-        framerate.x = hxd.Window.getInstance().width - 10;
+        this.s2d.add(this.framerate = new h2d.Text(font), 100);
+        this.framerate.textAlign = Left;
+        this.framerate.x = 0;
+        this.framerate.visible = false;
 
-        this.s2d.add(this.framerate, 100);
-        framerate.visible = false;
+        this.s2d.add(this.drawCalls = new h2d.Text(font), 100);
+        this.drawCalls.textAlign = Left;
+        this.drawCalls.y = 16;
+        this.drawCalls.visible = false;
     }
 
     function setupConsole() {
@@ -59,6 +63,7 @@ class Game extends hxd.App {
 
         this.console.addCommand("framerate", "toggle framerate", [], function() {
             this.framerate.visible = !this.framerate.visible;
+            this.drawCalls.visible = !this.drawCalls.visible;
         });
         this.console.addAlias("fr", "framerate");
     }
@@ -96,7 +101,14 @@ class Game extends hxd.App {
     }
 
     override function render(engine: h3d.Engine) {
+#if debug
+        var t0 = haxe.Timer.stamp();
+#end
         this.s2d.render(engine);
+#if debug
+        var drawTime = '${common.Strings.formatFloat(haxe.Timer.stamp() - t0, 5)}s';
+        this.drawCalls.text = 'draw: ${engine.drawCalls} (${drawTime})';
+#end
     }
 
     /** Screen management code **/
