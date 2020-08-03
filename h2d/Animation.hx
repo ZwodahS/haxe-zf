@@ -3,546 +3,222 @@ package common.h2d;
 import common.Updater;
 import common.Point2f;
 import common.MathUtils;
+import common.animations.Positionable;
+import common.animations.Scalable;
+import common.animations.Alphable;
+import common.animations.Rotatable;
 
-/**
-    Animation provide the common "animation" for h2d.Objects
-**/
-class Animation implements Updatable {
-    public var onFinish: () -> Void;
-    public var animator: Animator;
+class MoveToLocationByDurationAnimation extends common.animations.MoveToLocationByDuration
+        implements Positionable {
+    var h2dObject: h2d.Object;
 
-    public function new() {}
-
-    public function finish() {
-        if (this.onFinish != null) {
-            onFinish();
-        }
+    public function new(h2dObject: h2d.Object, position: Point2f, duration: Float) {
+        this.h2dObject = h2dObject;
+        super(this, position, duration);
     }
 
-    public function isDone(): Bool {
-        return true;
+    public var x(get, set): Float;
+
+    public function get_x(): Float {
+        return this.h2dObject.x;
     }
 
-    public function update(dt: Float) {}
-
-    public function stop(): Bool {
-        if (this.animator == null) return false;
-        return this.animator.stop(this);
+    public function set_x(x: Float): Float {
+        return this.h2dObject.x = x;
     }
 
-    /**
-        For easy chaining construction
-    **/
-    public function then(animation: Animation): ChainAnimation {
-        var animations: Array<Animation> = [this, animation];
-        return new ChainAnimation(animations);
+    public var y(get, set): Float;
+
+    public function get_y(): Float {
+        return this.h2dObject.y;
     }
 
-    public function with(animation: Animation): BatchAnimation {
-        var animations: Array<Animation> = [this, animation];
-        return new BatchAnimation(animations);
-    }
-
-    public function whenDone(onFinish: () -> Void): Animation {
-        this.onFinish = onFinish;
-        return this;
-    }
-
-    /******
-        Static Factory function to make this easier to use
-    ******/
-    /**
-        moveTo vs moveBy vs move
-        - moveTo is done when we reach the location
-        - moveBy is done when we moved by the amount
-        - move is to move the object by this amount for X duration.
-
-        moveTo
-        - byDuration: move to the position by Duration, this will calculate the path it will be taking
-                      and force the path. It will not do increment.
-        - bySpeed: move by amount per tick and stop eventually when the we reached. The speeds have to be absolute,
-                   and all negative values will be convert to positive.
-
-        moveBy
-        - byDuration: move to a position wihin a set time. Similar to the moveToByDuration, this will also calculate
-                      the pathing to take.
-        - bySpeed: move to position by providing a speed.
-
-        Ideally, do not combine movement animation together.
-
-    **/
-    /**
-        Move object by amount within duration
-    **/
-    public static function moveByAmountByDuration(object: h2d.Object, amount: Point2f,
-            duration: Float): Animation {
-        return new MoveByAmountByDuration(object, amount, duration);
-    }
-
-    public static function moveToLocationByDuration(object: h2d.Object, position: Point2f,
-            duration: Float): Animation {
-        return new MoveToLocationByDurationAnimation(object, position, duration);
-    }
-
-    /**
-        Batch & Chain
-    **/
-    public static function chain(animations: Array<Animation>): Animation {
-        return new ChainAnimation(animations);
-    }
-
-    public static function batch(animations: Array<Animation>): Animation {
-        return new BatchAnimation(animations);
+    public function set_y(y: Float): Float {
+        return this.h2dObject.y = y;
     }
 }
 
-/**
-    Chain Animation takes in a list of animations, and run them one after another
-**/
-class ChainAnimation extends Animation {
-    var currentIndex: Int;
-    var animations: Array<Animation>;
+class MoveToLocationBySpeedAnimation extends common.animations.MoveToLocationBySpeed implements Positionable {
+    var h2dObject: h2d.Object;
 
-    public function new(animations: Array<Animation>) {
-        super();
-        this.currentIndex = 0;
-        this.animations = animations;
+    public function new(h2dObject: h2d.Object, position: Point2f, speeds: Point2f = null, speed: Float = 1) {
+        this.h2dObject = h2dObject;
+        super(this, position, speeds, speed);
     }
 
-    override public function isDone(): Bool {
-        return this.currentIndex >= this.animations.length;
+    public var x(get, set): Float;
+
+    public function get_x(): Float {
+        return this.h2dObject.x;
     }
 
-    override public function update(dt: Float) {
-        if (this.isDone()) return;
-        this.animations[this.currentIndex].update(dt);
-        if (this.animations[this.currentIndex].isDone()) {
-            this.currentIndex++;
-        }
+    public function set_x(x: Float): Float {
+        return this.h2dObject.x = x;
     }
 
-    override public function then(animation: Animation): ChainAnimation {
-        this.animations.push(animation);
-        return this;
+    public var y(get, set): Float;
+
+    public function get_y(): Float {
+        return this.h2dObject.y;
+    }
+
+    public function set_y(y: Float): Float {
+        return this.h2dObject.y = y;
     }
 }
 
-/**
-    Batch Animation takes in a list of animations, run them together.
-**/
-class BatchAnimation extends Animation {
-    var animations: Array<Animation>;
+class MoveByAmountBySpeedAnimation extends common.animations.MoveByAmountBySpeed implements Positionable {
+    var h2dObject: h2d.Object;
 
-    public function new(animations: Array<Animation>) {
-        super();
-        this.animations = animations;
+    public function new(h2dObject: h2d.Object, moveAmount: Point2f, speeds: Point2f = null,
+            speed: Float = 1) {
+        this.h2dObject = h2dObject;
+        super(this, moveAmount, speeds, speed);
     }
 
-    override public function isDone(): Bool {
-        for (a in this.animations) {
-            if (!a.isDone()) return false;
-        }
-        return true;
+    public var x(get, set): Float;
+
+    public function get_x(): Float {
+        return this.h2dObject.x;
     }
 
-    override public function update(dt: Float) {
-        for (a in this.animations) {
-            if (a.isDone()) continue;
-            a.update(dt);
-        }
+    public function set_x(x: Float): Float {
+        return this.h2dObject.x = x;
     }
 
-    override public function with(animation: Animation): BatchAnimation {
-        this.animations.push(animation);
-        return this;
-    }
-}
+    public var y(get, set): Float;
 
-class MoveToLocationByDurationAnimation extends Animation {
-    var object: h2d.Object;
-    var start: Point2f;
-    var end: Point2f;
-    var duration: Float;
-    var delta: Float;
-    var step: Point2f;
-
-    var init = false;
-
-    public function new(object: h2d.Object, position: Point2f, duration: Float) {
-        super();
-        this.object = object;
-        this.end = position;
-        this.duration = duration;
-        this.delta = 0;
+    public function get_y(): Float {
+        return this.h2dObject.y;
     }
 
-    override public function isDone(): Bool {
-        return this.delta >= this.duration;
-    }
-
-    function initSteps() {
-        // delay this init for chain, or the position will be based on when it was constructed and not
-        // when the animation start.
-        this.start = [this.object.x, this.object.y];
-        this.step = (this.end - this.start) * (1 / duration);
-        this.init = true;
-    }
-
-    override public function update(dt: Float) {
-        if (!this.init) initSteps();
-        this.delta += dt;
-        if (this.delta > this.duration) this.delta = this.duration;
-        var currentPosition = this.start + (this.step * this.delta);
-        this.object.x = currentPosition.x;
-        this.object.y = currentPosition.y;
+    public function set_y(y: Float): Float {
+        return this.h2dObject.y = y;
     }
 }
 
-class MoveToLocationBySpeedAnimation extends Animation {
-    var object: h2d.Object;
-    var position: Point2f;
-    var speed: Point2f;
+class MoveByAmountByDuration extends common.animations.MoveByAmountByDuration implements Positionable {
+    var h2dObject: h2d.Object;
 
-    public function new(object: h2d.Object, position: Point2f, speeds: Point2f = null, speed: Float = 1) {
-        super();
-        this.object = object;
-        this.position = position;
-        this.speed = speeds != null ? speeds : [speed, speed];
+    public function new(h2dObject: h2d.Object, amount: Point2f, duration: Float) {
+        this.h2dObject = h2dObject;
+        super(this, amount, duration);
     }
 
-    override public function isDone(): Bool {
-        return this.position == [this.object.x, this.object.y];
+    public var x(get, set): Float;
+
+    public function get_x(): Float {
+        return this.h2dObject.x;
     }
 
-    override public function update(dt: Float) {
-        if (this.isDone()) {
-            return;
-        }
+    public function set_x(x: Float): Float {
+        return this.h2dObject.x = x;
+    }
 
-        if (this.object.x != this.position.x) {
-            var direction = this.object.x > this.position.x ? -1 : 1;
-            var moveX = this.speed.x * dt * direction;
-            if (moveX < 0) {
-                this.object.x = Math.max(this.object.x + moveX, this.position.x);
-            } else {
-                this.object.x = Math.min(this.object.x + moveX, this.position.x);
-            }
-        }
+    public var y(get, set): Float;
 
-        if (this.object.y != this.position.y) {
-            var direction = this.object.y > this.position.y ? -1 : 1;
-            var moveY = this.speed.y * dt * direction;
-            if (moveY < 0) {
-                this.object.y = Math.max(this.object.y + moveY, this.position.y);
-            } else {
-                this.object.y = Math.min(this.object.y + moveY, this.position.y);
-            }
-        }
+    public function get_y(): Float {
+        return this.h2dObject.y;
+    }
+
+    public function set_y(y: Float): Float {
+        return this.h2dObject.y = y;
     }
 }
 
-class MoveByAmountBySpeedAnimation extends Animation {
-    var object: h2d.Object;
-    var amount: Point2f;
-    var amountLeft: Point2f;
-    var speed: Point2f;
+class MoveBySpeedByDuration extends common.animations.MoveBySpeedByDuration implements Positionable {
+    var h2dObject: h2d.Object;
 
-    public function new(object: h2d.Object, moveAmount: Point2f, speeds: Point2f = null, speed: Float = 1) {
-        super();
-        this.object = object;
-        this.amount = moveAmount.copy();
-        this.amountLeft = moveAmount.copy();
-        this.speed = speeds != null ? speeds : [speed, speed];
-    }
-
-    override public function isDone(): Bool {
-        return (this.amountLeft.x == 0 && this.amountLeft.y == 0);
-    }
-
-    override public function update(dt: Float) {
-        if (this.isDone()) {
-            return;
-        }
-
-        var moveX = dt * this.speed.x * MathUtils.sign(this.amountLeft.x);
-        if (moveX < 0) {
-            moveX = Math.max(this.amountLeft.x, moveX);
-        } else {
-            moveX = Math.min(this.amountLeft.x, moveX);
-        }
-        this.amountLeft.x -= moveX;
-        this.object.x += moveX;
-
-        var moveY = dt * this.speed.y * MathUtils.sign(this.amountLeft.y);
-        if (moveY < 0) {
-            moveY = Math.max(this.amountLeft.y, moveY);
-        } else {
-            moveY = Math.min(this.amountLeft.y, moveY);
-        }
-        this.amountLeft.y -= moveY;
-        this.object.y += moveY;
-    }
-}
-
-class MoveByAmountByDuration extends Animation {
-    var object: h2d.Object;
-    var start: Point2f;
-    var amount: Point2f;
-    var duration: Float;
-    var delta: Float;
-    var step: Point2f;
-
-    public function new(object: h2d.Object, amount: Point2f, duration: Float) {
-        super();
-        this.object = object;
-        this.amount = amount;
-        this.duration = duration;
-        this.delta = 0;
-        this.start = [this.object.x, this.object.y];
-        this.step = this.amount * (1 / duration);
-    }
-
-    override public function isDone(): Bool {
-        return this.delta >= this.duration;
-    }
-
-    override public function update(dt: Float) {
-        this.delta += dt;
-        if (this.delta > this.duration) this.delta = this.duration;
-        var currentPosition = this.start + (this.step * this.delta);
-        this.object.x = currentPosition.x;
-        this.object.y = currentPosition.y;
-    }
-}
-
-class MoveBySpeedByDuration extends Animation {
-    var object: h2d.Object;
-    var moveSpeed: Point2f;
-    var moveDuration: Float;
-    var moveLeft: Float;
-
-    public function new(object: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null,
+    public function new(h2dObject: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null,
             moveSpeed: Float = 1) {
-        super();
-        this.object = object;
-        this.moveSpeed = moveSpeeds != null ? moveSpeeds : [moveSpeed, moveSpeed];
-        this.moveDuration = moveDuration;
-        this.moveLeft = moveDuration >= 0 ? moveDuration : 0;
+        this.h2dObject = h2dObject;
+        super(this, moveDuration, moveSpeeds, moveSpeed);
     }
 
-    override public function isDone(): Bool {
-        return (this.moveDuration >= 0 && this.moveLeft == 0);
+    public var x(get, set): Float;
+
+    public function get_x(): Float {
+        return this.h2dObject.x;
     }
 
-    override public function update(dt: Float) {
-        if (this.isDone()) {
-            return;
-        }
-
-        if (this.moveLeft >= 0) {
-            dt = Math.min(this.moveLeft, dt);
-        }
-
-        this.object.x += dt * this.moveSpeed.x;
-        this.object.y += dt * this.moveSpeed.y;
-        this.moveLeft -= dt;
-    }
-}
-
-class ScaleToAnimation extends Animation {
-    var object: h2d.Object;
-    var scaleTo: Point2f;
-    var scaleSpeed: Point2f;
-
-    public function new(object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1) {
-        super();
-        this.object = object;
-        this.scaleTo = scaleTo;
-        this.scaleSpeed = speeds != null ? speeds : [speed, speed];
+    public function set_x(x: Float): Float {
+        return this.h2dObject.x = x;
     }
 
-    override public function isDone(): Bool {
-        return this.scaleTo == [this.object.scaleX, this.object.scaleY];
+    public var y(get, set): Float;
+
+    public function get_y(): Float {
+        return this.h2dObject.y;
     }
 
-    override public function update(dt: Float) {
-        if (this.isDone()) {
-            return;
-        }
-
-        if (this.object.scaleX != this.scaleTo.x) {
-            var direction = this.object.scaleX > this.scaleTo.x ? -1 : 1;
-            var scaleX = this.scaleSpeed.x * dt * direction;
-            if (scaleX < 0) {
-                this.object.scaleX = Math.max(this.object.scaleX + scaleX, this.scaleTo.x);
-            } else {
-                this.object.scaleX = Math.min(this.object.scaleX + scaleX, this.scaleTo.x);
-            }
-        }
-
-        if (this.object.scaleY != this.scaleTo.y) {
-            var direction = this.object.scaleY > this.scaleTo.y ? -1 : 1;
-            var scaleY = this.scaleSpeed.y * dt * direction;
-            if (scaleY < 0) {
-                this.object.scaleY = Math.max(this.object.scaleY + scaleY, this.scaleTo.y);
-            } else {
-                this.object.scaleY = Math.min(this.object.scaleY + scaleY, this.scaleTo.y);
-            }
-        }
+    public function set_y(y: Float): Float {
+        return this.h2dObject.y = y;
     }
 }
 
-class AlphaToAnimation extends Animation {
-    var object: h2d.Object;
-    var alphaTo: Float;
-    var alphaSpeed: Float;
+class ScaleToAnimation extends common.animations.ScaleTo implements Scalable {
+    var h2dObject: h2d.Object;
 
-    public function new(object: h2d.Object, alphaTo: Float, alphaSpeed: Float = 1.0) {
-        super();
-        this.object = object;
-        this.alphaTo = alphaTo;
-        this.alphaSpeed = alphaSpeed;
+    public function new(h2dObject: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1) {
+        this.h2dObject = h2dObject;
+        super(this, scaleTo, speeds, speed);
     }
 
-    override public function isDone(): Bool {
-        return this.object.alpha == this.alphaTo;
+    public var scaleX(get, set): Float;
+
+    public function set_scaleX(scaleX: Float): Float {
+        return this.h2dObject.scaleX = scaleX;
     }
 
-    override public function update(dt: Float) {
-        if (this.isDone()) {
-            return;
-        }
+    public function get_scaleX(): Float {
+        return this.h2dObject.scaleX;
+    }
 
-        var sign = this.object.alpha > this.alphaTo ? -1 : 1;
-        var delta = this.alphaSpeed * dt * sign;
-        if (delta < 0) {
-            this.object.alpha = Math.max(this.object.alpha + delta, this.alphaTo);
-        } else {
-            this.object.alpha = Math.min(this.object.alpha + delta, this.alphaTo);
-        }
+    public var scaleY(get, set): Float;
+
+    public function set_scaleY(scaleY: Float): Float {
+        return this.h2dObject.scaleY = scaleY;
+    }
+
+    public function get_scaleY(): Float {
+        return this.h2dObject.scaleY;
     }
 }
 
-class RotateAnimation extends Animation {
-    var object: h2d.Object;
-    var rotateSpeed: Float; // in radians
-    var duration: Null<Float>; // in seconds
-    var timeElapsed: Float;
+class AlphaToAnimation extends common.animations.AlphaTo implements Alphable {
+    var h2dObject: h2d.Object;
 
-    public function new(object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null) {
-        super();
-        this.object = object;
-        this.rotateSpeed = rotateSpeed;
-        this.duration = duration;
-        this.timeElapsed = 0;
+    public function new(h2dObject: h2d.Object, alphaTo: Float, alphaSpeed: Float = 1.0) {
+        this.h2dObject = h2dObject;
+        super(this, alphaTo, alphaSpeed);
     }
 
-    override public function isDone(): Bool {
-        return this.duration != null && this.duration <= this.timeElapsed;
+    public var alpha(get, set): Float;
+
+    public function set_alpha(alpha: Float): Float {
+        return this.h2dObject.alpha = alpha;
     }
 
-    override public function update(dt: Float) {
-        if (this.isDone()) return;
-        this.timeElapsed += dt;
-        if (this.duration != null && this.timeElapsed >= this.duration) {
-            this.timeElapsed = duration;
-        }
-        this.object.rotation = (this.timeElapsed * Math.PI * this.rotateSpeed);
+    public function get_alpha(): Float {
+        return this.h2dObject.alpha;
     }
 }
 
-class Animator extends common.Updater { // extends the Updater since most of it is the same
-    public function new() {
-        super();
+class RotateAnimation extends common.animations.Rotate implements Rotatable {
+    var h2dObject: h2d.Object;
+
+    public function new(h2dObject: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null) {
+        this.h2dObject = h2dObject;
+        super(this, rotateSpeed, duration);
     }
 
-    public function runAnim(anim: Animation, onFinish: () -> Void = null) {
-        if (onFinish != null) anim.onFinish = onFinish;
-        this.run(anim);
-        anim.animator = this;
+    public var rotation(get, set): Float;
+
+    public function set_rotation(rotation: Float): Float {
+        return this.h2dObject.rotation = rotation;
     }
 
-    // mirrors MoveToLocationBySpeedAnimation constructor
-    public function moveTo(object: h2d.Object, position: Point2f, speeds: Point2f = null, speed: Float = 1,
-            onFinish: () -> Void = null): Animation {
-        var anim = new MoveToLocationBySpeedAnimation(object, position, speeds, speed);
-        if (onFinish != null) {
-            anim.onFinish = onFinish;
-        }
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function moveToByDuration(object: h2d.Object, position: Point2f, duration: Float,
-            onFinish: () -> Void = null): Animation {
-        var anim = new MoveToLocationByDurationAnimation(object, position, duration);
-        if (onFinish != null) {
-            anim.onFinish = onFinish;
-        }
-        this.runAnim(anim);
-        return anim;
-    }
-
-    // mirrors MoveByAmountBySpeedAnimation constructor
-    public function moveBy(object: h2d.Object, moveAmount: Point2f, speeds: Point2f = null,
-            speed: Float = 1, onFinish: () -> Void = null): Animation {
-        var anim = new MoveByAmountBySpeedAnimation(object, moveAmount, speeds, speed);
-        if (onFinish != null) {
-            anim.onFinish = onFinish;
-        }
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function move(object: h2d.Object, duration: Float, moveSpeeds: Point2f = null, moveSpeed = 1,
-            onFinish: () -> Void = null): Animation {
-        var anim = new MoveBySpeedByDuration(object, duration, moveSpeeds, moveSpeed);
-        if (onFinish != null) {
-            anim.onFinish = onFinish;
-        }
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function scaleTo(object: h2d.Object, scaleTo: Point2f, speeds: Point2f = null, speed: Float = 1,
-            onFinish: () -> Void = null): Animation {
-        var anim = new ScaleToAnimation(object, scaleTo, speeds, speed);
-        if (onFinish != null) {
-            anim.onFinish = onFinish;
-        }
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function alphaTo(object: h2d.Object, alphaTo: Float, alphaSpeed: Float = 1.0,
-            onFinish: () -> Void = null): Animation {
-        var anim = new AlphaToAnimation(object, alphaTo, alphaSpeed);
-        if (onFinish != null) {
-            anim.onFinish = onFinish;
-        }
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function rotate(object: h2d.Object, rotateSpeed: Float, duration: Null<Float> = null,
-            onFinish: () -> Void = null): Animation {
-        var anim = new RotateAnimation(object, rotateSpeed, duration);
-        if (onFinish != null) anim.onFinish = onFinish;
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function chain(animations: Array<Animation>, onFinish: () -> Void = null) {
-        var anim = new ChainAnimation(animations);
-        if (onFinish != null) anim.onFinish = onFinish;
-        this.runAnim(anim);
-        return anim;
-    }
-
-    public function batch(animations: Array<Animation>, onFinish: () -> Void = null) {
-        var anim = new BatchAnimation(animations);
-        if (onFinish != null) anim.onFinish = onFinish;
-        this.runAnim(anim);
-        return anim;
+    public function get_rotation(): Float {
+        return this.h2dObject.rotation;
     }
 }
