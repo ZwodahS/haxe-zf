@@ -37,4 +37,10 @@ class System<E: Entity> {
     public function onEvent(event: hxd.Event): Bool {
         return false;
     }
+
+    public function reset() {
+        /**
+            reset the system to the same state after constructor
+        **/
+    }
 }

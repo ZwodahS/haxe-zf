@@ -17,6 +17,8 @@ class Entity extends h2d.Layers {
         }
     }
 
+    public function destroy() {}
+
     override public function toString(): String {
         return 'Entity: ${this.id}';
     }

@@ -12,6 +12,23 @@ class World<E: Entity> {
         this.systems = new List<System<E>>();
     }
 
+    public function reset() {
+        /**
+            remove all the entities and reset all the systems.
+
+            We have 2 options.
+            1. just delete the world and create a new world
+            2. reset the world.
+
+            We could delete the world, but we also need the world to destroy all the listeners etc.
+            The effort in doing that is probably the same as resetting the world, hence we might as well do that.
+        **/
+
+        for (s in this.systems) s.reset();
+        for (e in this.entities) e.destroy();
+        this.entities.clear();
+    }
+
     /**
         addSystem add a system to the world
     **/
