@@ -3,13 +3,12 @@ package common.ecs2d;
 /**
     Generic Entity object.
 **/
-class Entity extends h2d.Layers {
+class Entity {
     public var id(default, null): Int; // id is only set during construction
 
     private static var idCounter: Int = 0; // global id counter for entity
 
     public function new(id: Null<Int> = null) {
-        super();
         if (id == null) {
             this.id = idCounter++;
         } else {
@@ -19,7 +18,7 @@ class Entity extends h2d.Layers {
 
     public function destroy() {}
 
-    override public function toString(): String {
+    public function toString(): String {
         return 'Entity: ${this.id}';
     }
 }
