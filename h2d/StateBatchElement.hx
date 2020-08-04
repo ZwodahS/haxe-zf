@@ -4,15 +4,13 @@ package common.h2d;
     StateBatchElement does the same thing as StateObject, except as a BatchElement.
 **/
 class StateBatchElement extends h2d.SpriteBatch.BatchElement {
-
     /**
         Tue Aug  4 12:15:41 2020
         For now we will deal with each state being a Tile.
         At some time we will have to handle animation.
         In StateObject, we uses Anim. In this case, we need the same logic as Anim, and
         override the update function of BatchElement to handle that.
-     **/
-
+    **/
     var states: Map<String, h2d.Tile>;
 
     public var state(default, set): String;
