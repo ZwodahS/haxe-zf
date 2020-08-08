@@ -12,10 +12,31 @@ enum ScreenState {
     Ready;
 }
 
+#if debug
+@:access(common.Game)
+class Console extends h2d.Console {
+    var g: Game;
+
+    public function new(font, ?parent, g: Game) {
+        this.g = g;
+        super(font, parent);
+    }
+
+    override public function show() {
+        super.show();
+        g.consoleBg.visible = true;
+    }
+
+    override public function hide() {
+        super.hide();
+        g.consoleBg.visible = false;
+    }
+}
+#end
+
 class Game extends hxd.App {
     var framerate: h2d.Text;
     var drawCalls: h2d.Text;
-    var console: h2d.Console;
 
     override function init() {
         // add event handler
@@ -29,6 +50,9 @@ class Game extends hxd.App {
     }
 
 #if debug
+    var console: h2d.Console;
+    var consoleBg: h2d.Bitmap;
+
     function setupFramerate() {
         var font: h2d.Font = hxd.res.DefaultFont.get().clone();
         font.resizeTo(12);
@@ -48,8 +72,13 @@ class Game extends hxd.App {
         var font = hxd.res.DefaultFont.get().clone();
         font.resizeTo(12);
 
-        this.console = new h2d.Console(font);
-        this.s2d.add(this.console, 10);
+        this.consoleBg = new h2d.Bitmap(h2d.Tile.fromColor(1, 1, 1, 0.5));
+        this.consoleBg.tile.scaleToSize(s2d.width, s2d.height);
+        this.consoleBg.visible = false;
+
+        this.console = new Console(font, this);
+        this.s2d.add(this.consoleBg, 9);
+        this.s2d.add(console, 10);
 
         this.console.addCommand("getWindowSize", "get the window size", [], function() {
             var window = hxd.Window.getInstance();
