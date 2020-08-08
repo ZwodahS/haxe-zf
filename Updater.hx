@@ -83,4 +83,9 @@ class Updater {
         var v = this.updates.remove(u);
         return v;
     }
+
+    public function clear() {
+        this.updates.clear();
+        this.toFinish.clear();
+    }
 }
