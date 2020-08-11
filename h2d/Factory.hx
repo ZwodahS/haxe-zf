@@ -52,6 +52,21 @@ class WrappedTextObject {
         return this;
     }
 
+    inline public function alignRight(x: Float): WrappedTextObject {
+        this.text.x = x - this.text.textWidth;
+        return this;
+    }
+
+    inline public function centerVertical(y: Float): WrappedTextObject {
+        this.text.y = y - (this.text.textHeight / 2);
+        return this;
+    }
+
+    inline public function centerHorizontal(x: Float): WrappedTextObject {
+        this.text.x = x - (this.text.textWidth / 2);
+        return this;
+    }
+
     inline public function visible(visible: Bool): WrappedTextObject {
         this.text.visible = visible;
         return this;
