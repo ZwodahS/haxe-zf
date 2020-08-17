@@ -97,6 +97,39 @@ class List<T> extends haxe.ds.List<T> {
         return items;
     }
 
+    public function get(position: Int): T {
+        /**
+            Slow, but useful if we know what we are doing.
+        **/
+        var curr = this.h;
+
+        for (i in 0...position) {
+            if (curr == null) break;
+            curr = curr.next;
+        }
+        return curr.item;
+    }
+
+    public function popItemAtPosition(position: Int): Null<T> {
+        var prev = null;
+        var curr = this.h;
+        for (i in 0...position) {
+            if (curr == null) break;
+            prev = curr;
+            curr = curr.next;
+        }
+        if (curr == null) return null;
+        if (prev == null) {
+            this.h = curr.next;
+        } else {
+            prev.next = curr.next;
+        }
+        if (this.q == curr) {
+            this.q = prev; // this become the last index
+        }
+        return curr.item;
+    }
+
     public function copy(): List<T> {
         // shallow copy
         var l = new List<T>();
