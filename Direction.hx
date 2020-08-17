@@ -1,6 +1,6 @@
 package common;
 
-enum Direction {
+enum DirectionType {
     Left;
     UpLeft;
     Up;
@@ -12,88 +12,162 @@ enum Direction {
     None;
 }
 
-class Utils {
-    public static function directionToCoord(direction: Direction): Point2i {
-        switch (direction) {
-            case Left:
-                return new Point2i(-1, 0);
-            case UpLeft:
-                return new Point2i(-1, -1);
-            case Up:
-                return new Point2i(0, -1);
-            case UpRight:
-                return new Point2i(1, -1);
-            case Right:
-                return new Point2i(1, 0);
-            case DownRight:
-                return new Point2i(1, 1);
-            case Down:
-                return new Point2i(0, 1);
-            case DownLeft:
-                return new Point2i(-1, 1);
+enum CardinalDirectionType {
+    West;
+    NorthWest;
+    North;
+    NorthEast;
+    East;
+    SouthEast;
+    South;
+    SouthWest;
+    None;
+}
+
+class Direction {
+    public var direction(get, never): DirectionType;
+    public var cardinalDirection(default, null): CardinalDirectionType;
+    public var coord(get, never): Point2i;
+
+    public function new(cDirectionType: CardinalDirectionType = None) {
+        this.cardinalDirection = cDirectionType;
+    }
+
+    public function get_direction(): DirectionType {
+        switch (this.cardinalDirection) {
+            case West:
+                return Left;
+            case NorthWest:
+                return UpLeft;
+            case North:
+                return Up;
+            case NorthEast:
+                return UpRight;
+            case East:
+                return Right;
+            case SouthEast:
+                return DownRight;
+            case South:
+                return Down;
+            case SouthWest:
+                return DownLeft;
             case None:
-                return new Point2i(0, 0);
+                return None;
+        }
+        return None;
+    }
+
+    public function get_coord(): Point2i {
+        switch (this.cardinalDirection) {
+            case West:
+                return [-1, 0];
+            case NorthWest:
+                return [-1, -1];
+            case North:
+                return [0, -1];
+            case NorthEast:
+                return [1, -1];
+            case East:
+                return [1, 0];
+            case SouthEast:
+                return [1, 1];
+            case South:
+                return [0, 1];
+            case SouthWest:
+                return [-1, 1];
+            case None:
+                return [0, 0];
+        }
+        return [0, 0];
+    }
+
+    public static function fromDirection(type: DirectionType): Direction {
+        switch (type) {
+            case Left:
+                return new Direction(West);
+            case UpLeft:
+                return new Direction(NorthWest);
+            case Up:
+                return new Direction(North);
+            case UpRight:
+                return new Direction(NorthEast);
+            case Right:
+                return new Direction(East);
+            case DownRight:
+                return new Direction(SouthEast);
+            case Down:
+                return new Direction(South);
+            case DownLeft:
+                return new Direction(SouthWest);
+            case None:
+                return new Direction(None);
             default:
-                return new Point2i();
+                return new Direction(None);
         }
     }
 
-    public static function coordToDirection(coord1: Point2i, coord2: Point2i): Direction {
-        var xDiff = coord2.x - coord1.x;
-        var yDiff = coord2.y - coord1.y;
+    public static function fromPoint2i(point: Point2i): Direction {
+        /**
+            This will bound all x and y between -1 and 1
+            origin is top left, meaning (1, 1) will be South East
+            TODO: might want to provide a different coordinate system if necessary
+        **/
+        var xDiff = MathUtils.clampI(point.x, -1, 1);
 
+        var yDiff = MathUtils.clampI(point.y, -1, 1);
         if (xDiff == 0) {
             if (yDiff == 0) {
-                return Direction.None;
+                return new Direction(None);
             } else if (yDiff == 1) {
-                return Direction.Down;
+                return new Direction(South);
             } else if (yDiff == -1) {
-                return Direction.Up;
+                return new Direction(North);
             }
         } else if (xDiff == 1) {
             if (yDiff == 0) {
-                return Direction.Right;
+                return new Direction(East);
             } else if (yDiff == 1) {
-                return Direction.UpRight;
+                return new Direction(SouthEast);
             } else if (yDiff == -1) {
-                return Direction.DownRight;
+                return new Direction(NorthEast);
             }
         } else if (xDiff == -1) {
             if (yDiff == 0) {
-                return Direction.Left;
+                return new Direction(West);
             } else if (yDiff == 1) {
-                return Direction.UpLeft;
+                return new Direction(SouthWest);
             } else if (yDiff == -1) {
-                return Direction.UpLeft;
+                return new Direction(NorthWest);
             }
         }
-
-        return Direction.None;
+        return new Direction(None);
     }
 
-    public static function opposite(direction: Direction): Direction {
-        switch (direction) {
-            case Left:
-                return Direction.Right;
-            case UpLeft:
-                return Direction.DownRight;
-            case Up:
-                return Direction.Down;
-            case UpRight:
-                return Direction.DownLeft;
-            case Right:
-                return Direction.Left;
-            case DownRight:
-                return Direction.UpLeft;
-            case Down:
-                return Direction.Up;
-            case DownLeft:
-                return Direction.UpRight;
+    public static function fromPointPerspective(coord1: Point2i, coord2: Point2i): Direction {
+        return fromPoint2i([coord2.x - coord1.x, coord2.y - coord1.y]);
+    }
+
+    public function opposite(): Direction {
+        switch (this.cardinalDirection) {
+            case West:
+                return new Direction(East);
+            case NorthWest:
+                return new Direction(SouthEast);
+            case North:
+                return new Direction(South);
+            case NorthEast:
+                return new Direction(SouthWest);
+            case East:
+                return new Direction(West);
+            case SouthEast:
+                return new Direction(NorthWest);
+            case South:
+                return new Direction(North);
+            case SouthWest:
+                return new Direction(NorthEast);
             case None:
-                return Direction.None;
-            default:
-                return Direction.None;
+                return new Direction(None);
         }
-        return Direction.None;
+        return new Direction(None);
     }
 }
