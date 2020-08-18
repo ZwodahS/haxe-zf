@@ -93,4 +93,19 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
     public function distance(p: Point2i): Int {
         return hxd.Math.iabs(this[0] - p.x) + hxd.Math.iabs(this[1] - p.y);
     }
+
+    public function isAround(p: Point2i): Bool {
+        // isAround check for if the point is a point around this point.
+        if (p.x == this[0] && p.y == this[0]) return false;
+        var xDiff = hxd.Math.iabs(this[0] - p.x);
+        var yDiff = hxd.Math.iabs(this[1] - p.y);
+        return xDiff <= 1 && yDiff <= 1;
+    }
+
+    public function isAdjacent(p: Point2i): Bool {
+        // isAdjacent check for if the point is directly adjacent to this, excluding diagonal
+        var xDiff = hxd.Math.iabs(this[0] - p.x);
+        var yDiff = hxd.Math.iabs(this[1] - p.y);
+        return xDiff + yDiff == 1;
+    }
 }
