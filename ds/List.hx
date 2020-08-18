@@ -78,8 +78,8 @@ class List<T> extends haxe.ds.List<T> {
         return this;
     }
 
-    public function shuffle() {
-        ListUtils.shuffle(this);
+    public function shuffle(r: hxd.Rand = null) {
+        ListUtils.shuffle(this, r);
     }
 
     public function contains(item: T): Bool {
