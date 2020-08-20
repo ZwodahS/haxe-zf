@@ -1,14 +1,13 @@
 package common;
 
 /**
-    Probability Map stores a mapping of [Chance] -> T
+    ProbabilityTable stores a mapping of [Chance] -> T
     It then allow for rolling for T by providing a hxd.Rand
 **/
-
-class ProbabilityMap<T> {
-
+class ProbabilityTable<T> {
     var chances: Array<{chance: Int, item: T}>;
     var total: Int;
+
     public function new() {
         this.chances = [];
         this.total = 0;
