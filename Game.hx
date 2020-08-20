@@ -135,7 +135,7 @@ class Game extends hxd.App {
 #end
         this.s2d.render(engine);
 #if debug
-        var drawTime = '${common.Strings.formatFloat(haxe.Timer.stamp() - t0, 5)}s';
+        var drawTime = '${common.StringUtils.formatFloat(haxe.Timer.stamp() - t0, 5)}s';
         this.drawCalls.text = 'draw: ${engine.drawCalls} (${drawTime})';
 #end
     }

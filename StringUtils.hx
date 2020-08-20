@@ -1,6 +1,6 @@
 package common;
 
-class Strings {
+class StringUtils {
     inline public static function formatFloat(v: Float, dp: Int = 0): String {
         var str = '${v}';
         var split = str.split('.');
