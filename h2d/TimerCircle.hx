@@ -1,4 +1,4 @@
-package common;
+package common.h2d;
 
 class TimerCircle extends h2d.Layers {
     public var maxTime(default, set): Float;
