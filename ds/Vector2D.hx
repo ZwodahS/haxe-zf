@@ -1,4 +1,4 @@
-package common;
+package common.ds;
 
 import haxe.ds.Vector;
 
@@ -7,7 +7,7 @@ typedef XY = {
     y: Int
 }
 
-@:access(common.Vector2D)
+@:access(common.ds.Vector2D)
 class Vector2DIteratorXY<T> {
     var data: Vector2D<T>;
     var currX: Int;
@@ -38,7 +38,7 @@ class Vector2DIteratorXY<T> {
     }
 }
 
-@:access(common.Vector2D)
+@:access(common.ds.Vector2D)
 class Vector2DIteratorYX<T> {
     var data: Vector2D<T>;
     var currX: Int;
@@ -69,7 +69,7 @@ class Vector2DIteratorYX<T> {
     }
 }
 
-@:access(common.Vector2D)
+@:access(common.ds.Vector2D)
 class LinearIterator<T> {
     var data: Vector2D<T>;
     var curr: Int;
