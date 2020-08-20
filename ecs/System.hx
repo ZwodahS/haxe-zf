@@ -1,57 +1,43 @@
 package common.ecs;
 
-import common.ecs.World;
-
 /**
-    Abstract System class
+    Abstract parent class of all System
 **/
-class System {
-    public static final TYPE = "System";
+class System<E: Entity> {
+    public function new() {}
 
     /**
-        type represent the string type of the system
+        inform that an entity is added to the world.
     **/
-    public var type(get, null): String;
-
-    public function get_type(): String {
-        return this.type;
-    }
-
-    var world: World;
-
-    public function new(type: String = "System") {
-        this.type = type;
-    }
+    public function entityAdded(entity: E) {}
 
     /**
-        init function is called when the system is added to the system
+        inform that an entity is removed from the world.
     **/
-    public function init(world: World) {
-        this.world = world;
-    }
+    public function entityRemoved(entity: E) {}
 
     /**
-        addEntity adds an entity into the system
-    **/
-    public function addEntity(ent: Entity) {}
-
-    /**
-        removeEntity removes an entity into the system
-    **/
-    public function removeEntity(ent: Entity): Entity {
-        return ent;
-    }
-
-    /**
-        update is the main function called by the world.
+        update loop
     **/
     public function update(dt: Float) {}
 
     /**
-        the event handling of the system.
-        if the event is handled or the event should stop propagating to the rest of the systems, return true
+        init the system.
+        This is called when the system is added to the world.
+    **/
+    public function init(world: World<E>) {}
+
+    /**
+        handle an event
+        return true if the event should stop propagation to other systems
     **/
     public function onEvent(event: hxd.Event): Bool {
         return false;
+    }
+
+    public function reset() {
+        /**
+            reset the system to the same state after constructor
+        **/
     }
 }

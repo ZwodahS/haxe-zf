@@ -1,10 +1,10 @@
 package common.ecs;
 
-class SimpleSystem extends System {
+class SimpleSystem<E: Entity> extends System<E> {
     var updateFunc: (Float) -> Void;
 
-    public function new(name: String, updateFunc: (dt: Float) -> Void) {
-        super(name);
+    public function new(updateFunc: (dt: Float) -> Void) {
+        super();
         this.updateFunc = updateFunc;
     }
 

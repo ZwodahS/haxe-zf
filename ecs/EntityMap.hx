@@ -1,4 +1,4 @@
-package common.ecs2d;
+package common.ecs;
 
 class Iterator<E: Entity> {
     var map: EntityMap<E>;
@@ -44,8 +44,8 @@ class KeyValueIterator<E: Entity> {
     }
 }
 
-@:access(common.ecs2d.Iterator)
-@:access(common.ecs2d.KeyValueIterator)
+@:access(common.ecs.Iterator)
+@:access(common.ecs.KeyValueIterator)
 class EntityMap<E: Entity> {
     var map: Map<Int, E>;
 
