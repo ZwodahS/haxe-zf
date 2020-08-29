@@ -108,16 +108,18 @@ class Game extends hxd.App {
         if (this.screenState == Exiting) {
             if (outgoingScreen.doneExiting()) {
                 this.s2d.removeChild(this.outgoingScreen);
+                screenExited(this.outgoingScreen);
                 this.outgoingScreen.destroy();
                 this.outgoingScreen = null;
-                if (incomingScreen != null) {
+                if (this.incomingScreen != null) {
                     beginIncommingScreen();
                 } else {
                     this.screenState = Ready;
                 }
             }
         } else if (this.screenState == Entering) {
-            if (incomingScreen.doneEntering()) {
+            if (this.incomingScreen.doneEntering()) {
+                screenEntered(this.incomingScreen);
                 this.screenState = Ready;
                 this.currentScreen = this.incomingScreen;
                 this.incomingScreen = null;
@@ -148,9 +150,10 @@ class Game extends hxd.App {
 
     var screenState: ScreenState;
 
-    function switchScreen(screen: common.Screen) {
+    public function switchScreen(screen: common.Screen) {
         if (this.currentScreen == screen) return;
         if (this.currentScreen != null) this.outgoingScreen = this.currentScreen;
+        screen.game = this;
         this.currentScreen = null;
         this.incomingScreen = screen;
 
