@@ -38,6 +38,7 @@ class ColorButton extends h2d.Layers {
         interactive.onClick = function(e: hxd.Event) {
             onClick();
         }
+        interactive.cursor = Default;
 
         this.init = true;
         updateTextAlignment();

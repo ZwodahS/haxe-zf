@@ -1,7 +1,7 @@
 package common;
 
 class AlignmentUtils {
-    public inline static function center(offset: Float, total: Float, width: Float): Float {
-        return offset + ((total - width) / 2);
+    public inline static function center(offset: Float, totalWidth: Float, width: Float): Float {
+        return offset + ((totalWidth - width) / 2);
     }
 }
