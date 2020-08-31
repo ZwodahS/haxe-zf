@@ -119,6 +119,7 @@ class Bar extends h2d.Object {
         if (this.bg != null) this.bg.width = this.width;
         if (this.barType == Normal) {
             var healthPercentage = value * 1.0 / maxValue;
+            if (healthPercentage < 0) healthPercentage = 0.0;
             this.bar.width = this.width * healthPercentage;
         } else {
             this.bar.width = this.width;
