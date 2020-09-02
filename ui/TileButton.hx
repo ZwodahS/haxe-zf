@@ -17,8 +17,8 @@ class TileButton extends h2d.Layers {
     var disabledBitmap: h2d.Bitmap;
     var selectedBitmap: h2d.Bitmap;
 
-    var width: Float;
-    var height: Float;
+    public var width(default, null): Float;
+    public var height(default, null): Float;
 
     public function new(defaultTile: h2d.Tile, hoverTile: h2d.Tile, disabledTile: h2d.Tile,
             selectedTile: h2d.Tile) {
