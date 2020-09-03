@@ -29,4 +29,9 @@ class Chain extends Animation {
         this.animations.push(animation);
         return this;
     }
+
+    override public function wait(duration: Float): Chain {
+        this.animations.push(new Wait(duration));
+        return this;
+    }
 }

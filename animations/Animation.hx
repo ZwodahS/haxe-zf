@@ -38,6 +38,11 @@ class Animation implements common.Updater.Updatable {
         return new Batch(animations);
     }
 
+    public function wait(duration: Float): Chain {
+        var animations: Array<Animation> = [this, new Wait(duration)];
+        return new Chain(animations);
+    }
+
     public function whenDone(onFinish: () -> Void): Animation {
         this.onFinish = onFinish;
         return this;
