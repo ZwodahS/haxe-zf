@@ -19,7 +19,7 @@ class Bar extends h2d.Object {
 
     public var value(default, set): Int = 0;
     public var maxValue(default, set): Int = 0;
-    public var textValue(default, set): String = '';
+    public var textValue(default, set): String = null;
 
     public var width(default, set): Float;
     public var height(default, set): Float;
@@ -120,11 +120,19 @@ class Bar extends h2d.Object {
         if (this.text == null) return;
         switch (this.barType) {
             case Normal:
-                this.text.text = '${this.value}/${this.maxValue}';
+                if (this.textValue != null) {
+                    this.text.text = this.textValue;
+                } else {
+                    this.text.text = '${this.value}/${this.maxValue}';
+                }
             case SingleValue:
-                this.text.text = '${this.value}';
+                if (this.textValue != null) {
+                    this.text.text = this.textValue;
+                } else {
+                    this.text.text = '${this.value}';
+                }
             case StringBar:
-                this.text.text = this.textValue;
+                this.text.text = this.textValue == null ? '' : this.textValue;
             default:
         }
         this.text.x = (this.bar.x + width / 2) - this.text.textWidth / 2;
