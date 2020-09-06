@@ -46,9 +46,9 @@ class WrappedTextObject {
         return this;
     }
 
-    inline public function position(x: Float, y: Float): WrappedTextObject {
-        this.text.x = x;
-        this.text.y = y;
+    inline public function position(x: Null<Float>, y: Null<Float>): WrappedTextObject {
+        if (x != null) this.text.x = x;
+        if (y != null) this.text.y = y;
         return this;
     }
 
