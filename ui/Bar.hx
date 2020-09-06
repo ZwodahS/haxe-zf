@@ -6,6 +6,7 @@ enum BarType {
     Normal; // Show current and max, with background and foreground of the same color, and background will have a different opacity
     SingleValue; // Show only current value, has no max value.
     StringBar; // Show a String + a color for the string.
+    EmptyBar;
 }
 
 class Bar extends h2d.Object {
@@ -45,13 +46,15 @@ class Bar extends h2d.Object {
         this.bar.height = height;
         this.barColor = barColor;
 
-        this.addChild(this.text = Factory.text(new h2d.Text(font))
-            .textColor(textColor)
-            .position(0, 0)
-            .setText('')
-            .centerHorizontal(this.bar.x + width / 2)
-            .centerVertical(this.bar.y + height / 2)
-            .text);
+        if (barType != EmptyBar) {
+            this.addChild(this.text = Factory.text(new h2d.Text(font))
+                .textColor(textColor)
+                .position(0, 0)
+                .setText('')
+                .centerHorizontal(this.bar.x + width / 2)
+                .centerVertical(this.bar.y + height / 2)
+                .text);
+        }
 
         this.width = width;
         this.height = height;
@@ -71,9 +74,11 @@ class Bar extends h2d.Object {
         this.bar.width = this.width * healthPercentage;
         this.value = valueCurr;
         this.maxValue = valueMax;
-        this.text.text = '${valueCurr} / ${valueMax}';
-        this.text.x = this.bar.x + ((width - this.text.textWidth) / 2);
-        this.text.y = this.bar.y + ((height - this.text.textHeight) / 2);
+        if (this.text != null) {
+            this.text.text = '${valueCurr} / ${valueMax}';
+            this.text.x = this.bar.x + ((width - this.text.textWidth) / 2);
+            this.text.y = this.bar.y + ((height - this.text.textHeight) / 2);
+        }
     }
 
     public function set_width(w: Float): Float {
@@ -112,6 +117,7 @@ class Bar extends h2d.Object {
     }
 
     function updateText() {
+        if (this.text == null) return;
         switch (this.barType) {
             case Normal:
                 this.text.text = '${this.value}/${this.maxValue}';
@@ -138,6 +144,11 @@ class Bar extends h2d.Object {
         } else {
             this.bar.width = this.width;
         }
+        updateTextPosition();
+    }
+
+    function updateTextPosition() {
+        if (this.text == null) return;
         this.text.x = this.bar.x + ((width - this.text.textWidth) / 2);
         this.text.y = this.bar.y + ((height - this.text.textHeight) / 2);
     }
