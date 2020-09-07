@@ -44,6 +44,12 @@ class TileButton extends h2d.Layers {
         interactive.onClick = function(e: hxd.Event) {
             onClick();
         }
+        interactive.onPush = function(e: hxd.Event) {
+            onPush();
+        }
+        interactive.onRelease = function(e: hxd.Event) {
+            onRelease();
+        }
         interactive.cursor = Default;
 
         this.init = true;
@@ -122,6 +128,10 @@ class TileButton extends h2d.Layers {
     }
 
     dynamic public function onClick() {}
+
+    dynamic public function onPush() {}
+
+    dynamic public function onRelease() {}
 
     public static function fromColor(defaultColor: Int, hoverColor: Int, disabledColor: Int,
             selectedColor: Int, width: Int, height: Int): TileButton {
