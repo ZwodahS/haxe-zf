@@ -101,7 +101,7 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
         return new h3d.col.Point(this[0], this[1], this[2]);
     }
 
-    @:from static public function fromh2dPoint(p: h3d.col.Point): Point3f {
+    @:from static public function fromh3dPoint(p: h3d.col.Point): Point3f {
         return new Point3f(p.x, p.y, p.z);
     }
 }
