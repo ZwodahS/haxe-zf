@@ -119,6 +119,7 @@ class List<T> extends haxe.ds.List<T> {
             curr = curr.next;
         }
         if (curr == null) return null;
+        length--;
         if (prev == null) {
             this.h = curr.next;
         } else {
