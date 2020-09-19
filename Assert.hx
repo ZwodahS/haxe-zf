@@ -16,4 +16,11 @@ class Assert {
         };
 #end
     }
+
+    public static function valueIn<T>(v: T, values: Array<T>): Bool {
+        for (value in values) {
+            if (v == value) return true;
+        }
+        return false;
+    }
 }
