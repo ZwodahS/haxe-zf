@@ -81,4 +81,13 @@ class Factory {
     inline public static function text(text: h2d.Text): WrappedTextObject {
         return new WrappedTextObject(text);
     }
+
+    inline public static function tileRect(x: Float, y: Float, w: Int, h: Int, color: Int): WrappedObject {
+        var tile = h2d.Tile.fromColor(0xFFFFFF, w, h);
+        var bm = new h2d.Bitmap(tile);
+        bm.x = x;
+        bm.y = y;
+        bm.color.setColor(color);
+        return new WrappedObject(bm);
+    }
 }

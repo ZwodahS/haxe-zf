@@ -9,7 +9,8 @@ class TileButton extends h2d.Layers {
 
     var isOver: Bool = false;
 
-    var textLabel: h2d.HtmlText;
+    public var textLabel(default, null): h2d.Text;
+
     var init: Bool = false;
 
     var defaultBitmap: h2d.Bitmap;
@@ -20,8 +21,10 @@ class TileButton extends h2d.Layers {
     public var width(default, null): Float;
     public var height(default, null): Float;
 
+    var useHtmlText: Bool = true;
+
     public function new(defaultTile: h2d.Tile, hoverTile: h2d.Tile, disabledTile: h2d.Tile,
-            selectedTile: h2d.Tile) {
+            selectedTile: h2d.Tile, useHtmlText: Bool = true) {
         super();
         this.addChild(this.defaultBitmap = new h2d.Bitmap(defaultTile));
         this.addChild(this.hoverBitmap = new h2d.Bitmap(hoverTile));
@@ -33,6 +36,7 @@ class TileButton extends h2d.Layers {
         this.hoverBitmap.visible = false;
         this.disabledBitmap.visible = false;
         this.selectedBitmap.visible = false;
+        this.useHtmlText = useHtmlText;
 
         var interactive = new h2d.Interactive(width, height, this);
         interactive.onOver = function(e: hxd.Event) {
@@ -91,7 +95,11 @@ class TileButton extends h2d.Layers {
     function createTextLabel() {
         if (this.textLabel != null) return;
         if (this.text == null || this.font == null) return; // not ready to create the label
-        this.addChild(this.textLabel = new h2d.HtmlText(font));
+        if (this.useHtmlText) {
+            this.addChild(this.textLabel = new h2d.HtmlText(font));
+        } else {
+            this.addChild(this.textLabel = new h2d.Text(font));
+        }
         this.textLabel.text = this.text;
     }
 
@@ -134,9 +142,9 @@ class TileButton extends h2d.Layers {
     dynamic public function onRelease() {}
 
     public static function fromColor(defaultColor: Int, hoverColor: Int, disabledColor: Int,
-            selectedColor: Int, width: Int, height: Int): TileButton {
+            selectedColor: Int, width: Int, height: Int, useHtmlText: Bool = true): TileButton {
         return new TileButton(h2d.Tile.fromColor(defaultColor, width, height),
             h2d.Tile.fromColor(hoverColor, width, height), h2d.Tile.fromColor(disabledColor, width, height),
-            h2d.Tile.fromColor(selectedColor, width, height));
+            h2d.Tile.fromColor(selectedColor, width, height), useHtmlText);
     }
 }
