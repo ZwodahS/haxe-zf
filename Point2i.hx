@@ -108,4 +108,13 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
         var yDiff = hxd.Math.iabs(this[1] - p.y);
         return xDiff + yDiff == 1;
     }
+
+    public function getAdjacent(): Array<Point2i> {
+        var pts: Array<Point2i> = [];
+        pts.push(new Point2i(this[0], this[1] - 1));
+        pts.push(new Point2i(this[0], this[1] + 1));
+        pts.push(new Point2i(this[0] - 1, this[1]));
+        pts.push(new Point2i(this[0] + 1, this[1]));
+        return pts;
+    }
 }
