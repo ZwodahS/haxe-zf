@@ -37,6 +37,7 @@ class ColorButton extends h2d.Layers {
         }
         interactive.onClick = function(e: hxd.Event) {
             onClick();
+            this.hover.visible = false;
         }
         interactive.cursor = Default;
 

@@ -56,6 +56,8 @@ class TileButton extends h2d.Layers {
             onPush();
         }
         interactive.onRelease = function(e: hxd.Event) {
+            this.isOver = false;
+            updateButton();
             onRelease();
         }
         interactive.cursor = Default;
