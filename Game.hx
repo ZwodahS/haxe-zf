@@ -32,12 +32,40 @@ class Console extends h2d.Console {
         g.consoleBg.visible = false;
     }
 }
+
+class TextLabel extends h2d.Object {
+    public var text(default, set): String;
+
+    var t: h2d.Text;
+    var bm: h2d.Bitmap;
+    var label: String;
+    var size: Point2i;
+
+    public function new(label: String, font: h2d.Font, size: Point2i) {
+        super(null);
+        this.label = label;
+        this.size = size;
+        var bm = new h2d.Bitmap(h2d.Tile.fromColor(0xAAAAAA, 1, 1));
+        bm.alpha = .3;
+        bm.width = size.x;
+        bm.height = size.y;
+        this.addChild(bm);
+        this.t = new h2d.Text(font);
+        this.addChild(this.t);
+        this.text = '';
+    }
+
+    public function set_text(text: String): String {
+        this.text = text;
+        this.t.text = '${this.label}: ${text}';
+        this.t.x = 1;
+        this.t.y = (this.size.y - this.t.textHeight) / 2;
+        return this.text;
+    }
+}
 #end
 
 class Game extends hxd.App {
-    var framerate: h2d.Text;
-    var drawCalls: h2d.Text;
-
     override function init() {
         // add event handler
         this.s2d.addEventListener(this.onEvent);
@@ -45,11 +73,14 @@ class Game extends hxd.App {
 #if debug
         this.setupConsole();
         this.setupFramerate();
+        this.setupCursor();
 #end
         this.screenState = Ready;
     }
 
 #if debug
+    var framerate: h2d.Text;
+    var drawCalls: h2d.Text;
     var console: h2d.Console;
     var consoleBg: h2d.Bitmap;
 
@@ -90,11 +121,28 @@ class Game extends hxd.App {
                 this.console.log(string);
         });
 
+        this.console.addCommand("mousePos", "Show mouse position", [], function() {
+            this.cursorDetail.visible = !this.cursorDetail.visible;
+        });
+        this.console.addAlias("mp", "mousePos");
+
         this.console.addCommand("framerate", "toggle framerate", [], function() {
             this.framerate.visible = !this.framerate.visible;
             this.drawCalls.visible = !this.drawCalls.visible;
         });
         this.console.addAlias("fr", "framerate");
+    }
+
+    var cursorDetail: TextLabel;
+
+    function setupCursor() {
+        var font = hxd.res.DefaultFont.get().clone();
+        font.resizeTo(12);
+        this.cursorDetail = new TextLabel("c", font, [100, 20]);
+        this.cursorDetail.x = 2;
+        this.cursorDetail.y = 2;
+        this.s2d.add(cursorDetail, 101);
+        this.cursorDetail.visible = false;
     }
 #end
 
@@ -104,6 +152,7 @@ class Game extends hxd.App {
         if (this.outgoingScreen != null) this.outgoingScreen.update(dt);
 #if debug
         this.framerate.text = '${common.MathUtils.round(1 / dt, 1)}';
+        if (this.cursorDetail.visible) this.cursorDetail.text = '(${s2d.mouseX}. ${s2d.mouseY})';
 #end
         if (this.screenState == Exiting) {
             if (outgoingScreen.doneExiting()) {
