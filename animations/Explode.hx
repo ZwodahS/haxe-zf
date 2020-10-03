@@ -11,41 +11,49 @@ class Explode extends Animation {
     var started: Bool;
     var spritebatch: h2d.SpriteBatch;
 
-    public function new(bitmap: h2d.Bitmap) {
+    var split: Int;
+    var explodeDuration: Float;
+    var deviation: Float;
+
+    public function new(bitmap: h2d.Bitmap, split: Int = 8, explodeDuration: Float = .7,
+            deviation: Float = 32) {
         super();
         this.original = bitmap;
         this.started = false;
         this.animations = [];
         this.spritebatch = new h2d.SpriteBatch(bitmap.tile);
+        this.explodeDuration = explodeDuration;
+        this.split = split;
+        this.deviation = deviation;
     }
-
-    static final Split = 8;
-    static final ExplodeDuration = .7;
-    static final Deviation = 32;
 
     var timeElapsed: Float = 0.;
 
     override public function isDone(): Bool {
-        return this.timeElapsed >= ExplodeDuration;
+        return this.timeElapsed >= this.explodeDuration;
     }
 
     override public function update(dt: Float) {
         if (this.isDone()) return;
         if (!started) {
-            var width = this.original.tile.width / Split;
-            var height = this.original.tile.height / Split;
-            for (x in 0...Split) {
-                for (y in 0...Split) {
+            var width = this.original.tile.width / this.split;
+            var height = this.original.tile.height / this.split;
+            for (x in 0...this.split) {
+                for (y in 0...this.split) {
                     var t = this.original.tile.sub(x * width, y * height, width, height);
                     var b = this.spritebatch.alloc(t);
                     b.x = this.original.x + x * width;
                     b.y = this.original.y + y * height;
+                    b.r = this.original.color.r;
+                    b.g = this.original.color.g;
+                    b.b = this.original.color.b;
                     b.alpha = this.original.alpha;
-                    var xMove = Random.int(-100, 100) / 50.0 * Deviation;
-                    var yMove = Random.int(-100, 100) / 50.0 * Deviation;
+                    var xMove = Random.int(-100, 100) / 50.0 * this.deviation;
+                    var yMove = Random.int(-100, 100) / 50.0 * this.deviation;
                     this.animations.push(new MoveBySpeedByDuration(new WrappedBatchElement(b),
-                        ExplodeDuration, [xMove, yMove]));
-                    this.animations.push(new AlphaTo(new WrappedBatchElement(b), 0.0, 0.5 / ExplodeDuration));
+                        this.explodeDuration, [xMove, yMove]));
+                    this.animations.push(new AlphaTo(new WrappedBatchElement(b), 0.0,
+                        0.5 / this.explodeDuration));
                 }
             }
             this.original.parent.addChild(this.spritebatch);
