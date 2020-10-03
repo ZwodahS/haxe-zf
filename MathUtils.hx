@@ -26,4 +26,8 @@ class MathUtils {
         if (max != null && value > max) return max;
         return value;
     }
+
+    inline public static function distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        return hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(x1 - x2), 2) + hxd.Math.pow(hxd.Math.abs(y1 - y2), 2));
+    }
 }
