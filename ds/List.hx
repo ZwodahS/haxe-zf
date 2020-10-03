@@ -60,8 +60,10 @@ class List<T> extends haxe.ds.List<T> {
         var newHead = null;
         var previous = null;
         var current = this.h;
+        this.length = 0;
         while (current != null) {
             if (f(current.item)) {
+                this.length += 1;
                 if (newHead == null) {
                     newHead = current;
                 }
