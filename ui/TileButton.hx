@@ -40,9 +40,13 @@ class TileButton extends h2d.Layers {
 
         var interactive = new h2d.Interactive(width, height, this);
         interactive.onOver = function(e: hxd.Event) {
+            this.isOver = true;
+            updateButton();
             onOver();
         }
         interactive.onOut = function(e: hxd.Event) {
+            this.isOver = false;
+            updateButton();
             onOut();
         }
         interactive.onClick = function(e: hxd.Event) {
@@ -111,11 +115,6 @@ class TileButton extends h2d.Layers {
         this.textLabel.y = AlignmentUtils.center(0, this.height, textLabel.textHeight);
     }
 
-    function onOver() {
-        this.isOver = true;
-        updateButton();
-    }
-
     function updateButton() {
         this.defaultBitmap.visible = false;
         this.hoverBitmap.visible = false;
@@ -130,10 +129,9 @@ class TileButton extends h2d.Layers {
         }
     }
 
-    function onOut() {
-        this.isOver = false;
-        updateButton();
-    }
+    dynamic public function onOut() {}
+
+    dynamic public function onOver() {}
 
     dynamic public function onClick() {}
 
