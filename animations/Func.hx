@@ -3,9 +3,9 @@ package common.animations;
 class Func extends Animation {
     var isCompleted: Bool = false;
 
-    var func: Void->Void;
+    var func: Float->Bool;
 
-    public function new(f: Void->Void) {
+    public function new(f: Float->Bool) {
         super();
         this.func = f;
     }
@@ -16,7 +16,6 @@ class Func extends Animation {
 
     override public function update(dt: Float) {
         if (this.isDone()) return;
-        this.func();
-        this.isCompleted = true;
+        this.isCompleted = this.func(dt);
     }
 }
