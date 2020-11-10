@@ -208,4 +208,48 @@ class Vector2D<T> {
     public function copy(): Vector2D<T> {
         return new Vector2D<T>(this.size, this.nullValue, this.data);
     }
+
+    /**
+        Get items adjacent to this position
+
+        @param x
+        @param y
+
+        return items in this order
+        left (x-1, y), right (x+1, y), up (x, y-1), down (x, y+1)
+    **/
+    public function getAdjacent(x: Int, y: Int): Array<T> {
+        var arr: Array<T> = [];
+        inline function _add(x0: Int, y0: Int) {
+            var t = get(x0, y0);
+            if (t != null) arr.push(t);
+        }
+        _add(x - 1, y);
+        _add(x + 1, y);
+        _add(x, y - 1);
+        _add(x, y + 1);
+        return arr;
+    }
+
+    /**
+        Get items around this position
+
+        @param x
+        @param y
+        @param includeSelf include the item in the position
+    **/
+    public function getAround(x: Int, y: Int, includeSelf: Bool = false): Array<T> {
+        var arr: Array<T> = [];
+        inline function _add(x0: Int, y0: Int) {
+            var t = get(x0, y0);
+            if (t != null) arr.push(t);
+        }
+        for (x0 in x - 1...x + 2) {
+            for (y0 in y - 1...y + 2) {
+                if (x0 == x && y0 == y && !includeSelf) continue;
+                _add(x0, y0);
+            }
+        }
+        return arr;
+    }
 }
