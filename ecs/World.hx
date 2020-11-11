@@ -1,29 +1,30 @@
 package common.ecs;
 
+import common.MessageDispatcher;
+
 class World<E: Entity> {
     public var entities: Map<Int, E>;
     public var systems: List<System<E>>;
+    public var dispatcher: MessageDispatcher;
 
     public function new() {
         this.entities = new Map<Int, E>();
         this.systems = new List<System<E>>();
+        this.dispatcher = new MessageDispatcher();
     }
 
+    /**
+        Reset World to the state after construction.
+
+        1. call reset of all system.
+        2. destroy and remove all entities.
+        3. clear all messages in dispatcher
+    **/
     public function reset() {
-        /**
-            remove all the entities and reset all the systems.
-
-            We have 2 options.
-            1. just delete the world and create a new world
-            2. reset the world.
-
-            We could delete the world, but we also need the world to destroy all the listeners etc.
-            The effort in doing that is probably the same as resetting the world, hence we might as well do that.
-        **/
-
         for (s in this.systems) s.reset();
         for (e in this.entities) e.destroy();
         this.entities.clear();
+        this.dispatcher.clearMessages();
     }
 
     /**
