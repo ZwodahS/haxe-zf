@@ -1,15 +1,15 @@
-package common.ecs;
+package common.ecst;
 
 import common.MessageDispatcher;
 
-class World {
-    public var entities: Map<Int, Entity>;
-    public var systems: List<System>;
+class World<E: Entity> {
+    public var entities: Map<Int, E>;
+    public var systems: List<System<E>>;
     public var dispatcher: MessageDispatcher;
 
     public function new() {
-        this.entities = new Map<Int, Entity>();
-        this.systems = new List<System>();
+        this.entities = new Map<Int, E>();
+        this.systems = new List<System<E>>();
         this.dispatcher = new MessageDispatcher();
     }
 
@@ -30,7 +30,7 @@ class World {
     /**
         addSystem add a system to the world
     **/
-    public function addSystem(system: System) {
+    public function addSystem(system: System<E>) {
         this.systems.add(system);
         system.init(this);
     }
@@ -38,7 +38,7 @@ class World {
     /**
         removeSystem remove a system from the world
     **/
-    public function removeSystem(system: System): Bool {
+    public function removeSystem(system: System<E>): Bool {
         return this.systems.remove(system);
     }
 
@@ -46,7 +46,7 @@ class World {
         addEntity adds an entity to this world.
         The entity will be added to all systems if addToSystems if true
     **/
-    public function addEntity(ent: Entity, addToSystems = true) {
+    public function addEntity(ent: E, addToSystems = true) {
         var existing = this.entities[ent.id];
         if (existing != null) {
             // if existing, do nothing
@@ -63,7 +63,7 @@ class World {
     /**
         removeEntity remove the entity from this world and all the systems.
     **/
-    public function removeEntity(ent: Entity) {
+    public function removeEntity(ent: E) {
         return this.removeEntityById(ent.id);
     }
 
@@ -92,7 +92,7 @@ class World {
         this.entities.clear();
     }
 
-    public function onEntityRemoved(ent: Entity) {}
+    public function onEntityRemoved(ent: E) {}
 
     /**
         update is the main function that should be called on every update loop

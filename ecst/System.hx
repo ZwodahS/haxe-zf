@@ -1,20 +1,20 @@
-package common.ecs;
+package common.ecst;
 
 /**
     Abstract parent class of all System
 **/
-class System {
+class System<E: Entity> {
     public function new() {}
 
     /**
         inform that an entity is added to the world.
     **/
-    public function entityAdded(entity: Entity) {}
+    public function entityAdded(entity: E) {}
 
     /**
         inform that an entity is removed from the world.
     **/
-    public function entityRemoved(entity: Entity) {}
+    public function entityRemoved(entity: E) {}
 
     /**
         update loop
@@ -25,7 +25,7 @@ class System {
         init the system.
         This is called when the system is added to the world.
     **/
-    public function init(world: World) {}
+    public function init(world: World<E>) {}
 
     /**
         handle an event
@@ -35,8 +35,9 @@ class System {
         return false;
     }
 
-    /**
-        reset the system to the same state after constructor
-    **/
-    public function reset() {}
+    public function reset() {
+        /**
+            reset the system to the same state after constructor
+        **/
+    }
 }
