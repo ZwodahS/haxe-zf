@@ -170,4 +170,8 @@ class Direction {
         }
         return new Direction(None);
     }
+
+    public function toString(): String {
+        return '${this.cardinalDirection}|${this.direction}';
+    }
 }
