@@ -53,6 +53,7 @@ class World {
             return;
         }
         this.entities[ent.id] = ent;
+        @:privateAccess ent.world = this;
         if (addToSystems) {
             for (sys in this.systems) {
                 sys.entityAdded(ent);
@@ -79,6 +80,7 @@ class World {
         for (sys in this.systems) {
             sys.entityRemoved(existing);
         }
+        @:privateAccess existing.world = null;
         this.onEntityRemoved(existing);
     }
 
@@ -88,6 +90,7 @@ class World {
                 sys.entityRemoved(e);
             }
             this.onEntityRemoved(e);
+            @:privateAccess e.world = null;
         }
         this.entities.clear();
     }
