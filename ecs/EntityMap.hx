@@ -50,6 +50,11 @@ class EntityMap<E: Entity> {
     var map: Map<Int, E>;
 
     public var count(default, null): Int;
+    public var length(get, never): Int;
+
+    inline public function get_length(): Int {
+        return this.count;
+    }
 
     public function new() {
         this.map = new Map<Int, E>();
