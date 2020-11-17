@@ -1,7 +1,15 @@
 package common;
 
 class Screen extends h2d.Layers {
-    public var game: Game;
+    public var game(default, set): Game;
+
+    public function set_game(g: Game): Game {
+        this.game = g;
+        onGameSet(this.game);
+        return this.game;
+    }
+
+    function onGameSet(g: Game) {}
 
     public function new() {
         super();

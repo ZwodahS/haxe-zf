@@ -131,6 +131,53 @@ class Game extends hxd.App {
             this.drawCalls.visible = !this.drawCalls.visible;
         });
         this.console.addAlias("fr", "framerate");
+
+        this.console.addCommand("printObject", "print dynamic object fields",
+            [{"name": "fields", "t": h2d.Console.ConsoleArg.AString},], this.printObject);
+        this.console.addAlias("po", "printObject");
+    }
+
+    function printObject(fields: String) {
+        var fieldSplit = fields.split(".");
+        if (fieldSplit.length == 0) return;
+        var objectName = fieldSplit[0];
+        var obj: Dynamic = this.monitoredObjects == null ? null : this.monitoredObjects[objectName];
+        if (obj == null) {
+            this.console.log('Object ${objectName} Not monitored');
+            return;
+        }
+
+        var i = 1;
+        var value: Dynamic = obj;
+        while (i < fieldSplit.length) {
+            if (fieldSplit[i] == "") {} else {
+                value = Reflect.getProperty(value, fieldSplit[i]);
+                if (value == null) {
+                    this.console.log('null');
+                    return;
+                }
+            }
+            i++;
+        }
+        try {
+            var valueString = cast(value, String);
+            for (s in valueString.split('\n')) {
+                this.console.log('${s}');
+            }
+        } catch (e) {
+            this.console.log('${value}');
+        }
+    }
+
+    var monitoredObjects: Map<String, Dynamic>;
+
+    public function monitorObject(obj: Dynamic, objectName: String) {
+        if (this.monitoredObjects == null) this.monitoredObjects = new Map<String, Dynamic>();
+        this.monitoredObjects[objectName] = obj;
+    }
+
+    public function unmonitorObject(objectName: String) {
+        this.monitoredObjects.remove(objectName);
     }
 
     var cursorDetail: TextLabel;
