@@ -26,6 +26,6 @@ class Entity {
     public function destroy() {}
 
     public function toString(): String {
-        return 'Entity: ${this.id}';
+        return '(Entity:${this.id})';
     }
 }
