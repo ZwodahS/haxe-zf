@@ -313,6 +313,11 @@ typedef AseSpritesheetConfig = {
     }
 }
 
+typedef LoadedSpritesheet = {
+    tile: h2d.Tile,
+    assets: Map<String, Asset2D>,
+}
+
 /**
     Assets is the main loader and assets container.
 
@@ -365,10 +370,7 @@ class Assets {
     // Wed Jul 22 16:12:21 2020
     // may want to do more with asesprite in the future, i.e. augment it with other configuration.
     // for now this will do.
-    public static function loadAseSpritesheetConfig(filename: String): {
-        tile: h2d.Tile,
-        assets: Map<String, Asset2D>
-    } {
+    public static function loadAseSpritesheetConfig(filename: String): LoadedSpritesheet {
         var jsonText = hxd.Res.load(filename).toText();
         var parsed: AseSpritesheetConfig = haxe.Json.parse(jsonText);
 
