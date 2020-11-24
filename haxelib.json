@@ -1,0 +1,12 @@
+{
+	"name": "zf",
+	"url" : "https://gitlab.com/zwodahs/haxe-zf",
+	"license": "MIT",
+	"tags": [],
+	"description": "General purpose library to be used with heaps",
+	"version": "0.0.1",
+	"classPath": "src/",
+	"releasenote": "",
+	"contributors": ["zwodahs"],
+	"dependencies": {}
+}
