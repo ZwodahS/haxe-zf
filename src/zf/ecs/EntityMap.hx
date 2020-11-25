@@ -1,11 +1,11 @@
 package zf.ecs;
 
 class Iterator<E: Entity> {
-    var map: EntityMap<E>;
+    var map: ReadOnlyEntityMap<E>;
     var keys: Array<Int>;
     var curr: Int;
 
-    function new(map: EntityMap<E>, keys: Array<Int>) {
+    function new(map: ReadOnlyEntityMap<E>, keys: Array<Int>) {
         this.map = map;
         this.keys = keys;
         this.curr = 0;
@@ -22,11 +22,11 @@ class Iterator<E: Entity> {
 }
 
 class KeyValueIterator<E: Entity> {
-    var map: EntityMap<E>;
+    var map: ReadOnlyEntityMap<E>;
     var keys: Array<Int>;
     var curr: Int;
 
-    function new(map: EntityMap<E>, keys: Array<Int>) {
+    function new(map: ReadOnlyEntityMap<E>, keys: Array<Int>) {
         this.map = map;
         this.keys = keys;
         this.curr = 0;
@@ -46,7 +46,7 @@ class KeyValueIterator<E: Entity> {
 
 @:access(zf.ecs.Iterator)
 @:access(zf.ecs.KeyValueIterator)
-class EntityMap<E: Entity> {
+class ReadOnlyEntityMap<E: Entity> {
     var map: Map<Int, E>;
 
     /**
@@ -65,63 +65,9 @@ class EntityMap<E: Entity> {
         return this.count;
     }
 
-    public function new() {
+    function new() {
         this.map = new Map<Int, E>();
         this.count = 0;
-    }
-
-    /**
-        Clear this entity map.
-        All entities are removed.
-    **/
-    public function clear() {
-        this.map.clear();
-        this.count = 0;
-    }
-
-    /**
-        Make a shallow copy of this entity map.
-    **/
-    public function copy(): EntityMap<E> {
-        var m = new EntityMap<E>();
-        for (k => e in this.map) m.add(e);
-        return m;
-    }
-
-    /**
-        Add entity to the map
-
-        @param e Entity to add
-    **/
-    public function add(e: E) {
-        if (map[e.id] != null) return;
-        this.map[e.id] = e;
-        this.count += 1;
-    }
-
-    /**
-        Remove entity from the map
-
-        @param e Entity to remove
-    **/
-    public function remove(e: E): Bool {
-        if (map[e.id] == null) return false;
-        this.map.remove(e.id);
-        this.count -= 1;
-        return true;
-    }
-
-    /**
-        Remove entity from the map by entity id
-
-        @param id entity id
-    **/
-    public function removeById(id: Int): E {
-        var e = this.map[id];
-        if (e == null) return null;
-        this.map.remove(id);
-        this.count -= 1;
-        return e;
     }
 
     /**
@@ -185,4 +131,72 @@ class EntityMap<E: Entity> {
     public function keyValueIterator(): KeyValueIterator<E> {
         return new KeyValueIterator(this, [for (k in this.map.keys()) k]);
     }
+}
+
+@:access(zf.ecs.Iterator)
+@:access(zf.ecs.KeyValueIterator)
+class EntityMap<E: Entity> extends ReadOnlyEntityMap<E> {
+
+    public function new() {
+        super();
+    }
+
+    /**
+        Clear this entity map.
+        All entities are removed.
+    **/
+    public function clear() {
+        this.map.clear();
+        this.count = 0;
+    }
+
+    /**
+        Make a shallow copy of this entity map.
+    **/
+    public function copy(): EntityMap<E> {
+        var m = new EntityMap<E>();
+        for (k => e in this.map) m.add(e);
+        return m;
+    }
+
+    /**
+        Add entity to the map
+
+        @param e Entity to add
+    **/
+    public function add(e: E) {
+        if (map[e.id] != null) return;
+        this.map[e.id] = e;
+        this.count += 1;
+    }
+
+    /**
+        Remove entity from the map
+
+        @param e Entity to remove
+    **/
+    public function remove(e: E): Bool {
+        if (map[e.id] == null) return false;
+        this.map.remove(e.id);
+        this.count -= 1;
+        return true;
+    }
+
+    /**
+        Remove entity from the map by entity id
+
+        @param id entity id
+    **/
+    public function removeById(id: Int): E {
+        var e = this.map[id];
+        if (e == null) return null;
+        this.map.remove(id);
+        this.count -= 1;
+        return e;
+    }
+
+    public function readonly(): ReadOnlyEntityMap<E> {
+        return this;
+    }
+
 }
