@@ -136,7 +136,6 @@ class ReadOnlyEntityMap<E: Entity> {
 @:access(zf.ecs.Iterator)
 @:access(zf.ecs.KeyValueIterator)
 class EntityMap<E: Entity> extends ReadOnlyEntityMap<E> {
-
     public function new() {
         super();
     }
@@ -198,5 +197,4 @@ class EntityMap<E: Entity> extends ReadOnlyEntityMap<E> {
     public function readonly(): ReadOnlyEntityMap<E> {
         return this;
     }
-
 }
