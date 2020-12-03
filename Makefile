@@ -1,4 +1,4 @@
 
 lint:
-	haxelib run formatter -s .
+	haxelib run formatter -s src
 
