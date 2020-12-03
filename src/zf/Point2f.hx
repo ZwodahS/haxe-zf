@@ -81,14 +81,6 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
         return this[1] = v;
     }
 
-    inline public function get_z(): Float {
-        return this[2];
-    }
-
-    inline public function set_z(v: Float): Float {
-        return this[2] = v;
-    }
-
     @:to
     public function toPoint3f(): Point3f {
         return new Point3f(this[0], this[1], 0);

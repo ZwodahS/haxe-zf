@@ -67,14 +67,6 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
         return this[1] = v;
     }
 
-    inline public function get_z(): Int {
-        return this[2];
-    }
-
-    inline public function set_z(v: Int): Int {
-        return this[2] = v;
-    }
-
     @:to
     public function toPoint2f(): Point2f {
         return new Point2f(this[0], this[1]);
