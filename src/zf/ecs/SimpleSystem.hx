@@ -1,6 +1,6 @@
 package zf.ecs;
 
-class SimpleSystem<E: Entity> extends System<E> {
+class SimpleSystem extends System {
     var updateFunc: (Float) -> Void;
 
     public function new(updateFunc: (dt: Float) -> Void) {
