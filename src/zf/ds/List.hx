@@ -141,4 +141,18 @@ class List<T> extends haxe.ds.List<T> {
         }
         return l;
     }
+
+    public function removeByFunc(check: T->Bool): T {
+        var found = null;
+        var current = this.h;
+        while (current != null) {
+            if (check(current.item)) {
+                found = current;
+                break;
+            }
+            current = current.next;
+        }
+        if (found != null) this.remove(found.item);
+        return found.item;
+    }
 }
