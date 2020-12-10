@@ -174,4 +174,12 @@ class Direction {
     public function toString(): String {
         return '${this.cardinalDirection}|${this.direction}';
     }
+
+    inline public function copy(): Direction {
+        return new Direction(this.cardinalDirection);
+    }
+
+    inline public function clone(): Direction {
+        return this.copy();
+    }
 }
