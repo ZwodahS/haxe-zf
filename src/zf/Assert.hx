@@ -33,19 +33,20 @@ class Assert {
         return false;
     }
 
-    macro public static function unreachable(terminate: Bool = true) {
+    macro public static function unreachable(terminate: Bool = true, ?msg: String) {
 #if no_assertion
         return macro {};
 #else
         var location = PositionTools.toLocation(Context.currentPos());
         var locationString = location.file + ":" + location.range.start.line;
+        msg = msg == null ? "" : ': ${msg}';
         if (terminate) {
             return macro {
-                throw '[${locationString}] Assertion failed: Should be unreachable';
+                throw '[${locationString}] Assertion failed: Should be unreachable${msg}';
             };
         } else {
             return macro {
-                trace('[${locationString}] Assertion failed: Should be unreachable');
+                trace('[${locationString}] Assertion failed: Should be unreachable${msg}');
             };
         }
 #end
