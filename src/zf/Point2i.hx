@@ -41,6 +41,11 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
         return this[0] == rhs.x && this[1] == rhs.y;
     }
 
+    @:op(A * B)
+    public function _scale(rhs: Int): Point2i {
+        return new Point2i(this[0] * rhs, this[1] * rhs);
+    }
+
     public function update(rhs: Point2i): Point2i {
         this[0] = rhs[0];
         this[1] = rhs[1];
