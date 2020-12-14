@@ -8,6 +8,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 
     public var xDiff(get, never): Int;
     public var yDiff(get, never): Int;
+    public var area(get, never): Int;
 
     public function new(xMin: Int = 0, yMin: Int = 0, xMax: Int = 0, yMax: Int = 0) {
         this = [xMin, yMin, xMax, yMax];
@@ -65,5 +66,9 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 
     public function get_yDiff(): Int {
         return this[3] - this[1];
+    }
+
+    public function get_area(): Int {
+        return (xDiff + 1) + (yDiff + 1);
     }
 }
