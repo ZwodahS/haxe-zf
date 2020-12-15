@@ -52,7 +52,17 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
         return this;
     }
 
+    /**
+        Make a copy of this point
+    **/
     inline public function copy(): Point2i {
+        return [this[0], this[1]];
+    }
+
+    /**
+        Make a copy of this point
+    **/
+    inline public function clone(): Point2i {
         return [this[0], this[1]];
     }
 
@@ -113,5 +123,34 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
         pts.push(new Point2i(this[0] - 1, this[1]));
         pts.push(new Point2i(this[0] + 1, this[1]));
         return pts;
+    }
+
+    /**
+        Bound a point and treat this point as size.
+
+        Essentially this will return a point that is within [0, 0, this.x-1, this.y-1];
+
+        If pt value is < 0, it will be set to 0.
+        If pt value is > this.value, it will be set to this.value - 1.
+
+        if update is true, then the original pt will be updated.
+        if update is false(default), then a copy of the pt will be updated.
+    **/
+    public function boundPoint(pt: Point2i, update: Bool = false): Point2i {
+        var newPt = update ? pt : pt.clone();
+
+        if (newPt.x < 0) {
+            newPt.x = 0;
+        } else if (newPt.x > this[0]) {
+            newPt.x = this[0] - 1;
+        }
+
+        if (newPt.y < 0) {
+            newPt.y = 0;
+        } else if (newPt.y > this[1]) {
+            newPt.y = this[1] - 1;
+        }
+
+        return newPt;
     }
 }
