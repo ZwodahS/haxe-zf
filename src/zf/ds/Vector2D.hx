@@ -139,6 +139,10 @@ class Vector2D<T> {
         this.data[pos(x, y)] = value;
     }
 
+    inline public function resetAll(value: T) {
+        for (i in 0...this.data.length) this.data[i] = value;
+    }
+
     inline function pos(x: Int, y: Int): Int { // return -1 if out of bound
         return x + (y * size.x);
     }
