@@ -7,13 +7,13 @@ typedef XY = {
     y: Int
 }
 
-@:access(zf.ds.Vector2D)
+@:access(zf.ds.ReadOnlyVector2D)
 class Vector2DIteratorXY<T> {
-    var data: Vector2D<T>;
+    var data: ReadOnlyVector2D<T>;
     var currX: Int;
     var currY: Int;
 
-    public function new(data: Vector2D<T>) {
+    public function new(data: ReadOnlyVector2D<T>) {
         this.data = data;
         this.currX = 0;
         this.currY = 0;
@@ -38,13 +38,13 @@ class Vector2DIteratorXY<T> {
     }
 }
 
-@:access(zf.ds.Vector2D)
+@:access(zf.ds.ReadOnlyVector2D)
 class Vector2DIteratorYX<T> {
-    var data: Vector2D<T>;
+    var data: ReadOnlyVector2D<T>;
     var currX: Int;
     var currY: Int;
 
-    public function new(data: Vector2D<T>) {
+    public function new(data: ReadOnlyVector2D<T>) {
         this.data = data;
         this.currX = 0;
         this.currY = 0;
@@ -69,12 +69,12 @@ class Vector2DIteratorYX<T> {
     }
 }
 
-@:access(zf.ds.Vector2D)
+@:access(zf.ds.ReadOnlyVector2D)
 class LinearIterator<T> {
-    var data: Vector2D<T>;
+    var data: ReadOnlyVector2D<T>;
     var curr: Int;
 
-    public function new(data: Vector2D<T>) {
+    public function new(data: ReadOnlyVector2D<T>) {
         this.data = data;
         this.curr = 0;
     }
@@ -89,7 +89,7 @@ class LinearIterator<T> {
     }
 }
 
-class Vector2D<T> {
+class ReadOnlyVector2D<T> {
     /**
         A 2x3 (width * height)
         [ 0, 1
@@ -134,15 +134,6 @@ class Vector2D<T> {
         return this.data[pos(x, y)];
     }
 
-    inline public function set(x, y, value: T) {
-        if (!inBound(x, y)) return;
-        this.data[pos(x, y)] = value;
-    }
-
-    inline public function resetAll(value: T) {
-        for (i in 0...this.data.length) this.data[i] = value;
-    }
-
     inline function pos(x: Int, y: Int): Int { // return -1 if out of bound
         return x + (y * size.x);
     }
@@ -161,52 +152,6 @@ class Vector2D<T> {
 
     public function iterateYX(): Vector2DIteratorYX<T> {
         return new Vector2DIteratorYX<T>(this);
-    }
-
-    // https://stackoverflow.com/questions/18034805/rotate-mn-matrix-90-degrees
-    public function rotateCCW() {
-        var newLengthX = this.size.y;
-        var newLengthY = this.size.x;
-        var copy = new Vector<T>(this.data.length);
-        var x1 = 0;
-        var y1 = 0;
-        var x0 = this.size.x - 1;
-        while (x0 >= 0) {
-            x1 = 0;
-            for (y0 in 0...this.size.y) {
-                copy[(y1 * newLengthX) + x1] = this.data[pos(x0, y0)];
-                x1 += 1;
-            }
-            x0 -= 1;
-            y1 += 1;
-        }
-        for (i in 0...data.length) {
-            data[i] = copy[i];
-        }
-        this.size.x = newLengthX;
-        this.size.y = newLengthY;
-    }
-
-    public function rotateCW() {
-        var newLengthX = this.size.y;
-        var newLengthY = this.size.x;
-        var copy = new Vector<T>(this.data.length);
-        var x1 = 0;
-        var y1 = 0;
-        var x0 = this.size.x - 1;
-        for (x0 in 0...this.size.x) {
-            x1 = newLengthX - 1;
-            for (y0 in 0...this.size.y) {
-                copy[(y1 * newLengthX) + x1] = this.data[pos(x0, y0)];
-                x1 -= 1;
-            }
-            y1 += 1;
-        }
-        for (i in 0...data.length) {
-            data[i] = copy[i];
-        }
-        this.size.x = newLengthX;
-        this.size.y = newLengthY;
     }
 
     public function copy(): Vector2D<T> {
@@ -255,5 +200,62 @@ class Vector2D<T> {
             }
         }
         return arr;
+    }
+}
+
+class Vector2D<T> extends ReadOnlyVector2D<T> {
+    inline public function set(x, y, value: T) {
+        if (!inBound(x, y)) return;
+        this.data[pos(x, y)] = value;
+    }
+
+    // https://stackoverflow.com/questions/18034805/rotate-mn-matrix-90-degrees
+    public function rotateCCW() {
+        var newLengthX = this.size.y;
+        var newLengthY = this.size.x;
+        var copy = new Vector<T>(this.data.length);
+        var x1 = 0;
+        var y1 = 0;
+        var x0 = this.size.x - 1;
+        while (x0 >= 0) {
+            x1 = 0;
+            for (y0 in 0...this.size.y) {
+                copy[(y1 * newLengthX) + x1] = this.data[pos(x0, y0)];
+                x1 += 1;
+            }
+            x0 -= 1;
+            y1 += 1;
+        }
+        for (i in 0...data.length) {
+            data[i] = copy[i];
+        }
+        this.size.x = newLengthX;
+        this.size.y = newLengthY;
+    }
+
+    public function rotateCW() {
+        var newLengthX = this.size.y;
+        var newLengthY = this.size.x;
+        var copy = new Vector<T>(this.data.length);
+        var x1 = 0;
+        var y1 = 0;
+        var x0 = this.size.x - 1;
+        for (x0 in 0...this.size.x) {
+            x1 = newLengthX - 1;
+            for (y0 in 0...this.size.y) {
+                copy[(y1 * newLengthX) + x1] = this.data[pos(x0, y0)];
+                x1 -= 1;
+            }
+            y1 += 1;
+        }
+        for (i in 0...data.length) {
+            data[i] = copy[i];
+        }
+        this.size.x = newLengthX;
+        this.size.y = newLengthY;
+    }
+
+    inline public function resetAll(value: T) {
+        for (i in 0...this.data.length) this.data[i] = value;
     }
 }
