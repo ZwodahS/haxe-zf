@@ -68,7 +68,7 @@ class MenuList extends h2d.Object {
         }
     }
 
-    function outOfBound(i: Int): Bool {
+    inline function outOfBound(i: Int): Bool {
         return i < 0 || i >= items.length;
     }
 
@@ -88,6 +88,9 @@ class MenuList extends h2d.Object {
     }
 }
 
+/**
+    A simple vertical menu just have item height and item spacing and place it in a vertical list.
+**/
 class VerticalMenuList extends MenuList {
     var itemHeight: Int;
     var itemSpacing: Int;
@@ -99,8 +102,10 @@ class VerticalMenuList extends MenuList {
     }
 
     override public function addItem(item: MenuItem) {
+        var y = this.items.length == 0 ? 0 : (this.items.length * itemHeight)
+            + ((this.items.length - 1) * itemSpacing);
         super.addItem(item);
-        item.y = (this.items.length * itemHeight) + ((this.items.length - 1) * itemSpacing);
+        item.y = y;
         item.selected = false;
         this.addChild(item);
     }
