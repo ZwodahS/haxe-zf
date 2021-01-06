@@ -71,4 +71,12 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
     public function get_area(): Int {
         return (xDiff + 1) + (yDiff + 1);
     }
+
+    public function clone(): Recti {
+        return [this[0], this[1], this[2], this[3]];
+    }
+
+    public function copy(): Recti {
+        return [this[0], this[1], this[2], this[3]];
+    }
 }
