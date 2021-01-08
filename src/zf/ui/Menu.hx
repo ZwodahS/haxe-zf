@@ -8,6 +8,7 @@ package zf.ui;
     3. Performing action on the menu item
 **/
 class MenuItem extends h2d.Object {
+    public var index(default, null): Int;
     public var selected(default, set): Bool;
 
     public function set_selected(s: Bool): Bool {
@@ -68,6 +69,11 @@ class MenuList extends h2d.Object {
         }
     }
 
+    public function reselectItem() {
+        var i = selectedItem;
+        if (i != null) i.selected = true;
+    }
+
     inline function outOfBound(i: Int): Bool {
         return i < 0 || i >= items.length;
     }
@@ -84,6 +90,7 @@ class MenuList extends h2d.Object {
     }
 
     public function addItem(item: MenuItem) {
+        @:privateAccess item.index = this.items.length;
         this.items.push(item);
     }
 }
