@@ -93,6 +93,17 @@ class MenuList extends h2d.Object {
         @:privateAccess item.index = this.items.length;
         this.items.push(item);
     }
+
+    public function removeItem(item: MenuItem): Bool {
+        if (!this.items.remove(item)) return false;
+        for (ind => i in this.items) {
+            @:privateAccess i.index = ind;
+            indexUpdated(i, ind);
+        }
+        return true;
+    }
+
+    public function indexUpdated(item: MenuItem, index: Int) {}
 }
 
 /**
@@ -109,16 +120,26 @@ class VerticalMenuList extends MenuList {
     }
 
     override public function addItem(item: MenuItem) {
-        var y = this.items.length == 0 ? 0 : (this.items.length * itemHeight)
-            + ((this.items.length - 1) * itemSpacing);
         super.addItem(item);
-        item.y = y;
+        indexUpdated(item, item.index);
         item.selected = false;
         this.addChild(item);
+    }
+
+    override public function removeItem(item: MenuItem): Bool {
+        var success = super.removeItem(item);
+        if (success) item.remove();
+        return success;
     }
 
     override public function clear() {
         for (i in this.items) i.remove();
         super.clear();
+    }
+
+    override public function indexUpdated(item: MenuItem, index: Int) {
+        var y = index == 0 ? 0 : (index * itemHeight) + ((index - 1) * itemSpacing);
+        item.y = y;
+        if (index == this.selectedIndex) item.selected = true;
     }
 }
