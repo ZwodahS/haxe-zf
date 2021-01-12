@@ -39,4 +39,8 @@ class Factory<O, T: Template<O>> {
     public function unregister(name: String) {
         this.templates.remove(name);
     }
+
+    public function get(name: String): Template<O> {
+        return templates[name];
+    }
 }
