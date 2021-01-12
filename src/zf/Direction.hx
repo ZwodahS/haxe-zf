@@ -24,17 +24,13 @@ enum CardinalDirectionType {
     None;
 }
 
-class Direction {
-    public var direction(get, never): DirectionType;
-    public var cardinalDirection(default, null): CardinalDirectionType;
-    public var coord(get, never): Point2i;
-
+abstract Direction(CardinalDirectionType) from CardinalDirectionType to CardinalDirectionType {
     public function new(cDirectionType: CardinalDirectionType = None) {
-        this.cardinalDirection = cDirectionType;
+        this = cDirectionType;
     }
 
-    public function get_direction(): DirectionType {
-        switch (this.cardinalDirection) {
+    @:to public function toDirection(): DirectionType {
+        switch (this) {
             case West:
                 return Left;
             case NorthWest:
@@ -57,8 +53,32 @@ class Direction {
         return None;
     }
 
-    public function get_coord(): Point2i {
-        switch (this.cardinalDirection) {
+    @:from public static function fromDirection(d: DirectionType): Direction {
+        switch (d) {
+            case Left:
+                return new Direction(West);
+            case UpLeft:
+                return new Direction(NorthWest);
+            case Up:
+                return new Direction(North);
+            case UpRight:
+                return new Direction(NorthEast);
+            case Right:
+                return new Direction(East);
+            case DownRight:
+                return new Direction(SouthEast);
+            case Down:
+                return new Direction(South);
+            case DownLeft:
+                return new Direction(SouthWest);
+            case None:
+                return new Direction(None);
+        }
+        return new Direction(None);
+    }
+
+    @:to public function toPoint2i(): Point2i {
+        switch (this) {
             case West:
                 return [-1, 0];
             case NorthWest:
@@ -81,32 +101,7 @@ class Direction {
         return [0, 0];
     }
 
-    public static function fromDirection(type: DirectionType): Direction {
-        switch (type) {
-            case Left:
-                return new Direction(West);
-            case UpLeft:
-                return new Direction(NorthWest);
-            case Up:
-                return new Direction(North);
-            case UpRight:
-                return new Direction(NorthEast);
-            case Right:
-                return new Direction(East);
-            case DownRight:
-                return new Direction(SouthEast);
-            case Down:
-                return new Direction(South);
-            case DownLeft:
-                return new Direction(SouthWest);
-            case None:
-                return new Direction(None);
-            default:
-                return new Direction(None);
-        }
-    }
-
-    public static function fromPoint2i(point: Point2i): Direction {
+    @:from public static function fromPoint2i(point: Point2i): Direction {
         /**
             This will bound all x and y between -1 and 1
             origin is top left, meaning (1, 1) will be South East
@@ -148,7 +143,7 @@ class Direction {
     }
 
     public function opposite(): Direction {
-        switch (this.cardinalDirection) {
+        switch (this) {
             case West:
                 return new Direction(East);
             case NorthWest:
@@ -172,14 +167,6 @@ class Direction {
     }
 
     public function toString(): String {
-        return '${this.cardinalDirection}|${this.direction}';
-    }
-
-    inline public function copy(): Direction {
-        return new Direction(this.cardinalDirection);
-    }
-
-    inline public function clone(): Direction {
-        return this.copy();
+        return '${this}|${toDirection()}';
     }
 }
