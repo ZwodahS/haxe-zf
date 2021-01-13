@@ -5,6 +5,10 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
     public var xMax(get, set): Int;
     public var yMin(get, set): Int;
     public var yMax(get, set): Int;
+    public var left(get, set): Int;
+    public var right(get, set): Int;
+    public var top(get, set): Int;
+    public var bottom(get, set): Int;
 
     public var xDiff(get, never): Int;
     public var yDiff(get, never): Int;
@@ -47,6 +51,42 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
     }
 
     public function get_yMax(): Int {
+        return this[3];
+    }
+
+    public function set_left(left: Int): Int {
+        this[0] = left;
+        return this[0];
+    }
+
+    public function get_left(): Int {
+        return this[0];
+    }
+
+    public function set_right(right: Int): Int {
+        this[2] = right;
+        return this[2];
+    }
+
+    public function get_right(): Int {
+        return this[2];
+    }
+
+    public function set_top(top: Int): Int {
+        this[1] = top;
+        return this[1];
+    }
+
+    public function get_top(): Int {
+        return this[1];
+    }
+
+    public function set_bottom(bottom: Int): Int {
+        this[3] = bottom;
+        return this[3];
+    }
+
+    public function get_bottom(): Int {
         return this[3];
     }
 
