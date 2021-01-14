@@ -129,6 +129,7 @@ class VerticalMenuList extends MenuList {
     override public function removeItem(item: MenuItem): Bool {
         var success = super.removeItem(item);
         if (success) item.remove();
+        if (this.selectedIndex >= this.items.length) this.selectedIndex = this.items.length - 1;
         return success;
     }
 
