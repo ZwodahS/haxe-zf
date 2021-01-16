@@ -11,16 +11,16 @@ class Assert {
 #if no_assertion
         return macro {};
 #else
-        var assertion = ExprTools.toString(e);
+        msg = msg != null ? msg : ExprTools.toString(e);
         var location = PositionTools.toLocation(Context.currentPos());
         var locationString = location.file + ":" + location.range.start.line;
         if (terminate) {
             return macro {
-                if (!$e) throw '[${locationString}] Assertion failed: ${msg} "' + $v{assertion} + '"';
+                if (!$e) throw '[${locationString}] Assertion failed: ${msg}';
             };
         } else {
             return macro {
-                if (!$e) trace('[${locationString}] Assertion failed: ${msg} "' + $v{assertion} + '"');
+                if (!$e) trace('[${locationString}] Assertion failed: ${msg}');
             };
         }
 #end
