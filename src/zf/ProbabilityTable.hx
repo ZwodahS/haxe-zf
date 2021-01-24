@@ -1,5 +1,25 @@
 package zf;
 
+class ProbabilityTableIterator<T> {
+    var chances: Array<{chance: Int, item: T}>;
+    var index = 0;
+
+    public function new(chances: Array<{chance: Int, item: T}>) {
+        this.chances = chances;
+    }
+
+    public function hasNext(): Bool {
+        return index < this.chances.length;
+    }
+
+    public function next(): {key: Int, value: T} {
+        if (!hasNext()) return null;
+        var curr = this.chances[this.index];
+        this.index++;
+        return {key: curr.chance, value: curr.item};
+    }
+}
+
 /**
     ProbabilityTable stores a mapping of [Chance] -> T
     It then allow for rolling for T by providing a hxd.Rand
@@ -33,5 +53,9 @@ class ProbabilityTable<T> {
             chance -= c.chance;
         }
         return null;
+    }
+
+    public function keyValueIterator(): ProbabilityTableIterator<T> {
+        return new ProbabilityTableIterator<T>(chances);
     }
 }
