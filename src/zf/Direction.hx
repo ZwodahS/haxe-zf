@@ -166,7 +166,31 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
         return new Direction(None);
     }
 
-    public function toString(): String {
-        return '${this}|${toDirection()}';
+    @:to public function toString(): String {
+        return '${toDirection()}';
+    }
+
+    @:from public static function fromString(s: String): Direction {
+        switch (s) {
+            case "West":
+                return Left;
+            case "NorthWest":
+                return UpLeft;
+            case "North":
+                return Up;
+            case "NorthEast":
+                return UpRight;
+            case "East":
+                return Right;
+            case "SouthEast":
+                return DownRight;
+            case "South":
+                return Down;
+            case "SouthWest":
+                return DownLeft;
+            case "None":
+                return None;
+        }
+        return None;
     }
 }
