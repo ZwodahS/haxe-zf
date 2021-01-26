@@ -28,11 +28,11 @@ class Vector2DIteratorXY<T> {
             key: {x: this.currX, y: this.currY},
             value: this.data.data[data.pos(this.currX, this.currY)],
         }
-        if (this.currX == this.data.size.x - 1) {
-            this.currX = 0;
-            this.currY += 1;
-        } else {
+        if (this.currY == this.data.size.y - 1) {
+            this.currY = 0;
             this.currX += 1;
+        } else {
+            this.currY += 1;
         }
         return returnValue;
     }
@@ -59,11 +59,11 @@ class Vector2DIteratorYX<T> {
             key: {x: this.currX, y: this.currY},
             value: this.data.data[data.pos(this.currX, this.currY)],
         }
-        if (this.currY == this.data.size.y - 1) {
-            this.currY = 0;
-            this.currX += 1;
-        } else {
+        if (this.currX == this.data.size.x - 1) {
+            this.currX = 0;
             this.currY += 1;
+        } else {
+            this.currX += 1;
         }
         return returnValue;
     }
@@ -146,10 +146,26 @@ class ReadOnlyVector2D<T> {
         return new LinearIterator<T>(this);
     }
 
+    /**
+        iterate x then y
+        essentially
+        for (x in 0...size.x) {
+            for (y in 0...size.y ) {
+            }
+        }
+    **/
     public function iterateXY(): Vector2DIteratorXY<T> {
         return new Vector2DIteratorXY<T>(this);
     }
 
+    /**
+        iterate Y then X
+        essentially
+        for (y in 0...size.y) {
+            for (x in 0...size.x) {
+            }
+        }
+    **/
     public function iterateYX(): Vector2DIteratorYX<T> {
         return new Vector2DIteratorYX<T>(this);
     }
