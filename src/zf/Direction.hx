@@ -174,19 +174,35 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
         switch (s) {
             case "West":
                 return Left;
+            case "Left":
+                return Left;
             case "NorthWest":
+                return UpLeft;
+            case "Upleft":
                 return UpLeft;
             case "North":
                 return Up;
+            case "Up":
+                return Up;
             case "NorthEast":
+                return UpRight;
+            case "UpRight":
                 return UpRight;
             case "East":
                 return Right;
+            case "Right":
+                return Right;
             case "SouthEast":
+                return DownRight;
+            case "DownRight":
                 return DownRight;
             case "South":
                 return Down;
+            case "Down":
+                return Down;
             case "SouthWest":
+                return DownLeft;
+            case "DownLeft":
                 return DownLeft;
             case "None":
                 return None;
