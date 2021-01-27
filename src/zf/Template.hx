@@ -1,5 +1,10 @@
 package zf;
 
-interface Template<T> {
-    public function make(r: hxd.Rand): T;
+class Template<T> {
+    // set default values for obj
+    public function load(e: T) {}
+    // create a new object
+    public function make(r: hxd.Rand): T {
+        return null;
+    }
 }
