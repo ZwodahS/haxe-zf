@@ -1,10 +1,19 @@
 package zf;
 
+/**
+    Probabilty Table allows us to choose object from a list based on their weights
+**/
+typedef Chance<T> = {chance: Int, item: T};
+
+/**
+    A linear iterator of all the chances in the table.
+    This is returned likely in the ordered that they are added.
+**/
 class ProbabilityTableIterator<T> {
-    var chances: Array<{chance: Int, item: T}>;
+    var chances: Array<Chance<T>>;
     var index = 0;
 
-    public function new(chances: Array<{chance: Int, item: T}>) {
+    public function new(chances: Array<Chance<T>>) {
         this.chances = chances;
     }
 
@@ -21,14 +30,45 @@ class ProbabilityTableIterator<T> {
 }
 
 /**
-    ProbabilityTable stores a mapping of [Chance] -> T
-    It then allow for rolling for T by providing a hxd.Rand
+    A probabilistic iterator of the table.
+    This will randomly return items based on their weightage
 **/
-class ProbabilityTable<T> {
-    var chances: Array<{chance: Int, item: T}>;
+class ProbabilityTableRandomIterator<T> {
+    var totalChance: Int;
+    var chances: Array<Chance<T>>;
+    var r: hxd.Rand;
+
+    public function new(chances: Array<Chance<T>>, r: hxd.Rand) {
+        this.totalChance = 0;
+        this.chances = [];
+        this.r = r;
+        for (c in chances) {
+            chances.push(c);
+            totalChance += c.chance;
+        }
+    }
+
+    public function hasNext(): Bool {
+        return this.chances.length > 0 && this.totalChance != 0;
+    }
+
+    public function next(): Null<T> {
+        if (!hasNext()) return null;
+        @:privateAccess var index = ReadOnlyProbabilityTable._random(this.chances, r, this.totalChance);
+        var item = chances.splice(index, 1)[0];
+        this.totalChance -= item.chance;
+        return item.item;
+    }
+}
+
+/**
+    The Readonly version of the table.
+    Doesn't not guaranteed immutability since the object can be casted
+**/
+class ReadOnlyProbabilityTable<T> {
+    var chances: Array<Chance<T>>;
 
     public var totalChance(default, null): Int;
-
     public var length(get, never): Int;
 
     public function get_length(): Int {
@@ -40,22 +80,58 @@ class ProbabilityTable<T> {
         this.totalChance = 0;
     }
 
-    public function add(chance: Int, item: T) {
-        this.chances.push({chance: chance, item: item});
-        this.totalChance += chance;
-    }
-
-    public function roll(?r: hxd.Rand): Null<T> {
-        if (totalChance == 0) return null;
-        var chance = r == null ? Random.int(1, totalChance) : 1 + r.random(totalChance);
-        for (c in this.chances) {
-            if (chance <= c.chance) return c.item;
+    @:generic static function _random<T>(chances: Array<Chance<T>>, r: hxd.Rand,
+            ?totalChance: Null<Int>): Int {
+        if (totalChance == null) {
+            totalChance = 0;
+            for (c in chances) totalChance += c.chance;
+        }
+        var chance = 1 + r.random(totalChance);
+        for (ind => c in chances) {
+            if (chance <= c.chance) return ind;
             chance -= c.chance;
         }
-        return null;
+        return 0;
+    }
+
+    /**
+        An alias to randomItem, deprecated
+    **/
+    @:deprecated
+    public function roll(?r: hxd.Rand): Null<T> {
+        return randomItem(r);
+    }
+
+    /**
+        Returns a random item in the table
+    **/
+    public function randomItem(?r: hxd.Rand): Null<T> {
+        if (totalChance == 0) return null;
+        r = r != null ? r : new hxd.Rand(Random.int(0, Constants.SeedMax));
+        var ind = _random(this.chances, r, this.totalChance);
+        return this.chances[ind].item;
+    }
+
+    /**
+        return a randomed Iterator of the item in this table
+    **/
+    public function randomList(?r: hxd.Rand): ProbabilityTableRandomIterator<T> {
+        r = r != null ? r : new hxd.Rand(Random.int(0, Constants.SeedMax));
+        return new ProbabilityTableRandomIterator(this.chances, r);
     }
 
     public function keyValueIterator(): ProbabilityTableIterator<T> {
         return new ProbabilityTableIterator<T>(chances);
+    }
+}
+
+/**
+    ProbabilityTable stores a mapping of [Chance] -> T
+    It then allow for rolling for T by providing a hxd.Rand
+**/
+class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
+    public function add(chance: Int, item: T) {
+        this.chances.push({chance: chance, item: item});
+        this.totalChance += chance;
     }
 }
