@@ -30,4 +30,16 @@ class MathUtils {
     inline public static function distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(x1 - x2), 2) + hxd.Math.pow(hxd.Math.abs(y1 - y2), 2));
     }
+
+    inline public static function iMax(ints: Array<Int>): Int {
+        var m = ints[0];
+        for (i in ints) {
+            if (i > m) m = i;
+        }
+        return m;
+    }
+
+    inline public static function iAbs(i: Int): Int {
+        return i >= 0 ? i : -i;
+    }
 }
