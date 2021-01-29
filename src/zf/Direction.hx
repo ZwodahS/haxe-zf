@@ -142,7 +142,9 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
         return fromPoint2i([coord2.x - coord1.x, coord2.y - coord1.y]);
     }
 
-    public function opposite(): Direction {
+    public var opposite(get, never): Direction;
+
+    public function get_opposite(): Direction {
         switch (this) {
             case West:
                 return new Direction(East);
@@ -164,6 +166,81 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
                 return new Direction(None);
         }
         return new Direction(None);
+    }
+
+    /**
+        Returns an "adjacent" direction.
+
+        Imagine the direction is mapped into the following.
+
+        NW   N   NE
+        W  None   E
+        SW   S   SE
+
+        Excluding none it will return the adjacent tiles.
+        if none is pass, an empty list is passed
+    **/
+    public var adjacent(get, never): Array<Direction>;
+
+    public function get_adjacent(): Array<Direction> {
+        switch (this) {
+            case West:
+                return [new Direction(SouthWest), new Direction(NorthWest)];
+            case NorthWest:
+                return [new Direction(West), new Direction(North)];
+            case North:
+                return [new Direction(NorthWest), new Direction(NorthEast)];
+            case NorthEast:
+                return [new Direction(North), new Direction(East)];
+            case East:
+                return [new Direction(NorthEast), new Direction(SouthEast)];
+            case SouthEast:
+                return [new Direction(East), new Direction(South)];
+            case South:
+                return [new Direction(SouthEast), new Direction(SouthWest)];
+            case SouthWest:
+                return [new Direction(South), new Direction(West)];
+            case None:
+                return [];
+        }
+        return [];
+    }
+
+    /**
+        Return the points on the opposite axis to this direction.
+
+        NW   N   NE
+        W  None   E
+        SW   S   SE
+
+        In this case,
+        - N and S will return W and E
+        - NW and SE will return SW and NE respectively
+    **/
+    public var oppositeAxis(get, never): Array<Direction>;
+
+    public function get_oppositeAxis(): Array<Direction> {
+        switch (this) {
+            case West:
+                return [new Direction(North), new Direction(South)];
+            case East:
+                return [new Direction(North), new Direction(South)];
+            case NorthWest:
+                return [new Direction(NorthEast), new Direction(SouthWest)];
+            case SouthEast:
+                return [new Direction(NorthEast), new Direction(SouthWest)];
+            case North:
+                return [new Direction(West), new Direction(East)];
+            case South:
+                return [new Direction(West), new Direction(East)];
+            case SouthWest:
+                return [new Direction(NorthWest), new Direction(SouthWest)];
+            case NorthEast:
+                return [new Direction(NorthWest), new Direction(SouthWest)];
+            case None:
+                return [];
+        }
+        return [];
     }
 
     @:to public function toString(): String {
