@@ -243,6 +243,32 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
         return [];
     }
 
+    public var cardinalShortString(get, never): String;
+
+    public function get_cardinalShortString(): String {
+        switch (this: CardinalDirectionType) {
+            case West:
+                return 'W';
+            case NorthWest:
+                return 'NW';
+            case North:
+                return 'N';
+            case NorthEast:
+                return 'NE';
+            case East:
+                return 'E';
+            case SouthEast:
+                return 'SE';
+            case South:
+                return 'S';
+            case SouthWest:
+                return 'SW';
+            case None:
+                return '';
+        }
+        return '';
+    }
+
     @:to public function toString(): String {
         return '${toDirection()}';
     }
