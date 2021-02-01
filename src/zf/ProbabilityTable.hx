@@ -1,9 +1,19 @@
 package zf;
 
+using zf.ArrayExtensions;
+
 /**
     Probabilty Table allows us to choose object from a list based on their weights
 **/
-typedef Chance<T> = {chance: Int, item: T};
+@:structInit class Chance<T> {
+    public var chance: Int;
+    public var item: T;
+
+    public function new(chance: Int, item: T) {
+        this.chance = chance;
+        this.item = item;
+    }
+}
 
 /**
     A linear iterator of all the chances in the table.
@@ -75,17 +85,20 @@ class ReadOnlyProbabilityTable<T> {
         return chances.length;
     }
 
-    public function new() {
-        this.chances = [];
-        this.totalChance = 0;
+    public function new(?chances: Array<Chance<T>>) {
+        if (chances == null) chances = [];
+        this.chances = chances;
+        this.totalChance = this.chances.reduce(function(i, v) {
+            return i.chance + v;
+        }, 0);
     }
 
-    @:generic static function _random<T>(chances: Array<Chance<T>>, r: hxd.Rand,
-            ?totalChance: Null<Int>): Int {
-        if (totalChance == null) {
-            totalChance = 0;
-            for (c in chances) totalChance += c.chance;
-        }
+    @:generic
+    static function _random<T>(chances: Array<Chance<T>>, r: hxd.Rand, ?totalChance: Null<Int>): Int {
+        if (totalChance == null) totalChance = chances.reduce(function(i, v) {
+            return i.chance + v;
+        }, 0);
+
         var chance = 1 + r.random(totalChance);
         for (ind => c in chances) {
             if (chance <= c.chance) return ind;
