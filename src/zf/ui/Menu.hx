@@ -103,6 +103,8 @@ class MenuList extends h2d.Object {
         return true;
     }
 
+    public function onClose() {}
+
     public function indexUpdated(item: MenuItem, index: Int) {}
 }
 
