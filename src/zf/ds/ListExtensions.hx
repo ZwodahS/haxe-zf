@@ -1,5 +1,7 @@
 package zf.ds;
 
+using zf.ds.ArrayExtensions;
+
 /**
     extends the List with various utility
 **/
@@ -82,11 +84,17 @@ class ListExtensions {
     }
 
     public static function shuffle<T>(thisList: List<T>, r: hxd.Rand = null) {
-        ListUtils.shuffle(thisList, r);
+        var arr = [for (item in thisList) item];
+        arr.shuffle(r);
+        thisList.clear();
+        for (item in arr) thisList.push(item);
     }
 
     public static function contains<T>(thisList: List<T>, item: T): Bool {
-        return ListUtils.contains(thisList, item);
+        for (i in thisList) {
+            if (i == item) return true;
+        }
+        return false;
     }
 
     public static function firstX<T>(thisList: List<T>, count: Int): Array<T> {
