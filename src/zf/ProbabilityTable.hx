@@ -1,6 +1,6 @@
 package zf;
 
-using zf.ArrayExtensions;
+using zf.ds.ArrayExtensions;
 
 /**
     Probabilty Table allows us to choose object from a list based on their weights

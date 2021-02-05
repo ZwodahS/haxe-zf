@@ -1,6 +1,6 @@
 package zf;
 
-import zf.ds.List;
+using zf.ds.ListExtensions;
 
 /**
     Previously was MessageDispatcher, now generalised to be a message dispatcher.

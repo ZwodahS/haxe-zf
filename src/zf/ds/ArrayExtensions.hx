@@ -1,4 +1,4 @@
-package zf;
+package zf.ds;
 
 class ArrayExtensions {
     /**

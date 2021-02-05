@@ -3,13 +3,14 @@ package zf.ds;
 /**
     extends the List with various utility
 **/
-class List<T> extends haxe.ds.List<T> {
+@:access(haxe.ds.List)
+class ListExtensions {
     // adapted from https://github.com/HaxeFoundation/haxe/blob/4.1.2/std/haxe/ds/ListSort.hx
     // which adapted from https://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
-    public function sort(cmp: (T, T) -> Int) {
-        if (this.h == null) return;
-        var list = this.h;
-        var tail = this.q;
+    public static function sort<T>(thisList: haxe.ds.List<T>, cmp: (T, T) -> Int) {
+        if (thisList.h == null) return;
+        var list = thisList.h;
+        var tail = thisList.q;
         tail = null;
         var insize = 1, nmerges, psize = 0, qsize = 0;
         var p, q, e;
@@ -52,18 +53,18 @@ class List<T> extends haxe.ds.List<T> {
             if (nmerges <= 1) break;
             insize *= 2;
         }
-        this.h = list;
-        this.q = tail;
+        thisList.h = list;
+        thisList.q = tail;
     }
 
-    public function inFilter(f: T->Bool): List<T> {
+    public static function inFilter<T>(thisList: List<T>, f: T->Bool): List<T> {
         var newHead = null;
         var previous = null;
-        var current = this.h;
-        this.length = 0;
+        var current = thisList.h;
+        thisList.length = 0;
         while (current != null) {
             if (f(current.item)) {
-                this.length += 1;
+                thisList.length += 1;
                 if (newHead == null) {
                     newHead = current;
                 }
@@ -75,22 +76,22 @@ class List<T> extends haxe.ds.List<T> {
             }
             current = current.next;
         }
-        this.h = newHead;
-        this.q = previous;
-        return this;
+        thisList.h = newHead;
+        thisList.q = previous;
+        return thisList;
     }
 
-    public function shuffle(r: hxd.Rand = null) {
-        ListUtils.shuffle(this, r);
+    public static function shuffle<T>(thisList: List<T>, r: hxd.Rand = null) {
+        ListUtils.shuffle(thisList, r);
     }
 
-    public function contains(item: T): Bool {
-        return ListUtils.contains(this, item);
+    public static function contains<T>(thisList: List<T>, item: T): Bool {
+        return ListUtils.contains(thisList, item);
     }
 
-    public function firstX(count: Int): Array<T> {
+    public static function firstX<T>(thisList: List<T>, count: Int): Array<T> {
         var items: Array<T> = [];
-        var item = this.h;
+        var item = thisList.h;
         for (i in 0...count) {
             if (item == null) break;
             items.push(item.item);
@@ -99,11 +100,11 @@ class List<T> extends haxe.ds.List<T> {
         return items;
     }
 
-    public function get(position: Int): T {
+    public static function get<T>(thisList: List<T>, position: Int): T {
         /**
             Slow, but useful if we know what we are doing.
         **/
-        var curr = this.h;
+        var curr = thisList.h;
 
         for (i in 0...position) {
             if (curr == null) break;
@@ -112,39 +113,39 @@ class List<T> extends haxe.ds.List<T> {
         return curr.item;
     }
 
-    public function popItemAtPosition(position: Int): Null<T> {
+    public static function popItemAtPosition<T>(thisList: List<T>, position: Int): Null<T> {
         var prev = null;
-        var curr = this.h;
+        var curr = thisList.h;
         for (i in 0...position) {
             if (curr == null) break;
             prev = curr;
             curr = curr.next;
         }
         if (curr == null) return null;
-        length--;
+        thisList.length--;
         if (prev == null) {
-            this.h = curr.next;
+            thisList.h = curr.next;
         } else {
             prev.next = curr.next;
         }
-        if (this.q == curr) {
-            this.q = prev; // this become the last index
+        if (thisList.q == curr) {
+            thisList.q = prev; // thisList become the last index
         }
         return curr.item;
     }
 
-    public function copy(): List<T> {
+    public static function copy<T>(thisList: List<T>): List<T> {
         // shallow copy
         var l = new List<T>();
-        for (i in this) {
+        for (i in thisList) {
             l.add(i);
         }
         return l;
     }
 
-    public function removeByFunc(check: T->Bool): T {
+    public static function removeByFunc<T>(thisList: List<T>, check: T->Bool): T {
         var found = null;
-        var current = this.h;
+        var current = thisList.h;
         while (current != null) {
             if (check(current.item)) {
                 found = current;
@@ -152,7 +153,7 @@ class List<T> extends haxe.ds.List<T> {
             }
             current = current.next;
         }
-        if (found != null) this.remove(found.item);
+        if (found != null) thisList.remove(found.item);
         return found.item;
     }
 }
