@@ -1,5 +1,7 @@
 package zf;
 
+import hxd.Rand;
+
 using zf.ds.ArrayExtensions;
 
 /**
@@ -46,9 +48,9 @@ class ProbabilityTableIterator<T> {
 class ProbabilityTableRandomIterator<T> {
     var totalChance: Int;
     var chances: Array<Chance<T>>;
-    var r: hxd.Rand;
+    var r: Rand;
 
-    public function new(chances: Array<Chance<T>>, r: hxd.Rand) {
+    public function new(chances: Array<Chance<T>>, r: Rand) {
         this.totalChance = 0;
         this.chances = [];
         this.r = r;
@@ -94,7 +96,7 @@ class ReadOnlyProbabilityTable<T> {
     }
 
     @:generic
-    static function _random<T>(chances: Array<Chance<T>>, r: hxd.Rand, ?totalChance: Null<Int>): Int {
+    static function _random<T>(chances: Array<Chance<T>>, r: Rand, ?totalChance: Null<Int>): Int {
         if (totalChance == null) totalChance = chances.reduce(function(i, v) {
             return i.chance + v;
         }, 0);
@@ -111,16 +113,16 @@ class ReadOnlyProbabilityTable<T> {
         An alias to randomItem, deprecated
     **/
     @:deprecated
-    public function roll(?r: hxd.Rand): Null<T> {
+    public function roll(?r: Rand): Null<T> {
         return randomItem(r);
     }
 
     /**
         Returns a random item in the table
     **/
-    public function randomItem(?r: hxd.Rand): Null<T> {
+    public function randomItem(?r: Rand): Null<T> {
         if (totalChance == 0) return null;
-        r = r != null ? r : new hxd.Rand(Random.int(0, Constants.SeedMax));
+        r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
         var ind = _random(this.chances, r, this.totalChance);
         return this.chances[ind].item;
     }
@@ -128,8 +130,8 @@ class ReadOnlyProbabilityTable<T> {
     /**
         return a randomed Iterator of the item in this table
     **/
-    public function randomList(?r: hxd.Rand): ProbabilityTableRandomIterator<T> {
-        r = r != null ? r : new hxd.Rand(Random.int(0, Constants.SeedMax));
+    public function randomList(?r: Rand): ProbabilityTableRandomIterator<T> {
+        r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
         return new ProbabilityTableRandomIterator(this.chances, r);
     }
 
@@ -140,7 +142,7 @@ class ReadOnlyProbabilityTable<T> {
 
 /**
     ProbabilityTable stores a mapping of [Chance] -> T
-    It then allow for rolling for T by providing a hxd.Rand
+    It then allow for rolling for T by providing a Rand
 **/
 class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
     public function add(chance: Int, item: T) {
