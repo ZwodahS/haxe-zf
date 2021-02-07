@@ -1,33 +1,40 @@
 package zf.tests;
 
+using StringTools;
+
 // The Console used here comes from console module, not h2d.Console
 class TestCase {
-    var testcases: Array<{name: String, func: Void->Void}>;
-
-    public function new() {
-        this.testcases = [];
-    }
+    public function new() {}
 
     public function run() {
-        Console.log('------ Running ${this}');
-        for (tc in this.testcases) {
-            Console.log('---- Running: ${tc.name}');
-            try {
-                tc.func();
-                Console.log('---- Done: ${tc.name}: <green>Pass</>');
-            } catch (e) {
-                if (e.message != 'Assertion Fail') {
-                    trace(e.message);
-                    trace(e.stack);
+        switch(Type.typeof(this)) {
+            case TClass(c):
+                var className = Type.getClassName(c);
+                Console.log('Running ${className}');
+                for (name in Type.getInstanceFields(c)) {
+                    var field = Reflect.field(this, name);
+                    var success = false;
+                    if (name.startsWith("test_") && Reflect.isFunction(field)) {
+                        try {
+                            Reflect.callMethod(this, field, []);
+                            success = true;
+                        } catch (e) {
+                            // error not thrown by assert function
+                            if (e.message != 'Assertion Fail') {
+                                trace(e.message);
+                                trace(e.stack);
+                            }
+                            success = false;
+                        }
+                        if (success) {
+                            Console.log('---- Done: ${className}.${name}: <green>Pass</>');
+                        } else {
+                            Console.log('---- Done: ${className}.${name}: <red>Fail</>');
+                        }
+                    }
                 }
-                Console.log('---- Done: ${tc.name}: <red>Fail</>');
-            }
-            Console.log('');
+            default:
         }
-    }
-
-    function add(name: String, func: Void->Void) {
-        this.testcases.push({name: name, func: func});
     }
 
     public function assertEqual(v1: Dynamic, v2: Dynamic, ?additionalMsg: String, ?pos: haxe.PosInfos) {
