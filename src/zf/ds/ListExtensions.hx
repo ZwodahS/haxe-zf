@@ -97,6 +97,12 @@ class ListExtensions {
         return false;
     }
 
+    public static function uniqueAdd<T>(thisList: List<T>, item: T): Bool {
+        if (contains(thisList, item)) return false;
+        thisList.add(item);
+        return true;
+    }
+
     public static function firstX<T>(thisList: List<T>, count: Int): Array<T> {
         var items: Array<T> = [];
         var item = thisList.h;
