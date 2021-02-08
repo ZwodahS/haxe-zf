@@ -2,6 +2,7 @@ package zf.tests;
 
 class TestRunner {
     var cases: List<TestCase>;
+
     public function new() {
         this.cases = new List<TestCase>();
     }

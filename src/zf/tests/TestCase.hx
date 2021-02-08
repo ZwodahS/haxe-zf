@@ -7,7 +7,7 @@ class TestCase {
     public function new() {}
 
     public function run() {
-        switch(Type.typeof(this)) {
+        switch (Type.typeof(this)) {
             case TClass(c):
                 var className = Type.getClassName(c);
                 Console.log('Running ${className}');
@@ -41,6 +41,23 @@ class TestCase {
         if (v1 != v2) {
             additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
             var msg = '[${pos.fileName}:${pos.lineNumber}]: ${v1} != ${v2} ${additionalMsg}';
+            Console.error(msg);
+            throw 'Assertion Fail';
+        }
+    }
+
+    public function assertIn(v1: Dynamic, v2: Iterable<Dynamic>, ?additionalMsg: String,
+            ?pos: haxe.PosInfos) {
+        var found = false;
+        for (v in v2) {
+            if (v1 == v) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
+            var msg = '[${pos.fileName}:${pos.lineNumber}]: ${v1} not found in ${v2} ${additionalMsg}';
             Console.error(msg);
             throw 'Assertion Fail';
         }
