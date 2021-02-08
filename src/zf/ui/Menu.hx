@@ -108,6 +108,7 @@ class MenuList extends h2d.Object {
         var oldValue = this.items[index];
         this.items[index] = item;
         item.selected = oldValue.selected;
+        @:privateAccess item.index = oldValue.index;
         return oldValue;
     }
 
