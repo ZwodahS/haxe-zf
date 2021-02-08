@@ -103,6 +103,14 @@ class MenuList extends h2d.Object {
         return true;
     }
 
+    public function replaceItem(item: MenuItem, index: Int): MenuItem {
+        if (index < 0 || index >= this.items.length) return null;
+        var oldValue = this.items[index];
+        this.items[index] = item;
+        item.selected = oldValue.selected;
+        return oldValue;
+    }
+
     public function onClose() {}
 
     public function indexUpdated(item: MenuItem, index: Int) {}
@@ -135,6 +143,15 @@ class VerticalMenuList extends MenuList {
         return success;
     }
 
+    override public function replaceItem(item: MenuItem, index: Int): MenuItem {
+        var oldValue = super.replaceItem(item, index);
+        if (oldValue == null) return null;
+        this.removeChild(oldValue);
+        this.addChild(item);
+        indexUpdated(item, index);
+        return oldValue;
+    }
+
     override public function clear() {
         for (i in this.items) i.remove();
         super.clear();
@@ -144,5 +161,9 @@ class VerticalMenuList extends MenuList {
         var y = index == 0 ? 0 : (index * itemHeight) + ((index - 1) * itemSpacing);
         item.y = y;
         if (index == this.selectedIndex) item.selected = true;
+    }
+
+    public function calculateMaxHeight(numOfItems: Int, additionalPadding: Int = 0): Int {
+        return (itemHeight * numOfItems) + (itemSpacing * (numOfItems - 1)) + (additionalPadding * 2);
     }
 }
