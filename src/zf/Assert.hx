@@ -26,6 +26,17 @@ class Assert {
 #end
     }
 
+    // using this need to be put behind #if !no_assertion, so that the 2 value does not get evaluated
+    // when it is a function.
+    public static function assertEqual(v1: Dynamic, v2: Dynamic, ?additionalMsg: String,
+            ?pos: haxe.PosInfos) {
+        if (v1 != v2) {
+            additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
+            var msg = ' ${v1} != ${v2} ${additionalMsg}';
+            throw '[${pos.fileName}:${pos.lineNumber}] Assertion failed: ${msg}';
+        }
+    }
+
     public static function valueIn<T>(v: T, values: Array<T>): Bool {
         for (value in values) {
             if (v == value) return true;
