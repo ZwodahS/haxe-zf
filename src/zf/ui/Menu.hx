@@ -18,7 +18,7 @@ class MenuItem extends h2d.Object {
     public function activate() {}
 }
 
-class MenuList extends h2d.Object {
+class MenuList extends h2d.Layers {
     public var items: Array<MenuItem>;
 
     public var wrapped: Bool = true;
@@ -134,7 +134,7 @@ class VerticalMenuList extends MenuList {
         super.addItem(item);
         indexUpdated(item, item.index);
         item.selected = false;
-        this.addChild(item);
+        this.add(item, 10);
     }
 
     override public function removeItem(item: MenuItem): Bool {
@@ -148,7 +148,7 @@ class VerticalMenuList extends MenuList {
         var oldValue = super.replaceItem(item, index);
         if (oldValue == null) return null;
         this.removeChild(oldValue);
-        this.addChild(item);
+        this.add(item, 10);
         indexUpdated(item, index);
         return oldValue;
     }
