@@ -1,5 +1,8 @@
 package zf.ui;
 
+/**
+    A Html text that can be used to buffer a list of strings
+**/
 class BufferedHtmlText extends h2d.HtmlText {
     var bufferedTexts: List<String>;
     var onFinish: Void->Void;
@@ -15,11 +18,18 @@ class BufferedHtmlText extends h2d.HtmlText {
         this.progress = 0.0;
     }
 
+    /**
+        set the display text to this value
+    **/
     public function displayText(text: String) {
         this.text = text;
         this.current = text;
+        this.progress = 1.0;
     }
 
+    /**
+        buffer a list of texts, and slowly display them.
+    **/
     public function bufferTexts(texts: Iterable<String>, onFinish: Void->Void) {
         this.bufferedTexts.clear();
         for (t in texts) this.bufferedTexts.add(t);
