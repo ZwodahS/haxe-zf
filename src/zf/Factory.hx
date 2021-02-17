@@ -40,7 +40,7 @@ class Factory<O, T: Template<O>> {
         this.templates.remove(name);
     }
 
-    public function get(name: String): Template<O> {
+    public function get(name: String): T {
         return templates[name];
     }
 }
