@@ -23,7 +23,7 @@ class Logger {
         var location = PositionTools.toLocation(Context.currentPos());
         var locationString = location.file + ":" + location.range.start.line;
         return macro {
-            haxe.Log.trace('${locationString}: [Debug] ${msg}', null);
+            haxe.Log.trace('${locationString}: [Warn] ${msg}', null);
         }
 #end
     }
