@@ -7,15 +7,23 @@ package zf.ui;
     2. Manipulating menu item
     3. Performing action on the menu item
 **/
+@:allow(zf.ui.MenuList)
 class MenuItem extends h2d.Object {
     public var index(default, null): Int;
     public var selected(default, set): Bool;
+
+    var menu: MenuList;
 
     public function set_selected(s: Bool): Bool {
         return this.selected = s;
     }
 
     public function activate() {}
+
+    public function removeFromMenu() {
+        if (this.menu == null) return;
+        this.menu.removeItem(this);
+    }
 }
 
 class MenuList extends h2d.Layers {
@@ -90,16 +98,22 @@ class MenuList extends h2d.Layers {
     }
 
     public function addItem(item: MenuItem) {
+        var prevSize = this.items.length;
         @:privateAccess item.index = this.items.length;
         this.items.push(item);
+        item.menu = this;
+        sizeUpdated(prevSize, this.items.length);
     }
 
     public function removeItem(item: MenuItem): Bool {
+        var prevSize = this.items.length;
         if (!this.items.remove(item)) return false;
         for (ind => i in this.items) {
             @:privateAccess i.index = ind;
             indexUpdated(i, ind);
         }
+        item.menu = null;
+        sizeUpdated(prevSize, this.items.length);
         return true;
     }
 
@@ -115,6 +129,8 @@ class MenuList extends h2d.Layers {
     public function onClose() {}
 
     public function indexUpdated(item: MenuItem, index: Int) {}
+
+    public function sizeUpdated(prevSize: Int, newSize: Int) {}
 }
 
 /**
