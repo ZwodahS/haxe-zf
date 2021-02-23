@@ -97,11 +97,20 @@ class MenuList extends h2d.Layers {
         this.selectedIndex = -1;
     }
 
-    public function addItem(item: MenuItem) {
+    public function addItem(item: MenuItem, ?updateSize: Bool = true) {
         var prevSize = this.items.length;
         @:privateAccess item.index = this.items.length;
         this.items.push(item);
         item.menu = this;
+        if (updateSize) sizeUpdated(prevSize, this.items.length);
+    }
+
+    public function addItems(items: Iterable<MenuItem>) {
+        var prevSize = this.items.length;
+        // NOTE: updateSize flag is a hack. Ideally, the "correct" way might be to have a internal _addItem function
+        // that is okay for the most part but that requires changing a lot of code in child classes.
+        // might still be dangerous to do it this way. Need to think about it
+        for (i in items) addItem(i, false);
         sizeUpdated(prevSize, this.items.length);
     }
 
@@ -130,7 +139,7 @@ class MenuList extends h2d.Layers {
 
     public function indexUpdated(item: MenuItem, index: Int) {}
 
-    public function sizeUpdated(prevSize: Int, newSize: Int) {}
+    dynamic public function sizeUpdated(prevSize: Int, newSize: Int) {}
 }
 
 /**
@@ -140,14 +149,20 @@ class VerticalMenuList extends MenuList {
     var itemHeight: Int;
     var itemSpacing: Int;
 
+    public var height(get, never): Int;
+
+    public function get_height(): Int {
+        return (itemHeight * this.items.length) + (itemSpacing * (this.items.length - 1));
+    }
+
     public function new(itemHeight: Int, itemSpacing: Int) {
         super();
         this.itemHeight = itemHeight;
         this.itemSpacing = itemSpacing;
     }
 
-    override public function addItem(item: MenuItem) {
-        super.addItem(item);
+    override public function addItem(item: MenuItem, ?updateSize: Bool = true) {
+        super.addItem(item, updateSize);
         indexUpdated(item, item.index);
         item.selected = false;
         this.add(item, 10);
@@ -178,9 +193,5 @@ class VerticalMenuList extends MenuList {
         var y = index == 0 ? 0 : (index * itemHeight) + ((index - 1) * itemSpacing);
         item.y = y;
         if (index == this.selectedIndex) item.selected = true;
-    }
-
-    public function calculateMaxHeight(numOfItems: Int, additionalPadding: Int = 0): Int {
-        return (itemHeight * numOfItems) + (itemSpacing * (numOfItems - 1)) + (additionalPadding * 2);
     }
 }
