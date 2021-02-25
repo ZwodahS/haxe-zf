@@ -31,4 +31,8 @@ class ArrayExtensions {
             i--;
         }
     }
+
+    public static function pushArray<T>(arr: Array<T>, pushedArray: Array<T>) {
+        for (i in pushedArray) arr.push(i);
+    }
 }
