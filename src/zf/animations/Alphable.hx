@@ -1,5 +1,5 @@
 package zf.animations;
 
 interface Alphable {
-    public var alpha(get, set): Float;
+	public var alpha(get, set): Float;
 }

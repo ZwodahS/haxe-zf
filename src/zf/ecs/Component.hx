@@ -1,14 +1,14 @@
 package zf.ecs;
 
 /**
-    Generic Component object
+	Generic Component object
 **/
 class Component {
-    public var type(get, never): String;
+	public var type(get, never): String;
 
-    public function get_type(): String {
-        return 'Component';
-    }
+	public function get_type(): String {
+		return 'Component';
+	}
 
-    public function new() {}
+	public function new() {}
 }

@@ -1,5 +1,5 @@
 package zf.animations;
 
 interface Rotatable {
-    public var rotation(get, set): Float;
+	public var rotation(get, set): Float;
 }

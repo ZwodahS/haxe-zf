@@ -19,7 +19,8 @@
     }
   },
   "indentation": {
-    "character": "    ",
+    "character": "tab",
+    "tabWidth": 4,
     "conditionalPolicy": "fixedZero"
   },
   "sameLine": {
