@@ -1,13 +1,39 @@
 package zf;
 
 abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
+	/**
+		x component of the point
+	**/
 	public var x(get, set): Int;
+
+	inline public function get_x(): Int {
+		return this[0];
+	}
+
+	inline public function set_x(v: Int): Int {
+		return this[0] = v;
+	}
+
+	/**
+		y component of the point
+	**/
 	public var y(get, set): Int;
+
+	inline public function get_y(): Int {
+		return this[1];
+	}
+
+	inline public function set_y(v: Int): Int {
+		return this[1] = v;
+	}
 
 	public function new(x: Int = 0, y: Int = 0) {
 		this = [x, y];
 	}
 
+	/**
+		return a string representation of the Point2i
+	**/
 	public function toString(): String {
 		return '{$x,$y}';
 	}
@@ -66,22 +92,6 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return [this[0], this[1]];
 	}
 
-	inline public function get_x(): Int {
-		return this[0];
-	}
-
-	inline public function set_x(v: Int): Int {
-		return this[0] = v;
-	}
-
-	inline public function get_y(): Int {
-		return this[1];
-	}
-
-	inline public function set_y(v: Int): Int {
-		return this[1] = v;
-	}
-
 	@:to
 	public function toPoint2f(): Point2f {
 		return new Point2f(this[0], this[1]);
@@ -97,10 +107,17 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return new Point3f(this[0], this[1], 0);
 	}
 
+	/**
+		return a "distance" to another point
+		Diagonal points have a distance of 2.
+	**/
 	public function distance(p: Point2i): Int {
 		return hxd.Math.iabs(this[0] - p.x) + hxd.Math.iabs(this[1] - p.y);
 	}
 
+	/**
+		Check if a point is around this point
+	**/
 	public function isAround(p: Point2i): Bool {
 		// isAround check for if the point is a point around this point.
 		if (p.x == this[0] && p.y == this[0]) return false;
@@ -109,6 +126,9 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return xDiff <= 1 && yDiff <= 1;
 	}
 
+	/**
+		Check if a point is adjacent to this point
+	**/
 	public function isAdjacent(p: Point2i): Bool {
 		// isAdjacent check for if the point is directly adjacent to this, excluding diagonal
 		var xDiff = hxd.Math.iabs(this[0] - p.x);
@@ -116,12 +136,52 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return xDiff + yDiff == 1;
 	}
 
+	/**
+		Get adjacent points
+		.X.
+		XOX
+		.X.
+	**/
 	public function getAdjacent(): Array<Point2i> {
 		var pts: Array<Point2i> = [];
 		pts.push(new Point2i(this[0], this[1] - 1));
 		pts.push(new Point2i(this[0], this[1] + 1));
 		pts.push(new Point2i(this[0] - 1, this[1]));
 		pts.push(new Point2i(this[0] + 1, this[1]));
+		return pts;
+	}
+
+	/**
+		Get diagonal points
+		X.X
+		.O.
+		X.X
+	**/
+	public function getDiagonal(): Array<Point2i> {
+		var pts: Array<Point2i> = [];
+		pts.push(new Point2i(this[0] - 1, this[1] - 1));
+		pts.push(new Point2i(this[0] + 1, this[1] - 1));
+		pts.push(new Point2i(this[0] - 1, this[1] + 1));
+		pts.push(new Point2i(this[0] + 1, this[1] + 1));
+		return pts;
+	}
+
+	/**
+		Get all points around this point.
+		XXX
+		XOX
+		XXX
+	**/
+	public function getAround(): Array<Point2i> {
+		var pts: Array<Point2i> = [];
+		pts.push(new Point2i(this[0] - 1, this[1] - 1));
+		pts.push(new Point2i(this[0], this[1] - 1));
+		pts.push(new Point2i(this[0] + 1, this[1] - 1));
+		pts.push(new Point2i(this[0] - 1, this[1]));
+		pts.push(new Point2i(this[0] + 1, this[1]));
+		pts.push(new Point2i(this[0] - 1, this[1] + 1));
+		pts.push(new Point2i(this[0], this[1] + 1));
+		pts.push(new Point2i(this[0] + 1, this[1] + 1));
 		return pts;
 	}
 
