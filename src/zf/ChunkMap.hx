@@ -3,10 +3,10 @@ package zf;
 /**
 	ChunkMap is a 2D array that allow for infinite coordinates system
 **/
-typedef TranslatedCoord = {
-	var chunkId: String;
-	var x: Int;
-	var y: Int;
+@:structInit class TranslatedCoord {
+	public var chunkId: String;
+	public var x: Int;
+	public var y: Int;
 }
 
 class ChunkMap<T> {

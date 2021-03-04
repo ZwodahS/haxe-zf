@@ -2,11 +2,6 @@ package zf.ds;
 
 import haxe.ds.Vector;
 
-typedef XY = {
-	x: Int,
-	y: Int
-}
-
 @:access(zf.ds.ReadOnlyVector2D)
 class Vector2DIteratorXY<T> {
 	var data: ReadOnlyVector2D<T>;
@@ -23,9 +18,9 @@ class Vector2DIteratorXY<T> {
 		return (this.currX < this.data.size.x && this.currY < this.data.size.y);
 	}
 
-	public function next(): {key: XY, value: T} {
+	public function next(): {key: Point2i, value: T} {
 		var returnValue = {
-			key: {x: this.currX, y: this.currY},
+			key: new Point2i(this.currX, this.currY),
 			value: this.data.data[data.pos(this.currX, this.currY)],
 		}
 		if (this.currY == this.data.size.y - 1) {
@@ -54,9 +49,9 @@ class Vector2DIteratorYX<T> {
 		return (this.currX < this.data.size.x && this.currY < this.data.size.y);
 	}
 
-	public function next(): {key: XY, value: T} {
+	public function next(): {key: Point2i, value: T} {
 		var returnValue = {
-			key: {x: this.currX, y: this.currY},
+			key: new Point2i(this.currX, this.currY),
 			value: this.data.data[data.pos(this.currX, this.currY)],
 		}
 		if (this.currX == this.data.size.x - 1) {

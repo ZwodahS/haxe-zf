@@ -10,12 +10,12 @@ enum IntersectType {
 	// if A and B is equal, A.interectionDetail(B) == B.intersectDetail(A) == Inside
 }
 
-typedef IntersectDetail = {
+@:structInit class IntersectDetail {
 	// x and y will always be positive.
-	x: Float,
-	y: Float,
-	xType: IntersectType,
-	yType: IntersectType,
+	public var x: Float;
+	public var y: Float;
+	public var xType: IntersectType;
+	public var yType: IntersectType;
 }
 
 abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
