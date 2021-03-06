@@ -4,7 +4,7 @@ import zf.animations.Alphable;
 import zf.animations.Scalable;
 import zf.animations.Positionable;
 
-class WrappedObject implements Alphable implements Scalable implements Positionable {
+class WrappedObject implements Alphable implements Scalable implements Positionable implements Rotatable {
 	public var object: h2d.Object;
 
 	public function new(o: h2d.Object) {
@@ -59,5 +59,15 @@ class WrappedObject implements Alphable implements Scalable implements Positiona
 
 	inline public function get_y(): Float {
 		return this.object.y;
+	}
+
+	public var rotation(get, set): Float;
+
+	inline public function get_rotation(): Float {
+		return this.object.rotation;
+	}
+
+	inline public function set_rotation(r: Float): Float {
+		return this.object.rotation = r;
 	}
 }
