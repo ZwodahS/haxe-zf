@@ -38,11 +38,23 @@ class CircularLinkedNode<T> {
 	public function toString(): String {
 		return 'Node: ${this.item}';
 	}
+
+	public function getAllItems(): Array<T> {
+		var items: Array<T> = [];
+		items.push(this.item);
+		var curr = this.next;
+		while (curr != this) {
+			items.push(curr.item);
+			curr = curr.next;
+		}
+		return items;
+	}
 }
 
 class CircularLinkedList<T> {
 	public var current(default, null): CircularLinkedNode<T>;
 
+	public var length: Int = 0;
 	public function new() {}
 
 	public function insertBefore(item: T): CircularLinkedNode<T> {
@@ -52,9 +64,11 @@ class CircularLinkedList<T> {
 			this.current = node;
 			node.next = node;
 			node.prev = node;
+			this.length += 1;
 			return node;
 		}
 		this.current.insertNodeBefore(node);
+		this.length += 1;
 		return node;
 	}
 
@@ -65,9 +79,11 @@ class CircularLinkedList<T> {
 			this.current = node;
 			node.next = node;
 			node.prev = node;
+			this.length += 1;
 			return node;
 		}
 		this.current.insertNodeAfter(node);
+		this.length += 1;
 		return node;
 	}
 
@@ -102,6 +118,7 @@ class CircularLinkedList<T> {
 		node.next = null;
 		node.prev = null;
 		node.list = null;
+		this.length -= 1;
 		return true;
 	}
 
