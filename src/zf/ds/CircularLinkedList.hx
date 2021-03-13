@@ -55,6 +55,7 @@ class CircularLinkedList<T> {
 	public var current(default, null): CircularLinkedNode<T>;
 
 	public var length: Int = 0;
+
 	public function new() {}
 
 	public function insertBefore(item: T): CircularLinkedNode<T> {

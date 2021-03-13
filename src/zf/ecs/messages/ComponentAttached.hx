@@ -15,4 +15,8 @@ class ComponentAttached extends zf.Message {
 		this.entity = entity;
 		this.component = component;
 	}
+
+	override public function toString(): String {
+		return '[m:ComponentAttached: ${entity}+${component}]';
+	}
 }

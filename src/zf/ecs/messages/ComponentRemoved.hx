@@ -15,4 +15,8 @@ class ComponentRemoved extends zf.Message {
 		this.entity = entity;
 		this.component = component;
 	}
+
+	override public function toString(): String {
+		return '[m:ComponentRemoved: ${entity}-${component}]';
+	}
 }

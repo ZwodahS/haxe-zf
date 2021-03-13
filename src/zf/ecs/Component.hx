@@ -11,4 +11,8 @@ class Component {
 	}
 
 	public function new() {}
+
+	public function toString(): String {
+		return '{c:${this.type}}';
+	}
 }
