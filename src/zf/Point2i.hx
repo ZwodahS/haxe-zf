@@ -67,6 +67,11 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return this[0] == rhs.x && this[1] == rhs.y;
 	}
 
+	@:op(A != B)
+	public function _notequal(rhs: Point2i): Bool {
+		return !(this[0] == rhs.x && this[1] == rhs.y);
+	}
+
 	@:op(A * B)
 	public function _scale(rhs: Int): Point2i {
 		return new Point2i(this[0] * rhs, this[1] * rhs);
