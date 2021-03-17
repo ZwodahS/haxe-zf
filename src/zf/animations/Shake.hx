@@ -23,8 +23,7 @@ class Shake extends Animation {
 	override public function update(dt: Float) {
 		this.duration -= dt;
 
-		var position: Point2f = new Point2f(this.object.x, this.object.y)
-			- currentOffset;
+		var position: Point2f = new Point2f(this.object.x, this.object.y) - currentOffset;
 		if (duration <= 0) {
 			this.currentOffset = [.0, .0];
 		} else {
