@@ -6,17 +6,29 @@ import zf.AlignmentUtils;
 
 class TextButton extends h2d.Object {
 	var label: h2d.HtmlText;
-	var text: String;
+
+	public var text(default, set): String = '';
+
+	public function set_text(text: String): String {
+		this.text = text;
+		this.label.text = text;
+		this.interactive.width = this.label.textWidth;
+		this.interactive.height = this.label.textHeight;
+		this.width = this.label.textWidth;
+		this.height = this.label.textHeight;
+		updateText();
+		return this.text;
+	}
 
 	var width: Float;
 	var height: Float;
 	var defaultColor: Int;
 	var hoverColor: Int;
 	var isHovered: Bool = false;
+	var interactive: h2d.Interactive;
 
 	public function new(defaultColor: Int, hoverColor: Int, text: String, font: h2d.Font) {
 		super();
-		this.text = text;
 		this.label = new h2d.HtmlText(font);
 		this.defaultColor = defaultColor;
 		this.hoverColor = hoverColor;
@@ -27,19 +39,20 @@ class TextButton extends h2d.Object {
 
 		this.width = this.label.textWidth;
 		this.height = this.label.textHeight;
-		var interactive = new h2d.Interactive(width, height, this);
-		interactive.onOver = function(e: hxd.Event) {
+		this.interactive = new h2d.Interactive(width, height, this);
+		this.interactive.onOver = function(e: hxd.Event) {
 			this.isHovered = true;
 			updateText();
 		}
-		interactive.onOut = function(e: hxd.Event) {
+		this.interactive.onOut = function(e: hxd.Event) {
 			this.isHovered = false;
 			updateText();
 		}
-		interactive.onRelease = function(e: hxd.Event) {
+		this.interactive.onRelease = function(e: hxd.Event) {
 			onClick();
 		}
-		interactive.cursor = Default;
+		this.interactive.cursor = Default;
+		this.text = text;
 	}
 
 	function updateText() {
