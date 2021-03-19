@@ -1,10 +1,10 @@
 package zf.ecs.messages;
 
 class ComponentRemoved extends zf.Message {
-	public static final Type = "ComponentRemoved";
+	public static final MessageType = "ComponentRemoved";
 
 	override public function get_type(): String {
-		return Type;
+		return MessageType;
 	}
 
 	public var entity: Entity;

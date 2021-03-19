@@ -1,10 +1,10 @@
 package zf.ecs.messages;
 
 class ComponentAttached extends zf.Message {
-	public static final Type = "ComponentAttached";
+	public static final MessageType = "ComponentAttached";
 
 	override public function get_type(): String {
-		return Type;
+		return MessageType;
 	}
 
 	public var entity: Entity;
