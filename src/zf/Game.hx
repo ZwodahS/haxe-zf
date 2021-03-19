@@ -264,7 +264,7 @@ class Game extends hxd.App {
 	function beginIncommingScreen() {
 		this.screenState = Entering;
 		this.incomingScreen.beginScreenEnter();
-		this.s2d.add(this.incomingScreen, 0);
+		this.s2d.add(this.incomingScreen, 100);
 	}
 
 	function screenExited(screen: zf.Screen) {}
