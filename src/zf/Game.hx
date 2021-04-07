@@ -2,9 +2,6 @@ package zf;
 
 /**
 	Parent Game.hx
-
-
-	provide screen transition
 **/
 enum ScreenState {
 	Exiting;
@@ -66,10 +63,40 @@ class TextLabel extends h2d.Object {
 #end
 
 class Game extends hxd.App {
+	/**
+		There are 3 sizes value
+
+		window.size denote the size of the window that the game is in.
+		game(Width|Height) denote the size of the game that is rendered, this is resized by boundedSize.
+		boundedSize is the size is the game we ideally want the game to be in. The game will be resized accordingly.
+	**/
+	public var gameWidth(default, null): Int = 800;
+
+	public var gameHeight(default, null): Int = 600;
+	public var boundedSize(default, set): Point2i = null;
+
+	var boundRatio: Null<Float> = null;
+
+	override function new() {
+		super();
+		this.boundedSize = [800, 600];
+		this.gameWidth = 800;
+		this.gameHeight = 600;
+	}
+
+	public function set_boundedSize(size: Point2i): Point2i {
+		this.boundedSize = size;
+		if (size == null) {
+			this.boundRatio = null;
+		} else {
+			this.boundRatio = size.x / size.y;
+		}
+		return this.boundedSize;
+	}
+
 	override function init() {
 		// add event handler
 		this.s2d.addEventListener(this.onEvent);
-
 #if debug
 		this.setupConsole();
 		this.setupFramerate();
@@ -193,6 +220,8 @@ class Game extends hxd.App {
 	}
 #end
 
+	// end of debug
+
 	override function update(dt: Float) {
 		if (this.currentScreen != null) this.currentScreen.update(dt);
 		if (this.incomingScreen != null) this.incomingScreen.update(dt);
@@ -270,4 +299,23 @@ class Game extends hxd.App {
 	function screenExited(screen: zf.Screen) {}
 
 	function screenEntered(screen: zf.Screen) {}
+
+	override function onResize() {
+		var w = hxd.Window.getInstance();
+		if (this.boundRatio == null) {
+			this.gameWidth = w.width;
+			this.gameHeight = w.height;
+		} else {
+			var ratio = w.width / w.height;
+			if (ratio < this.boundRatio) {
+				this.gameWidth = this.boundedSize.x;
+				this.gameHeight = Std.int(this.boundedSize.x * w.height / w.width);
+			} else {
+				this.gameHeight = this.boundedSize.y;
+				this.gameWidth = Std.int(this.boundedSize.y * w.width / w.height);
+			}
+		}
+		this.s2d.scaleMode = Stretch(gameWidth, gameHeight);
+		if (this.currentScreen != null) this.currentScreen.resize(gameWidth, gameHeight);
+	}
 }
