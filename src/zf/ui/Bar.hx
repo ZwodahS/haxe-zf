@@ -23,6 +23,7 @@ class Bar extends h2d.Object {
 
 	public var width(default, set): Float;
 	public var height(default, set): Float;
+	public var yOffset(default, set): Float = 0;
 
 	var text: h2d.Text;
 
@@ -76,8 +77,7 @@ class Bar extends h2d.Object {
 		this.maxValue = valueMax;
 		if (this.text != null) {
 			this.text.text = '${valueCurr} / ${valueMax}';
-			this.text.x = this.bar.x + ((width - this.text.textWidth) / 2);
-			this.text.y = this.bar.y + ((height - this.text.textHeight) / 2);
+			updateTextPosition();
 		}
 	}
 
@@ -114,6 +114,12 @@ class Bar extends h2d.Object {
 		this.textValue = v;
 		updateText();
 		return this.textValue;
+	}
+
+	public function set_yOffset(v: Float): Float {
+		this.yOffset = v;
+		updateTextPosition();
+		return this.yOffset;
 	}
 
 	function updateText() {
@@ -158,6 +164,6 @@ class Bar extends h2d.Object {
 	function updateTextPosition() {
 		if (this.text == null) return;
 		this.text.x = this.bar.x + ((width - this.text.textWidth) / 2);
-		this.text.y = this.bar.y + ((height - this.text.textHeight) / 2);
+		this.text.y = this.bar.y + this.yOffset + ((height - this.text.textHeight) / 2);
 	}
 }
