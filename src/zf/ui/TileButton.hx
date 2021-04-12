@@ -2,13 +2,9 @@ package zf.ui;
 
 import zf.AlignmentUtils;
 
-class TileButton extends h2d.Layers {
+class TileButton extends Button {
 	public var text(default, set): Null<String>;
 	public var font(default, set): h2d.Font;
-	public var disabled(default, set): Bool = false;
-
-	var isOver: Bool = false;
-
 	public var textLabel(default, null): h2d.Text;
 
 	var init: Bool = false;
@@ -18,49 +14,20 @@ class TileButton extends h2d.Layers {
 	var disabledBitmap: h2d.Bitmap;
 	var selectedBitmap: h2d.Bitmap;
 
-	public var width(default, null): Float;
-	public var height(default, null): Float;
-
 	var useHtmlText: Bool = true;
 
 	public function new(defaultTile: h2d.Tile, hoverTile: h2d.Tile, disabledTile: h2d.Tile,
 			selectedTile: h2d.Tile, useHtmlText: Bool = true) {
-		super();
+		super(Std.int(defaultTile.width), Std.int(defaultTile.height));
 		this.addChild(this.defaultBitmap = new h2d.Bitmap(defaultTile));
 		this.addChild(this.hoverBitmap = new h2d.Bitmap(hoverTile));
 		this.addChild(this.disabledBitmap = new h2d.Bitmap(disabledTile));
 		this.addChild(this.selectedBitmap = new h2d.Bitmap(selectedTile));
-		this.width = defaultTile.width;
-		this.height = defaultTile.height;
 		this.defaultBitmap.visible = true;
 		this.hoverBitmap.visible = false;
 		this.disabledBitmap.visible = false;
 		this.selectedBitmap.visible = false;
 		this.useHtmlText = useHtmlText;
-
-		var interactive = new h2d.Interactive(width, height, this);
-		interactive.onOver = function(e: hxd.Event) {
-			this.isOver = true;
-			updateButton();
-			onOver();
-		}
-		interactive.onOut = function(e: hxd.Event) {
-			this.isOver = false;
-			updateButton();
-			onOut();
-		}
-		interactive.onClick = function(e: hxd.Event) {
-			onClick();
-		}
-		interactive.onPush = function(e: hxd.Event) {
-			onPush();
-		}
-		interactive.onRelease = function(e: hxd.Event) {
-			this.isOver = false;
-			updateButton();
-			onRelease();
-		}
-		interactive.cursor = Default;
 
 		this.init = true;
 		updateTextLabel();
@@ -92,12 +59,6 @@ class TileButton extends h2d.Layers {
 		return this.font;
 	}
 
-	public function set_disabled(b: Bool): Bool {
-		this.disabled = b;
-		updateButton();
-		return this.disabled;
-	}
-
 	function createTextLabel() {
 		if (this.textLabel != null) return;
 		if (this.text == null || this.font == null) return; // not ready to create the label
@@ -117,7 +78,7 @@ class TileButton extends h2d.Layers {
 		this.textLabel.y = AlignmentUtils.center(0, this.height, textLabel.textHeight);
 	}
 
-	function updateButton() {
+	override function updateButton() {
 		this.defaultBitmap.visible = false;
 		this.hoverBitmap.visible = false;
 		this.disabledBitmap.visible = false;
@@ -131,20 +92,18 @@ class TileButton extends h2d.Layers {
 		}
 	}
 
-	dynamic public function onOut() {}
-
-	dynamic public function onOver() {}
-
-	dynamic public function onClick() {}
-
-	dynamic public function onPush() {}
-
-	dynamic public function onRelease() {}
-
 	public static function fromColor(defaultColor: Int, hoverColor: Int, disabledColor: Int,
 			selectedColor: Int, width: Int, height: Int, useHtmlText: Bool = true): TileButton {
 		return new TileButton(h2d.Tile.fromColor(defaultColor, width, height),
 			h2d.Tile.fromColor(hoverColor, width, height), h2d.Tile.fromColor(disabledColor, width, height),
 			h2d.Tile.fromColor(selectedColor, width, height), useHtmlText);
+	}
+
+	public static function fromTiles(tiles: Array<h2d.Tile>): TileButton {
+		var defaultTile = tiles[0];
+		var hoverTile = tiles.length > 1 ? tiles[1] : tiles[0];
+		var disabledTile = tiles.length > 2 ? tiles[2] : tiles[0];
+		var selectedTile = tiles.length > 3 ? tiles[3] : tiles[0];
+		return new TileButton(defaultTile, hoverTile, disabledTile, selectedTile);
 	}
 }
