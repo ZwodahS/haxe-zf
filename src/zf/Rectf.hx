@@ -27,6 +27,10 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 	// setting x and y will preserve the width / height
 	public var x(get, set): Float;
 	public var y(get, set): Float;
+	// setting right and bottom will preserve the width / height
+	public var right(get, set): Float;
+	public var bottom(get, set): Float;
+	// setting the width and height will preserve x and y, and change xMax / yMax
 	public var width(get, set): Float;
 	public var height(get, set): Float;
 
@@ -110,6 +114,28 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 		return this[1];
 	}
 
+	public function get_right(): Float {
+		return this[2];
+	}
+
+	public function set_right(v: Float): Float {
+		var w = this[2] - this[0];
+		this[0] = v - w;
+		this[2] = v;
+		return v;
+	}
+
+	public function get_bottom(): Float {
+		return this[3];
+	}
+
+	public function set_bottom(v: Float): Float {
+		var w = this[3] - this[1];
+		this[1] = v - w;
+		this[3] = v;
+		return v;
+	}
+
 	public function intersect(rect: Rectf): Bool {
 		if (this[0] >= rect.xMax || rect.xMin >= this[2]) {
 			return false;
@@ -175,6 +201,40 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+		Place the input rect within this rect.
+
+		If any dimensional of thisRect is smaller than rect, the input rect is returned
+	**/
+	public function alignRect(rect: Rectf): Rectf {
+		var thisRect: Rectf = this;
+		var details = rect.intersectDetail(thisRect);
+		var outRect = rect.clone();
+		if (thisRect.width <= rect.width || thisRect.height <= rect.height) return outRect;
+		switch (details.xType) {
+			case None:
+				outRect.x = thisRect.x;
+			case Inside: // do nothing
+			case Contains: // do nothing
+			case Negative:
+				outRect.x = thisRect.x;
+			case Positive:
+				outRect.right = thisRect.right;
+		}
+
+		switch (details.yType) {
+			case None:
+				outRect.y = thisRect.y;
+			case Inside: // do nothing
+			case Contains: // do nothing
+			case Negative:
+				outRect.y = thisRect.y;
+			case Positive:
+				outRect.bottom = thisRect.bottom;
+		}
+		return outRect;
 	}
 
 	public function contains(point: Point2f): Bool {
