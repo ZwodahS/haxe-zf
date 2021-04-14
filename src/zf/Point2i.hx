@@ -32,6 +32,35 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	}
 
 	/**
+		proxy this as min / max
+	**/
+	public var min(get, set): Int;
+
+	inline public function get_min(): Int {
+		return this[0];
+	}
+
+	inline public function set_min(v: Int): Int {
+		return this[0] = v;
+	}
+
+	public var max(get, set): Int;
+
+	inline public function get_max(): Int {
+		return this[1];
+	}
+
+	inline public function set_max(v: Int): Int {
+		return this[1] = v;
+	}
+
+	public var diff(get, never): Int;
+
+	inline public function get_diff(): Int {
+		return this[1] - this[0];
+	}
+
+	/**
 		return a string representation of the Point2i
 	**/
 	public function toString(): String {
