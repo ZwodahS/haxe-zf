@@ -36,4 +36,16 @@ class ObjectExtensions {
 		obj.y = component.y + offset.y;
 		return obj;
 	}
+
+	public static function centerX(obj: h2d.Object, startX: Float, width: Float): h2d.Object {
+		var objSize = obj.getSize();
+		obj.x = startX + ((width - objSize.width) / 2);
+		return obj;
+	}
+
+	public static function centerY(obj: h2d.Object, startY: Float, height: Float): h2d.Object {
+		var objSize = obj.getSize();
+		obj.y = startY + ((height - objSize.height) / 2);
+		return obj;
+	}
 }

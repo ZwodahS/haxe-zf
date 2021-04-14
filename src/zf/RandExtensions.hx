@@ -14,4 +14,14 @@ class RandExtensions {
 		var item = a.splice(pos, 1);
 		return item[0];
 	}
+
+	public static function randomWithinRange(r: hxd.Rand, min: Int, max: Int): Int {
+		if (max == min) return min;
+		var diff = max - min;
+		return r.random(diff) + min;
+	}
+
+	public static function randomChance(r: hxd.Rand, chance: Int, base: Int = 100): Bool {
+		return r.random(base) < chance;
+	}
 }
