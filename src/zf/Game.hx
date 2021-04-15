@@ -1,5 +1,7 @@
 package zf;
 
+using zf.h2d.ObjectExtensions;
+
 /**
 	Parent Game.hx
 **/
@@ -111,24 +113,31 @@ class Game extends hxd.App {
 	var console: h2d.Console;
 	var consoleBg: h2d.Bitmap;
 
-	function setupFramerate() {
-		var font: h2d.Font = hxd.res.DefaultFont.get().clone();
+	function getDebugFont(): h2d.Font {
+		var font = hxd.res.DefaultFont.get().clone();
 		font.resizeTo(12);
+		return font;
+	}
 
-		this.s2d.add(this.framerate = new h2d.Text(font), 100);
+	function setupFramerate() {
+		var font: h2d.Font = getDebugFont();
+
+		this.s2d.add(this.framerate = new h2d.HtmlText(font), 150);
 		this.framerate.textAlign = Left;
-		this.framerate.x = 0;
+		this.framerate.text = '0';
+		this.framerate.x = 2;
+		this.framerate.y = 2;
 		this.framerate.visible = false;
 
-		this.s2d.add(this.drawCalls = new h2d.Text(font), 100);
+		this.s2d.add(this.drawCalls = new h2d.HtmlText(font), 151);
 		this.drawCalls.textAlign = Left;
-		this.drawCalls.y = 16;
+		this.drawCalls.text = '0';
+		this.drawCalls.anchorBelow(this.framerate, [0, 2]);
 		this.drawCalls.visible = false;
 	}
 
 	function setupConsole() {
-		var font = hxd.res.DefaultFont.get().clone();
-		font.resizeTo(12);
+		var font = getDebugFont();
 
 		this.consoleBg = new h2d.Bitmap(h2d.Tile.fromColor(1, 1, 1, 0.5));
 		this.consoleBg.tile.scaleToSize(s2d.width, s2d.height);
@@ -136,7 +145,7 @@ class Game extends hxd.App {
 
 		this.console = new Console(font, this);
 		this.s2d.add(this.consoleBg, 9);
-		this.s2d.add(console, 10);
+		this.s2d.add(console, 1000);
 
 		this.console.addCommand("getWindowSize", "get the window size", [], function() {
 			var window = hxd.Window.getInstance();
