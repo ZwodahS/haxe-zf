@@ -48,4 +48,10 @@ class ObjectExtensions {
 		obj.y = startY + ((height - objSize.height) / 2);
 		return obj;
 	}
+
+	public static function setPosition(obj: h2d.Object, x: Float, y: Float): h2d.Object {
+		obj.x = x;
+		obj.y = y;
+		return obj;
+	}
 }

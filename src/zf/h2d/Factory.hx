@@ -1,5 +1,9 @@
 package zf.h2d;
 
+/**
+	Thu Apr 15 13:02:21 2021
+	Deprecated. Use Object exists instead
+**/
 class WrappedObject {
 	public var object(default, null): h2d.Object;
 
