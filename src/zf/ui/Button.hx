@@ -2,6 +2,8 @@ package zf.ui;
 
 class Button extends h2d.Layers {
 	public var disabled(default, set): Bool = false;
+	// used for button where there is a state for being "selected"
+	public var toggled(default, set): Bool = true;
 
 	var isOver: Bool = false;
 	var interactive: h2d.Interactive;
@@ -13,6 +15,12 @@ class Button extends h2d.Layers {
 		this.disabled = b;
 		updateButton();
 		return this.disabled;
+	}
+
+	public function set_toggled(b: Bool): Bool {
+		this.toggled = b;
+		updateButton();
+		return this.toggled;
 	}
 
 	public function new(width: Int, height: Int) {
