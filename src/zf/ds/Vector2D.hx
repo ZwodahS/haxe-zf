@@ -221,7 +221,7 @@ class Vector2D<T> extends ReadOnlyVector2D<T> {
 	}
 
 	// https://stackoverflow.com/questions/18034805/rotate-mn-matrix-90-degrees
-	public function rotateCCW() {
+	public function rotateCCW(): Vector2D<T> {
 		var newLengthX = this.size.y;
 		var newLengthY = this.size.x;
 		var copy = new Vector<T>(this.data.length);
@@ -242,9 +242,10 @@ class Vector2D<T> extends ReadOnlyVector2D<T> {
 		}
 		this.size.x = newLengthX;
 		this.size.y = newLengthY;
+		return this;
 	}
 
-	public function rotateCW() {
+	public function rotateCW(): Vector2D<T> {
 		var newLengthX = this.size.y;
 		var newLengthY = this.size.x;
 		var copy = new Vector<T>(this.data.length);
@@ -264,6 +265,41 @@ class Vector2D<T> extends ReadOnlyVector2D<T> {
 		}
 		this.size.x = newLengthX;
 		this.size.y = newLengthY;
+		return this;
+	}
+
+	public function flipHorizontal(): Vector2D<T> {
+		// flip will not change size
+		inline function swap(y: Int, x1: Int, x2: Int) {
+			var p1 = pos(x1, y);
+			var p2 = pos(x2, y);
+			var old = data[p1];
+			data[p1] = data[p2];
+			data[p2] = old;
+		}
+		for (y in 0...this.size.y) {
+			for (x in 0...Std.int(this.size.x / 2)) {
+				swap(y, x, this.size.x - 1 - x);
+			}
+		}
+		return this;
+	}
+
+	public function flipVertical(): Vector2D<T> {
+		// flip will not change size
+		inline function swap(x: Int, y1: Int, y2: Int) {
+			var p1 = pos(x, y1);
+			var p2 = pos(x, y2);
+			var old = data[p1];
+			data[p1] = data[p2];
+			data[p2] = old;
+		}
+		for (x in 0...this.size.x) {
+			for (y in 0...Std.int(this.size.y / 2)) {
+				swap(x, y, this.size.y - 1 - y);
+			}
+		}
+		return this;
 	}
 
 	inline public function resetAll(value: T) {
