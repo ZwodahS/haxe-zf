@@ -150,6 +150,14 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	}
 
 	/**
+		return the max diff between the 2 point in both axis
+		this is the alternative to distance, where diagonal will be a distance of 1
+	**/
+	public function maxDiff(p: Point2i): Int {
+		return hxd.Math.imax(hxd.Math.iabs(this[0] - p.x), hxd.Math.iabs(this[1] - p.y));
+	}
+
+	/**
 		Check if a point is around this point
 	**/
 	public function isAround(p: Point2i): Bool {

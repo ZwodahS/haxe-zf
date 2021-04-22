@@ -65,12 +65,6 @@ class ObjectExtensions {
 		return obj;
 	}
 
-	public static function setPosition(obj: h2d.Object, x: Float, y: Float): h2d.Object {
-		obj.x = x;
-		obj.y = y;
-		return obj;
-	}
-
 	public static function setX(obj: h2d.Object, x: Float): h2d.Object {
 		obj.x = x;
 		return obj;

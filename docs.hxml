@@ -1,0 +1,13 @@
+--library heaps
+--library hxrandom
+--library zf
+--library astar
+--library console
+--class-path src
+--macro include('zf')
+--no-output
+--each
+
+-hl zf.hl
+-xml build/docs/zf_hl.xml
+--next
