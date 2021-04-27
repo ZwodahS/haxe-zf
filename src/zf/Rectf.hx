@@ -16,6 +16,10 @@ enum IntersectType {
 	public var y: Float;
 	public var xType: IntersectType;
 	public var yType: IntersectType;
+
+	public function toString(): String {
+		return '${this.xType}(${this.x})|${this.yType}(${this.y})';
+	}
 }
 
 abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
@@ -155,7 +159,7 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 			yType: None
 		};
 		var yDetail = intersectType(this[1], this[3], rect.yMin, rect.yMax);
-		if (xDetail.type == None) return {
+		if (yDetail.type == None) return {
 			x: 0,
 			y: 0,
 			xType: None,
