@@ -43,4 +43,22 @@ class MathExtensions {
 	public static function iAbs(cls: Class<Math>, i: Int): Int {
 		return i >= 0 ? i : -i;
 	}
+
+	public static function increaseAbsoluteValue(cls: Class<Math>, v: Float, amt: Float): Float {
+		return v >= 0 ? v + amt : v - amt;
+	}
+
+	public static function decreaseAbsoluteValue(cls: Class<Math>, v: Float, amt: Float,
+			wrap: Bool = false): Float {
+		var newValue = v >= 0 ? v - amt : v + amt;
+		if (v >= 0) {
+			if (newValue >= 0) return newValue;
+			if (!wrap) return 0;
+			return newValue;
+		} else {
+			if (newValue < 0) return newValue;
+			if (!wrap) return 0;
+			return newValue;
+		}
+	}
 }
