@@ -1,6 +1,6 @@
 package zf.ui;
 
-import zf.AlignmentUtils;
+using zf.h2d.ObjectExtensions;
 
 class TileButton extends Button {
 	public var text(default, set): Null<String>;
@@ -74,8 +74,8 @@ class TileButton extends Button {
 		if (this.textLabel == null) return;
 
 		this.textLabel.text = this.text;
-		this.textLabel.x = AlignmentUtils.center(0, this.width, textLabel.textWidth);
-		this.textLabel.y = AlignmentUtils.center(0, this.height, textLabel.textHeight);
+		this.textLabel.setX(this.width, Center);
+		this.textLabel.setY(this.height, Center);
 	}
 
 	override function updateButton() {
