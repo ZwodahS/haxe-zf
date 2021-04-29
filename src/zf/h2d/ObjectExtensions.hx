@@ -2,11 +2,11 @@ package zf.h2d;
 
 enum SetMode {
 	Set;
-	Left;
-	Right;
-	Top;
-	Bottom;
-	Center;
+	AnchorLeft;
+	AnchorRight;
+	AnchorTop;
+	AnchorBottom;
+	AlignCenter;
 }
 
 class ObjectExtensions {
@@ -63,11 +63,11 @@ class ObjectExtensions {
 	}
 
 	inline public static function centerX(obj: h2d.Object, startX: Float, width: Float): h2d.Object {
-		return setX(obj, width, Center, startX);
+		return setX(obj, width, AlignCenter, startX);
 	}
 
 	inline public static function centerY(obj: h2d.Object, startY: Float, height: Float): h2d.Object {
-		return setY(obj, height, Center, startY);
+		return setY(obj, height, AlignCenter, startY);
 	}
 
 	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set,
@@ -75,11 +75,11 @@ class ObjectExtensions {
 		switch (setMode) {
 			case Set:
 				obj.x = x;
-			case Left:
+			case AnchorLeft:
 				obj.x = x + padding;
-			case Right:
+			case AnchorRight:
 				obj.x = x - padding - obj.getSize().width;
-			case Center:
+			case AlignCenter:
 				obj.x = padding + (x - obj.getSize().width) / 2;
 			default:
 				obj.x = x;
@@ -92,11 +92,11 @@ class ObjectExtensions {
 		switch (setMode) {
 			case Set:
 				obj.y = y;
-			case Top:
+			case AnchorTop:
 				obj.y = y + padding;
-			case Bottom:
+			case AnchorBottom:
 				obj.y = y - padding - obj.getSize().height;
-			case Center:
+			case AlignCenter:
 				obj.y = padding + (y - obj.getSize().height) / 2;
 			default:
 				obj.y = y;

@@ -2,8 +2,6 @@ package zf.ui;
 
 using zf.HtmlUtils;
 
-import zf.AlignmentUtils;
-
 class TextButton extends h2d.Object {
 	var label: h2d.HtmlText;
 

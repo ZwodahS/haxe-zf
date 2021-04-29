@@ -74,8 +74,8 @@ class TileButton extends Button {
 		if (this.textLabel == null) return;
 
 		this.textLabel.text = this.text;
-		this.textLabel.setX(this.width, Center);
-		this.textLabel.setY(this.height, Center);
+		this.textLabel.setX(this.width, AlignCenter);
+		this.textLabel.setY(this.height, AlignCenter);
 	}
 
 	override function updateButton() {

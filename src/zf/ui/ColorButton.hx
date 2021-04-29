@@ -1,6 +1,6 @@
 package zf.ui;
 
-import zf.AlignmentUtils;
+import zf.h2d.ObjectExtensions.SetMode;
 
 class ColorButton extends h2d.Layers {
 	var hover: h2d.Bitmap;
@@ -55,8 +55,8 @@ class ColorButton extends h2d.Layers {
 
 	function updateTextAlignment() {
 		if (!this.init) return;
-		this.textLabel.x = AlignmentUtils.center(0, this.width, textLabel.textWidth);
-		this.textLabel.y = AlignmentUtils.center(0, this.height, textLabel.textHeight);
+		this.textLabel.setX(this.width, Center);
+		this.textLabel.setY(this.height, Center);
 	}
 
 	dynamic public function onClick() {}
