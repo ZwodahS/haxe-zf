@@ -29,7 +29,7 @@ class RandExtensions {
 
 	public static function randomWithinRange(r: hxd.Rand, min: Int, max: Int): Int {
 		if (max == min) return min;
-		var diff = max - min;
+		var diff = max - min + 1;
 		return r.random(diff) + min;
 	}
 
