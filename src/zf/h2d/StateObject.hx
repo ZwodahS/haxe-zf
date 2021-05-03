@@ -4,6 +4,10 @@ package zf.h2d;
 	StateObject are used to store graphic assets into objects that have state.
 	For example, a platformer can use it to store jumping state, idle state, attack state etc.
 
+	[Mon May 03 22:37:22 2021]
+	This is actually quite unoptimised, so will try to optimise this further, maybe do something similar to
+	h2d.Anim, but that requires re thinking, and only do so if there is a need.
+
 	[Wed Jun 17 11:04:35 2020]
 	Some assumptions when using this.
 
@@ -20,24 +24,18 @@ package zf.h2d;
 	2. if there is a state change, the frame of the incoming state will be set to 0.
 	3. when the new state is the same as the current state, nothing happens.
 **/
-class StateObject extends h2d.Layers {
+class StateObject extends h2d.Object {
 	var tiles: List<h2d.Tile>;
 	var states: Map<String, h2d.Object>;
 
 	public var state(default, set): String;
 
-	public var layer: h2d.Layers;
-
-	public function new(?layer: h2d.Layers) {
-		/**
-			to use StateObject like component rather than a layer, then just provide it with an optional argument layer
-		**/
+	public function new() {
 		super();
 
 		this.tiles = new List<h2d.Tile>();
 		this.states = new Map<String, h2d.Object>();
 		this.state = "";
-		this.layer = layer == null ? this : layer;
 	}
 
 	public function set_state(s: String): String {
@@ -61,14 +59,14 @@ class StateObject extends h2d.Layers {
 
 	function addBitmap(s: String, bitmap: h2d.Bitmap) {
 		this.states[s] = bitmap;
-		this.layer.add(bitmap, 0);
+		this.addChild(bitmap);
 		this.tiles.push(bitmap.tile);
 		bitmap.visible = this.state == s;
 	}
 
 	function addAnim(s: String, anim: h2d.Anim) {
 		this.states[s] = anim;
-		this.layer.add(anim, 0);
+		this.addChild(anim);
 		for (f in anim.frames) {
 			this.tiles.push(f);
 		}
@@ -86,7 +84,7 @@ class StateObject extends h2d.Layers {
 		} else if (Std.is(old, h2d.Bitmap)) {
 			this.tiles.remove(cast(old, h2d.Bitmap).tile);
 		}
-		this.layer.removeChild(old);
+		this.removeChild(old);
 		return old;
 	}
 

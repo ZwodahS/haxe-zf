@@ -157,8 +157,8 @@ class Object2D extends Asset {
 		return states[state];
 	}
 
-	public function createStateObject(?layer: h2d.Layers): StateObject {
-		var obj = new StateObject(layer);
+	public function createStateObject(): StateObject {
+		var obj = new StateObject();
 		for (s => asset in this.states) {
 			if (Std.is(asset, Anim2D)) {
 				var a = cast(asset, Anim2D);
