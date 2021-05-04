@@ -17,10 +17,10 @@ class AlphaButton extends Button {
 	}
 
 	override function updateButton() {
-		if (this.isOver) {
-			this.alpha = hoverAlpha;
-		} else if (this.disabled) {
+		if (this.disabled) {
 			this.alpha = disabledAlpha;
+		} else if (this.isOver) {
+			this.alpha = hoverAlpha;
 		} else if (!this.toggled) {
 			this.alpha = untoggledAlpha;
 		} else {
