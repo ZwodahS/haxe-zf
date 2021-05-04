@@ -70,6 +70,8 @@ class ObjectExtensions {
 		return setY(obj, height, AlignCenter, startY);
 	}
 
+	/** Chain Functions set values and return the object **/
+
 	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set,
 			padding: Float = 0): h2d.Object {
 		switch (setMode) {
@@ -101,6 +103,14 @@ class ObjectExtensions {
 			default:
 				obj.y = y;
 		}
+		return obj;
+	}
+
+	/**
+		Set scale of object and return
+	**/
+	public static function cSetScale(obj: h2d.Object, scale: Float): h2d.Object {
+		obj.scale(scale);
 		return obj;
 	}
 }
