@@ -55,7 +55,7 @@ class ProbabilityTableRandomIterator<T> {
 		this.chances = [];
 		this.r = r;
 		for (c in chances) {
-			chances.push(c);
+			this.chances.push(c);
 			totalChance += c.chance;
 		}
 	}
