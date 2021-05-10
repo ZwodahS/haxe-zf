@@ -71,7 +71,6 @@ class ObjectExtensions {
 	}
 
 	/** Chain Functions set values and return the object **/
-
 	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set,
 			padding: Float = 0): h2d.Object {
 		switch (setMode) {
