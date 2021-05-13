@@ -10,7 +10,7 @@ enum SetMode {
 }
 
 class ObjectExtensions {
-	public static function putAbove(obj: h2d.Object, component: h2d.Object, offset: Point2i = null,
+	public static function putAbove(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
 			overrideX: Null<Int> = null): h2d.Object {
 		if (offset == null) offset = [0, 0];
 		var objSize = obj.getSize();
@@ -23,7 +23,7 @@ class ObjectExtensions {
 		return obj;
 	}
 
-	public static function putBelow(obj: h2d.Object, component: h2d.Object, offset: Point2i = null,
+	public static function putBelow(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
 			overrideX: Null<Int> = null): h2d.Object {
 		if (offset == null) offset = [0, 0];
 		var componentSize = component.getSize();
@@ -36,7 +36,7 @@ class ObjectExtensions {
 		return obj;
 	}
 
-	public static function putOnLeft(obj: h2d.Object, component: h2d.Object, offset: Point2i = null,
+	public static function putOnLeft(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
 			overrideY: Null<Int> = null): h2d.Object {
 		if (offset == null) offset = [0, 0];
 		var objSize = obj.getSize();
@@ -49,7 +49,7 @@ class ObjectExtensions {
 		return obj;
 	}
 
-	public static function putOnRight(obj: h2d.Object, component: h2d.Object, offset: Point2i = null,
+	public static function putOnRight(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
 			overrideY: Null<Int> = null): h2d.Object {
 		if (offset == null) offset = [0, 0];
 		var componentSize = component.getSize();
