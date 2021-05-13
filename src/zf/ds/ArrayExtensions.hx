@@ -35,4 +35,15 @@ class ArrayExtensions {
 	public static function pushArray<T>(arr: Array<T>, pushedArray: Array<T>) {
 		for (i in pushedArray) arr.push(i);
 	}
+
+	public static function findOne<T>(arr: Array<T>, func: T->Bool): Null<T> {
+		for (i in arr) {
+			if (func(i)) return i;
+		}
+		return null;
+	}
+
+	inline public static function clear<T>(arr: Array<T>) {
+		arr.resize(0);
+	}
 }
