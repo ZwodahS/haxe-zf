@@ -312,4 +312,56 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		}
 		return None;
 	}
+
+	public var clockwise(get, never): Direction;
+
+	public function get_clockwise() {
+		switch (this) {
+			case West:
+				return NorthWest;
+			case NorthWest:
+				return North;
+			case North:
+				return NorthEast;
+			case NorthEast:
+				return East;
+			case East:
+				return SouthEast;
+			case SouthEast:
+				return South;
+			case South:
+				return SouthWest;
+			case SouthWest:
+				return West;
+			case None:
+				return None;
+		}
+		return None;
+	}
+
+	public var cclockwise(get, never): Direction;
+
+	public function get_cclockwise() {
+		switch (this) {
+			case West:
+				return SouthWest;
+			case NorthWest:
+				return West;
+			case North:
+				return NorthWest;
+			case NorthEast:
+				return North;
+			case East:
+				return NorthEast;
+			case SouthEast:
+				return East;
+			case South:
+				return SouthEast;
+			case SouthWest:
+				return South;
+			case None:
+				return None;
+		}
+		return None;
+	}
 }
