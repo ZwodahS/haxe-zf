@@ -120,11 +120,16 @@ class ReadOnlyProbabilityTable<T> {
 	/**
 		Returns a random item in the table
 	**/
-	public function randomItem(?r: Rand): Null<T> {
+	public function randomItem(?r: Rand, remove: Bool = false): Null<T> {
 		if (totalChance == 0) return null;
 		r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
 		var ind = _random(this.chances, r, this.totalChance);
-		return this.chances[ind].item;
+		var c = this.chances[ind];
+		if (remove) {
+			this.chances.splice(ind, 1);
+			this.totalChance -= c.chance;
+		}
+		return c.item;
 	}
 
 	/**
