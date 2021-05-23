@@ -1,4 +1,4 @@
-package zf;
+package zf.debug;
 
 import haxe.macro.Expr;
 import haxe.macro.PositionTools;
@@ -13,7 +13,7 @@ class Debug {
 #end
 	}
 
-	macro public static function b() {
+	macro public static function breakpoint() {
 #if debugger
 		// this is currently hardcoded to find "src/ and remove everything before it
 		// TOFIX: need to find a way to dynamically resolve the actual path to the file
@@ -34,4 +34,22 @@ class Debug {
 		return macro {}
 #end
 	}
+
+	static var TimerCounter: Map<String, Float>;
+
+	public static function time(id: String, print = false, remove = false): Float {
+		if (Debug.TimerCounter == null) Debug.TimerCounter = new Map<String, Float>();
+		var c = Debug.TimerCounter[id];
+		var now = Sys.time();
+		if (remove) {
+			Debug.TimerCounter.remove(id);
+		} else {
+			Debug.TimerCounter[id] = now;
+		}
+		var diff = c != null ? now - c : 0;
+		if (print) haxe.Log.trace('[Timer: ${id}] took: ${diff}s', null);
+		return diff;
+	}
+
+	static var counter: Int = 0;
 }
