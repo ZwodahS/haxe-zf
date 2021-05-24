@@ -1,4 +1,4 @@
-package zf.debug;
+package zf;
 
 import haxe.macro.Expr;
 import haxe.macro.PositionTools;

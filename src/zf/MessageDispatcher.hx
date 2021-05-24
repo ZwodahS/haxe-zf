@@ -175,6 +175,10 @@ class MessageDispatcher {
 		this.dispatchStack.push(message);
 		var listeners = this.listenersMap.get(message.type);
 
+#if debug_message
+		var t0 = Sys.time();
+#end
+
 		for (listener in this.allMessageDispatcherListeners) {
 			listener.callback(message);
 		}
@@ -184,6 +188,11 @@ class MessageDispatcher {
 				listener.callback(message);
 			}
 		}
+
+#if debug_message
+		var t1 = Sys.time();
+		haxe.Log.trace('[Dispatcher] ${message} took ${(t1 - t0) * 100}ms', null);
+#end
 
 		this.dispatchStack.pop();
 	}
