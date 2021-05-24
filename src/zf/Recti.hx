@@ -1,17 +1,33 @@
 package zf;
 
+/**
+	Note that Recti behaves differently from Rectf, due to the discrete nature of Recti
+
+	For example, right in this case denote the right most position, rather than the first position after the right
+	i.e. xMin = 0, xMax = 2, will be the same as left == 0, right == 2,
+
+	xDiff also behaves differently from width
+	xDiff in the above case will return 2, while width will return 3
+	area will behaves like width * height
+
+	Mon May 24 14:47:04 2021
+	Some setter behaviors will be changed to match Rectf's, so other than xMin, xMax, yMin, yMax
+	using the setter for the rest of the attributes is not recommended.
+**/
 abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 	public var xMin(get, set): Int;
 	public var xMax(get, set): Int;
 	public var yMin(get, set): Int;
 	public var yMax(get, set): Int;
-	public var left(get, set): Int;
-	public var right(get, set): Int;
-	public var top(get, set): Int;
-	public var bottom(get, set): Int;
+	public var left(get, never): Int;
+	public var right(get, never): Int;
+	public var top(get, never): Int;
+	public var bottom(get, never): Int;
 
 	public var xDiff(get, never): Int;
 	public var yDiff(get, never): Int;
+	public var width(get, never): Int;
+	public var height(get, never): Int;
 	public var area(get, never): Int;
 
 	public function new(xMin: Int = 0, yMin: Int = 0, xMax: Int = 0, yMax: Int = 0) {
@@ -108,8 +124,16 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		return this[3] - this[1];
 	}
 
+	public function get_width(): Int {
+		return this[2] - this[0] + 1;
+	}
+
+	public function get_height(): Int {
+		return this[3] - this[1] + 1;
+	}
+
 	public function get_area(): Int {
-		return (xDiff + 1) + (yDiff + 1);
+		return (width * height);
 	}
 
 	public function clone(): Recti {
