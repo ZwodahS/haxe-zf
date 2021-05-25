@@ -40,7 +40,7 @@ class Debug {
 	public static function time(id: String, print = false, remove = false): Float {
 		if (Debug.TimerCounter == null) Debug.TimerCounter = new Map<String, Float>();
 		var c = Debug.TimerCounter[id];
-		var now = Sys.time();
+		var now = haxe.Timer.stamp();
 		if (remove) {
 			Debug.TimerCounter.remove(id);
 		} else {
