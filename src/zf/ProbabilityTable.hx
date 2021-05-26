@@ -3,6 +3,7 @@ package zf;
 import hxd.Rand;
 
 using zf.ds.ArrayExtensions;
+using zf.RandExtensions;
 
 /**
 	Probabilty Table allows us to choose object from a list based on their weights
@@ -101,7 +102,7 @@ class ReadOnlyProbabilityTable<T> {
 			return i.chance + v;
 		}, 0);
 
-		var chance = 1 + r.random(totalChance);
+		var chance = 1 + r.randomInt(totalChance);
 		for (ind => c in chances) {
 			if (chance <= c.chance) return ind;
 			chance -= c.chance;

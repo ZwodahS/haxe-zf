@@ -30,11 +30,19 @@ class RandExtensions {
 	public static function randomWithinRange(r: hxd.Rand, min: Int, max: Int): Int {
 		if (max == min) return min;
 		var diff = max - min + 1;
-		return r.random(diff) + min;
+		return randomInt(r, diff) + min;
 	}
 
 	public static function randomChance(r: hxd.Rand, chance: Int, base: Int = 100): Bool {
 		if (chance >= base) return true;
-		return r.random(base) < chance;
+		return randomInt(r, base) < chance;
+	}
+
+	/**
+		This is the same as r.random, except that it does checks for max == 0.
+		In JS x%0 is undefined, while in hl x%0 == 0
+	**/
+	inline public static function randomInt(r: hxd.Rand, max: Int): Int {
+		return max <= 0 ? 0 : r.random(max);
 	}
 }

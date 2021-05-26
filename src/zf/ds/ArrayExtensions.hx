@@ -1,5 +1,7 @@
 package zf.ds;
 
+using zf.RandExtensions;
+
 class ArrayExtensions {
 	/**
 		wrapper to Lambda fold
@@ -22,7 +24,7 @@ class ArrayExtensions {
 		if (array.length <= 1) return;
 		var i = array.length - 1;
 		while (i >= 1) {
-			var j = r.random(i);
+			var j = r.randomInt(i);
 			if (i != j) {
 				var t = array[j];
 				array[j] = array[i];
