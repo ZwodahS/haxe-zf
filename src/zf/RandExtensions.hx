@@ -35,7 +35,13 @@ class RandExtensions {
 
 	public static function randomChance(r: hxd.Rand, chance: Int, base: Int = 100): Bool {
 		if (chance >= base) return true;
+		if (chance == 0) return false;
 		return randomInt(r, base) < chance;
+	}
+
+	public static function randomWeightedIndex(r: hxd.Rand, weights: Array<Int>): Int {
+		// delegate to prob table
+		return ProbabilityTable.fromChances(weights).randomItem(r);
 	}
 
 	/**

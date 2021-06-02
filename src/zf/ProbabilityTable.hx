@@ -155,4 +155,13 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 		this.chances.push({chance: chance, item: item});
 		this.totalChance += chance;
 	}
+
+	/**
+		create a prob table from chances, such that the value returns is the index of the array
+	**/
+	public static function fromChances(chances: Array<Int>): ReadOnlyProbabilityTable<Int> {
+		var tb = new ProbabilityTable<Int>();
+		for (ind => c in chances) tb.add(c, ind);
+		return tb;
+	}
 }
