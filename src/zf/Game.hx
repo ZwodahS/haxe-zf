@@ -307,7 +307,9 @@ class Game extends hxd.App {
 
 	function screenExited(screen: zf.Screen) {}
 
-	function screenEntered(screen: zf.Screen) {}
+	function screenEntered(screen: zf.Screen) {
+		screen.resize(this.gameWidth, this.gameHeight);
+	}
 
 	override function onResize() {
 		var w = hxd.Window.getInstance();
