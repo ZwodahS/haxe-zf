@@ -62,6 +62,16 @@ class ObjectExtensions {
 		return obj;
 	}
 
+	public static function alignXWithin(obj: h2d.Object, component: h2d.Object): h2d.Object {
+		setX(obj, component.getSize().width, AlignCenter, component.x);
+		return obj;
+	}
+
+	public static function alignYWithin(obj: h2d.Object, component: h2d.Object): h2d.Object {
+		setY(obj, component.getSize().height, AlignCenter, component.y);
+		return obj;
+	}
+
 	inline public static function centerX(obj: h2d.Object, startX: Float, width: Float): h2d.Object {
 		return setX(obj, width, AlignCenter, startX);
 	}
@@ -110,6 +120,11 @@ class ObjectExtensions {
 	**/
 	public static function cSetScale(obj: h2d.Object, scale: Float): h2d.Object {
 		obj.scale(scale);
+		return obj;
+	}
+
+	public static function cSetText(obj: h2d.Text, text: String): h2d.Text {
+		obj.text = text;
 		return obj;
 	}
 }
