@@ -48,4 +48,19 @@ class ArrayExtensions {
 	inline public static function clear<T>(arr: Array<T>) {
 		arr.resize(0);
 	}
+
+	public static function filterAndRemove<T>(arr: Array<T>, func: T->Bool): Array<T> {
+		// QUESTION: this might be slow for big array, so need be better to use the default filter
+		var removed: Array<T> = [];
+		var i = 0;
+		while (i < arr.length) {
+			if (func(arr[i])) {
+				removed.push(arr[i]);
+				arr.splice(i, 1);
+				continue;
+			}
+			i += 1;
+		}
+		return removed;
+	}
 }
