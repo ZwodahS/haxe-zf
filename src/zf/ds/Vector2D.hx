@@ -87,10 +87,11 @@ class LinearIterator<T> {
 class ReadOnlyVector2D<T> {
 	/**
 		A 2x3 (width * height)
-		[ 0, 1
-		  2, 3
-		  4, 5
-		  ]
+		[
+			0, 1
+			2, 3
+			4, 5
+		]
 		will be stored as [0, 1, 2, 3, 4, 5]
 		There shouldn't be a need to know this when using this from outside.
 	**/
@@ -302,7 +303,11 @@ class Vector2D<T> extends ReadOnlyVector2D<T> {
 		return this;
 	}
 
-	inline public function resetAll(value: T) {
+	inline public function setAll(value: T) {
 		for (i in 0...this.data.length) this.data[i] = value;
+	}
+
+	public function getRegion(): Vector2DRegion<T> {
+		return new Vector2DRegion(this);
 	}
 }

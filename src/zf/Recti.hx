@@ -136,11 +136,46 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		return (width * height);
 	}
 
+	@:op(A == B)
+	public function _equal(rhs: Recti): Bool {
+		return this[0] == rhs.xMin && this[1] == rhs.yMin && this[2] == rhs.xMax && this[3] == rhs.yMax;
+	}
+
 	public function clone(): Recti {
 		return [this[0], this[1], this[2], this[3]];
 	}
 
 	public function copy(): Recti {
 		return [this[0], this[1], this[2], this[3]];
+	}
+
+	/**
+		Force Place the input rect within this rect.
+		if input rect is outside of this rect then a size 1,1 rect is returned
+	**/
+	public function boundRect(rect: Recti): Recti {
+		var recti: Recti = rect.clone();
+
+		if (recti.xMin < this[0]) recti.xMin = this[0];
+		if (recti.yMin < this[1]) recti.yMin = this[1];
+		if (recti.xMax > this[2]) recti.xMax = this[2];
+		if (recti.yMax > this[3]) recti.yMax = this[3];
+
+		if (recti.xMin > recti.xMax) {
+			if (recti.xMax < this[0]) {
+				recti.xMax = recti.xMin;
+			} else {
+				recti.xMin = recti.xMax;
+			}
+		}
+		if (recti.yMin > recti.yMax) {
+			if (recti.yMax < this[2]) {
+				recti.yMax = recti.yMin;
+			} else {
+				recti.yMin = recti.yMax;
+			}
+		}
+
+		return recti;
 	}
 }

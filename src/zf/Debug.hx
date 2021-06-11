@@ -37,10 +37,12 @@ class Debug {
 
 	static var TimerCounter: Map<String, Float>;
 
-	public static function time(id: String, print = false, remove = false): Float {
+	public static function time(id: String, print: Null<Bool> = null, remove: Null<Bool> = null): Float {
 		if (Debug.TimerCounter == null) Debug.TimerCounter = new Map<String, Float>();
 		var c = Debug.TimerCounter[id];
 		var now = haxe.Timer.stamp();
+		if (remove == null && c != null) remove = true;
+		if (print == null && c != null) print = true;
 		if (remove) {
 			Debug.TimerCounter.remove(id);
 		} else {
