@@ -219,8 +219,7 @@ class Game extends hxd.App {
 	var cursorDetail: TextLabel;
 
 	function setupCursor() {
-		var font = hxd.res.DefaultFont.get().clone();
-		font.resizeTo(12);
+		var font = getDebugFont();
 		this.cursorDetail = new TextLabel("c", font, [100, 20]);
 		this.cursorDetail.x = 2;
 		this.cursorDetail.y = 2;
