@@ -364,4 +364,12 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		}
 		return None;
 	}
+
+	public static function allFourDirections(): Array<Direction> {
+		return [North, East, South, West];
+	}
+
+	public static function allEightDirections(): Array<Direction> {
+		return [North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest];
+	}
 }
