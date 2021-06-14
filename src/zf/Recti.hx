@@ -29,6 +29,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 	public var width(get, never): Int;
 	public var height(get, never): Int;
 	public var area(get, never): Int;
+	public var points(get, never): Array<Point2i>;
 
 	public function new(xMin: Int = 0, yMin: Int = 0, xMax: Int = 0, yMax: Int = 0) {
 		this = [xMin, yMin, xMax, yMax];
@@ -177,5 +178,34 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		}
 
 		return recti;
+	}
+
+	public function get_points(): Array<Point2i> {
+		var points: Array<Point2i> = [];
+		for (y in this[1]...this[3] + 1) {
+			for (x in this[0]...this[2] + 1) {
+				points.push([x, y]);
+			}
+		}
+		return points;
+	}
+
+	public function splitHorizontal(leftWidth: Int): Array<Recti> {
+		var thisRect: Recti = this;
+		if (leftWidth > thisRect.width) leftWidth = thisRect.width;
+		if (leftWidth == 0) return [null, thisRect.clone()];
+		var r0 = new Recti(thisRect.xMin, thisRect.yMin, thisRect.xMin + leftWidth - 1, thisRect.yMax);
+		var r1 = leftWidth == thisRect.width ? null : new Recti(r0.xMax + 1, r0.yMin, thisRect.xMax, r0.yMax);
+		return [r0, r1];
+	}
+
+	public function splitVertical(topHeight: Int): Array<Recti> {
+		var thisRect: Recti = this;
+		if (topHeight > thisRect.height) topHeight = thisRect.height;
+		if (topHeight == 0) return [null, thisRect.clone()];
+		var r0 = new Recti(thisRect.xMin, thisRect.yMin, thisRect.xMax, thisRect.yMin + topHeight - 1);
+		var r1 = topHeight == thisRect.height ? null : new Recti(r0.xMin, r0.yMax + 1, r0.xMax,
+			thisRect.yMax);
+		return [r0, r1];
 	}
 }

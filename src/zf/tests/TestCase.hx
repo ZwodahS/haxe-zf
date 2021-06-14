@@ -37,6 +37,15 @@ class TestCase {
 		}
 	}
 
+	public function assertTrue(v: Bool, ?additionalMsg: String, ?pos: haxe.PosInfos) {
+		if (!v) {
+			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
+			var msg = '[${pos.fileName}:${pos.lineNumber}]: ${v} is not True ${additionalMsg}';
+			Console.error(msg);
+			throw 'Assertion Fail';
+		}
+	}
+
 	public function assertEqual(v1: Dynamic, v2: Dynamic, ?additionalMsg: String, ?pos: haxe.PosInfos) {
 		if (v1 != v2) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
