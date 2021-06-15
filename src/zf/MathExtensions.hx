@@ -32,6 +32,14 @@ class MathExtensions {
 		return hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(x1 - x2), 2) + hxd.Math.pow(hxd.Math.abs(y1 - y2), 2));
 	}
 
+	public static function iMin(cls: Class<Math>, ints: Array<Int>): Int {
+		var m = ints[0];
+		for (i in ints) {
+			if (i < m) m = i;
+		}
+		return m;
+	}
+
 	public static function iMax(cls: Class<Math>, ints: Array<Int>): Int {
 		var m = ints[0];
 		for (i in ints) {
