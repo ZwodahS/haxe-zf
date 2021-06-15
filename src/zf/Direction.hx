@@ -315,7 +315,7 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 
 	public var clockwise(get, never): Direction;
 
-	public function get_clockwise() {
+	public function get_clockwise(): Direction {
 		switch (this) {
 			case West:
 				return NorthWest;
@@ -341,7 +341,7 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 
 	public var cclockwise(get, never): Direction;
 
-	public function get_cclockwise() {
+	public function get_cclockwise(): Direction {
 		switch (this) {
 			case West:
 				return SouthWest;
@@ -363,6 +363,18 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 				return None;
 		}
 		return None;
+	}
+
+	public function rotateCW(i: Int): Direction {
+		var d: Direction = this;
+		for (_ in 0...i) d = d.clockwise;
+		return d;
+	}
+
+	public function rotateCCW(i: Int): Direction {
+		var d: Direction = this;
+		for (_ in 0...i) d = d.cclockwise;
+		return d;
 	}
 
 	public static function allFourDirections(): Array<Direction> {
