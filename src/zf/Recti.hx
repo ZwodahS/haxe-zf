@@ -117,6 +117,11 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		return true;
 	}
 
+	public function contains(x: Int, y: Int): Bool {
+		// xMin <= x && x <= xMax && yMin <= y && y <= yMax;
+		return this[0] <= x && x <= this[2] && this[1] <= y && y <= this[3];
+	}
+
 	public function get_xDiff(): Int {
 		return this[2] - this[0];
 	}
