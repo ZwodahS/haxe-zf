@@ -1,5 +1,7 @@
 package zf;
 
+using zf.RandExtensions;
+
 enum DirectionType {
 	Left;
 	UpLeft;
@@ -381,7 +383,45 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		return [North, East, South, West];
 	}
 
+	public static function randomFourDirection(r: hxd.Rand): Direction {
+		switch (r.randomInt(4)) {
+			case 0:
+				return North;
+			case 1:
+				return East;
+			case 2:
+				return South;
+			case 3:
+				return West;
+			default:
+				return North;
+		}
+	}
+
 	public static function allEightDirections(): Array<Direction> {
 		return [North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest];
+	}
+
+	public static function randomEightDirection(r: hxd.Rand): Direction {
+		switch (r.randomInt(8)) {
+			case 0:
+				return North;
+			case 1:
+				return East;
+			case 2:
+				return South;
+			case 3:
+				return West;
+			case 4:
+				return NorthEast;
+			case 5:
+				return NorthWest;
+			case 6:
+				return SouthEast;
+			case 7:
+				return SouthWest;
+			default:
+				return North;
+		}
 	}
 }
