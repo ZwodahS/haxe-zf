@@ -21,11 +21,14 @@ class Tile {
 	public var tile: h2d.Tile;
 	public var color: h3d.Vector;
 	public var scale: Float;
+	public var offset: Point2i;
 
-	public function new(t: h2d.Tile, color: h3d.Vector, scale: Float) {
+	public function new(t: h2d.Tile, color: h3d.Vector, scale: Float, offset: Point2i) {
 		this.tile = t;
 		this.color = color;
 		this.scale = scale;
+		this.tile.dx = -offset.x;
+		this.tile.dy = -offset.y;
 	}
 
 	public function getBitmap(): h2d.Bitmap {
@@ -37,12 +40,13 @@ class Tile {
 	}
 
 	public function copy(): Tile {
-		var t = new Tile(this.tile.clone(), this.color, this.scale);
+		var t = new Tile(this.tile.clone(), this.color, this.scale, this.offset);
 		return t;
 	}
 
 	public function sub(x: Int, y: Int, w: Int, h: Int) {
-		return new Tile(this.tile.sub(x, y, w, h), this.color.clone(), this.scale);
+		// once sub, the center will be reset to 0
+		return new Tile(this.tile.sub(x, y, w, h), this.color.clone(), this.scale, [0, 0]);
 	}
 }
 
@@ -129,6 +133,7 @@ typedef AseSpritesheetConfig = {
 			w: Int,
 			h: Int
 		},
+		?center: {x: Int, y: Int},
 		sourceSize: {w: Int, h: Int},
 		duration: Int,
 	}>,
@@ -155,8 +160,15 @@ class Assets {
 		for (frame in parsed.meta.frameTags) {
 			var tiles: Array<Tile> = [];
 			for (i in frame.from...frame.to + 1) {
-				var f = parsed.frames[i].frame;
-				var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), 1.0);
+				var pf = parsed.frames[i];
+				var f = pf.frame;
+				var offset: Point2i = null;
+				if (pf.center != null) {
+					offset = [pf.center.x, pf.center.y];
+				} else {
+					offset = [0, 0];
+				}
+				var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), 1.0, offset);
 				tiles.push(t);
 			}
 			data[frame.name] = new Asset2D(tiles);
