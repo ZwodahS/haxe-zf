@@ -90,4 +90,35 @@ class Vector2DRegion<T> {
 	inline public function setAll(value: T) {
 		for (pt => v in this.iterate()) this.set(pt.x, pt.y, value);
 	}
+
+	/**
+		count the number of neighbouring cells that matches a function
+	**/
+	public function countAround(centerX: Int, centerY: Int, match: T->Bool): Int {
+		var count = 0;
+		inline function countValue(x: Int, y: Int) {
+			count += match(get(centerX + x, centerY + y)) ? 1 : 0;
+		}
+		countValue(-1, -1);
+		countValue(0, -1);
+		countValue(1, -1);
+		countValue(-1, 0);
+		countValue(1, 0);
+		countValue(-1, 1);
+		countValue(0, 1);
+		countValue(1, 1);
+		return count;
+	}
+
+	public function countAdjacent(centerX: Int, centerY: Int, match: T->Bool): Int {
+		var count = 0;
+		inline function countValue(x: Int, y: Int) {
+			count += match(get(centerX + x, centerY + y)) ? 1 : 0;
+		}
+		countValue(0, -1);
+		countValue(-1, 0);
+		countValue(1, 0);
+		countValue(0, 1);
+		return count;
+	}
 }
