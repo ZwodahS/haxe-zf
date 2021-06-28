@@ -175,6 +175,34 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 	}
 
 	/**
+		Split a diagonal direction into the four direction components.
+		If Left Right Up Down is splitted, it will return an array of itself
+	**/
+	public function split(): Array<Direction> {
+		switch (this) {
+			case West:
+				return [West];
+			case NorthWest:
+				return [North, West];
+			case North:
+				return [North];
+			case NorthEast:
+				return [North, East];
+			case East:
+				return [East];
+			case SouthEast:
+				return [South, East];
+			case South:
+				return [South];
+			case SouthWest:
+				return [South, West];
+			case None:
+				return [None];
+		}
+		return [None];
+	}
+
+	/**
 		Returns an "adjacent" direction.
 
 		Imagine the direction is mapped into the following.
