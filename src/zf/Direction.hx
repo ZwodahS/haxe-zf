@@ -103,15 +103,15 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		return [0, 0];
 	}
 
-	@:from public static function fromPoint2i(point: Point2i): Direction {
+	public static function fromXY(x: Int, y: Int): Direction {
 		/**
 			This will bound all x and y between -1 and 1
 			origin is top left, meaning (1, 1) will be South East
 			TODO: might want to provide a different coordinate system if necessary
 		**/
-		var xDiff = MathUtils.clampI(point.x, -1, 1);
+		var xDiff = MathUtils.clampI(x, -1, 1);
 
-		var yDiff = MathUtils.clampI(point.y, -1, 1);
+		var yDiff = MathUtils.clampI(y, -1, 1);
 		if (xDiff == 0) {
 			if (yDiff == 0) {
 				return new Direction(None);
@@ -138,6 +138,10 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 			}
 		}
 		return new Direction(None);
+	}
+
+	@:from public static function fromPoint2i(point: Point2i): Direction {
+		return fromXY(point.x, point.y);
 	}
 
 	public static function fromPointPerspective(coord1: Point2i, coord2: Point2i): Direction {
