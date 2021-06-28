@@ -77,4 +77,38 @@ class RectiTestCase extends TestCase {
 		assertTrue(rs[0] == new Recti(0, 0, 9, 9), '${rs[0]} != [0, 0, 9, 9]');
 		assertTrue(rs[1] == null, '${rs[1]} != null');
 	}
+
+	function test_recti_setters() {
+		var rect = new Recti(0, 0, 2, 3); // this is a 3 by 4 rect
+
+		rect.left = 3;
+		assertTrue(rect == [3, 0, 5, 3], '${rect} != [3, 0, 5, 3]');
+		assertEqual(rect.width, 3);
+		assertEqual(rect.height, 4);
+
+		rect.top = 4;
+		assertTrue(rect == [3, 4, 5, 7], '${rect} != [3, 4, 5, 7]');
+		assertEqual(rect.width, 3);
+		assertEqual(rect.height, 4);
+
+		rect.right = 9;
+		assertTrue(rect == [7, 4, 9, 7], '${rect} != [7, 4, 9, 7]');
+		assertEqual(rect.width, 3);
+		assertEqual(rect.height, 4);
+
+		rect.bottom = 10;
+		assertTrue(rect == [7, 7, 9, 10], '${rect} != [7, 7, 9, 10]');
+		assertEqual(rect.width, 3);
+		assertEqual(rect.height, 4);
+
+		rect.width = 5;
+		assertTrue(rect == [7, 7, 11, 10], '${rect} != [7, 7, 11, 10]');
+		assertEqual(rect.width, 5);
+		assertEqual(rect.height, 4);
+
+		rect.height = 6;
+		assertTrue(rect == [7, 7, 11, 12], '${rect} != [7, 7, 11, 12]');
+		assertEqual(rect.width, 5);
+		assertEqual(rect.height, 6);
+	}
 }

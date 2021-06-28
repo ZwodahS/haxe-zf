@@ -8,27 +8,45 @@ package zf;
 
 	xDiff also behaves differently from width
 	xDiff in the above case will return 2, while width will return 3
-	area will behaves like width * height
+	The way to think of this is xDiff and yDiff is the difference between xMin and xMax.
+	Width is the number of 'value' in the x-axis.
+	The same applies to the y axis.
 
-	Mon May 24 14:47:04 2021
-	Some setter behaviors will be changed to match Rectf's, so other than xMin, xMax, yMin, yMax
-	using the setter for the rest of the attributes is not recommended.
+	area will behaves like width * height, i.e. number of square in the rect
+
+	Additional notes on the Getter.
+		1. The following pair are guaranteed to be equal
+		- xMin == left
+		- yMin == top
+		- xMax == right
+		- yMax == bottom
+
+	Additional notes on Setter.
+		Each group of setters have different behaviors.
+		- xMin/xMax/yMin/yMax will modify the underlying value of the rectangle
+		- left/right/top/bottom will modify the value, while preserving the width/height
+		- width/height will preserve xMin/yMin, while modifying xMax/yMax
+
 **/
 abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 	public var xMin(get, set): Int;
 	public var xMax(get, set): Int;
 	public var yMin(get, set): Int;
 	public var yMax(get, set): Int;
-	public var left(get, never): Int;
-	public var right(get, never): Int;
-	public var top(get, never): Int;
-	public var bottom(get, never): Int;
+
+	public var left(get, set): Int;
+	public var right(get, set): Int;
+	public var top(get, set): Int;
+	public var bottom(get, set): Int;
 
 	public var xDiff(get, never): Int;
 	public var yDiff(get, never): Int;
-	public var width(get, never): Int;
-	public var height(get, never): Int;
+
+	public var width(get, set): Int;
+	public var height(get, set): Int;
+
 	public var area(get, never): Int;
+
 	public var points(get, never): Array<Point2i>;
 
 	public function new(xMin: Int = 0, yMin: Int = 0, xMax: Int = 0, yMax: Int = 0) {
@@ -71,36 +89,44 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		return this[3];
 	}
 
-	public function set_left(left: Int): Int {
-		this[0] = left;
-		return this[0];
+	public function set_left(v: Int): Int {
+		var w = this[2] - this[0];
+		this[0] = v;
+		this[2] = v + w;
+		return v;
 	}
 
 	public function get_left(): Int {
 		return this[0];
 	}
 
-	public function set_right(right: Int): Int {
-		this[2] = right;
-		return this[2];
+	public function set_right(v: Int): Int {
+		var w = this[2] - this[0];
+		this[0] = v - w;
+		this[2] = v;
+		return v;
 	}
 
 	public function get_right(): Int {
 		return this[2];
 	}
 
-	public function set_top(top: Int): Int {
-		this[1] = top;
-		return this[1];
+	public function set_top(v: Int): Int {
+		var w = this[3] - this[1];
+		this[1] = v;
+		this[3] = v + w;
+		return v;
 	}
 
 	public function get_top(): Int {
 		return this[1];
 	}
 
-	public function set_bottom(bottom: Int): Int {
-		this[3] = bottom;
-		return this[3];
+	public function set_bottom(v: Int): Int {
+		var w = this[3] - this[1];
+		this[1] = v - w;
+		this[3] = v;
+		return v;
 	}
 
 	public function get_bottom(): Int {
@@ -134,8 +160,18 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		return this[2] - this[0] + 1;
 	}
 
+	public function set_width(w: Int): Int {
+		this[2] = this[0] + w - 1;
+		return w;
+	}
+
 	public function get_height(): Int {
 		return this[3] - this[1] + 1;
+	}
+
+	public function set_height(h: Int): Int {
+		this[3] = this[1] + h - 1;
+		return h;
 	}
 
 	public function get_area(): Int {
@@ -212,5 +248,26 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		var r1 = topHeight == thisRect.height ? null : new Recti(r0.xMin, r0.yMax + 1, r0.xMax,
 			thisRect.yMax);
 		return [r0, r1];
+	}
+
+	/**
+		Expand the rect by amt in all direction
+	**/
+	public function expand(amt: Int): Recti {
+		this[0] -= 1;
+		this[1] -= 1;
+		this[2] += 1;
+		this[3] += 1;
+		return this;
+	}
+
+	public function shrink(amt: Int): Recti {
+		this[0] += 1;
+		this[1] += 1;
+		this[2] -= 1;
+		this[3] -= 1;
+		if (this[0] > this[2]) this[2] = this[0];
+		if (this[1] > this[3]) this[3] = this[1];
+		return this;
 	}
 }
