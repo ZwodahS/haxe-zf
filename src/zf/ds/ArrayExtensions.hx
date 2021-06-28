@@ -63,4 +63,9 @@ class ArrayExtensions {
 		}
 		return removed;
 	}
+
+	public static function randomItem<T>(arr: Array<T>, r: hxd.Rand, pop: Bool = false): Null<T> {
+		if (pop) return r.randomPop(arr);
+		return r.randomChoice(arr);
+	}
 }

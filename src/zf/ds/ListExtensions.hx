@@ -170,4 +170,8 @@ class ListExtensions {
 		if (found != null) thisList.remove(found.item);
 		return found.item;
 	}
+
+	public static function toArray<T>(thisList: List<T>): Array<T> {
+		return [for (i in thisList) i];
+	}
 }
