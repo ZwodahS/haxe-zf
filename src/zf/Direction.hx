@@ -411,6 +411,32 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		return d;
 	}
 
+	public var int(get, never): Int;
+
+	public function get_int(): Int {
+		var d: Direction = this;
+		switch (d) {
+			case North:
+				return 0;
+			case NorthEast:
+				return 1;
+			case East:
+				return 2;
+			case SouthEast:
+				return 3;
+			case South:
+				return 4;
+			case SouthWest:
+				return 5;
+			case West:
+				return 6;
+			case NorthWest:
+				return 7;
+			default:
+				return 8;
+		}
+	}
+
 	public static function allFourDirections(): Array<Direction> {
 		return [North, East, South, West];
 	}
