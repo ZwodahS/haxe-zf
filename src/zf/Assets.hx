@@ -1,16 +1,36 @@
 package zf;
 
+import zf.Logger;
+
 /**
 	Fri May 14 00:45:58 2021
 	The old code is moved into zf.deprecated, only the aseprite loading is kept.
 **/
+class AssetsMap {
+	public var map: Map<String, Asset2D>;
+
+	public function new(map: Map<String, Asset2D>) {
+		this.map = map;
+	}
+
+	public function get(s: String): Asset2D {
+		var a = this.map[s];
+		if (a == null) {
+#if debug
+			Logger.debug('Assets ${s} not loaded');
+#end
+		}
+		return a;
+	}
+}
+
 @:structInit class LoadedSpritesheet {
 	public var tile: h2d.Tile;
-	public var assets: Map<String, Asset2D>;
+	public var assets: AssetsMap;
 
 	public function new(tile: h2d.Tile, assets: Map<String, Asset2D>) {
 		this.tile = tile;
-		this.assets = assets;
+		this.assets = new AssetsMap(assets);
 	}
 }
 
@@ -18,35 +38,41 @@ package zf;
 	Tile is a combination of Tile:h2d.Tile + color:h3d.Vector + Float scale
 **/
 class Tile {
-	public var tile: h2d.Tile;
+	public var tile(default, null): h2d.Tile;
+
+	var innerTile: h2d.Tile;
+
 	public var color: h3d.Vector;
 	public var scale: Float;
 	public var offset: Point2i;
 
 	public function new(t: h2d.Tile, color: h3d.Vector, scale: Float, offset: Point2i) {
-		this.tile = t;
+		this.innerTile = t;
 		this.color = color;
 		this.scale = scale;
-		this.tile.dx = -offset.x;
-		this.tile.dy = -offset.y;
+		this.innerTile.dx = -offset.x;
+		this.innerTile.dy = -offset.y;
+
+		this.tile = this.innerTile.clone();
+		if (this.scale != 1) {
+			this.tile.setSize(this.tile.width * this.scale, this.tile.height * this.scale);
+		}
 	}
 
 	public function getBitmap(): h2d.Bitmap {
 		var bm: h2d.Bitmap = new h2d.Bitmap(this.tile.clone());
 		bm.color = this.color.clone();
-		bm.scaleX = this.scale;
-		bm.scaleY = this.scale;
 		return bm;
 	}
 
 	public function copy(): Tile {
-		var t = new Tile(this.tile.clone(), this.color, this.scale, this.offset);
+		var t = new Tile(this.innerTile.clone(), this.color, this.scale, this.offset);
 		return t;
 	}
 
 	public function sub(x: Int, y: Int, w: Int, h: Int) {
 		// once sub, the center will be reset to 0
-		return new Tile(this.tile.sub(x, y, w, h), this.color.clone(), this.scale, [0, 0]);
+		return new Tile(this.innerTile.sub(x, y, w, h), this.color.clone(), this.scale, [0, 0]);
 	}
 }
 
@@ -142,7 +168,8 @@ typedef AseSpritesheetConfig = {
 			name: String,
 			from: Int,
 			to: Int,
-			direction: String
+			direction: String,
+			?scale: Null<Int>,
 		}>,
 	}
 }
@@ -159,6 +186,8 @@ class Assets {
 		// for each frameTags, we export
 		for (frame in parsed.meta.frameTags) {
 			var tiles: Array<Tile> = [];
+			var scale = 1;
+			if (frame.scale != null) scale = frame.scale;
 			for (i in frame.from...frame.to + 1) {
 				var pf = parsed.frames[i];
 				var f = pf.frame;
@@ -168,7 +197,7 @@ class Assets {
 				} else {
 					offset = [0, 0];
 				}
-				var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), 1.0, offset);
+				var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), scale, offset);
 				tiles.push(t);
 			}
 			data[frame.name] = new Asset2D(tiles);
