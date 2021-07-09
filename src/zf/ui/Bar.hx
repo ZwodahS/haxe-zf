@@ -2,6 +2,8 @@ package zf.ui;
 
 import zf.h2d.Factory;
 
+using zf.h2d.ObjectExtensions;
+
 enum BarType {
 	Normal; // Show current and max, with background and foreground of the same color, and background will have a different opacity
 	SingleValue; // Show only current value, has no max value.
@@ -25,7 +27,7 @@ class Bar extends h2d.Object {
 	public var height(default, set): Float;
 	public var yOffset(default, set): Float = 0;
 
-	var text: h2d.Text;
+	public var text: h2d.Text;
 
 	public function new(barType: BarType, barColor: Int, font: h2d.Font, textColor: Int, width: Float,
 			height: Float) {
@@ -48,13 +50,15 @@ class Bar extends h2d.Object {
 		this.barColor = barColor;
 
 		if (barType != EmptyBar) {
-			this.addChild(this.text = Factory.text(new h2d.Text(font))
-				.textColor(textColor)
-				.position(0, 0)
-				.setText('')
-				.centerHorizontal(this.bar.x + width / 2)
-				.centerVertical(this.bar.y + height / 2)
-				.text);
+			this.text = new h2d.Text(font);
+			text.textColor = textColor;
+			text.x = 0;
+			text.y = 0;
+			text.textAlign = Center;
+			text.maxWidth = width;
+			text.text = ' ';
+			text.setY(height, AlignCenter);
+			this.addChild(text);
 		}
 
 		this.width = width;
