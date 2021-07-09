@@ -5,7 +5,7 @@ package zf;
 **/
 class RandExtensions {
 	public static function randomChoice<T>(r: hxd.Rand, a: Array<T>): Null<T> {
-		return a.length == 0 ? null : a[r.random(a.length)];
+		return a.length == 0 ? null : a.length == 1 ? a[0] : a[r.random(a.length)];
 	}
 
 	public static function randomChoices<T>(r: hxd.Rand, a: Array<T>, count: Int): Array<T> {
