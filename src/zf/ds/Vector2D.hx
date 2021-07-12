@@ -7,11 +7,13 @@ class Vector2DIteratorXY<T> {
 	var data: ReadOnlyVector2D<T>;
 	var currX: Int;
 	var currY: Int;
+	var point: Point2i;
 
 	public function new(data: ReadOnlyVector2D<T>) {
 		this.data = data;
 		this.currX = 0;
 		this.currY = 0;
+		this.point = new Point2i();
 	}
 
 	public function hasNext(): Bool {
@@ -20,9 +22,11 @@ class Vector2DIteratorXY<T> {
 
 	public function next(): {key: Point2i, value: T} {
 		var returnValue = {
-			key: new Point2i(this.currX, this.currY),
+			key: this.point,
 			value: this.data.data[data.pos(this.currX, this.currY)],
 		}
+		this.point.x = this.currX;
+		this.point.y = this.currY;
 		if (this.currY == this.data.size.y - 1) {
 			this.currY = 0;
 			this.currX += 1;
@@ -38,11 +42,15 @@ class Vector2DIteratorYX<T> {
 	var data: ReadOnlyVector2D<T>;
 	var currX: Int;
 	var currY: Int;
+	var pos: Int = 0;
+
+	var point: Point2i;
 
 	public function new(data: ReadOnlyVector2D<T>) {
 		this.data = data;
 		this.currX = 0;
 		this.currY = 0;
+		this.point = new Point2i();
 	}
 
 	public function hasNext(): Bool {
@@ -50,9 +58,11 @@ class Vector2DIteratorYX<T> {
 	}
 
 	public function next(): {key: Point2i, value: T} {
+		this.point.x = this.currX;
+		this.point.y = this.currY;
 		var returnValue = {
-			key: new Point2i(this.currX, this.currY),
-			value: this.data.data[data.pos(this.currX, this.currY)],
+			key: this.point,
+			value: this.data.data[pos], // this works because we know how Vector2D stores the data
 		}
 		if (this.currX == this.data.size.x - 1) {
 			this.currX = 0;
@@ -60,6 +70,7 @@ class Vector2DIteratorYX<T> {
 		} else {
 			this.currX += 1;
 		}
+		pos+=1;
 		return returnValue;
 	}
 }
