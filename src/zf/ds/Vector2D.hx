@@ -70,7 +70,7 @@ class Vector2DIteratorYX<T> {
 		} else {
 			this.currX += 1;
 		}
-		pos+=1;
+		pos += 1;
 		return returnValue;
 	}
 }
