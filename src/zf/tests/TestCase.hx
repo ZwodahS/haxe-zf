@@ -4,36 +4,58 @@ using StringTools;
 
 // The Console used here comes from console module, not h2d.Console
 class TestCase {
+	var currentContext: String = "";
+
 	public function new() {}
 
 	public function run() {
-		switch (Type.typeof(this)) {
-			case TClass(c):
-				var className = Type.getClassName(c);
-				Console.log('Running ${className}');
-				for (name in Type.getInstanceFields(c)) {
-					var field = Reflect.field(this, name);
-					var success = false;
-					if (name.startsWith("test_") && Reflect.isFunction(field)) {
-						try {
-							Reflect.callMethod(this, field, []);
-							success = true;
-						} catch (e) {
-							// error not thrown by assert function
-							if (e.message != 'Assertion Fail') {
-								trace(e.message);
-								trace(e.stack);
-							}
-							success = false;
-						}
-						if (success) {
-							Console.log('---- Done: ${className}.${name}: <green>Pass</>');
-						} else {
-							Console.log('---- Done: ${className}.${name}: <red>Fail</>');
-						}
+		var c = Type.getClass(this);
+		var className = Type.getClassName(c);
+		Console.log('Running ${className}');
+		for (name in Type.getInstanceFields(c)) {
+			var field = Reflect.field(this, name);
+			var success = false;
+			if (name.startsWith("test_") && Reflect.isFunction(field)) {
+				try {
+					this.currentContext = name;
+					Reflect.callMethod(this, field, []);
+					success = true;
+				} catch (e) {
+					// error not thrown by assert function
+					if (e.message != 'Assertion Fail') {
+						trace(e.message);
+						trace(e.stack);
 					}
+					success = false;
 				}
-			default:
+				this.currentContext = null;
+				if (success) {
+					Console.log('---- Done: ${className}.${name}: <green>Pass</>');
+				} else {
+					Console.log('---- Done: ${className}.${name}: <red>Fail</>');
+				}
+			}
+		}
+	}
+
+	function subTest(subTestId: String, func: Void->Void) {
+		var className = Type.getClassName(Type.getClass(this));
+		var success = false;
+		try {
+			func();
+			success = true;
+		} catch (e) {
+			// error not thrown by assert function
+			if (e.message != 'Assertion Fail') {
+				trace(e.message);
+				trace(e.stack);
+			}
+			success = false;
+		}
+		if (success) {
+			Console.log('---- Done: SubTest ${className}.${this.currentContext}:${subTestId} <green>Pass</>');
+		} else {
+			Console.log('---- Done: SubTest ${className}.${this.currentContext}:${subTestId} <red>Fail</>');
 		}
 	}
 
