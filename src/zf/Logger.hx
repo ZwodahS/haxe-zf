@@ -59,4 +59,12 @@ class Logger {
 		}
 #end
 	}
+
+	inline public static function exception(e: haxe.Exception) {
+#if debug
+		for (es in haxe.CallStack.exceptionStack()) trace(es);
+		haxe.Log.trace(e, null);
+		trace(e.stack);
+#end
+	}
 }
