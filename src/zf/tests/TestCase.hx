@@ -62,7 +62,7 @@ class TestCase {
 	public function assertTrue(v: Bool, ?additionalMsg: String, ?pos: haxe.PosInfos) {
 		if (!v) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
-			var msg = '[${pos.fileName}:${pos.lineNumber}]: ${v} is not True ${additionalMsg}';
+			var msg = '[AssertTrue] [${pos.fileName}:${pos.lineNumber}]: ${v} is not True ${additionalMsg}';
 			Console.error(msg);
 			throw 'Assertion Fail';
 		}
@@ -71,7 +71,16 @@ class TestCase {
 	public function assertEqual(v1: Dynamic, v2: Dynamic, ?additionalMsg: String, ?pos: haxe.PosInfos) {
 		if (v1 != v2) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
-			var msg = '[${pos.fileName}:${pos.lineNumber}]: ${v1} != ${v2} ${additionalMsg}';
+			var msg = '[AssertEqual] [${pos.fileName}:${pos.lineNumber}]: ${v1} != ${v2} ${additionalMsg}';
+			Console.error(msg);
+			throw 'Assertion Fail';
+		}
+	}
+
+	public function assertNotEqual(v1: Dynamic, v2: Dynamic, ?additionalMsg: String, ?pos: haxe.PosInfos) {
+		if (v1 == v2) {
+			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
+			var msg = '[AssertNotEqual] [${pos.fileName}:${pos.lineNumber}]: ${v1} == ${v2} ${additionalMsg}';
 			Console.error(msg);
 			throw 'Assertion Fail';
 		}
@@ -88,7 +97,7 @@ class TestCase {
 		}
 		if (!found) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
-			var msg = '[${pos.fileName}:${pos.lineNumber}]: ${v1} not found in ${v2} ${additionalMsg}';
+			var msg = '[AssertIn] [${pos.fileName}:${pos.lineNumber}]: ${v1} not found in ${v2} ${additionalMsg}';
 			Console.error(msg);
 			throw 'Assertion Fail';
 		}
