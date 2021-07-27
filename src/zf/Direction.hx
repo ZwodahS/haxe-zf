@@ -1,5 +1,7 @@
 package zf;
 
+import haxe.ds.ArraySort;
+
 using zf.RandExtensions;
 
 enum DirectionType {
@@ -481,5 +483,30 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 			default:
 				return North;
 		}
+	}
+
+	// takes in a list of directions and sort them based on a distanceFunc
+	// if directions is not provided, all directions will be used.
+	public static function getSortedDirections(center: Point2i, target: Point2i,
+			distanceFunc: (Int, Int) -> Int, directions: Array<Direction> = null,
+			reversed = false): Array<Direction> {
+		if (directions == null) directions = allEightDirections();
+
+		var directionsWithDistance: Array<{c: Int, direction: Direction}> = [];
+		for (d in directions) {
+			var pt = d.toPoint2i();
+			// @formatter:off
+			var distance = distanceFunc(
+				hxd.Math.iabs(pt.x + center.x - target.x), hxd.Math.iabs(pt.y + center.y - target.y)
+			);
+			directionsWithDistance.push({c: distance, direction: d});
+		}
+
+		if (reversed) {
+			ArraySort.sort(directionsWithDistance, function(x1, x2) { return x2.c - x1.c; });
+		} else {
+			ArraySort.sort(directionsWithDistance, function(x1, x2) { return x1.c - x2.c; });
+		}
+		return [ for (x in directionsWithDistance) x.direction ];
 	}
 }
