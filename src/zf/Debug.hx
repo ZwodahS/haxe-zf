@@ -49,7 +49,8 @@ class Debug {
 			Debug.TimerCounter[id] = now;
 		}
 		var diff = c != null ? now - c : 0;
-		if (print) haxe.Log.trace('[Timer: ${id}] took: ${diff}s', null);
+		var percentOfFrame = StringUtils.formatFloat(diff / (1/60) * 100, 1);
+		if (print) haxe.Log.trace('[Timer: ${id}] took: ${diff}s, ${percentOfFrame}% of frame', null);
 		return diff;
 	}
 
