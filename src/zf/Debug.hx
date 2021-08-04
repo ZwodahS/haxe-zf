@@ -37,7 +37,13 @@ class Debug {
 
 	static var TimerCounter: Map<String, Float>;
 
+	/**
+		A simple timing function. only works in debug
+	**/
 	public static function time(id: String, print: Null<Bool> = null, remove: Null<Bool> = null): Float {
+#if !debug
+		return 0;
+#else
 		if (Debug.TimerCounter == null) Debug.TimerCounter = new Map<String, Float>();
 		var c = Debug.TimerCounter[id];
 		var now = haxe.Timer.stamp();
@@ -49,9 +55,10 @@ class Debug {
 			Debug.TimerCounter[id] = now;
 		}
 		var diff = c != null ? now - c : 0;
-		var percentOfFrame = StringUtils.formatFloat(diff / (1/60) * 100, 1);
+		var percentOfFrame = StringUtils.formatFloat(diff / (1 / 60) * 100, 1);
 		if (print) haxe.Log.trace('[Timer: ${id}] took: ${diff}s, ${percentOfFrame}% of frame', null);
 		return diff;
+#end
 	}
 
 	static var counter: Int = 0;

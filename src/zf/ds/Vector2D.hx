@@ -2,6 +2,9 @@ package zf.ds;
 
 import haxe.ds.Vector;
 
+/**
+	This provides a 2D Vector by wrapping around a Vector
+**/
 @:access(zf.ds.ReadOnlyVector2D)
 class Vector2DIteratorXY<T> {
 	var data: ReadOnlyVector2D<T>;

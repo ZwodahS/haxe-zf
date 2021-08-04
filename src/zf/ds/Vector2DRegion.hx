@@ -1,5 +1,8 @@
 package zf.ds;
 
+/**
+	This provide a wrapper around a Vector2D to handle sub region.
+**/
 class Vector2DRegionIterator<T> {
 	var region: Vector2DRegion<T>;
 	var currX: Int;

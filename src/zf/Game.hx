@@ -72,9 +72,19 @@ class Game extends hxd.App {
 		game(Width|Height) denote the size of the game that is rendered, this is resized by boundedSize.
 		boundedSize is the size is the game we ideally want the game to be in. The game will be resized accordingly.
 	**/
+	/**
+		The width that the game is currently rendered in.
+	**/
 	public var gameWidth(default, null): Int = 800;
 
+	/**
+		The height that the game is currently rendered in.
+	**/
 	public var gameHeight(default, null): Int = 600;
+
+	/**
+		The size to bound the game rendering.
+	**/
 	public var boundedSize(default, set): Point2i = null;
 
 	var boundRatio: Null<Float> = null;

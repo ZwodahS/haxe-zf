@@ -1,7 +1,7 @@
 package zf.ecs;
 
 /**
-	Abstract parent class of all System
+	Abstract parent class of all System.
 **/
 class System {
 	public function new() {}

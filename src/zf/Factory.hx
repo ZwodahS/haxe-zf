@@ -7,6 +7,7 @@ package zf;
 	The second type is a template that create the object.
 
 **/
+@:deprecated
 class Factory<O, T: Template<O>> {
 	var templates: Map<String, T>;
 

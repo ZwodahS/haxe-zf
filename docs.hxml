@@ -1,6 +1,7 @@
---library heaps
+--library heaps-dev
 --library hxrandom
 --library zf
+--library hlsdl
 --library astar
 --library console
 --class-path src

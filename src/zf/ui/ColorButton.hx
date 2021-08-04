@@ -1,5 +1,7 @@
 package zf.ui;
 
+using zf.h2d.ObjectExtensions;
+
 import zf.h2d.ObjectExtensions.SetMode;
 
 class ColorButton extends h2d.Layers {
@@ -55,8 +57,8 @@ class ColorButton extends h2d.Layers {
 
 	function updateTextAlignment() {
 		if (!this.init) return;
-		this.textLabel.setX(this.width, Center);
-		this.textLabel.setY(this.height, Center);
+		this.textLabel.setX(this.width, AlignCenter);
+		this.textLabel.setY(this.height, AlignCenter);
 	}
 
 	dynamic public function onClick() {}

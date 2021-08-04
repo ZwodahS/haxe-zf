@@ -3,8 +3,20 @@ package zf.ecs;
 import zf.MessageDispatcher;
 
 class World {
+	/**
+		All the entities in the world
+	**/
 	public var entities: Map<Int, Entity>;
+
+	/**
+		List of systems.
+		The update function of the systems will be called in the order that they are added.
+	**/
 	public var systems: List<System>;
+
+	/**
+		The message dispatcher assigned to the world.
+	**/
 	public var dispatcher: MessageDispatcher;
 
 	public function new() {

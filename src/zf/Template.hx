@@ -1,5 +1,6 @@
 package zf;
 
+@:deprecated
 class Template<T> {
 	// set default values for obj
 	public function load(e: T) {}
