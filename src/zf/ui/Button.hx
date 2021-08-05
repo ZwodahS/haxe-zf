@@ -28,6 +28,7 @@ class Button extends h2d.Layers {
 		this.width = width;
 		this.height = height;
 		this.interactive = new h2d.Interactive(width, height, this);
+		this.interactive.enableRightButton = true;
 		interactive.onOver = function(e: hxd.Event) {
 			this.isOver = true;
 			updateButton();
@@ -39,7 +40,12 @@ class Button extends h2d.Layers {
 			onOut();
 		}
 		interactive.onClick = function(e: hxd.Event) {
-			onClick();
+			if (e.button == 0) {
+				onLeftClick();
+			} else if (e.button == 1) {
+				onRightClick();
+			}
+			onClick(e.button);
 		}
 		interactive.onPush = function(e: hxd.Event) {
 			onPush();
@@ -56,7 +62,11 @@ class Button extends h2d.Layers {
 
 	dynamic public function onOver() {}
 
-	dynamic public function onClick() {}
+	dynamic public function onClick(button: Int) {}
+
+	dynamic public function onLeftClick() {}
+
+	dynamic public function onRightClick() {}
 
 	dynamic public function onPush() {}
 

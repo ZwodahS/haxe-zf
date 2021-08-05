@@ -47,7 +47,15 @@ class TextButton extends h2d.Object {
 			updateText();
 		}
 		this.interactive.onRelease = function(e: hxd.Event) {
-			onClick();
+			onRelease();
+		}
+		this.interactive.onClick = function(e: hxd.Event) {
+			if (e.button == 0) {
+				onLeftClick();
+			} else if (e.button == 1) {
+				onRightClick();
+			}
+			onClick(e.button);
 		}
 		this.interactive.cursor = Default;
 		this.text = text;
@@ -58,5 +66,11 @@ class TextButton extends h2d.Object {
 		this.label.text = '${this.text.font(color)}';
 	}
 
-	dynamic public function onClick() {}
+	dynamic public function onClick(button: Int) {}
+
+	dynamic public function onLeftClick() {}
+
+	dynamic public function onRightClick() {}
+
+	dynamic public function onRelease() {}
 }
