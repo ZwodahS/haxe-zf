@@ -11,6 +11,7 @@ class Test extends TestRunner {
 		super();
 		add(new RectiTestCase());
 		add(new Vector2DRegionTestCase());
+		add(new ListExtensionsTestCase());
 	}
 
 	public static function main() {

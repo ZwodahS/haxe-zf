@@ -204,4 +204,21 @@ class ListExtensions {
 	public static function toArray<T>(thisList: List<T>): Array<T> {
 		return [for (i in thisList) i];
 	}
+
+	public static function slice<T>(thisList: List<T>, start: Int, end: Int): Array<T> {
+		var i = 0;
+		var curr = thisList.h;
+		while (i < start && curr != null) {
+			curr = curr.next;
+			i += 1;
+		}
+		if (curr == null) return [];
+		var arr: Array<T> = [];
+		while (curr != null && i < end) {
+			arr.push(curr.item);
+			i += 1;
+			curr = curr.next;
+		}
+		return arr;
+	}
 }
