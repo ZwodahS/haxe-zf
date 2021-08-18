@@ -69,4 +69,104 @@ class Vector2DRegionTestCase extends TestCase {
 		assertEqual(r4.get(1, 0), null);
 		assertEqual(r4.get(0, 1), null);
 	}
+
+	function test_rowiterator() {
+		var grid = new Vector2D<String>([10, 10], "#");
+		var r = new Vector2DRegion<String>(grid);
+		// set up the coord system
+		for (pt => value in r.iterate()) {
+			r.set(pt.x, pt.y, '${pt.x},${pt.y}');
+		}
+
+		var output: Array<String> = [];
+		for (pt => value in r.iterateRow(2, 2)) {
+			output.push(value);
+		}
+		assertEqual(output.length, 8);
+		assertEqual(output[0], '2,2');
+		assertEqual(output[1], '3,2');
+		assertEqual(output[2], '4,2');
+		assertEqual(output[3], '5,2');
+		assertEqual(output[4], '6,2');
+		assertEqual(output[5], '7,2');
+		assertEqual(output[6], '8,2');
+		assertEqual(output[7], '9,2');
+
+		var output: Array<String> = [];
+		for (pt => value in r.iterateRow(4, 2, true)) {
+			output.push(value);
+		}
+		assertEqual(output.length, 5);
+		assertEqual(output[0], '4,2');
+		assertEqual(output[1], '3,2');
+		assertEqual(output[2], '2,2');
+		assertEqual(output[3], '1,2');
+		assertEqual(output[4], '0,2');
+
+		var output: Array<String> = [];
+		for (pt => value in r.iterateRow(-1, 2, true)) {
+			output.push(value);
+		}
+		assertEqual(output.length, 10);
+		assertEqual(output[0], '9,2');
+		assertEqual(output[1], '8,2');
+		assertEqual(output[2], '7,2');
+		assertEqual(output[3], '6,2');
+		assertEqual(output[4], '5,2');
+		assertEqual(output[5], '4,2');
+		assertEqual(output[6], '3,2');
+		assertEqual(output[7], '2,2');
+		assertEqual(output[8], '1,2');
+		assertEqual(output[9], '0,2');
+	}
+
+	function test_columniterator() {
+		var grid = new Vector2D<String>([10, 10], "#");
+		var r = new Vector2DRegion<String>(grid);
+		// set up the coord system
+		for (pt => value in r.iterate()) {
+			r.set(pt.x, pt.y, '${pt.x},${pt.y}');
+		}
+
+		var output: Array<String> = [];
+		for (pt => value in r.iterateColumn(2, 2)) {
+			output.push(value);
+		}
+		assertEqual(output.length, 8);
+		assertEqual(output[0], '2,2');
+		assertEqual(output[1], '2,3');
+		assertEqual(output[2], '2,4');
+		assertEqual(output[3], '2,5');
+		assertEqual(output[4], '2,6');
+		assertEqual(output[5], '2,7');
+		assertEqual(output[6], '2,8');
+		assertEqual(output[7], '2,9');
+
+		var output: Array<String> = [];
+		for (pt => value in r.iterateColumn(2, 4, true)) {
+			output.push(value);
+		}
+		assertEqual(output.length, 5);
+		assertEqual(output[0], '2,4');
+		assertEqual(output[1], '2,3');
+		assertEqual(output[2], '2,2');
+		assertEqual(output[3], '2,1');
+		assertEqual(output[4], '2,0');
+
+		var output: Array<String> = [];
+		for (pt => value in r.iterateColumn(2, -1, true)) {
+			output.push(value);
+		}
+		assertEqual(output.length, 10);
+		assertEqual(output[0], '2,9');
+		assertEqual(output[1], '2,8');
+		assertEqual(output[2], '2,7');
+		assertEqual(output[3], '2,6');
+		assertEqual(output[4], '2,5');
+		assertEqual(output[5], '2,4');
+		assertEqual(output[6], '2,3');
+		assertEqual(output[7], '2,2');
+		assertEqual(output[8], '2,1');
+		assertEqual(output[9], '2,0');
+	}
 }

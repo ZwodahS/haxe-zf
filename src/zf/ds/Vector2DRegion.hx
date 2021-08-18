@@ -34,6 +34,74 @@ class Vector2DRegionIterator<T> {
 	}
 }
 
+class Vector2DRegionRowIterator<T> {
+	var region: Vector2DRegion<T>;
+	var currX: Int;
+	var currY: Int;
+	var reversed: Bool = false;
+
+	public function new(region: Vector2DRegion<T>, startX: Int, startY: Int, reversed = false) {
+		this.region = region;
+		this.currX = startX;
+		this.currY = startY;
+		this.reversed = reversed;
+	}
+
+	public function hasNext(): Bool {
+		return (this.currX >= 0
+			&& this.currX < this.region.size.x
+			&& this.currY >= 0
+			&& this.currY < this.region.size.y);
+	}
+
+	public function next(): {key: Point2i, value: T} {
+		var returnValue = {
+			key: new Point2i(this.currX, this.currY),
+			value: this.region.get(this.currX, this.currY),
+		}
+		if (reversed) {
+			this.currX -= 1;
+		} else {
+			this.currX += 1;
+		}
+		return returnValue;
+	}
+}
+
+class Vector2DRegionColumnIterator<T> {
+	var region: Vector2DRegion<T>;
+	var currX: Int;
+	var currY: Int;
+	var reversed: Bool = false;
+
+	public function new(region: Vector2DRegion<T>, startX: Int, startY: Int, reversed = false) {
+		this.region = region;
+		this.currX = startX;
+		this.currY = startY;
+		this.reversed = reversed;
+	}
+
+	public function hasNext(): Bool {
+		return (this.currX >= 0
+			&& this.currX < this.region.size.x
+			&& this.currY >= 0
+			&& this.currY < this.region.size.y);
+	}
+
+	public function next(): {key: Point2i, value: T} {
+		var returnValue = {
+			key: new Point2i(this.currX, this.currY),
+			value: this.region.get(this.currX, this.currY),
+		}
+		if (reversed) {
+			this.currY -= 1;
+		} else {
+			this.currY += 1;
+		}
+		return returnValue;
+	}
+}
+
 class Vector2DRegion<T> {
 	public var grid: Vector2D<T>;
 
@@ -60,6 +128,24 @@ class Vector2DRegion<T> {
 
 	public function iterate(): Vector2DRegionIterator<T> {
 		return new Vector2DRegionIterator<T>(this);
+	}
+
+	/**
+		if x / y is negative it will be taken from the end instead
+	**/
+	public function iterateRow(x: Int, y: Int, reversed: Bool = false): Vector2DRegionRowIterator<T> {
+		if (x < 0) x += this.size.x;
+		if (y < 0) y += this.size.y;
+		return new Vector2DRegionRowIterator<T>(this, x, y, reversed);
+	}
+
+	/**
+		if x / y is negative it will be taken from the end instead
+	**/
+	public function iterateColumn(x: Int, y: Int, reversed: Bool = false): Vector2DRegionColumnIterator<T> {
+		if (x < 0) x += this.size.x;
+		if (y < 0) y += this.size.y;
+		return new Vector2DRegionColumnIterator<T>(this, x, y, reversed);
 	}
 
 	public function get(x: Int, y: Int): T {
