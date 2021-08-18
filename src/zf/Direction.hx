@@ -4,83 +4,49 @@ import haxe.ds.ArraySort;
 
 using zf.RandExtensions;
 
-enum DirectionType {
-	Left;
-	UpLeft;
-	Up;
-	UpRight;
-	Right;
-	DownRight;
-	Down;
-	DownLeft;
-	None;
-}
+/**
+	Direction provide the implementation to handle the 8 direction on a 2D area.
 
-enum CardinalDirectionType {
-	West;
-	NorthWest;
-	North;
-	NorthEast;
-	East;
-	SouthEast;
-	South;
-	SouthWest;
-	None;
-}
+	Notes on using Direction:
+	1. When using direction, it should be used like a primitive.
 
-abstract Direction(CardinalDirectionType) from CardinalDirectionType to CardinalDirectionType {
-	public function new(cDirectionType: CardinalDirectionType = None) {
-		this = cDirectionType;
-	}
+	Wed 15:34:55 18 Aug 2021
+	Refactored Direction to enum abstract.
+	We will store them as String as Int does not allow for null value and we need it.
 
-	@:to public function toDirection(): DirectionType {
-		switch (this) {
-			case West:
-				return Left;
-			case NorthWest:
-				return UpLeft;
-			case North:
-				return Up;
-			case NorthEast:
-				return UpRight;
-			case East:
-				return Right;
-			case SouthEast:
-				return DownRight;
-			case South:
-				return Down;
-			case SouthWest:
-				return DownLeft;
-			case None:
-				return None;
-		}
-		return None;
-	}
+	Still testing how I want direction to be implemented.
+	There is no need to know how it is implemented when using it so it should be fine.
 
-	@:from public static function fromDirection(d: DirectionType): Direction {
-		switch (d) {
-			case Left:
-				return new Direction(West);
-			case UpLeft:
-				return new Direction(NorthWest);
-			case Up:
-				return new Direction(North);
-			case UpRight:
-				return new Direction(NorthEast);
-			case Right:
-				return new Direction(East);
-			case DownRight:
-				return new Direction(SouthEast);
-			case Down:
-				return new Direction(South);
-			case DownLeft:
-				return new Direction(SouthWest);
-			case None:
-				return new Direction(None);
-		}
-		return new Direction(None);
-	}
+	For now we will implement it using String, previously it was implemented using 2 type of enums which was
+	quite hard handle switch statement.
 
+	There might also be some advantage to handle it via bitmask instead to allow for North | East to create NorthEast.
+	However, that creates confusions in cases like North | South.
+	Therefore, it is better not to have to think about it.
+**/
+enum abstract Direction(String) from String to String {
+	var North = "North";
+	var Up = "North";
+	var NorthEast = "NorthEast";
+	var UpRight = "NorthEast";
+	var East = "East";
+	var Right = "East";
+	var SouthEast = "SouthEast";
+	var DownRight = "SouthEast";
+	var South = "South";
+	var Down = "South";
+	var SouthWest = "SouthWest";
+	var DownLeft = "SouthWest";
+	var West = "West";
+	var Left = "West";
+	var NorthWest = "NorthWest";
+	var UpLeft = "NorthWest";
+	var None = "None";
+
+	/**
+		Convert a direction to a point2i.
+		The value of each axis will be between -1, 1
+	**/
 	@:to public function toPoint2i(): Point2i {
 		switch (this) {
 			case West:
@@ -99,81 +65,101 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 				return [0, 1];
 			case SouthWest:
 				return [-1, 1];
-			case None:
+			default:
 				return [0, 0];
 		}
 		return [0, 0];
 	}
 
-	public static function fromXY(x: Int, y: Int): Direction {
-		/**
-			This will bound all x and y between -1 and 1
-			origin is top left, meaning (1, 1) will be South East
-			TODO: might want to provide a different coordinate system if necessary
-		**/
-		var xDiff = MathUtils.clampI(x, -1, 1);
+	/**
+		Convert x, y to Direction.
+		This is present so that we don't have to create a Point2i object just to convert to Direction
 
+		@param x the x value
+		@param y the y value
+		@return the converted direction
+
+		values will be clamped between -1 and 1 inclusive.
+	**/
+	public static function fromXY(x: Int, y: Int): Direction {
+		// clamp the 2 values
+		var xDiff = MathUtils.clampI(x, -1, 1);
 		var yDiff = MathUtils.clampI(y, -1, 1);
+
 		if (xDiff == 0) {
 			if (yDiff == 0) {
-				return new Direction(None);
+				return None;
 			} else if (yDiff == 1) {
-				return new Direction(South);
+				return South;
 			} else if (yDiff == -1) {
-				return new Direction(North);
+				return North;
 			}
 		} else if (xDiff == 1) {
 			if (yDiff == 0) {
-				return new Direction(East);
+				return East;
 			} else if (yDiff == 1) {
-				return new Direction(SouthEast);
+				return SouthEast;
 			} else if (yDiff == -1) {
-				return new Direction(NorthEast);
+				return NorthEast;
 			}
 		} else if (xDiff == -1) {
 			if (yDiff == 0) {
-				return new Direction(West);
+				return West;
 			} else if (yDiff == 1) {
-				return new Direction(SouthWest);
+				return SouthWest;
 			} else if (yDiff == -1) {
-				return new Direction(NorthWest);
+				return NorthWest;
 			}
 		}
-		return new Direction(None);
+		return None;
 	}
 
+	/**
+		Convert a point2i to a direction
+	**/
 	@:from public static function fromPoint2i(point: Point2i): Direction {
 		return fromXY(point.x, point.y);
 	}
 
+	/**
+		Get the direction of coord2 from coord1
+		This is the same as `var d: Direction = coord2 - coord1
+
+		@param coord1 the point of reference
+		@param coord2 the target point
+		@return the converted direction
+	**/
 	public static function fromPointPerspective(coord1: Point2i, coord2: Point2i): Direction {
 		return fromPoint2i([coord2.x - coord1.x, coord2.y - coord1.y]);
 	}
 
+	/**
+		get the opposite direction
+	**/
 	public var opposite(get, never): Direction;
 
 	public function get_opposite(): Direction {
 		switch (this) {
 			case West:
-				return new Direction(East);
+				return East;
 			case NorthWest:
-				return new Direction(SouthEast);
+				return SouthEast;
 			case North:
-				return new Direction(South);
+				return South;
 			case NorthEast:
-				return new Direction(SouthWest);
+				return SouthWest;
 			case East:
-				return new Direction(West);
+				return West;
 			case SouthEast:
-				return new Direction(NorthWest);
+				return NorthWest;
 			case South:
-				return new Direction(North);
+				return North;
 			case SouthWest:
-				return new Direction(NorthEast);
+				return NorthEast;
 			case None:
-				return new Direction(None);
+				return None;
 		}
-		return new Direction(None);
+		return None;
 	}
 
 	/**
@@ -221,21 +207,21 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 	public function get_adjacent(): Array<Direction> {
 		switch (this) {
 			case West:
-				return [new Direction(SouthWest), new Direction(NorthWest)];
+				return [SouthWest, NorthWest];
 			case NorthWest:
-				return [new Direction(West), new Direction(North)];
+				return [West, North];
 			case North:
-				return [new Direction(NorthWest), new Direction(NorthEast)];
+				return [NorthWest, NorthEast];
 			case NorthEast:
-				return [new Direction(North), new Direction(East)];
+				return [North, East];
 			case East:
-				return [new Direction(NorthEast), new Direction(SouthEast)];
+				return [NorthEast, SouthEast];
 			case SouthEast:
-				return [new Direction(East), new Direction(South)];
+				return [East, South];
 			case South:
-				return [new Direction(SouthEast), new Direction(SouthWest)];
+				return [SouthEast, SouthWest];
 			case SouthWest:
-				return [new Direction(South), new Direction(West)];
+				return [South, West];
 			case None:
 				return [];
 		}
@@ -258,21 +244,21 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 	public function get_oppositeAxis(): Array<Direction> {
 		switch (this) {
 			case West:
-				return [new Direction(North), new Direction(South)];
+				return [North, South];
 			case East:
-				return [new Direction(North), new Direction(South)];
+				return [North, South];
 			case NorthWest:
-				return [new Direction(NorthEast), new Direction(SouthWest)];
+				return [NorthEast, SouthWest];
 			case SouthEast:
-				return [new Direction(NorthEast), new Direction(SouthWest)];
+				return [NorthEast, SouthWest];
 			case North:
-				return [new Direction(West), new Direction(East)];
+				return [West, East];
 			case South:
-				return [new Direction(West), new Direction(East)];
+				return [West, East];
 			case SouthWest:
-				return [new Direction(NorthWest), new Direction(SouthWest)];
+				return [NorthWest, SouthWest];
 			case NorthEast:
-				return [new Direction(NorthWest), new Direction(SouthWest)];
+				return [NorthWest, SouthWest];
 			case None:
 				return [];
 		}
@@ -282,7 +268,7 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 	public var cardinalShortString(get, never): String;
 
 	public function get_cardinalShortString(): String {
-		switch (this: CardinalDirectionType) {
+		switch (this) {
 			case West:
 				return 'W';
 			case NorthWest:
@@ -303,50 +289,6 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 				return '';
 		}
 		return '';
-	}
-
-	@:to public function toString(): String {
-		return '${toDirection()}';
-	}
-
-	@:from public static function fromString(s: String): Direction {
-		switch (s) {
-			case "West":
-				return Left;
-			case "Left":
-				return Left;
-			case "NorthWest":
-				return UpLeft;
-			case "Upleft":
-				return UpLeft;
-			case "North":
-				return Up;
-			case "Up":
-				return Up;
-			case "NorthEast":
-				return UpRight;
-			case "UpRight":
-				return UpRight;
-			case "East":
-				return Right;
-			case "Right":
-				return Right;
-			case "SouthEast":
-				return DownRight;
-			case "DownRight":
-				return DownRight;
-			case "South":
-				return Down;
-			case "Down":
-				return Down;
-			case "SouthWest":
-				return DownLeft;
-			case "DownLeft":
-				return DownLeft;
-			case "None":
-				return None;
-		}
-		return None;
 	}
 
 	public var clockwise(get, never): Direction;
@@ -401,23 +343,36 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		return None;
 	}
 
-	public function rotateCW(i: Int): Direction {
+	/**
+		rotate this direction n times clockwise and return the new direction.
+		this does not mutate the direction
+
+		@param n the number of times to rotate
+		@return the direction
+	**/
+	public function rotateCW(n: Int): Direction {
 		var d: Direction = this;
-		for (_ in 0...i) d = d.clockwise;
+		for (_ in 0...n) d = d.clockwise;
 		return d;
 	}
 
-	public function rotateCCW(i: Int): Direction {
+	/**
+		rotate this direction n times counter-clockwise and return the new direction.
+		this does not mutate the direction
+
+		@param n the number of times to rotate
+		@return the direction
+	**/
+	public function rotateCCW(n: Int): Direction {
 		var d: Direction = this;
-		for (_ in 0...i) d = d.cclockwise;
+		for (_ in 0...n) d = d.cclockwise;
 		return d;
 	}
 
 	public var int(get, never): Int;
 
 	public function get_int(): Int {
-		var d: Direction = this;
-		switch (d) {
+		switch (this) {
 			case North:
 				return 0;
 			case NorthEast:
@@ -439,7 +394,7 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		}
 	}
 
-	public static function allFourDirections(): Array<Direction> {
+	inline public static function allFourDirections(): Array<Direction> {
 		return [North, East, South, West];
 	}
 
@@ -458,7 +413,7 @@ abstract Direction(CardinalDirectionType) from CardinalDirectionType to Cardinal
 		}
 	}
 
-	public static function allEightDirections(): Array<Direction> {
+	inline public static function allEightDirections(): Array<Direction> {
 		return [North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest];
 	}
 

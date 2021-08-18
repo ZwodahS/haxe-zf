@@ -12,6 +12,7 @@ class Test extends TestRunner {
 		add(new RectiTestCase());
 		add(new Vector2DRegionTestCase());
 		add(new ListExtensionsTestCase());
+		add(new DirectionTestCase());
 	}
 
 	public static function main() {
