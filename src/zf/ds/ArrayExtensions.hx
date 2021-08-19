@@ -89,4 +89,12 @@ class ArrayExtensions {
 		if (pop) return r.randomPop(arr);
 		return r.randomChoice(arr);
 	}
+
+	inline public static function first<T>(arr: Array<T>): Null<T> {
+		return arr.length == 0 ? null : arr[0];
+	}
+
+	inline public static function last<T>(arr: Array<T>): Null<T> {
+		return arr.length == 0 ? null : arr[arr.length - 1];
+	}
 }
