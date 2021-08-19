@@ -254,18 +254,18 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		Expand the rect by amt in all direction
 	**/
 	public function expand(amt: Int): Recti {
-		this[0] -= 1;
-		this[1] -= 1;
-		this[2] += 1;
-		this[3] += 1;
+		this[0] -= amt;
+		this[1] -= amt;
+		this[2] += amt;
+		this[3] += amt;
 		return this;
 	}
 
 	public function shrink(amt: Int): Recti {
-		this[0] += 1;
-		this[1] += 1;
-		this[2] -= 1;
-		this[3] -= 1;
+		this[0] += amt;
+		this[1] += amt;
+		this[2] -= amt;
+		this[3] -= amt;
 		if (this[0] > this[2]) this[2] = this[0];
 		if (this[1] > this[3]) this[3] = this[1];
 		return this;
