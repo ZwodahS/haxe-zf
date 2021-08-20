@@ -3,6 +3,7 @@ package zf;
 import haxe.ds.ArraySort;
 
 using zf.RandExtensions;
+using zf.ds.ArrayExtensions;
 
 /**
 	Direction provide the implementation to handle the 8 direction on a 2D area.
@@ -394,8 +395,13 @@ enum abstract Direction(String) from String to String {
 		}
 	}
 
-	inline public static function allFourDirections(): Array<Direction> {
-		return [North, East, South, West];
+	/**
+		Get all 4 directions. if r is provided, then the array will be shuffled.
+	**/
+	inline public static function allFourDirections(r: hxd.Rand = null): Array<Direction> {
+		var d = [North, East, South, West];
+		if (r != null) d.shuffle(r);
+		return d;
 	}
 
 	public static function randomFourDirection(r: hxd.Rand): Direction {
