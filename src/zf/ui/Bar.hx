@@ -30,20 +30,22 @@ class Bar extends h2d.Object {
 	public var text: h2d.Text;
 
 	public function new(barType: BarType, barColor: Int, font: h2d.Font, textColor: Int, width: Float,
-			height: Float) {
+			height: Float, tile: h2d.Tile = null) {
 		super();
 
 		this.barType = barType;
 
+		if (tile == null) tile = h2d.Tile.fromColor(0xFFFFFF, 1, 1);
+
 		if (barType == Normal) {
-			this.addChild(this.bg = new h2d.Bitmap(h2d.Tile.fromColor(0xFFFFFF, 1, 1)));
+			this.addChild(this.bg = new h2d.Bitmap(tile));
 			this.bg.color.setColor(barColor);
 			this.bg.alpha = 0.3;
 			this.bg.width = width;
 			this.bg.height = height;
 		}
 
-		this.addChild(this.bar = new h2d.Bitmap(h2d.Tile.fromColor(0xFFFFFF, 1, 1)));
+		this.addChild(this.bar = new h2d.Bitmap(tile));
 		this.bar.color.setColor(barColor);
 		this.bar.width = width;
 		this.bar.height = height;
