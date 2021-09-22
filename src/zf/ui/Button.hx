@@ -1,14 +1,31 @@
 package zf.ui;
 
+/**
+	Generic Button object.
+	This is the parent for all button and Child object should implement the rendering.
+**/
 class Button extends h2d.Layers {
+	/**
+		flag for if the button is disabled.
+	**/
 	public var disabled(default, set): Bool = false;
-	// used for button where there is a state for being "selected"
+
+	/**
+		flag for if the button is toggled/selected.
+	**/
 	public var toggled(default, set): Bool = true;
 
 	var isOver: Bool = false;
 	var interactive: h2d.Interactive;
 
+	/**
+		width of the interactive part of the button.
+	**/
 	public var width(default, null): Int;
+
+	/**
+		height of the interactive part of the button.
+	**/
 	public var height(default, null): Int;
 
 	public function set_disabled(b: Bool): Bool {
@@ -72,5 +89,8 @@ class Button extends h2d.Layers {
 
 	dynamic public function onRelease() {}
 
+	/**
+		Update the button. This is called when state is changed.
+	**/
 	function updateButton() {}
 }

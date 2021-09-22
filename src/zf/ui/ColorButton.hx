@@ -4,6 +4,7 @@ using zf.h2d.ObjectExtensions;
 
 import zf.h2d.ObjectExtensions.SetMode;
 
+@:deprecated
 class ColorButton extends h2d.Layers {
 	var hover: h2d.Bitmap;
 

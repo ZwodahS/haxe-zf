@@ -4,6 +4,7 @@ package zf.ui;
 	Change alpha based on button state.
 	This is mainly used for prototyping.
 **/
+@:deprecated
 class AlphaButton extends Button {
 	public var disabledAlpha: Float = .5;
 	public var untoggledAlpha: Float = .5;
