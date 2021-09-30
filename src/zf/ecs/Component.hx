@@ -15,4 +15,8 @@ class Component {
 	public function toString(): String {
 		return '{c:${this.type}}';
 	}
+
+	public function toStruct(): Dynamic {
+		return {};
+	}
 }

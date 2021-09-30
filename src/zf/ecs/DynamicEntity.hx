@@ -6,8 +6,8 @@ import zf.ecs.messages.ComponentAttached;
 class DynamicEntity extends zf.ecs.Entity {
 	var components: Map<String, Component>;
 
-	public function new() {
-		super();
+	public function new(id: Null<Int> = null) {
+		super(id);
 		this.components = new Map<String, Component>();
 	}
 
@@ -16,6 +16,7 @@ class DynamicEntity extends zf.ecs.Entity {
 	}
 
 	public function attachComponent(component: Component) {
+		if (component == null) return;
 		removeComponentByType(component.type);
 		this.components[component.type] = component;
 		if (this.world != null) this.world.dispatcher.dispatch(new ComponentAttached(this, component));

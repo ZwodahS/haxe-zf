@@ -3,7 +3,6 @@ package zf.ui;
 /**
 	Generic Checkbox using h2d.Object as image
 **/
-
 class GenericCheckbox extends h2d.Layers {
 	var uncheckedObject: h2d.Object;
 	var checkedObject: h2d.Object;
@@ -49,7 +48,6 @@ class GenericCheckbox extends h2d.Layers {
 	/**
 		Various builder methods
 	**/
-
 	public static function fromTiles(tiles: Array<h2d.Tile>, defaultValue: Bool = true): GenericCheckbox {
 		return new GenericCheckbox(new h2d.Bitmap(tiles[0]), new h2d.Bitmap(tiles[1]), defaultValue);
 	}
