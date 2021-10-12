@@ -145,4 +145,22 @@ class GenericButton extends Button {
 			new h2d.Bitmap(selectedTile)
 		);
 	}
+
+	public static function fromTileColors(tile: h2d.Tile, colors: Array<Int>): GenericButton {
+		final defaultColor = colors[0];
+		final hoverColor = colors.length > 1 ? colors[1] : colors[0];
+		final disabledColor = colors.length > 2 ? colors[2] : colors[0];
+		final selectedColor = colors.length > 3 ? colors[3] : colors[0];
+		inline function makeBitmap(color: Int): h2d.Bitmap {
+			final bm = new h2d.Bitmap(tile);
+			bm.color.setColor(color);
+			return bm;
+		}
+		return new GenericButton(
+			makeBitmap(defaultColor),
+			makeBitmap(hoverColor),
+			makeBitmap(disabledColor),
+			makeBitmap(selectedColor)
+		);
+	}
 }
