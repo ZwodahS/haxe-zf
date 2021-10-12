@@ -17,7 +17,7 @@ class TileBoxFactory {
 		this.tile = tile;
 	}
 
-	public function make(boxSize: Point2i): h2d.Object {
+	public function make(boxSize: Point2i): h2d.Drawable {
 		var obj = new h2d.ScaleGrid(this.tile, this.borderLeft, this.borderTop, this.borderRight,
 			this.borderBottom);
 		obj.width = boxSize.x;
