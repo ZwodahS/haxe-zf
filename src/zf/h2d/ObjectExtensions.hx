@@ -23,6 +23,19 @@ class ObjectExtensions {
 		return obj;
 	}
 
+	public static function putAboveBound(obj: h2d.Object, bounds: h2d.col.Bounds, offset: Point2f = null,
+			overrideX: Null<Int> = null): h2d.Object {
+		if (offset == null) offset = [0, 0];
+		final objSize = obj.getSize();
+		if (overrideX == null) {
+			obj.x = bounds.xMin + offset.x;
+		} else {
+			obj.x = overrideX;
+		}
+		obj.y = bounds.yMin - objSize.height - offset.y;
+		return obj;
+	}
+
 	public static function putBelow(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
 			overrideX: Null<Int> = null): h2d.Object {
 		if (offset == null) offset = [0, 0];
@@ -33,6 +46,18 @@ class ObjectExtensions {
 			obj.x = overrideX;
 		}
 		obj.y = component.y + componentSize.height + offset.y;
+		return obj;
+	}
+
+	public static function putBelowBound(obj: h2d.Object, bounds: h2d.col.Bounds, offset: Point2f = null,
+			overrideX: Null<Int> = null): h2d.Object {
+		if (offset == null) offset = [0, 0];
+		if (overrideX == null) {
+			obj.x = bounds.xMin + offset.x;
+		} else {
+			obj.x = overrideX;
+		}
+		obj.y = bounds.yMax + offset.y;
 		return obj;
 	}
 
