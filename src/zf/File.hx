@@ -14,9 +14,6 @@ class File {
 		final text = f.toText().trim();
 
 		var strings: Array<String> = null;
-#if strings
-		= text.split('\n');
-#else
 		// handle OS "Windows" | "Linux" | "BSD" | "Mac"
 		switch (Sys.systemName()) {
 			case "Windows":
@@ -24,7 +21,6 @@ class File {
 			default:
 				strings = text.split('\n');
 		}
-#end
 		return strings;
 	}
 }
