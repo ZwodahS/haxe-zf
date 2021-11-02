@@ -5,7 +5,7 @@ interface IntCounter {
 }
 
 class SimpleIntCounter implements IntCounter {
-	var counter: Int = 0;
+	public var counter(default, null): Int = 0;
 
 	public function new(startingId: Int = 0) {
 		this.counter = startingId;
