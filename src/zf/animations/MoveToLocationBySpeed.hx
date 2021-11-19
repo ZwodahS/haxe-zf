@@ -10,7 +10,8 @@ class MoveToLocationBySpeed extends Animation {
 		super();
 		this.object = object;
 		this.destination = destination;
-		this.speed = speeds != null ? speeds : [speed, speed];
+		// aboslute the speed
+		this.speed = speeds != null ? speeds.abs : [speed, speed];
 	}
 
 	override public function isDone(): Bool {
