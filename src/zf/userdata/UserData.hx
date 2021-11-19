@@ -144,6 +144,37 @@ class UserData {
 #end
 	}
 
+	public function deleteDirectory(path: String): UserDataResult {
+#if sys
+		final actualPath = [this.rootDir, path];
+		final actualPathString = Path.join(actualPath);
+		if (FileSystem.exists(actualPathString)) FileSystem.deleteDirectory(actualPathString);
+#end
+		return Success;
+	}
+
+	public function deleteFile(path: String): UserDataResult {
+#if (!sys && !js)
+		Logger.warn("Saving not supported");
+		return NotSupported;
+#elseif js
+		var storage = js.Browser.getLocalStorage();
+		if (storage == null) {
+			Logger.warn("Saving not enabled");
+			return BrowserNotEnabled;
+		}
+#end
+
+		if (!exists(path)) return Failure;
+#if sys
+		FileSystem.deleteFile(sysPath(path));
+#elseif js
+		final storage = js.Browser.getLocalStorage();
+		storage.removeItem(jsPath(path));
+#end
+		return Success;
+	}
+
 	public function init() {
 		createDirectory("");
 	}
