@@ -108,36 +108,49 @@ class ObjectExtensions {
 	/** Chain Functions set values and return the object **/
 	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set,
 			padding: Float = 0): h2d.Object {
-		switch (setMode) {
-			case Set:
-				obj.x = x;
-			case AnchorLeft:
-				obj.x = x + padding;
-			case AnchorRight:
-				obj.x = x - padding - obj.getSize().width;
-			case AlignCenter:
-				obj.x = padding + (x - obj.getSize().width) / 2;
-			default:
-				obj.x = x;
-		}
+		obj.x = calculateXPosition(obj, x, setMode, padding);
 		return obj;
 	}
 
 	public static function setY(obj: h2d.Object, y: Float, setMode: SetMode = Set,
 			padding: Float = 0): h2d.Object {
+		obj.y = calculateYPosition(obj, y, setMode, padding);
+		return obj;
+	}
+
+	/** Chain Functions set values and return the object **/
+	public static function calculateXPosition(obj: h2d.Object, x: Float, setMode: SetMode = Set,
+			padding: Float = 0): Float {
 		switch (setMode) {
 			case Set:
-				obj.y = y;
-			case AnchorTop:
-				obj.y = y + padding;
-			case AnchorBottom:
-				obj.y = y - padding - obj.getSize().height;
+				return x;
+			case AnchorLeft:
+				return x + padding;
+			case AnchorRight:
+				return x - padding - obj.getSize().width;
 			case AlignCenter:
-				obj.y = padding + (y - obj.getSize().height) / 2;
+				return padding + (x - obj.getSize().width) / 2;
 			default:
-				obj.y = y;
+				return x;
 		}
-		return obj;
+		return x;
+	}
+
+	public static function calculateYPosition(obj: h2d.Object, y: Float, setMode: SetMode = Set,
+			padding: Float = 0): Float {
+		switch (setMode) {
+			case Set:
+				return y;
+			case AnchorTop:
+				return y + padding;
+			case AnchorBottom:
+				return y - padding - obj.getSize().height;
+			case AlignCenter:
+				return padding + (y - obj.getSize().height) / 2;
+			default:
+				return y;
+		}
+		return y;
 	}
 
 	/**

@@ -62,6 +62,18 @@ class ArrayExtensions {
 	}
 
 	/**
+		A smart index.
+		negative value will return arr[.length + ind]
+		positive value(including 0) will return arr[ind];
+		if out of bound, return null
+	**/
+	inline public static function item<T>(arr: Array<T>, index: Int): T {
+		final actualIndex = index > 0 ? index : arr.length + index;
+		if (actualIndex < 0 || actualIndex >= arr.length) return null;
+		return arr[actualIndex];
+	}
+
+	/**
 		Filter and remove items in array that matches a criteria
 
 		Note: This might be slow in cases where many elements are being removed.
