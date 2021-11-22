@@ -67,8 +67,8 @@ class ArrayExtensions {
 		positive value(including 0) will return arr[ind];
 		if out of bound, return null
 	**/
-	inline public static function item<T>(arr: Array<T>, index: Int): T {
-		final actualIndex = index > 0 ? index : arr.length + index;
+	inline public static function item<T>(arr: Array<T>, index: Int): Null<T> {
+		final actualIndex = index >= 0 ? index : arr.length + index;
 		if (actualIndex < 0 || actualIndex >= arr.length) return null;
 		return arr[actualIndex];
 	}
