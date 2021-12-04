@@ -6,6 +6,7 @@ enum SetMode {
 	AnchorRight;
 	AnchorTop;
 	AnchorBottom;
+	AnchorCenter;
 	AlignCenter;
 }
 
@@ -97,6 +98,16 @@ class ObjectExtensions {
 		return obj;
 	}
 
+	public static function centerWithinObject(obj: h2d.Object, component: h2d.Object): h2d.Object {
+		return centerWithinBounds(obj, component.getBounds());
+	}
+
+	public static function centerWithinBounds(obj: h2d.Object, bounds: h2d.col.Bounds): h2d.Object {
+		setX(obj, bounds.width, AlignCenter, bounds.x);
+		setY(obj, bounds.height, AlignCenter, bounds.y);
+		return obj;
+	}
+
 	inline public static function centerX(obj: h2d.Object, startX: Float, width: Float): h2d.Object {
 		return setX(obj, width, AlignCenter, startX);
 	}
@@ -118,7 +129,6 @@ class ObjectExtensions {
 		return obj;
 	}
 
-	/** Chain Functions set values and return the object **/
 	public static function calculateXPosition(obj: h2d.Object, x: Float, setMode: SetMode = Set,
 			padding: Float = 0): Float {
 		switch (setMode) {
@@ -128,6 +138,8 @@ class ObjectExtensions {
 				return x + padding;
 			case AnchorRight:
 				return x - padding - obj.getSize().width;
+			case AnchorCenter:
+				return x - (obj.getSize().width / 2) + padding;
 			case AlignCenter:
 				return padding + (x - obj.getSize().width) / 2;
 			default:
@@ -145,12 +157,62 @@ class ObjectExtensions {
 				return y + padding;
 			case AnchorBottom:
 				return y - padding - obj.getSize().height;
+			case AnchorCenter:
+				return y - (obj.getSize().height / 2) + padding;
 			case AlignCenter:
 				return padding + (y - obj.getSize().height) / 2;
 			default:
 				return y;
 		}
 		return y;
+	}
+
+	public static function setXInBound(obj: h2d.Object, bound: h2d.col.Bounds, setMode = AlignCenter,
+			padding: Float = 0) {
+		obj.x = calculateXPositionInBound(obj, bound, setMode, padding);
+		return obj;
+	}
+
+	public static function setYInBound(obj: h2d.Object, bound: h2d.col.Bounds, setMode = AlignCenter,
+			padding: Float = 0) {
+		obj.y = calculateYPositionInBound(obj, bound, setMode, padding);
+		return obj;
+	}
+
+	public static function calculateXPositionInBound(obj: h2d.Object, bound: h2d.col.Bounds,
+			setMode: SetMode = Set, padding: Float = 0): Float {
+		if (setMode == AnchorCenter) setMode = AlignCenter; // this does the same thing for this case
+		switch (setMode) {
+			case Set:
+				return bound.x;
+			case AnchorLeft:
+				return bound.x + padding;
+			case AnchorRight:
+				return bound.xMax - padding - obj.getSize().width;
+			case AlignCenter:
+				return padding + bound.x + ((bound.width - obj.getSize().width) / 2);
+			default:
+				return bound.x;
+		}
+		return bound.x;
+	}
+
+	public static function calculateYPositionInBound(obj: h2d.Object, bound: h2d.col.Bounds,
+			setMode: SetMode = Set, padding: Float = 0): Float {
+		if (setMode == AnchorCenter) setMode = AlignCenter; // this does the same thing for this case
+		switch (setMode) {
+			case Set:
+				return bound.y;
+			case AnchorTop:
+				return bound.y + padding;
+			case AnchorBottom:
+				return bound.yMax - padding - obj.getSize().height;
+			case AlignCenter:
+				return padding + bound.y + ((bound.height - obj.getSize().height) / 2);
+			default:
+				return bound.y;
+		}
+		return bound.y;
 	}
 
 	/**
@@ -163,6 +225,11 @@ class ObjectExtensions {
 
 	public static function cSetText(obj: h2d.Text, text: String): h2d.Text {
 		obj.text = text;
+		return obj;
+	}
+
+	public static function cSetTextColor(obj: h2d.Text, color: Int): h2d.Text {
+		obj.textColor = color;
 		return obj;
 	}
 }
