@@ -1,5 +1,7 @@
 package zf.ui;
 
+import zf.h2d.Interactive;
+
 /**
 	Generic Button object.
 	This is the parent for all button and Child object should implement the rendering.
@@ -16,7 +18,7 @@ class Button extends h2d.Layers {
 	public var toggled(default, set): Bool = true;
 
 	var isOver: Bool = false;
-	var interactive: h2d.Interactive;
+	var interactive: Interactive;
 
 	/**
 		width of the interactive part of the button.
@@ -44,8 +46,12 @@ class Button extends h2d.Layers {
 		super();
 		this.width = width;
 		this.height = height;
-		this.interactive = new h2d.Interactive(width, height, this);
+		this.interactive = new Interactive(width, height, this);
 		this.interactive.enableRightButton = true;
+
+		interactive.dyOnRemove = function() {
+			dyOnRemove();
+		}
 		interactive.onOver = function(e: hxd.Event) {
 			this.isOver = true;
 			updateButton();
@@ -88,6 +94,8 @@ class Button extends h2d.Layers {
 	dynamic public function onPush() {}
 
 	dynamic public function onRelease() {}
+
+	dynamic public function dyOnRemove() {}
 
 	/**
 		Update the button. This is called when state is changed.
