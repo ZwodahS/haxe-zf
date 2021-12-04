@@ -102,8 +102,18 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
 	public function get_unit(): Point2f {
 		// return a copy of the unit vector for this point
-		var mag = hxd.Math.sqrt(hxd.Math.pow(this[0], 2) + hxd.Math.pow(this[1], 2));
-		return [this[0] * (1 / mag), this[1] * (1 / mag)];
+		final pt: Point2f = this.copy();
+		return pt.normalize();
+	}
+
+	/**
+		normalize the vector and return itself
+	**/
+	public function normalize(): Point2f {
+		final mag = hxd.Math.sqrt(hxd.Math.pow(this[0], 2) + hxd.Math.pow(this[1], 2));
+		this[0] *= (1 / mag);
+		this[1] *= (1 / mag);
+		return this;
 	}
 
 	public function get_abs(): Point2f {
