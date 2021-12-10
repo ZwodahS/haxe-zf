@@ -63,6 +63,7 @@ class Button extends h2d.Layers {
 			onOut();
 		}
 		interactive.onClick = function(e: hxd.Event) {
+			if (this.disabled) return;
 			if (e.button == 0) {
 				onLeftClick();
 			} else if (e.button == 1) {
