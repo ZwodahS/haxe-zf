@@ -13,14 +13,19 @@ class Console extends h2d.Console {
 
 	override public function show() {
 		super.show();
+#if debug
 		@:privateAccess g.consoleBg.visible = true;
+#end
 	}
 
 	override public function hide() {
 		super.hide();
+#if debug
 		@:privateAccess g.consoleBg.visible = false;
+#end
 	}
 
+	// perhaps upgrade console and put these into add Command instead ?
 	override function getCommandSuggestion(cmd: String): String {
 		// handle prefix blocking the command suggestion
 		var havePrefix = false;
