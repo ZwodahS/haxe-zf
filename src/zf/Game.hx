@@ -69,6 +69,8 @@ class Game extends hxd.App {
 
 	var boundRatio: Null<Float> = null;
 
+	var pixelPerfect: Bool = false;
+
 	override function new() {
 		super();
 		this.boundedSize = [800, 600];
@@ -303,20 +305,24 @@ class Game extends hxd.App {
 
 	override function onResize() {
 		var w = hxd.Window.getInstance();
-		if (this.boundRatio == null) {
-			this.gameWidth = w.width;
-			this.gameHeight = w.height;
-		} else {
-			var ratio = w.width / w.height;
-			if (ratio < this.boundRatio) {
-				this.gameWidth = this.boundedSize.x;
-				this.gameHeight = Std.int(this.boundedSize.x * w.height / w.width);
+		if (!this.pixelPerfect) {
+			if (this.boundRatio == null) {
+				this.gameWidth = w.width;
+				this.gameHeight = w.height;
 			} else {
-				this.gameHeight = this.boundedSize.y;
-				this.gameWidth = Std.int(this.boundedSize.y * w.width / w.height);
+				var ratio = w.width / w.height;
+				if (ratio < this.boundRatio) {
+					this.gameWidth = this.boundedSize.x;
+					this.gameHeight = Std.int(this.boundedSize.x * w.height / w.width);
+				} else {
+					this.gameHeight = this.boundedSize.y;
+					this.gameWidth = Std.int(this.boundedSize.y * w.width / w.height);
+				}
 			}
+			this.s2d.scaleMode = Stretch(gameWidth, gameHeight);
+		} else {
+			this.s2d.scaleMode = Fixed(this.boundedSize.x, this.boundedSize.y, 1, Center, Center);
 		}
-		this.s2d.scaleMode = Stretch(gameWidth, gameHeight);
 		if (this.currentScreen != null) this.currentScreen.resize(gameWidth, gameHeight);
 	}
 }
