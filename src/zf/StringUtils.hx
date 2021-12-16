@@ -15,4 +15,14 @@ class StringUtils {
 	public static function equals(v1: String, v2: String): Bool {
 		return v1 == v2;
 	}
+
+	public static function findClosestMatch(stringList: Array<String>, str: String) {
+		var closest = "";
+		for (current in stringList) {
+			if (current.indexOf(str) == 0 && (closest == "" || closest.length > current.length)) {
+				closest = current;
+			}
+		}
+		return closest;
+	}
 }
