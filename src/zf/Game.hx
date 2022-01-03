@@ -45,47 +45,33 @@ class TextLabel extends h2d.Object {
 #end
 
 class Game extends hxd.App {
-	/**
-		There are 3 sizes value
+	// ---- Proxy methods to scene ---- //
+	public var gameWidth(get, null): Int;
 
-		window.size denote the size of the window that the game is in.
-		game(Width|Height) denote the size of the game that is rendered, this is resized by boundedSize.
-		boundedSize is the size is the game we ideally want the game to be in. The game will be resized accordingly.
-	**/
-	/**
-		The width that the game is currently rendered in.
-	**/
-	public var gameWidth(default, null): Int = 800;
+	public function get_gameWidth(): Int {
+		return this.s2d.width;
+	}
 
-	/**
-		The height that the game is currently rendered in.
-	**/
-	public var gameHeight(default, null): Int = 600;
+	public var gameHeight(get, null): Int;
+
+	public function get_gameHeight(): Int {
+		return this.s2d.height;
+	}
 
 	/**
 		The size to bound the game rendering.
 	**/
-	public var boundedSize(default, set): Point2i = null;
-
-	var boundRatio: Null<Float> = null;
+	public var boundedSize(default, null): Point2i = null;
 
 	var pixelPerfect: Bool = false;
+	var autoResize: Bool = true;
 
-	override function new() {
+	override function new(size: Point2i = null, pixelPerfect: Bool = false, autoResize: Bool = true) {
 		super();
-		this.boundedSize = [800, 600];
-		this.gameWidth = 800;
-		this.gameHeight = 600;
-	}
-
-	public function set_boundedSize(size: Point2i): Point2i {
+		if (size == null) size = [800, 600];
+		this.pixelPerfect = pixelPerfect;
 		this.boundedSize = size;
-		if (size == null) {
-			this.boundRatio = null;
-		} else {
-			this.boundRatio = size.x / size.y;
-		}
-		return this.boundedSize;
+		this.autoResize = autoResize;
 	}
 
 	override function init() {
@@ -97,6 +83,17 @@ class Game extends hxd.App {
 		this.setupCursor();
 #end
 		this.screenState = Ready;
+
+		// handle the common type of scene viewport
+		if (!this.autoResize) {
+			this.s2d.scaleMode = Fixed(this.boundedSize.x, this.boundedSize.y, 1.0);
+		} else {
+			if (this.pixelPerfect) {
+				this.s2d.scaleMode = LetterBox(this.boundedSize.x, this.boundedSize.y, true);
+			} else {
+				this.s2d.scaleMode = LetterBox(this.boundedSize.x, this.boundedSize.y, false);
+			}
+		}
 	}
 
 #if debug
@@ -304,25 +301,6 @@ class Game extends hxd.App {
 	}
 
 	override function onResize() {
-		var w = hxd.Window.getInstance();
-		if (!this.pixelPerfect) {
-			if (this.boundRatio == null) {
-				this.gameWidth = w.width;
-				this.gameHeight = w.height;
-			} else {
-				var ratio = w.width / w.height;
-				if (ratio < this.boundRatio) {
-					this.gameWidth = this.boundedSize.x;
-					this.gameHeight = Std.int(this.boundedSize.x * w.height / w.width);
-				} else {
-					this.gameHeight = this.boundedSize.y;
-					this.gameWidth = Std.int(this.boundedSize.y * w.width / w.height);
-				}
-			}
-			this.s2d.scaleMode = Stretch(gameWidth, gameHeight);
-		} else {
-			this.s2d.scaleMode = Fixed(this.boundedSize.x, this.boundedSize.y, 1, Center, Center);
-		}
-		if (this.currentScreen != null) this.currentScreen.resize(gameWidth, gameHeight);
+		if (this.currentScreen != null) this.currentScreen.resize(this.s2d.width, this.s2d.height);
 	}
 }
