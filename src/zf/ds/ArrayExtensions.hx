@@ -109,4 +109,12 @@ class ArrayExtensions {
 	inline public static function last<T>(arr: Array<T>): Null<T> {
 		return arr.length == 0 ? null : arr[arr.length - 1];
 	}
+
+	public static function isEqual<T>(arr1: Array<T>, arr2: Array<T>): Bool {
+		if (arr1.length != arr2.length) return false;
+		for (ind in 0...arr1.length) {
+			if (arr1[ind] != arr2[ind]) return false;
+		}
+		return true;
+	}
 }
