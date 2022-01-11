@@ -121,7 +121,8 @@ class MessageDispatcher {
 		@param message the message to send
 		@param dispatchMode when to dispatch the message.
 	**/
-	public function dispatch(message: Message, dispatchMode: DispatchMode = DispatchMode.Immediately) {
+	public function dispatch<T: Message>(message: T,
+			dispatchMode: DispatchMode = DispatchMode.Immediately): T {
 		/**
 			There are 3 types of dispatchMode
 
@@ -147,12 +148,10 @@ class MessageDispatcher {
 			// if dispatch mode is start of queue, that means there is something dispatching
 			// we will just add it to the start of the queue
 			this.queuedMessage.push(message);
-			return;
 		} else if (dispatchMode == DispatchMode.EndOfQueue) {
 			// if dispatch mode is end of queue, that means there is something dispatching
 			// we will just add it to the end of the queue
 			this.queuedMessage.add(message);
-			return;
 		} else { // Immediately
 			_dispatchMessage(message);
 
@@ -166,6 +165,7 @@ class MessageDispatcher {
 				this.clearing = false;
 			}
 		}
+		return message;
 	}
 
 	/**
