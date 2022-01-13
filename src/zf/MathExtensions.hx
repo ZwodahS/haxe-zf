@@ -28,6 +28,14 @@ class MathExtensions {
 		return value;
 	}
 
+	public static function wrapI(cls: Class<Math>, value: Int, max: Int): Int {
+		while (value < 0) {
+			value += max;
+		}
+		if (value >= max) value = value % max;
+		return value;
+	}
+
 	public static function distance(cls: Class<Math>, x1: Float, y1: Float, x2: Float, y2: Float): Float {
 		return hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(x1 - x2), 2) + hxd.Math.pow(hxd.Math.abs(y1 - y2), 2));
 	}
