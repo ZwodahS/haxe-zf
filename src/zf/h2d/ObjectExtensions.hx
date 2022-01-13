@@ -111,7 +111,7 @@ class ObjectExtensions {
 		@return the object being set
 	**/
 	public static function putOnLeft(obj: h2d.Object, relativeTo: h2d.Object, offset: Point2f = null,
-			overrideY: Null<Int> = null): h2d.Object {
+			overrideY: Null<Float> = null): h2d.Object {
 		if (relativeTo == null) {
 			obj.x = 0;
 			obj.y = 0;
@@ -139,7 +139,7 @@ class ObjectExtensions {
 		@return the object being set
 	**/
 	public static function putOnRight(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
-			overrideY: Null<Int> = null): h2d.Object {
+			overrideY: Null<Float> = null): h2d.Object {
 		if (component == null) {
 			obj.x = 0;
 			obj.y = 0;
