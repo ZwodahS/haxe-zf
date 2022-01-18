@@ -6,21 +6,21 @@ import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 
 class Assert {
-	macro public static function assert(e: ExprOf<Bool>, terminate: Bool = true, ?msg: String) {
+	macro public static function assert(e: ExprOf<Bool>, terminate: Bool = true) {
 		// taken from https://gist.github.com/bendmorris/7695f36dbc8c2968c2a5d6bdde5f0592
 #if no_assertion
 		return macro {};
 #else
-		msg = msg != null ? msg : ExprTools.toString(e);
+		var msg = ExprTools.toString(e);
 		var location = PositionTools.toLocation(Context.currentPos());
 		var locationString = location.file + ":" + location.range.start.line;
 		if (terminate) {
 			return macro {
-				if (!$e) throw '[${locationString}] Assertion failed: ${msg}';
+				if (!$e) throw '[' + $v{locationString} + '] Assertion failed: ' + $v{msg};
 			};
 		} else {
 			return macro {
-				if (!$e) trace('[${locationString}] Assertion failed: ${msg}');
+				if (!$e) trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 			};
 		}
 #end
@@ -44,20 +44,19 @@ class Assert {
 		return false;
 	}
 
-	macro public static function unreachable(terminate: Bool = true, ?msg: String) {
+	macro public static function unreachable(terminate: Bool = true, msg: ExprOf<String>) {
 #if no_assertion
 		return macro {};
 #else
 		var location = PositionTools.toLocation(Context.currentPos());
 		var locationString = location.file + ":" + location.range.start.line;
-		msg = msg == null ? "" : ': ${msg}';
 		if (terminate) {
 			return macro {
-				throw '[${locationString}] Assertion failed: Should be unreachable${msg}';
+				throw '[' + $v{locationString} + '] Assertion failed: Should be unreachable' + $e{msg};
 			};
 		} else {
 			return macro {
-				trace('[${locationString}] Assertion failed: Should be unreachable${msg}');
+				trace('[' + $v{locationString} + '] Assertion failed: Should be unreachable' + $e{msg});
 			};
 		}
 #end
