@@ -3,6 +3,8 @@ package zf;
 import haxe.macro.PositionTools;
 import haxe.macro.Context;
 
+import zf.exceptions.AssertionFail;
+
 class Logger {
 	macro public static function error(msg: ExprOf<String>, tag: String = null) {
 #if (!loggingLevel || loggingLevel < 10)
@@ -62,9 +64,13 @@ class Logger {
 
 	inline public static function exception(e: haxe.Exception) {
 #if debug
-		for (es in haxe.CallStack.exceptionStack()) trace(es);
-		haxe.Log.trace(e, null);
-		trace(e.stack);
+		if (Std.isOfType(e, AssertionFail)) {
+			haxe.Log.trace(e.message, null);
+		} else {
+			for (es in haxe.CallStack.exceptionStack()) trace(es);
+			haxe.Log.trace(e, null);
+			trace(e.stack);
+		}
 #end
 	}
 }

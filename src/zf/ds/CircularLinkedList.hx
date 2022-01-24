@@ -1,6 +1,7 @@
 package zf.ds;
 
 import zf.Assert;
+import zf.exceptions.AssertionFail;
 
 @:allow(zf.ds.CircularLinkedList)
 class CircularLinkedNode<T> {
