@@ -5,8 +5,7 @@ package zf;
 	Eventually LinePoint2i should be moved into this
 **/
 class Line2i {
-	public static function getLineXYSymmetry(start: Point2i, end: Point2i,
-			reversed: Bool = false): List<Point2i> {
+	public static function getLineXYSymmetry(start: Point2i, end: Point2i, reversed: Bool = false): List<Point2i> {
 		// http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
 		// modified from python version
 		var x1 = start.x, y1 = start.y;

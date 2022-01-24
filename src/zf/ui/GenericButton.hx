@@ -121,8 +121,8 @@ class GenericButton extends Button {
 	/**
 		Create a button from color
 	**/
-	public static function fromColor(defaultColor: Int, hoverColor: Int, disabledColor: Int,
-			selectedColor: Int, width: Int, height: Int, useHtmlText: Bool = true): GenericButton {
+	public static function fromColor(defaultColor: Int, hoverColor: Int, disabledColor: Int, selectedColor: Int,
+			width: Int, height: Int, useHtmlText: Bool = true): GenericButton {
 		// @formatter:off
 		return new GenericButton(
 			new h2d.Bitmap(h2d.Tile.fromColor(defaultColor, width, height)),

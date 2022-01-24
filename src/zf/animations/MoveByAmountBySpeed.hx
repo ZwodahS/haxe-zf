@@ -6,8 +6,7 @@ class MoveByAmountBySpeed extends Animation {
 	var amountLeft: Point2f;
 	var speed: Point2f;
 
-	public function new(object: Positionable, moveAmount: Point2f, speeds: Point2f = null,
-			speed: Float = 1) {
+	public function new(object: Positionable, moveAmount: Point2f, speeds: Point2f = null, speed: Float = 1) {
 		super();
 		this.object = object;
 		this.amount = moveAmount.copy();

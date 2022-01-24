@@ -219,8 +219,7 @@ class ObjectExtensions {
 		@param setMode the mode to set the X value. See calculateXPosition to see how the X position are set.
 		@param padding additional padding to the x value
 	**/
-	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set,
-			padding: Float = 0): h2d.Object {
+	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set, padding: Float = 0): h2d.Object {
 		obj.x = calculateXPosition(obj, x, setMode, padding);
 		return obj;
 	}
@@ -233,8 +232,7 @@ class ObjectExtensions {
 		@param setMode the mode to set the Y value. See calculateYPosition to see how to Y position are set.
 		@param padding additional padding to the y value
 	**/
-	public static function setY(obj: h2d.Object, y: Float, setMode: SetMode = Set,
-			padding: Float = 0): h2d.Object {
+	public static function setY(obj: h2d.Object, y: Float, setMode: SetMode = Set, padding: Float = 0): h2d.Object {
 		obj.y = calculateYPosition(obj, y, setMode, padding);
 		return obj;
 	}
@@ -349,8 +347,8 @@ class ObjectExtensions {
 
 		@param padding additional x padding
 	**/
-	public static function calculateXPositionInBound(obj: h2d.Object, bound: h2d.col.Bounds,
-			setMode: SetMode = Set, padding: Float = 0): Float {
+	public static function calculateXPositionInBound(obj: h2d.Object, bound: h2d.col.Bounds, setMode: SetMode = Set,
+			padding: Float = 0): Float {
 		if (setMode == AnchorCenter) setMode = AlignCenter; // this does the same thing for this case
 		switch (setMode) {
 			case Set:
@@ -379,8 +377,8 @@ class ObjectExtensions {
 			AnchorBottom - anchor the object to the bottom of the bound
 			AlignCenter - center the object within the bound
 	**/
-	public static function calculateYPositionInBound(obj: h2d.Object, bound: h2d.col.Bounds,
-			setMode: SetMode = Set, padding: Float = 0): Float {
+	public static function calculateYPositionInBound(obj: h2d.Object, bound: h2d.col.Bounds, setMode: SetMode = Set,
+			padding: Float = 0): Float {
 		if (setMode == AnchorCenter) setMode = AlignCenter; // this does the same thing for this case
 		switch (setMode) {
 			case Set:

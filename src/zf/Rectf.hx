@@ -173,8 +173,7 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 		};
 	}
 
-	static function intersectType(aMin: Float, aMax: Float, bMin: Float,
-			bMax): {amount: Float, type: IntersectType} {
+	static function intersectType(aMin: Float, aMax: Float, bMin: Float, bMax): {amount: Float, type: IntersectType} {
 		if (aMin >= bMax || bMin >= aMax) return {amount: 0, type: None};
 		// Diagram, we will use a0, a1, b0, b1 to show what each statement does
 		// Assumption, a1 >= a0, b1 >= b0

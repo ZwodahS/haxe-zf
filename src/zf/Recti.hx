@@ -245,8 +245,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		if (topHeight > thisRect.height) topHeight = thisRect.height;
 		if (topHeight == 0) return [null, thisRect.clone()];
 		var r0 = new Recti(thisRect.xMin, thisRect.yMin, thisRect.xMax, thisRect.yMin + topHeight - 1);
-		var r1 = topHeight == thisRect.height ? null : new Recti(r0.xMin, r0.yMax + 1, r0.xMax,
-			thisRect.yMax);
+		var r1 = topHeight == thisRect.height ? null : new Recti(r0.xMin, r0.yMax + 1, r0.xMax, thisRect.yMax);
 		return [r0, r1];
 	}
 

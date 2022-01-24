@@ -15,8 +15,7 @@ class MathExtensions {
 		return number > 0 ? 1 : number < 0 ? -1 : 0;
 	}
 
-	public static function clampF(cls: Class<Math>, value: Float, min: Null<Float>,
-			max: Null<Float>): Float {
+	public static function clampF(cls: Class<Math>, value: Float, min: Null<Float>, max: Null<Float>): Float {
 		if (min != null && value < min) return min;
 		if (max != null && value > max) return max;
 		return value;
@@ -64,8 +63,7 @@ class MathExtensions {
 		return v >= 0 ? v + amt : v - amt;
 	}
 
-	public static function decreaseAbsoluteValue(cls: Class<Math>, v: Float, amt: Float,
-			wrap: Bool = false): Float {
+	public static function decreaseAbsoluteValue(cls: Class<Math>, v: Float, amt: Float, wrap: Bool = false): Float {
 		var newValue = v >= 0 ? v - amt : v + amt;
 		if (v >= 0) {
 			if (newValue >= 0) return newValue;

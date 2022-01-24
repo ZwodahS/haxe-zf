@@ -86,8 +86,7 @@ class TestCase {
 		}
 	}
 
-	public function assertIn(v1: Dynamic, v2: Iterable<Dynamic>, ?additionalMsg: String,
-			?pos: haxe.PosInfos) {
+	public function assertIn(v1: Dynamic, v2: Iterable<Dynamic>, ?additionalMsg: String, ?pos: haxe.PosInfos) {
 		var found = false;
 		for (v in v2) {
 			if (v1 == v) {

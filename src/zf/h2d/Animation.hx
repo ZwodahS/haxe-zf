@@ -8,8 +8,7 @@ import zf.animations.Scalable;
 import zf.animations.Alphable;
 import zf.animations.Rotatable;
 
-class MoveToLocationByDurationAnimation extends zf.animations.MoveToLocationByDuration
-		implements Positionable {
+class MoveToLocationByDurationAnimation extends zf.animations.MoveToLocationByDuration implements Positionable {
 	var h2dObject: h2d.Object;
 
 	public function new(h2dObject: h2d.Object, position: Point2f, duration: Float) {
@@ -70,8 +69,7 @@ class MoveToLocationBySpeedAnimation extends zf.animations.MoveToLocationBySpeed
 class MoveByAmountBySpeedAnimation extends zf.animations.MoveByAmountBySpeed implements Positionable {
 	var h2dObject: h2d.Object;
 
-	public function new(h2dObject: h2d.Object, moveAmount: Point2f, speeds: Point2f = null,
-			speed: Float = 1) {
+	public function new(h2dObject: h2d.Object, moveAmount: Point2f, speeds: Point2f = null, speed: Float = 1) {
 		this.h2dObject = h2dObject;
 		super(this, moveAmount, speeds, speed);
 	}
@@ -129,8 +127,7 @@ class MoveByAmountByDuration extends zf.animations.MoveByAmountByDuration implem
 class MoveBySpeedByDuration extends zf.animations.MoveBySpeedByDuration implements Positionable {
 	var h2dObject: h2d.Object;
 
-	public function new(h2dObject: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null,
-			moveSpeed: Float = 1) {
+	public function new(h2dObject: h2d.Object, moveDuration: Float, moveSpeeds: Point2f = null, moveSpeed: Float = 1) {
 		this.h2dObject = h2dObject;
 		super(this, moveDuration, moveSpeeds, moveSpeed);
 	}

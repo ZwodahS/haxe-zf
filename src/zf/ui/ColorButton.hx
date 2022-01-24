@@ -17,8 +17,7 @@ class ColorButton extends h2d.Layers {
 
 	var init: Bool = false;
 
-	public function new(width: Int, height: Int, hoverColor: Int, bgColor: Int, text: String,
-			font: h2d.Font) {
+	public function new(width: Int, height: Int, hoverColor: Int, bgColor: Int, text: String, font: h2d.Font) {
 		super();
 		this.add(this.hover = new h2d.Bitmap(h2d.Tile.fromColor(hoverColor, width + 4, height + 4)), 0);
 		this.width = width;

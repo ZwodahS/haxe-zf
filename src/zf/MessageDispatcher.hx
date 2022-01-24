@@ -121,8 +121,7 @@ class MessageDispatcher {
 		@param message the message to send
 		@param dispatchMode when to dispatch the message.
 	**/
-	public function dispatch<T: Message>(message: T,
-			dispatchMode: DispatchMode = DispatchMode.Immediately): T {
+	public function dispatch<T: Message>(message: T, dispatchMode: DispatchMode = DispatchMode.Immediately): T {
 		/**
 			There are 3 types of dispatchMode
 

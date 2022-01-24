@@ -29,8 +29,8 @@ class Bar extends h2d.Object {
 
 	public var text: h2d.Text;
 
-	public function new(barType: BarType, barColor: Int, font: h2d.Font, textColor: Int, width: Float,
-			height: Float, tile: h2d.Tile = null) {
+	public function new(barType: BarType, barColor: Int, font: h2d.Font, textColor: Int, width: Float, height: Float,
+			tile: h2d.Tile = null) {
 		super();
 
 		this.barType = barType;

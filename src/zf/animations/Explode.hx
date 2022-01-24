@@ -15,8 +15,7 @@ class Explode extends Animation {
 	var explodeDuration: Float;
 	var deviation: Float;
 
-	public function new(bitmap: h2d.Bitmap, split: Int = 8, explodeDuration: Float = .7,
-			deviation: Float = 32) {
+	public function new(bitmap: h2d.Bitmap, split: Int = 8, explodeDuration: Float = .7, deviation: Float = 32) {
 		super();
 		this.original = bitmap;
 		this.started = false;
@@ -50,10 +49,9 @@ class Explode extends Animation {
 					b.alpha = this.original.alpha;
 					var xMove = Random.int(-100, 100) / 50.0 * this.deviation;
 					var yMove = Random.int(-100, 100) / 50.0 * this.deviation;
-					this.animations.push(new MoveBySpeedByDuration(new WrappedBatchElement(b),
-						this.explodeDuration, [xMove, yMove]));
-					this.animations.push(new AlphaTo(new WrappedBatchElement(b), 0.0,
-						0.5 / this.explodeDuration));
+					this.animations.push(new MoveBySpeedByDuration(new WrappedBatchElement(b), this.explodeDuration,
+						[xMove, yMove]));
+					this.animations.push(new AlphaTo(new WrappedBatchElement(b), 0.0, 0.5 / this.explodeDuration));
 				}
 			}
 			this.original.parent.addChild(this.spritebatch);

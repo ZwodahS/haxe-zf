@@ -28,6 +28,6 @@
     "forBody": "same"
   },
   "wrapping": {
-    "maxLineLength": 110
+    "maxLineLength": 120
   }
 }

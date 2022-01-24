@@ -70,8 +70,7 @@ class Assert {
 		final locationString = location.file + ":" + location.range.start.line;
 		if (terminate) {
 			return macro {
-				throw new AssertionFail('['
-					+ $v{locationString} + '] Assertion failed: Should be unreachable.');
+				throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: Should be unreachable.');
 			};
 		} else {
 			return macro {

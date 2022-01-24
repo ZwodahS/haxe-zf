@@ -354,8 +354,7 @@ class Assets {
 			for (key => value in parsed.frames) {
 				var w = value.w == null ? 1 : value.w;
 				var h = value.h == null ? 1 : value.h;
-				data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, w * gridsize.x,
-					h * gridsize.y);
+				data[key] = image.sub(value.x * gridsize.x, value.y * gridsize.y, w * gridsize.x, h * gridsize.y);
 			}
 		} else {
 			for (key => value in parsed.frames) {
@@ -544,8 +543,7 @@ class Assets {
 	}
 
 	static function parseRect(rect: RectDefinition): Tile {
-		var color = new h3d.Vector(rect.color[0] / 255, rect.color[1] / 255, rect.color[2] / 255,
-			rect.color[3] / 255);
+		var color = new h3d.Vector(rect.color[0] / 255, rect.color[1] / 255, rect.color[2] / 255, rect.color[3] / 255);
 		return new Tile(h2d.Tile.fromColor(0xFFFFFF, rect.width, rect.height), color,
 			rect.scale == null ? 1.0 : rect.scale);
 	}

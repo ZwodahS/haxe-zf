@@ -448,9 +448,8 @@ enum abstract Direction(String) from String to String {
 
 	// takes in a list of directions and sort them based on a distanceFunc
 	// if directions is not provided, all directions will be used.
-	public static function getSortedDirections(center: Point2i, target: Point2i,
-			distanceFunc: (Int, Int) -> Int, directions: Array<Direction> = null,
-			reversed = false): Array<Direction> {
+	public static function getSortedDirections(center: Point2i, target: Point2i, distanceFunc: (Int, Int) -> Int,
+			directions: Array<Direction> = null, reversed = false): Array<Direction> {
 		if (directions == null) directions = allEightDirections();
 
 		var directionsWithDistance: Array<{c: Int, direction: Direction}> = [];
