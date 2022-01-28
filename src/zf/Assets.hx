@@ -9,7 +9,8 @@ import zf.Logger;
 class AssetsMap {
 	public var map: Map<String, Asset2D>;
 
-	public function new(map: Map<String, Asset2D>) {
+	public function new(map: Map<String, Asset2D> = null) {
+		if (map == null) map = new Map<String, Asset2D>();
 		this.map = map;
 	}
 
@@ -22,13 +23,37 @@ class AssetsMap {
 		}
 		return a;
 	}
+
+	public function set(s: String, a: Asset2D): Asset2D {
+		var prev = this.map[s];
+		if (prev != null) {
+			Logger.info('Duplicated Assets : ${s}. ${prev.spritesheet.filename} -> ${a.spritesheet.filename}',
+				"Assets");
+		}
+		this.map[s] = a;
+		return a;
+	}
+
+	public function add(asset: Asset2D): Asset2D {
+		return this.set(asset.id, asset);
+	}
+
+	public function iterator() {
+		return map.iterator();
+	}
+
+	public function keyValueIterator() {
+		return map.keyValueIterator();
+	}
 }
 
 @:structInit class LoadedSpritesheet {
+	public var filename: String;
 	public var tile: h2d.Tile;
 	public var assets: AssetsMap;
 
-	public function new(tile: h2d.Tile, assets: Map<String, Asset2D>) {
+	public function new(filename: String, tile: h2d.Tile, assets: Map<String, Asset2D>) {
+		this.filename = filename;
 		this.tile = tile;
 		this.assets = new AssetsMap(assets);
 	}
@@ -80,6 +105,8 @@ class Tile {
 	Asset2D defines a 2D graphical asset.
 **/
 class Asset2D {
+	public var id: String;
+	public var spritesheet(default, null): LoadedSpritesheet;
 	public var tiles(default, null): Array<Tile>;
 	public var count(get, null): Int;
 
@@ -87,7 +114,9 @@ class Asset2D {
 		return this.tiles.length;
 	}
 
-	public function new(tiles) {
+	public function new(id: String, ss: LoadedSpritesheet, tiles: Array<Tile>) {
+		this.id = id;
+		this.spritesheet = ss;
 		this.tiles = tiles;
 	}
 
@@ -183,6 +212,8 @@ class Assets {
 		var directory = haxe.io.Path.directory(filename);
 		var image = hxd.Res.load(haxe.io.Path.join([directory, parsed.meta.image])).toTile();
 
+		final ss = new LoadedSpritesheet(filename, image, data);
+
 		// for each frameTags, we export
 		for (frame in parsed.meta.frameTags) {
 			var tiles: Array<Tile> = [];
@@ -200,8 +231,8 @@ class Assets {
 				var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), scale, offset);
 				tiles.push(t);
 			}
-			data[frame.name] = new Asset2D(tiles);
+			data[frame.name] = new Asset2D(frame.name, ss, tiles);
 		}
-		return {tile: image, assets: data};
+		return ss;
 	}
 }
