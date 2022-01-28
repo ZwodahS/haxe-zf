@@ -17,19 +17,43 @@ class Assert {
 #if no_assertion
 		return macro {};
 #else
-		final msg = ExprTools.toString(expression);
+		final msg = '"${ExprTools.toString(expression)}"';
 		final location = PositionTools.toLocation(Context.currentPos());
 		final locationString = location.file + ":" + location.range.start.line;
 		if (terminate) {
 			return macro {
-				if (!$e{expression}) {
+				if (!($e{expression})) {
 					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
 		} else {
 			return macro {
-				if (!$e{expression}) {
+				if (!($e{expression})) {
 					haxe.Log.trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		}
+#end
+	}
+
+	macro public static function assertTrue(expression: ExprOf<Bool>, terminate: Bool = true) {
+#if no_assertion
+		return macro {};
+#else
+		final msg = '"${ExprTools.toString(expression)}"';
+		final location = PositionTools.toLocation(Context.currentPos());
+		final locationString = location.file + ":" + location.range.start.line;
+		if (terminate) {
+			return macro {
+				if (!($e{expression})) {
+					throw new AssertionFail('['
+						+ $v{locationString} + '] Assertion failed: ' + $v{msg} + ' is not true');
+				}
+			};
+		} else {
+			return macro {
+				if (!($e{expression})) {
+					haxe.Log.trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg} + ' is not true');
 				}
 			};
 		}
@@ -43,7 +67,7 @@ class Assert {
 #if no_assertion
 		return macro {};
 #else
-		final msg = '${ExprTools.toString(v1)} != ${ExprTools.toString(v2)}';
+		final msg = '${ExprTools.toString(v1)} == ${ExprTools.toString(v2)}';
 		final location = PositionTools.toLocation(Context.currentPos());
 		final locationString = location.file + ":" + location.range.start.line;
 		if (terminate) {
@@ -55,6 +79,84 @@ class Assert {
 		} else {
 			return macro {
 				if ($e{v1} != $e{v2}) {
+					haxe.Log.trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		}
+#end
+	}
+
+	/**
+		Assert that 2 values are not equal.
+	**/
+	macro public static function assertNotEqual<T>(v1: ExprOf<T>, v2: ExprOf<T>, terminate: Bool = true) {
+#if no_assertion
+		return macro {};
+#else
+		final msg = '${ExprTools.toString(v1)} != ${ExprTools.toString(v2)}';
+		final location = PositionTools.toLocation(Context.currentPos());
+		final locationString = location.file + ":" + location.range.start.line;
+		if (terminate) {
+			return macro {
+				if ($e{v1} == $e{v2}) {
+					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		} else {
+			return macro {
+				if ($e{v1} == $e{v2}) {
+					haxe.Log.trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		}
+#end
+	}
+
+	/**
+		Assert a value is not null
+	**/
+	macro public static function assertNotNull(v1: ExprOf<Dynamic>, terminate: Bool = true) {
+#if no_assertion
+		return macro {};
+#else
+		final msg = '${ExprTools.toString(v1)} unexpectedly null';
+		final location = PositionTools.toLocation(Context.currentPos());
+		final locationString = location.file + ":" + location.range.start.line;
+		if (terminate) {
+			return macro {
+				if (${v1} == null) {
+					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		} else {
+			return macro {
+				if (${v1} == null) {
+					haxe.Log.trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		}
+#end
+	}
+
+	/**
+		Assert a value is null
+	**/
+	macro public static function assertNull(v1: ExprOf<Dynamic>, terminate: Bool = true) {
+#if no_assertion
+		return macro {};
+#else
+		final msg = '${ExprTools.toString(v1)} is not null';
+		final location = PositionTools.toLocation(Context.currentPos());
+		final locationString = location.file + ":" + location.range.start.line;
+		if (terminate) {
+			return macro {
+				if (${v1} != null) {
+					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+				}
+			};
+		} else {
+			return macro {
+				if (${v1} != null) {
 					haxe.Log.trace('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
