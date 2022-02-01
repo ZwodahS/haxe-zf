@@ -5,6 +5,8 @@ import hxd.Rand;
 using zf.ds.ArrayExtensions;
 using zf.RandExtensions;
 
+using Lambda;
+
 /**
 	Probabilty Table allows us to choose object from a list based on their weights
 **/
@@ -91,14 +93,14 @@ class ReadOnlyProbabilityTable<T> {
 	public function new(?chances: Array<Chance<T>>) {
 		if (chances == null) chances = [];
 		this.chances = chances;
-		this.totalChance = this.chances.reduce(function(i, v) {
+		this.totalChance = this.chances.fold(function(i, v) {
 			return i.chance + v;
 		}, 0);
 	}
 
 	@:generic
 	static function _random<T>(chances: Array<Chance<T>>, r: Rand, ?totalChance: Null<Int>): Int {
-		if (totalChance == null) totalChance = chances.reduce(function(i, v) {
+		if (totalChance == null) totalChance = chances.fold(function(i, v) {
 			return i.chance + v;
 		}, 0);
 

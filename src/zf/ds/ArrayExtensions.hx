@@ -4,20 +4,6 @@ using zf.RandExtensions;
 
 class ArrayExtensions {
 	/**
-		wrapper to Lambda fold
-	**/
-	inline public static function fold<T, V>(array: Array<T>, f: (t: T, v: V) -> V, start: V): V {
-		return Lambda.fold(array, f, start);
-	}
-
-	/**
-		wrapper to Lambda fold
-	**/
-	inline public static function reduce<T, V>(array: Array<T>, f: (t: T, v: V) -> V, start: V): V {
-		return Lambda.fold(array, f, start);
-	}
-
-	/**
 		shuffle an array using hxd.Rand
 	**/
 	public static function shuffle<T>(array: Array<T>, r: hxd.Rand = null) {
