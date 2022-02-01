@@ -418,4 +418,11 @@ class ObjectExtensions {
 		obj.textColor = color;
 		return obj;
 	}
+
+	public static function isReallyVisible(obj: h2d.Object): Bool {
+		// recursively check if parent is visible
+		if (!obj.visible) return false;
+		if (obj.parent == null) return true;
+		return isReallyVisible(obj.parent);
+	}
 }
