@@ -1,5 +1,6 @@
 package zf.ui;
 
+import zf.h2d.ScaleGrid;
 import zf.Assets;
 
 class TileBoxFactory {
@@ -8,6 +9,8 @@ class TileBoxFactory {
 	var borderTop: Int;
 	var borderBottom: Int;
 	var tile: h2d.Tile;
+
+	public var tiling: Bool = false;
 
 	public var minWidth(get, never): Int;
 	public var minHeight(get, never): Int;
@@ -20,10 +23,11 @@ class TileBoxFactory {
 		this.tile = tile;
 	}
 
-	public function make(boxSize: Point2i): h2d.ScaleGrid {
-		var obj = new h2d.ScaleGrid(this.tile, this.borderLeft, this.borderTop, this.borderRight, this.borderBottom);
+	public function make(boxSize: Point2i): ScaleGrid {
+		var obj = new ScaleGrid(this.tile, this.borderLeft, this.borderTop, this.borderRight, this.borderBottom);
 		obj.width = boxSize.x;
 		obj.height = boxSize.y;
+		obj.tiling = this.tiling;
 		return obj;
 	}
 
