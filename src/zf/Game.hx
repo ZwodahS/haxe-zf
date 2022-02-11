@@ -221,34 +221,40 @@ class Game extends hxd.App {
 	// end of debug
 
 	override function update(dt: Float) {
-		if (this.currentScreen != null) this.currentScreen.update(dt);
-		if (this.incomingScreen != null) this.incomingScreen.update(dt);
-		if (this.outgoingScreen != null) this.outgoingScreen.update(dt);
+		try {
+			if (this.currentScreen != null) this.currentScreen.update(dt);
+			if (this.incomingScreen != null) this.incomingScreen.update(dt);
+			if (this.outgoingScreen != null) this.outgoingScreen.update(dt);
 #if debug
-		this.framerate.text = '${zf.MathUtils.round(1 / dt, 1)}';
-		if (this.cursorDetail.visible) this.cursorDetail.text = '(${s2d.mouseX}. ${s2d.mouseY})';
+			this.framerate.text = '${zf.MathUtils.round(1 / dt, 1)}';
+			if (this.cursorDetail.visible) this.cursorDetail.text = '(${s2d.mouseX}. ${s2d.mouseY})';
 #end
-		if (this.screenState == Exiting) {
-			if (outgoingScreen.doneExiting()) {
-				this.s2d.removeChild(this.outgoingScreen);
-				screenExited(this.outgoingScreen);
-				this.outgoingScreen.destroy();
-				this.outgoingScreen = null;
-				if (this.incomingScreen != null) {
-					beginIncommingScreen();
-				} else {
+			if (this.screenState == Exiting) {
+				if (outgoingScreen.doneExiting()) {
+					this.s2d.removeChild(this.outgoingScreen);
+					screenExited(this.outgoingScreen);
+					this.outgoingScreen.destroy();
+					this.outgoingScreen = null;
+					if (this.incomingScreen != null) {
+						beginIncommingScreen();
+					} else {
+						this.screenState = Ready;
+					}
+				}
+			} else if (this.screenState == Entering) {
+				if (this.incomingScreen.doneEntering()) {
+					screenEntered(this.incomingScreen);
 					this.screenState = Ready;
+					this.currentScreen = this.incomingScreen;
+					this.incomingScreen = null;
 				}
 			}
-		} else if (this.screenState == Entering) {
-			if (this.incomingScreen.doneEntering()) {
-				screenEntered(this.incomingScreen);
-				this.screenState = Ready;
-				this.currentScreen = this.incomingScreen;
-				this.incomingScreen = null;
-			}
+		} catch (e) {
+			onException(e, haxe.CallStack.exceptionStack());
 		}
 	}
+
+	function onException(e: haxe.Exception, cs: Array<haxe.CallStack.StackItem>) {}
 
 	function onEvent(event: hxd.Event) {
 		if (this.currentScreen != null) this.currentScreen.onEvent(event);
