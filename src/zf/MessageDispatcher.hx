@@ -199,6 +199,20 @@ class MessageDispatcher {
 	/**
 		listen to a message and provide a callback for handling the message
 
+		Mon 12:14:21 14 Feb 2022
+		In theory we could convert this to listen<T: Message> and store the listeners
+		by the classname. However, there are cases that this way of using String as
+		message type is preferred.
+
+		For example, suppose we have a message M that is used by a generic system S.
+		If in a game, we want to extend the message to add new properties, but
+		still want to keep S, we can extends M and S will still be able to process M
+		and only in system that uses the additional properties that we need to know
+		about the child class of M.
+
+		If we use generic, then we will have to handle inheritance in this listen.
+		Not that it can't be done, but it is a lot of work to handle it right now.
+
 		@:param messageType the type value of the message
 		@:param callback the function to handle the message
 		@:param priority the priority for this handler, lower priority will be handled first.
