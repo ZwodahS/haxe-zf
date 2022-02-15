@@ -66,8 +66,11 @@ class Game extends hxd.App {
 	var pixelPerfect: Bool = false;
 	var autoResize: Bool = true;
 
+	public var r: hxd.Rand;
+
 	override function new(size: Point2i = null, pixelPerfect: Bool = false, autoResize: Bool = true) {
 		super();
+		this.r = new hxd.Rand(Random.int(0, zf.Constants.SeedMax));
 		if (size == null) size = [800, 600];
 		this.pixelPerfect = pixelPerfect;
 		this.boundedSize = size;
