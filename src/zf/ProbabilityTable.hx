@@ -8,19 +8,6 @@ using zf.RandExtensions;
 using Lambda;
 
 /**
-	Probabilty Table allows us to choose object from a list based on their weights
-**/
-@:structInit class Chance<T> {
-	public var chance: Int;
-	public var item: T;
-
-	public function new(chance: Int, item: T) {
-		this.chance = chance;
-		this.item = item;
-	}
-}
-
-/**
 	A linear iterator of all the chances in the table.
 	This is returned likely in the ordered that they are added.
 **/
