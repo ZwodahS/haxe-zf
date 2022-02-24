@@ -15,7 +15,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ': [Error] ' + $e{msg}, null);
+			haxe.Log.trace($v{tag} + ' [Error] ' + $e{msg}, null);
 		}
 #end
 	}
@@ -29,7 +29,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ': [Warn] ' + $e{msg}, null);
+			haxe.Log.trace($v{tag} + ' [Warn] ' + $e{msg}, null);
 		}
 #end
 	}
@@ -43,7 +43,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ': [Info] ' + $e{msg}, null);
+			haxe.Log.trace($v{tag} + ' [Info] ' + $e{msg}, null);
 		}
 #end
 	}
@@ -57,7 +57,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ': [Debug] ' + $e{msg}, null);
+			haxe.Log.trace($v{tag} + ' [Debug] ' + $e{msg}, null);
 		}
 #end
 	}
