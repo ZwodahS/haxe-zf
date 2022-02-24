@@ -33,6 +33,7 @@ class ArrayExtensions {
 	/**
 		Find the first item in array that matches a criteria
 	**/
+	@:deprecated("use find from Lambda instead")
 	public static function findOne<T>(arr: Array<T>, func: T->Bool): Null<T> {
 		for (i in arr) {
 			if (func(i)) return i;
