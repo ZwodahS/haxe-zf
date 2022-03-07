@@ -121,4 +121,10 @@ class WrappedObject implements Alphable implements Scalable implements Positiona
 	inline public function set_rotation(r: Float): Float {
 		return this.object.rotation = r;
 	}
+
+	public static function wo(obj: h2d.Object, alignCenter: Bool = false): WrappedObject {
+		final wo = new WrappedObject(obj);
+		if (alignCenter == true) wo.alignCenter();
+		return wo;
+	}
 }
