@@ -32,4 +32,12 @@ class MapExtensions {
 			if (!f(map[k])) map.remove(k);
 		}
 	}
+
+	public static function toArray<K, V>(map: Map<K, V>, filter: (K, V) -> Bool) {
+		final out: Array<V> = [];
+		for (k => v in map) {
+			if (filter(k, v)) out.push(v);
+		}
+		return out;
+	}
 }
