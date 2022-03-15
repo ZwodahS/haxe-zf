@@ -30,6 +30,10 @@ class ArrayExtensions {
 		for (i in pushedArray) arr.push(i);
 	}
 
+	inline public static function pushItems<T>(arr: Array<T>, item: T, count: Int) {
+		for (_ in 0...count) arr.push(item);
+	}
+
 	/**
 		Find the first item in array that matches a criteria
 	**/
