@@ -27,7 +27,7 @@ class UserProfiles {
 				final settings: UserProfilesSettings = data;
 			default:
 #if sys
-				final jsonString = haxe.format.JsonPrinter.print({profiles: []}, "  ");
+				final jsonString = haxe.format.JsonPrinter.print({profiles: [], "default": "default"}, "  ");
 #else
 				final jsonString = haxe.Json.stringify({profiles: []});
 #end
