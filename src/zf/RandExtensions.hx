@@ -27,6 +27,9 @@ class RandExtensions {
 		return item[0];
 	}
 
+	/**
+		Return a random integer between min and max (inclusive)
+	**/
 	public static function randomWithinRange(r: hxd.Rand, min: Int, max: Int): Int {
 		if (max == min) return min;
 		var diff = max - min + 1;

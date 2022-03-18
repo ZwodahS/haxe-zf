@@ -21,6 +21,13 @@ class MathExtensions {
 		return value;
 	}
 
+	/**
+		Clamp value within a range
+
+		@param value the value to be clamped
+		@param min the minimum value allowed (inclusive)
+		@param max the maximum value allowed (inclusive)
+	**/
 	public static function clampI(cls: Class<Math>, value: Int, min: Null<Int>, max: Null<Int>): Int {
 		if (min != null && value < min) return min;
 		if (max != null && value > max) return max;
