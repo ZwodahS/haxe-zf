@@ -13,7 +13,7 @@ class Pop extends Animation {
 
 	public var maxScale: Float = 0.1;
 
-	public function new(object: Scalable, duration: Float, maxScale: Float = .1, func: Float->Float = null) {
+	public function new(object: Scalable, duration: Float, maxScale: Float = .1) {
 		super();
 		this.object = object;
 		this.duration = duration;
