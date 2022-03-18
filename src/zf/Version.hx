@@ -21,6 +21,6 @@ class Version {
 
 	public static function fromString(s: String): Version {
 		final split = s.split(".");
-		return new Version(Std.int(split[0]), Std.int(split[1]), Std.int(split[2]));
+		return new Version(Std.parseInt(split[0]), Std.parseInt(split[1]), Std.parseInt(split[2]));
 	}
 }
