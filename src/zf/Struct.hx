@@ -87,6 +87,15 @@ class Struct {
 		}
 	}
 
+	public function getArray(key: String): Array<Dynamic> {
+		try {
+			final value: Array<Dynamic> = get(key);
+			return value;
+		} catch (e) {
+			return null;
+		}
+	}
+
 	static function getValueByKeys<T>(data: DynamicAccess<Dynamic>, keys: Array<String>,
 			ind: Int = 0): {hasKey: Bool, value: T} {
 		try {

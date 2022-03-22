@@ -126,24 +126,41 @@ class StructLoader {
 			}
 			final value: Dynamic = data.get(key);
 			// for non-object we are done
-			if (Type.typeof(value) != TObject) return;
-			final dy: DynamicAccess<Dynamic> = value;
-			// check if there is a $load key. if exists, we ignore everything else
-			if (dy.exists("$load")) {
-				// for each key in $load, we will need to then merge them
-				final mergePath: Array<String> = dy.get("$load");
-				// prepare the object to replace
-				final obj: Dynamic = {};
-				for (p in mergePath) {
-					final mData = loadPath(p, newContext);
-					mergeDynamic(obj, mData);
-				}
-				// replace
-				data.set(key, obj);
-			} else {
-				for (k in dy.keys()) {
-					parse(dy, k);
-				}
+			switch (Type.typeof(value)) {
+				case TObject:
+					final dy: DynamicAccess<Dynamic> = value;
+					// check if there is a $load key. if exists, we ignore everything else
+					if (dy.exists("$load")) {
+						var p: Dynamic = dy.get("$load");
+						if (Type.enumEq(Type.typeof(p), TClass(String))) {
+							p = [p];
+						}
+						// for each key in $load, we will need to then merge them
+						final mergePath: Array<String> = p;
+						// prepare the object to replace
+						final obj: Dynamic = {};
+						for (p in mergePath) {
+							final mData = loadPath(p, newContext);
+							mergeDynamic(obj, mData);
+						}
+						// replace
+						data.set(key, obj);
+					} else {
+						for (k in dy.keys()) {
+							parse(dy, k);
+						}
+					}
+				case TClass(_):
+					if (Std.isOfType(value, Array)) {
+						final dy: Array<Dynamic> = value;
+						// for each of the index, we will need to parse the data
+						for (ind => v in dy) {
+							final d: Dynamic = {data: v}; // wrap around it like how we do for root
+							parse(d, "data");
+							dy[ind] = d.data; // set the value back
+						}
+					}
+				default:
 			}
 		}
 		// we wrap the object around a key
