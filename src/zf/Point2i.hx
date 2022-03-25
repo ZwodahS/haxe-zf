@@ -68,26 +68,26 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	}
 
 	@:op(A += B)
-	public function add(rhs: Array<Int>): Point2i {
+	public function add(rhs: Point2i): Point2i {
 		this[0] += rhs[0];
 		this[1] += rhs[1];
 		return this;
 	}
 
 	@:op(A + B)
-	public function _add(rhs: Array<Int>): Point2i {
+	public function _add(rhs: Point2i): Point2i {
 		return new Point2i(this[0] + rhs[0], this[1] + rhs[1]);
 	}
 
 	@:op(A -= B)
-	public function sub(rhs: Array<Int>): Point2i {
+	public function sub(rhs: Point2i): Point2i {
 		this[0] -= rhs[0];
 		this[1] -= rhs[1];
 		return this;
 	}
 
 	@:op(A - B)
-	public function _sub(rhs: Array<Int>): Point2i {
+	public function _sub(rhs: Point2i): Point2i {
 		return new Point2i(this[0] - rhs[0], this[1] - rhs[1]);
 	}
 

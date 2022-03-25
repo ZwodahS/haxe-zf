@@ -26,29 +26,30 @@ using zf.ds.ArrayExtensions;
 	Therefore, it is better not to have to think about it.
 **/
 enum abstract Direction(String) from String to String {
-	var North = "North";
-	var Up = "North";
-	var NorthEast = "NorthEast";
-	var UpRight = "NorthEast";
-	var East = "East";
-	var Right = "East";
-	var SouthEast = "SouthEast";
-	var DownRight = "SouthEast";
-	var South = "South";
-	var Down = "South";
-	var SouthWest = "SouthWest";
-	var DownLeft = "SouthWest";
-	var West = "West";
-	var Left = "West";
-	var NorthWest = "NorthWest";
-	var UpLeft = "NorthWest";
-	var None = "None";
+	public var North = "North";
+	public var Up = "North";
+	public var NorthEast = "NorthEast";
+	public var UpRight = "NorthEast";
+	public var East = "East";
+	public var Right = "East";
+	public var SouthEast = "SouthEast";
+	public var DownRight = "SouthEast";
+	public var South = "South";
+	public var Down = "South";
+	public var SouthWest = "SouthWest";
+	public var DownLeft = "SouthWest";
+	public var West = "West";
+	public var Left = "West";
+	public var NorthWest = "NorthWest";
+	public var UpLeft = "NorthWest";
+	public var None = "None";
+	public var point(get, never): Point2i;
 
 	/**
 		Convert a direction to a point2i.
 		The value of each axis will be between -1, 1
 	**/
-	@:to public function toPoint2i(): Point2i {
+	@:to public function get_point(): Point2i {
 		switch (this) {
 			case West:
 				return [-1, 0];
@@ -70,6 +71,10 @@ enum abstract Direction(String) from String to String {
 				return [0, 0];
 		}
 		return [0, 0];
+	}
+
+	public function toPoint2i(): Point2i {
+		return get_point();
 	}
 
 	/**
@@ -454,7 +459,7 @@ enum abstract Direction(String) from String to String {
 
 		var directionsWithDistance: Array<{c: Int, direction: Direction}> = [];
 		for (d in directions) {
-			var pt = d.toPoint2i();
+			var pt = d.point;
 			// @formatter:off
 			var distance = distanceFunc(
 				hxd.Math.iabs(pt.x + center.x - target.x), hxd.Math.iabs(pt.y + center.y - target.y)
