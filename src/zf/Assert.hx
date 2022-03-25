@@ -23,7 +23,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if (!($e{expression})) {
-					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
 		} else {
@@ -46,7 +46,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if (!($e{expression})) {
-					throw new AssertionFail('['
+					throw new zf.exceptions.AssertionFail('['
 						+ $v{locationString} + '] Assertion failed: ' + $v{msg} + ' is not true');
 				}
 			};
@@ -73,7 +73,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if ($e{v1} != $e{v2}) {
-					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
 		} else {
@@ -99,7 +99,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if ($e{v1} == $e{v2}) {
-					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
 		} else {
@@ -125,7 +125,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if (${v1} == null) {
-					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
 		} else {
@@ -151,7 +151,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if (${v1} != null) {
-					throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
+					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
 		} else {
@@ -172,7 +172,8 @@ class Assert {
 		final locationString = location.file + ":" + location.range.start.line;
 		if (terminate) {
 			return macro {
-				throw new AssertionFail('[' + $v{locationString} + '] Assertion failed: Should be unreachable.');
+				throw new zf.exceptions.AssertionFail('['
+					+ $v{locationString} + '] Assertion failed: Should be unreachable.');
 			};
 		} else {
 			return macro {

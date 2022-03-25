@@ -1,6 +1,22 @@
 
-tests:
-	haxe -L heaps-dev -L hxrandom -L hlsdl -L console -p src -D test -D debug -D loggingLevel=30 --hl test.hl --main tests.Test
+ifndef HAXEPATH
+HAXEPATH=$(shell which haxe | xargs dirname)
+endif
+
+ifndef HASHLINKPATH
+HASHLINKPATH=$(shell which hl | xargs dirname)
+endif
+
+buildinfo:
+	@echo "OS                    : ${OS}"
+	@echo "HAXE VERSION          : $(shell ${HAXEPATH}/haxe --version) from ${HAXEPATH}"
+	@echo "HASHLINK VERSION      : $(shell ${HASHLINKPATH}/hl --version) from ${HASHLINKPATH}"
+	@echo "Building Game Version : ${VERSION}"
+	@echo "Flags                 : ${COMPILE_FLAGS} ${BINARY_FLAGS}"
+	@echo ""
+
+tests: buildinfo
+	haxe -L heaps -L hxrandom -L hlsdl -L console -p src -D test -D debug -D loggingLevel=30 --hl test.hl --main tests.Test
 
 docs: xml pages
 

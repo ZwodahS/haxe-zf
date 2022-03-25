@@ -1,5 +1,7 @@
 package zf.tests;
 
+import Console;
+
 using StringTools;
 
 // The Console used here comes from console module, not h2d.Console
@@ -15,11 +17,15 @@ class TestCase {
 		for (name in Type.getInstanceFields(c)) {
 			var field = Reflect.field(this, name);
 			var success = false;
+			var message: String = null;
 			if (name.startsWith("test_") && Reflect.isFunction(field)) {
 				try {
 					this.currentContext = name;
 					Reflect.callMethod(this, field, []);
 					success = true;
+				} catch (e: zf.exceptions.AssertionFail) {
+					success = false;
+					message = e.message;
 				} catch (e) {
 					// error not thrown by assert function
 					if (e.message != 'Assertion Fail') {
@@ -33,6 +39,9 @@ class TestCase {
 					Console.log('---- Done: ${className}.${name}: <green>Pass</>');
 				} else {
 					Console.log('---- Done: ${className}.${name}: <red>Fail</>');
+					if (message != null) {
+						Console.log('     <red>Failure</>: ${message}');
+					}
 				}
 			}
 		}
