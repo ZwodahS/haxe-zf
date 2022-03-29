@@ -63,7 +63,14 @@ class Game extends hxd.App {
 	**/
 	public var boundedSize(default, null): Point2i = null;
 
-	var pixelPerfect: Bool = false;
+	public var pixelPerfect(default, set): Bool = false;
+
+	public function set_pixelPerfect(p: Bool): Bool {
+		this.pixelPerfect = p;
+		if (this.screenState == Ready) updateScaleMode();
+		return this.pixelPerfect;
+	}
+
 	var autoResize: Bool = true;
 
 	public var r: hxd.Rand;
@@ -87,6 +94,10 @@ class Game extends hxd.App {
 #end
 		this.screenState = Ready;
 
+		updateScaleMode();
+	}
+
+	function updateScaleMode() {
 		// handle the common type of scene viewport
 		if (!this.autoResize) {
 			this.s2d.scaleMode = Fixed(this.boundedSize.x, this.boundedSize.y, 1.0);
