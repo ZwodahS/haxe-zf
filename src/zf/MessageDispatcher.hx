@@ -184,7 +184,12 @@ class MessageDispatcher {
 
 		if (listeners != null) {
 			for (listener in listeners) {
-				listener.callback(message);
+				try {
+					listener.callback(message);
+				} catch (e) {
+					Logger.exception(e);
+					throw e;
+				}
 			}
 		}
 
