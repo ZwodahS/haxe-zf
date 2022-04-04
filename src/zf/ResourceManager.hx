@@ -1,6 +1,7 @@
 package zf;
 
 import zf.Assets;
+import zf.exceptions.ResourceLoadException;
 
 /**
 	Opinionated Res Manager
