@@ -11,6 +11,7 @@ class RandExtensions {
 	public static function randomChoices<T>(r: hxd.Rand, a: Array<T>, count: Int): Array<T> {
 		var choices = [for (i in 0...a.length) i];
 		var out: Array<T> = [];
+		if (choices.length == 0) return out;
 		for (i in 0...count) {
 			var choice = randomChoice(r, choices);
 			choices.remove(choice);
