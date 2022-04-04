@@ -45,6 +45,7 @@ class Updater {
 	var toFinish: List<Updatable>;
 
 	public var count(get, null): Int;
+	public var idle(get, null): Bool;
 
 	public function new() {
 		this.updates = new List<Updatable>();
@@ -77,6 +78,10 @@ class Updater {
 
 	public function get_count(): Int {
 		return this.updates.length;
+	}
+
+	public function get_idle(): Bool {
+		return this.updates.length == 0;
 	}
 
 	public function stop(u: Updatable): Bool {
