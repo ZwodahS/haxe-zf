@@ -8,6 +8,7 @@ using zf.ds.ArrayExtensions;
 
 import zf.exceptions.StructInvalidMerge;
 import zf.exceptions.StructRecursiveLoad;
+import zf.exceptions.ResourceLoadException;
 
 import haxe.DynamicAccess;
 
