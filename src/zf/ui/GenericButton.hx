@@ -9,7 +9,7 @@ class GenericButton extends Button {
 	/**
 		Set the text for the button
 	**/
-	public var text(default, set): Null<String>;
+	public var text(default, set): String;
 
 	/**
 		Set the font for the text above the button
