@@ -20,6 +20,11 @@ typedef HtmlTextObjectConf = {
 		max width
 	**/
 	public var ?maxWidth: Int;
+
+	/**
+		text alignment
+	**/
+	public var ?textAlign: String;
 }
 
 class HtmlTextObject extends Template {
@@ -33,6 +38,16 @@ class HtmlTextObject extends Template {
 		text.text = conf.text;
 		if (conf.textColor != null) text.textColor = conf.textColor;
 		if (conf.maxWidth != null) text.maxWidth = conf.maxWidth;
+		if (conf.textAlign != null) {
+			switch (conf.textAlign) {
+				case "center":
+					text.textAlign = Center;
+				case "left":
+					text.textAlign = Left;
+				case "right":
+					text.textAlign = Right;
+			}
+		}
 		return text;
 	}
 }
