@@ -1,9 +1,9 @@
-package zf.animations;
+package zf.up;
 
 /**
-	Wait Animation just wait for a duration before finishing
+	Wait just wait for a duration before finishing
 **/
-class Wait extends Animation {
+class Wait extends Update {
 	var elapsed: Float = 0;
 	var duration: Float;
 

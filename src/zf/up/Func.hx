@@ -1,8 +1,10 @@
-package zf.animations;
+package zf.up;
 
-class Func extends Animation {
+/**
+	A generic run function that takes in a delta and run untils it returns true
+**/
+class Func extends Update {
 	var isCompleted: Bool = false;
-
 	var func: Float->Bool;
 
 	public function new(f: Float->Bool) {

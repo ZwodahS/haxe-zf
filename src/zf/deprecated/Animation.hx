@@ -1,4 +1,4 @@
-package zf.h2d;
+package zf.deprecated;
 
 import zf.Updater;
 import zf.Point2f;

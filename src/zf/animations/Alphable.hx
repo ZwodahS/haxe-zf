@@ -1,5 +1,4 @@
 package zf.animations;
 
-interface Alphable {
-	public var alpha(get, set): Float;
-}
+@:deprecated
+typedef Alphable = zf.up.animations.Alphable;

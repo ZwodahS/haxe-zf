@@ -1,5 +1,4 @@
 package zf.animations;
 
-interface Rotatable {
-	public var rotation(get, set): Float;
-}
+@:deprecated
+typedef Rotatable = zf.up.animations.Rotatable;

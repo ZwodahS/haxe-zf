@@ -1,10 +1,10 @@
-package zf.animations;
+package zf.up;
 
 /**
 	WaitFor animation wait for a function to return true before finishing
 	Because this runs on every update, the waitFunc should be something light.
 **/
-class WaitFor extends Animation {
+class WaitFor extends Update {
 	public function new(waitFor: Void->Bool = null) {
 		super();
 		if (waitFor != null) this.waitFunc = waitFor;
