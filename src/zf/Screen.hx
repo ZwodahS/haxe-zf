@@ -27,11 +27,15 @@ class Screen extends h2d.Layers {
 
 	public function beginScreenEnter() {} // called when the screen is switched in
 
+	public function onScreenEntered() {};
+
 	public function doneEntering(): Bool {
 		return true;
 	}
 
 	public function beginScreenExit() {} // called when the screen is switched out
+
+	public function onScreenExited() {};
 
 	public function doneExiting(): Bool {
 		return true;

@@ -246,6 +246,7 @@ class Game extends hxd.App {
 			if (this.screenState == Exiting) {
 				if (outgoingScreen.doneExiting()) {
 					this.s2d.removeChild(this.outgoingScreen);
+					this.outgoingScreen.onScreenExited();
 					screenExited(this.outgoingScreen);
 					this.outgoingScreen.destroy();
 					this.outgoingScreen = null;
@@ -257,6 +258,7 @@ class Game extends hxd.App {
 				}
 			} else if (this.screenState == Entering) {
 				if (this.incomingScreen.doneEntering()) {
+					this.incomingScreen.onScreenEntered();
 					screenEntered(this.incomingScreen);
 					this.screenState = Ready;
 					this.currentScreen = this.incomingScreen;
