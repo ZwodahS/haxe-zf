@@ -1,5 +1,7 @@
 package zf.tui.templates;
 
+using zf.tui.templates.HtmlTextObject;
+
 typedef HtmlTextObjectConf = {
 	/**
 		font to use
@@ -34,12 +36,16 @@ class HtmlTextObject extends Template {
 
 	override public function make(c: Dynamic): h2d.HtmlText {
 		final conf: HtmlTextObjectConf = c;
-		final text = new h2d.HtmlText(conf.font);
-		text.text = conf.text;
-		if (conf.textColor != null) text.textColor = conf.textColor;
-		if (conf.maxWidth != null) text.maxWidth = conf.maxWidth;
-		if (conf.textAlign != null) {
-			switch (conf.textAlign) {
+		return h2d.HtmlText.fromTemplate(conf);
+	}
+
+	public static function fromTemplate(cls: Class<h2d.HtmlText>, template: HtmlTextObjectConf): h2d.HtmlText {
+		final text = new h2d.HtmlText(template.font);
+		text.text = template.text;
+		if (template.textColor != null) text.textColor = template.textColor;
+		if (template.maxWidth != null) text.maxWidth = template.maxWidth;
+		if (template.textAlign != null) {
+			switch (template.textAlign) {
 				case "center":
 					text.textAlign = Center;
 				case "left":
