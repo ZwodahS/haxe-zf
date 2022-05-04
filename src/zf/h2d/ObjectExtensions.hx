@@ -197,7 +197,17 @@ class ObjectExtensions {
 		Center an object within a bound
 	**/
 	public static function centerWithinBounds(obj: h2d.Object, bounds: h2d.col.Bounds): h2d.Object {
+		centerXWithinBounds(obj, bounds);
+		centerYWithinBounds(obj, bounds);
+		return obj;
+	}
+
+	public static function centerXWithinBounds(obj: h2d.Object, bounds: h2d.col.Bounds): h2d.Object {
 		setX(obj, bounds.width, AlignCenter, bounds.x);
+		return obj;
+	}
+
+	public static function centerYWithinBounds(obj: h2d.Object, bounds: h2d.col.Bounds): h2d.Object {
 		setY(obj, bounds.height, AlignCenter, bounds.y);
 		return obj;
 	}
