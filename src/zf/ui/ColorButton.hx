@@ -30,7 +30,7 @@ class ColorButton extends h2d.Layers {
 		this.add(textLabel, 2);
 
 		this.hover.visible = false;
-		var interactive = new h2d.Interactive(width, height, this);
+		var interactive = new zf.h2d.Interactive(width, height, this);
 		interactive.onOver = function(e: hxd.Event) {
 			this.hover.visible = true;
 		}
@@ -41,7 +41,6 @@ class ColorButton extends h2d.Layers {
 			onClick();
 			this.hover.visible = false;
 		}
-		interactive.cursor = Default;
 
 		this.init = true;
 		updateTextAlignment();

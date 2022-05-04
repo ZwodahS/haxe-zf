@@ -184,7 +184,6 @@ class WindowRenderSystem {
 		final height = Std.int(bound.height);
 		final interactive = new zf.h2d.Interactive(width, height, obj);
 
-		interactive.cursor = Default;
 		interactive.onOver = function(e: hxd.Event) {
 			final bound = obj.getBounds();
 			window.onShow();

@@ -37,7 +37,7 @@ class TextButton extends h2d.Object {
 
 		this.width = this.label.textWidth;
 		this.height = this.label.textHeight;
-		this.interactive = new h2d.Interactive(width, height, this);
+		this.interactive = new zf.h2d.Interactive(width, height, this);
 		this.interactive.onOver = function(e: hxd.Event) {
 			this.isHovered = true;
 			updateText();
@@ -57,7 +57,6 @@ class TextButton extends h2d.Object {
 			}
 			onClick(e.button);
 		}
-		this.interactive.cursor = Default;
 		this.text = text;
 	}
 

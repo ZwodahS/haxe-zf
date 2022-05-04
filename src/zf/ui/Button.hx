@@ -1,5 +1,7 @@
 package zf.ui;
 
+import hxd.Cursor;
+
 import zf.h2d.Interactive;
 
 /**
@@ -29,6 +31,16 @@ class Button extends h2d.Layers {
 		height of the interactive part of the button.
 	**/
 	public var height(default, null): Int;
+
+	public var cursor(get, set): Cursor;
+
+	public function get_cursor(): Cursor {
+		return this.interactive.cursor;
+	}
+
+	public function set_cursor(c: Cursor): Cursor {
+		return this.interactive.cursor = c;
+	}
 
 	public function set_disabled(b: Bool): Bool {
 		this.disabled = b;
@@ -79,7 +91,6 @@ class Button extends h2d.Layers {
 			updateButton();
 			onRelease();
 		}
-		interactive.cursor = Default;
 	}
 
 	dynamic public function onOut() {}
