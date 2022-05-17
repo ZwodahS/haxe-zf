@@ -65,6 +65,12 @@ class Update {
 		return new Batch(updates);
 	}
 
+	public function withRun(func: Void->Void = null, funcWithUpdate: Void->Updatable = null): Update {
+		if (func == null && funcWithUpdate == null) return this;
+		final runOnce = new RunOnce(func, funcWithUpdate);
+		return this.with(runOnce);
+	}
+
 	/**
 		Wait after running this update
 	**/
