@@ -70,12 +70,11 @@ class Text extends Component {
 		final textColorString = conf.getString("textColor");
 		var textColor: Color = 0xFFFFFF;
 		if (textColorString != null) {
-			// if the color can be parsed to an int, i.e. 0x??????, then we use it
-			try {
-				textColor = Std.parseInt(textColorString);
-			} catch (e) {
-				// if exception, then we use the getColor method from builder
+			final parsed = Std.parseInt(textColorString);
+			if (parsed == null) {
 				textColor = this.builder.getColor(textColorString);
+			} else {
+				textColor = parsed;
 			}
 		}
 
