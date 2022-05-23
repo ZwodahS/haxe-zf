@@ -133,6 +133,10 @@ class ReadOnlyProbabilityTable<T> {
 	public function keyValueIterator(): ProbabilityTableIterator<T> {
 		return new ProbabilityTableIterator<T>(chances);
 	}
+
+	public function toString(): String {
+		return [for (c in this.chances) '${c.chance} => ${c.item}'].join("\n");
+	}
 }
 
 /**
