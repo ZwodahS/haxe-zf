@@ -49,8 +49,15 @@ class Text extends Component {
 			return null;
 		}
 		if (innerData == null) return null;
-		textObject.text = formatString(innerData.trim()).replace("\n", "<br/>");
+		innerData = trimText(innerData.trim());
+		textObject.text = formatString(innerData).replace("\n", "<br/>");
 		return textObject;
+	}
+
+	function trimText(t: String): String {
+		var strings = t.split("\n");
+		strings = [for (s in strings) s.trim()];
+		return strings.join("\n");
 	}
 
 	override public function makeFromStruct(c: Dynamic): h2d.Object {
