@@ -44,7 +44,7 @@ class Text extends Component {
 		var access = new haxe.xml.Access(element);
 		var innerData: String = null;
 		try {
-			innerData = access.innerData;
+			innerData = access.innerHTML;
 		} catch (e) {
 			return null;
 		}
@@ -109,6 +109,6 @@ class Text extends Component {
 	}
 
 	function formatString(str: String): String {
-		return str;
+		return this.builder.formatString(str);
 	}
 }

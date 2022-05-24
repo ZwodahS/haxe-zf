@@ -113,9 +113,16 @@ class Builder {
 	}
 
 	/**
-		Get a predefine color by name
+		Get a predefined color by name
 	**/
 	inline public function getColor(name: String): Color {
 		return this.colors.exists(name) ? this.colors[name] : 0xFFFFFF;
+	}
+
+	/**
+		A function to format all display strings.
+	**/
+	dynamic public function formatString(str: String): String {
+		return str;
 	}
 }
