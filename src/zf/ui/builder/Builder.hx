@@ -119,6 +119,12 @@ class Builder {
 		return this.colors.exists(name) ? this.colors[name] : 0xFFFFFF;
 	}
 
+	public function parseColorString(cs: String): Color {
+		final parsed = Std.parseInt(cs);
+		if (parsed != null) return parsed;
+		return getColor(cs);
+	}
+
 	/**
 		A function to format all display strings.
 	**/
