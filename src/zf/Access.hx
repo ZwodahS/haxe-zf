@@ -19,14 +19,18 @@ class Access {
 	function new(?xml: Xml, ?struct: Dynamic) {
 		if (xml != null) {
 			this.x = xml;
-			this.get = this.x.get;
+			this._get = this.x.get;
 		} else if (struct != null) {
 			this.d = struct;
-			this.get = this.d.get;
+			this._get = this.d.get;
 		}
 	}
 
-	dynamic public function get(name: String): Dynamic {
+	public function get<T>(name: String): T {
+		return _get(name);
+	}
+
+	dynamic function _get(name: String): Dynamic {
 		throw new zf.exceptions.NotSupported();
 	}
 
