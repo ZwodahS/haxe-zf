@@ -26,7 +26,7 @@ class Access {
 		}
 	}
 
-	public function get<T>(name: String): T {
+	public function get<T>(name: String): Null<T> {
 		return _get(name);
 	}
 
@@ -34,17 +34,17 @@ class Access {
 		throw new zf.exceptions.NotSupported();
 	}
 
-	public function getInt(name: String): Null<Int> {
+	public function getInt(name: String, defaultValue: Null<Int> = null): Null<Int> {
 		final raw: Dynamic = this.get(name);
-		if (raw == null) return null;
+		if (raw == null) return defaultValue;
 		if (Std.isOfType(raw, Int)) return cast(raw, Int);
 		if (Std.isOfType(raw, String)) return Std.parseInt(cast(raw, String));
-		return null;
+		return defaultValue;
 	}
 
-	public function getString(name: String): String {
+	public function getString(name: String, defaultValue: String = null): String {
 		final raw: Dynamic = this.get(name);
-		if (raw == null) return null;
+		if (raw == null) return defaultValue;
 		if (Std.isOfType(raw, String)) return cast(raw, String);
 		return '${raw}';
 	}
@@ -52,16 +52,18 @@ class Access {
 	/**
 		Returns true if the value is "true", false if the value is "false", null otherwise
 	**/
-	public function getBool(name: String): Null<Bool> {
-		var str = getString(name);
-		if (str == null) return null;
-		switch (str) {
+	public function getBool(name: String, defaultValue: Null<Bool> = null): Null<Bool> {
+		final rawValue = _get(name);
+		if (Std.isOfType(rawValue, Bool)) return cast(rawValue, Bool);
+		final strValue = getString(name);
+		if (strValue == null) return defaultValue;
+		switch (strValue) {
 			case "true":
 				return true;
 			case "false":
 				return false;
 			default:
-				return null;
+				return defaultValue;
 		}
 	}
 
