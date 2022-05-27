@@ -12,6 +12,7 @@ class Factory {
 		}
 	}
 
+	@:deprecated
 	public function createObject(conf: TemplateConf): h2d.Object {
 		final t = this.templates[conf.type];
 		if (t == null) {

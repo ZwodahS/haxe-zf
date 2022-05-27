@@ -50,6 +50,7 @@ class VerticalFlowLayout extends Component {
 
 		for (item in conf.items) {
 			final c = this.builder.makeObjectFromStruct(item);
+			if (c == null) continue;
 			flow.addChild(c);
 			if (item.layout != null) {
 				final layout: LayoutConf = item.layout;
