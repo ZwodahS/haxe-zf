@@ -140,4 +140,13 @@ class Builder {
 	dynamic public function formatString(str: String, context: BuilderContext): String {
 		return str;
 	}
+
+	/**
+	**/
+	dynamic public function getBitmap(conf: zf.Access): h2d.Object {
+		if (this.res == null) return null;
+		final path = conf.getString("path");
+		final index = conf.getInt("index", 0);
+		return this.res.getBitmap(path, index);
+	}
 }

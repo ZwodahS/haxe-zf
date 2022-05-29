@@ -38,4 +38,8 @@ class BuilderContext {
 		if (context == null) context = this;
 		return this.builder.makeObjectFromStruct(conf, context);
 	}
+
+	public function getBitmap(conf: zf.Access): h2d.Object {
+		return this.builder.getBitmap(conf);
+	}
 }
