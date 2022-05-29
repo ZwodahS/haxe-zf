@@ -23,27 +23,27 @@ class HorizontalFlowLayout extends Component {
 		super("layout-hflow");
 	}
 
-	override public function makeFromXML(element: Xml): h2d.Object {
-		final flow = make(zf.Access.xml(element));
+	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+		final flow = make(zf.Access.xml(element), context);
 		for (children in element.elements()) {
-			final c = this.builder.makeObjectFromXMLElement(children);
+			final c = context.makeObjectFromXMLElement(children);
 			if (c == null) continue;
 			flow.addChild(c);
 		}
 		return flow;
 	}
 
-	override public function makeFromStruct(c: Dynamic): h2d.Object {
+	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
 		final conf: HorizontalFlowLayoutConf = c;
-		final flow = make(zf.Access.struct(c));
+		final flow = make(zf.Access.struct(c), context);
 		for (item in conf.items) {
-			final c = this.builder.makeObjectFromStruct(item);
+			final c = context.makeObjectFromStruct(item);
 			flow.addChild(c);
 		}
 		return flow;
 	}
 
-	function make(conf: zf.Access): h2d.Flow {
+	function make(conf: zf.Access, context: BuilderContext): h2d.Flow {
 		final flow = new h2d.Flow();
 		flow.layout = Horizontal;
 		flow.verticalAlign = switch (conf.getString("align")) {

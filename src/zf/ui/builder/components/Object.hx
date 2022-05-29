@@ -9,7 +9,7 @@ class Object extends Component {
 		super("object");
 	}
 
-	override public function makeFromStruct(c: Dynamic): h2d.Object {
+	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
 		final conf: ObjectConf = c;
 		return conf.object;
 	}

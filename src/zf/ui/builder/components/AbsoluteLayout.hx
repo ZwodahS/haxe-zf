@@ -5,7 +5,7 @@ class AbsoluteLayout extends Component {
 		super("layout-absolute");
 	}
 
-	override public function makeFromXML(element: Xml): h2d.Object {
+	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
 		/**
 			For object, we assume that each object will be added in order
 			and the position of each of the item will be set based on the attribute
@@ -16,7 +16,7 @@ class AbsoluteLayout extends Component {
 		}
 		final obj = new h2d.Object();
 		for (children in element.elements()) {
-			final c = this.builder.makeObjectFromXMLElement(children);
+			final c = context.makeObjectFromXMLElement(children);
 			if (c == null) {
 				final e = new ComponentException();
 				e.xmlNode = children;

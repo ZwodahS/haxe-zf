@@ -14,6 +14,11 @@ typedef VerticalFlowLayoutConf = {
 		y spacing between each object
 	**/
 	public var ?spacing: Int;
+
+	/**
+		set flow.maxWidth
+	**/
+	public var ?maxWidth: Int;
 }
 
 /**
@@ -27,11 +32,11 @@ class VerticalFlowLayout extends Component {
 		super("layout-vflow");
 	}
 
-	override public function makeFromXML(element: Xml): h2d.Object {
-		final flow = make(zf.Access.xml(element));
+	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+		final flow = make(zf.Access.xml(element), context);
 
 		for (children in element.elements()) {
-			final c = this.builder.makeObjectFromXMLElement(children);
+			final c = context.makeObjectFromXMLElement(children);
 			if (c == null) continue;
 			flow.addChild(c);
 			// modify the position of the child
@@ -44,12 +49,12 @@ class VerticalFlowLayout extends Component {
 		return flow;
 	}
 
-	override public function makeFromStruct(c: Dynamic): h2d.Object {
+	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
 		final conf: VerticalFlowLayoutConf = c;
-		final flow = make(zf.Access.struct(conf));
+		final flow = make(zf.Access.struct(conf), context);
 
 		for (item in conf.items) {
-			final c = this.builder.makeObjectFromStruct(item);
+			final c = context.makeObjectFromStruct(item);
 			if (c == null) continue;
 			flow.addChild(c);
 			if (item.layout != null) {
@@ -63,7 +68,7 @@ class VerticalFlowLayout extends Component {
 		return flow;
 	}
 
-	function make(conf: zf.Access): h2d.Flow {
+	function make(conf: zf.Access, context: BuilderContext): h2d.Flow {
 		final flow = new h2d.Flow();
 		flow.layout = Vertical;
 		flow.horizontalAlign = switch (conf.getString("align")) {
@@ -72,8 +77,12 @@ class VerticalFlowLayout extends Component {
 			case "middle": Middle;
 			default: Left;
 		}
+
 		final spacing = conf.getInt("spacing");
 		if (spacing != null) flow.verticalSpacing = spacing;
+
+		final maxWidth = conf.getInt("maxWidth");
+		if (maxWidth != null) flow.maxWidth = maxWidth;
 		return flow;
 	}
 }

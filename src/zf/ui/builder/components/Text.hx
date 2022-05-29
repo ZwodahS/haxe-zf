@@ -39,8 +39,8 @@ class Text extends Component {
 		super(type);
 	}
 
-	override public function makeFromXML(element: Xml): h2d.Object {
-		final textObject = make(zf.Access.xml(element));
+	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+		final textObject = make(zf.Access.xml(element), context);
 		var access = new haxe.xml.Access(element);
 		var innerData: String = null;
 		try {
@@ -50,7 +50,7 @@ class Text extends Component {
 		}
 		if (innerData == null) return null;
 		innerData = trimText(innerData.trim());
-		textObject.text = formatString(innerData).replace("\n", "<br/>");
+		textObject.text = context.formatString(innerData).replace("\n", "<br/>");
 		return textObject;
 	}
 
@@ -60,18 +60,19 @@ class Text extends Component {
 		return strings.join("\n");
 	}
 
-	override public function makeFromStruct(c: Dynamic): h2d.Object {
+	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
 		final conf: TextConf = c;
-		final textObject = make(zf.Access.struct(conf));
-		textObject.text = conf.text;
+		if (conf.text == null) return null;
+		final textObject = make(zf.Access.struct(conf), context);
+		textObject.text = context.formatString(trimText(conf.text));
 		return textObject;
 	}
 
-	function make(conf: zf.Access): h2d.HtmlText {
+	function make(conf: zf.Access, context: BuilderContext): h2d.HtmlText {
 		var font: h2d.Font = null;
 		if (conf.get("font") != null) font = cast(conf.get("font"));
 		if (font == null) {
-			font = getFont(conf.getString("fontName"));
+			font = context.builder.getFont(conf.getString("fontName"));
 		}
 
 		final textColorString = conf.getString("textColor");
@@ -79,7 +80,7 @@ class Text extends Component {
 		if (textColorString != null) {
 			final parsed = Std.parseInt(textColorString);
 			if (parsed == null) {
-				textColor = this.builder.getColor(textColorString);
+				textColor = context.builder.getColor(textColorString);
 			} else {
 				textColor = parsed;
 			}
@@ -101,14 +102,5 @@ class Text extends Component {
 		}
 
 		return textObject;
-	}
-
-	function getFont(name: String): h2d.Font {
-		final font = name == null ? this.builder.defaultFont : this.builder.getFont(name);
-		return font;
-	}
-
-	function formatString(str: String): String {
-		return this.builder.formatString(str);
 	}
 }

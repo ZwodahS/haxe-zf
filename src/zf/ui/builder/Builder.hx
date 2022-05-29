@@ -57,7 +57,6 @@ class Builder {
 		Logger.debug('Builder Component: ${component} registered as "${component.type}"', "[UIBuilder]");
 #end
 		this.components[component.type] = component;
-		component.builder = this;
 	}
 
 	inline public function registerFont(name: String, font: h2d.Font) {
@@ -73,20 +72,25 @@ class Builder {
 	/**
 		Make object from a XML String.
 	**/
-	public function makeObjectFromXMLString(xmlString: String): h2d.Object {
+	public function makeObjectFromXMLString(xmlString: String, context: BuilderContext = null): h2d.Object {
 		final xml = Xml.parse(xmlString);
 		final element = xml.firstElement();
-		return makeObjectFromXMLElement(element);
+		return makeObjectFromXMLElement(element, context);
 	}
 
 	/**
 		Make object from XML element
 	**/
-	public function makeObjectFromXMLElement(element: Xml): h2d.Object {
+	public function makeObjectFromXMLElement(element: Xml, context: BuilderContext = null): h2d.Object {
+		// create context if not exists
+		if (context == null) context = {};
+		// set builder
+		context.builder = this;
+
 		if (element.nodeType != Element) return null;
 		final comp = this.components[element.nodeName];
 		if (comp == null) return null;
-		var obj = comp.makeFromXML(element);
+		var obj = comp.makeFromXML(element, context);
 		if (element.get("id") != null) obj.name = element.get("id");
 		return obj;
 	}
@@ -94,10 +98,15 @@ class Builder {
 	/**
 		Make object from component struct
 	**/
-	public function makeObjectFromStruct(conf: ComponentConf): h2d.Object {
+	public function makeObjectFromStruct(conf: ComponentConf, context: BuilderContext = null): h2d.Object {
+		// create context if not exists
+		if (context == null) context = {};
+		// set builder
+		context.builder = this;
+
 		final comp = this.components[conf.type];
 		if (comp == null) return null;
-		final object = comp.makeFromStruct(conf.conf);
+		final object = comp.makeFromStruct(conf.conf, context);
 		if (conf.id != null) object.name = conf.id;
 		return object;
 	}
@@ -128,7 +137,7 @@ class Builder {
 	/**
 		A function to format all display strings.
 	**/
-	dynamic public function formatString(str: String): String {
+	dynamic public function formatString(str: String, context: BuilderContext): String {
 		return str;
 	}
 }
