@@ -20,7 +20,8 @@ class Button extends h2d.Layers {
 	public var toggled(default, set): Bool = true;
 
 	var isOver: Bool = false;
-	var interactive: Interactive;
+
+	public var interactive: Interactive;
 
 	/**
 		width of the interactive part of the button.
@@ -87,7 +88,6 @@ class Button extends h2d.Layers {
 			onPush();
 		}
 		interactive.onRelease = function(e: hxd.Event) {
-			this.isOver = false;
 			updateButton();
 			onRelease();
 		}
