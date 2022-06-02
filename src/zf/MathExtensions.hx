@@ -34,11 +34,17 @@ class MathExtensions {
 		return value;
 	}
 
-	public static function wrapI(cls: Class<Math>, value: Int, max: Int): Int {
+	/**
+		Wrap an integer
+
+		@param value the value to wrap
+		@param base the base of the interger, i.e. the result will be value % base
+	**/
+	public static function wrapI(cls: Class<Math>, value: Int, base: Int): Int {
 		while (value < 0) {
-			value += max;
+			value += base;
 		}
-		if (value >= max) value = value % max;
+		if (value >= base) value = value % base;
 		return value;
 	}
 
