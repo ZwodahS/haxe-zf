@@ -100,9 +100,11 @@ class GenericButton extends Button {
 		this.hoverObject.visible = false;
 		this.disabledObject.visible = false;
 		this.selectedObject.visible = false;
-		if (this.disabled) {
+		if (this.disabled == true) {
 			this.disabledObject.visible = true;
-		} else if (this.isOver) {
+		} else if (this.toggled == true) {
+			this.selectedObject.visible = true;
+		} else if (this.isOver == true) {
 			this.hoverObject.visible = true;
 		} else {
 			this.defaultObject.visible = true;

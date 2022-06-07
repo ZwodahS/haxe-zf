@@ -17,7 +17,7 @@ class Button extends h2d.Layers {
 	/**
 		flag for if the button is toggled/selected.
 	**/
-	public var toggled(default, set): Bool = true;
+	public var toggled(default, set): Bool = false;
 
 	var isOver: Bool = false;
 
