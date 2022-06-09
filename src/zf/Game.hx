@@ -103,9 +103,9 @@ class Game extends hxd.App {
 			this.s2d.scaleMode = Fixed(this.boundedSize.x, this.boundedSize.y, 1.0);
 		} else {
 			if (this.pixelPerfect) {
-				this.s2d.scaleMode = LetterBox(this.boundedSize.x, this.boundedSize.y, true);
+				this.s2d.scaleMode = LetterBox(this.boundedSize.x, this.boundedSize.y, true, Center, Center);
 			} else {
-				this.s2d.scaleMode = LetterBox(this.boundedSize.x, this.boundedSize.y, false);
+				this.s2d.scaleMode = LetterBox(this.boundedSize.x, this.boundedSize.y, false, Center, Center);
 			}
 		}
 	}
@@ -320,6 +320,19 @@ class Game extends hxd.App {
 
 	function screenEntered(screen: zf.Screen) {
 		screen.resize(this.gameWidth, this.gameHeight);
+	}
+
+	public function toggleFullScreen(fullscreen: Bool) {
+		switch (fullscreen) {
+			case true:
+#if js
+				hxd.Window.getInstance().displayMode = FullscreenResize;
+#else
+				hxd.Window.getInstance().displayMode = Borderless;
+#end
+			default:
+				hxd.Window.getInstance().displayMode = Windowed;
+		}
 	}
 
 	override function onResize() {
