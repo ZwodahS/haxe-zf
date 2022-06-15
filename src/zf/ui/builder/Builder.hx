@@ -73,6 +73,7 @@ class Builder {
 		Make object from a XML String.
 	**/
 	public function makeObjectFromXMLString(xmlString: String, context: BuilderContext = null): h2d.Object {
+		if (xmlString == null) return null;
 		final xml = Xml.parse(xmlString);
 		final element = xml.firstElement();
 		return makeObjectFromXMLElement(element, context);
@@ -82,6 +83,7 @@ class Builder {
 		Make object from XML element
 	**/
 	public function makeObjectFromXMLElement(element: Xml, context: BuilderContext = null): h2d.Object {
+		if (element == null) return null;
 		// create context if not exists
 		if (context == null) context = {};
 		// set builder
@@ -99,6 +101,7 @@ class Builder {
 		Make object from component struct
 	**/
 	public function makeObjectFromStruct(conf: ComponentConf, context: BuilderContext = null): h2d.Object {
+		if (conf == null) return null;
 		// create context if not exists
 		if (context == null) context = {};
 		// set builder
