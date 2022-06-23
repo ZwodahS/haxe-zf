@@ -38,6 +38,7 @@ class HorizontalFlowLayout extends Component {
 		final flow = make(zf.Access.struct(c), context);
 		for (item in conf.items) {
 			final c = context.makeObjectFromStruct(item);
+			if (c == null) continue;
 			flow.addChild(c);
 		}
 		return flow;
