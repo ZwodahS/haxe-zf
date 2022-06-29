@@ -33,10 +33,10 @@ class MapExtensions {
 		}
 	}
 
-	public static function toArray<K, V>(map: Map<K, V>, filter: (K, V) -> Bool) {
+	public static function toArray<K, V>(map: Map<K, V>, filter: (K, V) -> Bool = null) {
 		final out: Array<V> = [];
 		for (k => v in map) {
-			if (filter(k, v)) out.push(v);
+			if (filter == null || filter(k, v)) out.push(v);
 		}
 		return out;
 	}
