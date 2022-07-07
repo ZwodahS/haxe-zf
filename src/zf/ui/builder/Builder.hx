@@ -93,7 +93,7 @@ class Builder {
 		final comp = this.components[element.nodeName];
 		if (comp == null) return null;
 		var obj = comp.makeFromXML(element, context);
-		if (element.get("id") != null) obj.name = element.get("id");
+		if (obj != null && element.get("id") != null) obj.name = element.get("id");
 		return obj;
 	}
 

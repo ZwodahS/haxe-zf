@@ -34,9 +34,14 @@ typedef TextConf = {
 	public var ?textAlign: String;
 }
 
+typedef DropShadowConf = {dx: Float, dy: Float, color: Int, alpha: Float};
+
 class Text extends Component {
-	public function new(type: String = "text") {
+	public var defaultDropShadow: DropShadowConf = null;
+
+	public function new(type: String = "text", defaultDropShadow: DropShadowConf = null) {
 		super(type);
+		this.defaultDropShadow = defaultDropShadow;
 	}
 
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
@@ -99,6 +104,10 @@ class Text extends Component {
 				textObject.textAlign = Left;
 			case "right":
 				textObject.textAlign = Right;
+		}
+
+		if (this.defaultDropShadow != null) {
+			textObject.dropShadow = this.defaultDropShadow;
 		}
 
 		return textObject;
