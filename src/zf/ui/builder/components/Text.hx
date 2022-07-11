@@ -1,5 +1,7 @@
 package zf.ui.builder.components;
 
+using zf.ds.ArrayExtensions;
+
 using StringTools;
 
 typedef TextConf = {
@@ -32,10 +34,18 @@ typedef TextConf = {
 		text alignment
 	**/
 	public var ?textAlign: String;
+
+	/**
+		stringId
+	**/
+	public var ?stringId: String;
 }
 
 typedef DropShadowConf = {dx: Float, dy: Float, color: Int, alpha: Float};
 
+/**
+	Create HTML Text component
+**/
 class Text extends Component {
 	public var defaultDropShadow: DropShadowConf = null;
 
@@ -45,35 +55,47 @@ class Text extends Component {
 	}
 
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		final textObject = make(zf.Access.xml(element), context);
-		var access = new haxe.xml.Access(element);
-		var innerData: String = null;
-		try {
-			innerData = access.innerHTML;
-		} catch (e) {
-			return null;
-		}
-		if (innerData == null) return null;
-		innerData = trimText(innerData.trim());
-		textObject.text = context.formatString(innerData).replace("\n", "<br/>");
-		return textObject;
-	}
+		final result = make(zf.Access.xml(element), context);
+		final textObject = result.text;
 
-	function trimText(t: String): String {
-		var strings = t.split("\n");
-		strings = [for (s in strings) s.trim()];
-		return strings.join("\n");
+		if (result.hasText == false) {
+			var access = new haxe.xml.Access(element);
+			var innerData: String = null;
+			try {
+				innerData = access.innerHTML;
+				if (innerData != null) {
+					innerData = trimText(innerData.trim());
+					textObject.text = context.formatString(innerData).replace("\n", "<br/>");
+				}
+			} catch (e) {}
+		}
+
+		return textObject;
 	}
 
 	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
 		final conf: TextConf = c;
-		if (conf.text == null) return null;
-		final textObject = make(zf.Access.struct(conf), context);
-		textObject.text = context.formatString(trimText(conf.text));
+		final result = make(zf.Access.struct(conf), context);
+		final textObject = result.text;
+
+		if (result.hasText == false) {
+			if (conf.text == null) return null;
+			textObject.text = context.formatString(trimText(conf.text));
+		}
+
 		return textObject;
 	}
 
-	function make(conf: zf.Access, context: BuilderContext): h2d.HtmlText {
+	function trimText(t: String, eol = "::eol::"): String {
+		var strings = t.split("\n");
+		strings = [for (s in strings) s.trim()];
+		strings.filterAndRemove((s) -> {
+			return s == null || s == "";
+		});
+		return strings.join(eol);
+	}
+
+	function make(conf: zf.Access, context: BuilderContext): {text: h2d.HtmlText, hasText: Bool} {
 		var font: h2d.Font = null;
 		if (conf.get("font") != null) font = cast(conf.get("font"));
 		if (font == null) {
@@ -110,6 +132,17 @@ class Text extends Component {
 			textObject.dropShadow = this.defaultDropShadow;
 		}
 
-		return textObject;
+		// handles string id, useful for localisation
+		var hasText = false;
+		if (conf.get("stringId") != null) {
+			final stringId = conf.get("stringId");
+			final template = context.builder.getStringTemplate(stringId);
+			if (template != null) {
+				textObject.text = trimText(context.formatTemplate(template), "<br />");
+				hasText = true;
+			}
+		}
+
+		return {text: textObject, hasText: hasText};
 	}
 }

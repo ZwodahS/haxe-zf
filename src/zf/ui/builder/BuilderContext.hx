@@ -14,6 +14,10 @@ class BuilderContext {
 		return builder.formatString(str, this);
 	}
 
+	public function formatTemplate(template: haxe.Template): String {
+		return template.execute(this.data);
+	}
+
 	public function expandTemplateContext(context: Dynamic): BuilderContext {
 		var ctx: BuilderContext = {data: data.copy()};
 		ctx.builder = this.builder;

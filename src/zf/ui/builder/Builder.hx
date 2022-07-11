@@ -138,6 +138,13 @@ class Builder {
 	}
 
 	/**
+		Get a haxe Template
+	**/
+	dynamic public function getStringTemplate(id: String): haxe.Template {
+		return null;
+	}
+
+	/**
 		A function to format all display strings.
 	**/
 	dynamic public function formatString(str: String, context: BuilderContext): String {
