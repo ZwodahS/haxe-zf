@@ -89,8 +89,13 @@ class ArrayExtensions {
 		Get a random item from an Array using hxd.Rand
 	**/
 	public static function randomItem<T>(arr: Array<T>, r: hxd.Rand, pop: Bool = false): Null<T> {
-		if (pop) return r.randomPop(arr);
+		if (pop == true) return r.randomPopItem(arr);
 		return r.randomChoice(arr);
+	}
+
+	public static function randomItems<T>(arr: Array<T>, r: hxd.Rand, count: Int, pop: Bool = false): Array<T> {
+		if (pop == true) return r.randomPopItems(arr, count);
+		return r.randomChoices(arr, count);
 	}
 
 	inline public static function first<T>(arr: Array<T>): Null<T> {

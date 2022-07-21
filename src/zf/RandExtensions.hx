@@ -21,11 +21,26 @@ class RandExtensions {
 		return out;
 	}
 
+	@:deprecated
 	public static function randomPop<T>(r: hxd.Rand, a: Array<T>): Null<T> {
+		return randomPopItem(r, a);
+	}
+
+	public static function randomPopItem<T>(r: hxd.Rand, a: Array<T>): Null<T> {
 		if (a.length == 0) return null;
 		var pos = r.random(a.length);
 		var item = a.splice(pos, 1);
 		return item[0];
+	}
+
+	public static function randomPopItems<T>(r: hxd.Rand, a: Array<T>, count: Int): Array<T> {
+		final out: Array<T> = [];
+		for (_ in 0...count) {
+			final o = randomPopItem(r, a);
+			if (o != null) out.push(o);
+			if (a.length == 0) break;
+		}
+		return out;
 	}
 
 	/**
