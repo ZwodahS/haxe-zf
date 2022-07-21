@@ -87,11 +87,9 @@ class Text extends Component {
 	}
 
 	function trimText(t: String, eol = "::eol::"): String {
+		t = t.trim();
 		var strings = t.split("\n");
 		strings = [for (s in strings) s.trim()];
-		strings.filterAndRemove((s) -> {
-			return s == null || s == "";
-		});
 		return strings.join(eol);
 	}
 

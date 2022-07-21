@@ -8,7 +8,7 @@ typedef VerticalFlowLayoutConf = {
 	/**
 		All item in this horizontal
 	**/
-	public var items: Array<ComponentConf>;
+	public var ?items: Array<ComponentConf>;
 
 	/**
 		y spacing between each object
@@ -53,15 +53,17 @@ class VerticalFlowLayout extends Component {
 		final conf: VerticalFlowLayoutConf = c;
 		final flow = make(zf.Access.struct(conf), context);
 
-		for (item in conf.items) {
-			final c = context.makeObjectFromStruct(item);
-			if (c == null) continue;
-			flow.addChild(c);
-			if (item.layout != null) {
-				final layout: LayoutConf = item.layout;
-				if (layout.paddingTop != null) {
-					final properties = flow.getProperties(c);
-					properties.paddingTop = layout.paddingTop;
+		if (conf.items != null) {
+			for (item in conf.items) {
+				final c = context.makeObjectFromStruct(item);
+				if (c == null) continue;
+				flow.addChild(c);
+				if (item.layout != null) {
+					final layout: LayoutConf = item.layout;
+					if (layout.paddingTop != null) {
+						final properties = flow.getProperties(c);
+						properties.paddingTop = layout.paddingTop;
+					}
 				}
 			}
 		}

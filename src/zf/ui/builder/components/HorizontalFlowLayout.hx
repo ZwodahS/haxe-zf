@@ -4,7 +4,7 @@ typedef HorizontalFlowLayoutConf = {
 	/**
 		All item in this horizontal
 	**/
-	public var items: Array<ComponentConf>;
+	public var ?items: Array<ComponentConf>;
 
 	/**
 		x spacing between each object
@@ -36,10 +36,12 @@ class HorizontalFlowLayout extends Component {
 	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
 		final conf: HorizontalFlowLayoutConf = c;
 		final flow = make(zf.Access.struct(c), context);
-		for (item in conf.items) {
-			final c = context.makeObjectFromStruct(item);
-			if (c == null) continue;
-			flow.addChild(c);
+		if (conf.items != null) {
+			for (item in conf.items) {
+				final c = context.makeObjectFromStruct(item);
+				if (c == null) continue;
+				flow.addChild(c);
+			}
 		}
 		return flow;
 	}
