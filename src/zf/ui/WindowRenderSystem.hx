@@ -8,31 +8,23 @@ typedef ShowWindowConf = {
 	/**
 		If true, the window will be adjusted to fit into the renderingBounds. (default. true)
 	**/
-	?adjustWindow: Bool,
+	public var ?adjustWindow: Bool;
+
 	/**
 		The prefer direction to render the window.
 		Allowed direction [Down, Right, Up, Left]
 		Any direction other than these 4 will be ignored.
 	**/
-	?preferredDirection: Array<Direction>,
+	public var ?preferredDirection: Array<Direction>;
+
 	/**
 		If provided, this will override the spacing defined in WindowRenderSystem
 	**/
-	?overrideSpacing: Float,
+	public var ?overrideSpacing: Float;
 }
 
 /**
-	Manage "Window" within a certain bound.
-
-	Thu 15:30:24 24 Feb 2022
-
-	This is planned to be moved into zf, hence written in a very generic way.
-	Also, this might be useful to merge with TooltipHelper
-
-	Sun 13:12:54 03 Apr 2022
-	Added this to zf temporary to help with LD50.
-	Refactor later
-	This is also merged with TooltipHelper as well. Deal with that later
+	Manage Window within a certain bound.
 **/
 class WindowRenderSystem {
 	/**
@@ -175,34 +167,18 @@ class WindowRenderSystem {
 			w.x = this.renderingBounds.yMin;
 		}
 	}
-
-	public function update(dt: Float) {}
-
-	public function attachWindowTooltip(obj: h2d.Object, window: Window, directions: Array<Direction> = null): Window {
-		final bound = obj.getSize();
-		final width = Std.int(bound.width);
-		final height = Std.int(bound.height);
-		final interactive = new zf.h2d.Interactive(width, height, obj);
-
-		interactive.onOver = function(e: hxd.Event) {
-			final bound = obj.getBounds();
-			window.onShow();
-			showWindow(window, bound, {overrideSpacing: 5, preferredDirection: directions});
-		}
-
-		interactive.onOut = function(e: hxd.Event) {
-			window.remove();
-			window.onHide();
-		}
-
-		interactive.dyOnRemove = function() {
-			if (window.parent != null) {
-				window.remove();
-				window.onHide();
-			}
-		}
-		interactive.propagateEvents = true;
-
-		return window;
-	}
 }
+
+/**
+	# Thu 15:30:24 24 Feb 2022
+	This is planned to be moved into zf, hence written in a very generic way.
+	Also, this might be useful to merge with TooltipHelper
+
+	# Sun 13:12:54 03 Apr 2022
+	Added this to zf temporary to help with LD50.
+	Refactor later
+	This is also merged with TooltipHelper as well. Deal with that later
+
+	# Sat 14:56:25 30 Jul 2022
+	R lefactor and clean up the tooltip code and move it into a tooltiphelper
+**/
