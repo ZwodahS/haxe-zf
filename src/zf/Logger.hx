@@ -48,6 +48,18 @@ class Logger {
 #end
 	}
 
+	macro public static function deprecated() {
+#if !debug
+		return macro {};
+#else
+		var location = PositionTools.toLocation(Context.currentPos());
+		final tag = location.file + ":" + location.range.start.line;
+		return macro {
+			haxe.Log.trace($v{tag} + ' [Debug] this code is deprecated.');
+		}
+#end
+	}
+
 	macro public static function debug(msg: ExprOf<String>, tag: String = null) {
 #if (!loggingLevel || loggingLevel < 30)
 		return macro {};
