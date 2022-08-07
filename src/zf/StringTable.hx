@@ -38,7 +38,13 @@ class StringTable {
 				for (id => value in c) {
 					path.push(id);
 					if (Std.isOfType(value, String)) {
-						strings[path.join(".")] = new haxe.Template(value);
+						try {
+							strings[path.join(".")] = new haxe.Template(value);
+						} catch (e) {
+							Logger.error('Error parsing string id: ${id}');
+							Logger.error('${value}');
+							Logger.exception(e);
+						}
 					} else {
 						parse(value, path);
 					}
