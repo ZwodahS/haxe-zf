@@ -25,7 +25,8 @@
   },
   "sameLine": {
     "ifBody": "same",
-    "forBody": "same"
+    "forBody": "same",
+    "functionBody": "same"
   },
   "wrapping": {
     "maxLineLength": 120

@@ -12,11 +12,9 @@ class ReverseIntIterator {
 		this.end = end;
 	}
 
-	public inline function hasNext(): Bool
-		return i >= end;
+	public inline function hasNext(): Bool return i >= end;
 
-	public inline function next(): Int
-		return i--;
+	public inline function next(): Int return i--;
 }
 
 class IntIterator {
@@ -28,11 +26,9 @@ class IntIterator {
 		this.end = end;
 	}
 
-	public inline function hasNext(): Bool
-		return i <= end;
+	public inline function hasNext(): Bool return i <= end;
 
-	public inline function next(): Int
-		return i++;
+	public inline function next(): Int return i++;
 }
 
 class IteratorUtils {
