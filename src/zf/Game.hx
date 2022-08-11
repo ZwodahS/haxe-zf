@@ -287,11 +287,10 @@ class Game extends hxd.App {
 #end
 	}
 
-	/** Screen management code **/
-	var currentScreen: zf.Screen;
-
-	var incomingScreen: zf.Screen;
-	var outgoingScreen: zf.Screen;
+	// ---- Screen Management ---- //
+	public var currentScreen(default, null): zf.Screen;
+	public var incomingScreen(default, null): zf.Screen;
+	public var outgoingScreen(default, null): zf.Screen;
 
 	var screenState: ScreenState;
 
