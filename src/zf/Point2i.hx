@@ -228,6 +228,62 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	}
 
 	/**
+		Get an area around this point.
+
+		range <= 0 (empty list)
+		range == 1 (only this key)
+		range == 2 (adjacent)
+		range == 3 (around)
+		range == 4
+
+		..X..
+		.XXX.
+		XXOXX
+		.XXX.
+		..X..
+
+		range == 5
+
+		XXXXX
+		XXXXX
+		XXOXX
+		XXXXX
+		XXXXX
+
+		currently only support up to 5. Implement whenever necessary
+	**/
+	public function getArea(range: Int): Array<Point2i> {
+		if (range == 0) return [];
+		if (range == 1) return [this.copy()];
+		if (range == 2) {
+			var pts = getAdjacent();
+			pts.push(this.copy());
+			return pts;
+		}
+		if (range == 3) {
+			var pts = getAround();
+			pts.push(this.copy());
+			return pts;
+		}
+		if (range == 4) {
+			var pts: Array<Point2i> = getAround();
+			pts.push([this[0], this[1] - 2]);
+			pts.push([this[0], this[1] + 2]);
+			pts.push([this[0] - 2, this[1]]);
+			pts.push([this[0] + 2, this[1]]);
+			return pts;
+		} else {
+			var pts: Array<Point2i> = [];
+			for (y in -2...3) {
+				for (x in -2...3) {
+					pts.push([this[0] + x, this[1] + y]);
+				}
+			}
+			return pts;
+		}
+	}
+
+	/**
 		Bound a point and treat this point as size.
 
 		Essentially this will return a point that is within [0, 0, this.x-1, this.y-1];
