@@ -18,7 +18,7 @@ typedef TextConf = {
 	/**
 		text to display
 	**/
-	public var text: String;
+	public var ?text: String;
 
 	/**
 		default color of the text
