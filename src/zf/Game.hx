@@ -87,6 +87,7 @@ class Game extends hxd.App {
 	override function init() {
 		// add event handler
 		this.s2d.addEventListener(this.onEvent);
+		this.s2d.camera.clipViewport = true;
 #if debug
 		this.setupConsole();
 		this.setupFramerate();
