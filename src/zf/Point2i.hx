@@ -299,13 +299,13 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 
 		if (newPt.x < 0) {
 			newPt.x = 0;
-		} else if (newPt.x > this[0]) {
+		} else if (newPt.x >= this[0]) {
 			newPt.x = this[0] - 1;
 		}
 
 		if (newPt.y < 0) {
 			newPt.y = 0;
-		} else if (newPt.y > this[1]) {
+		} else if (newPt.y >= this[1]) {
 			newPt.y = this[1] - 1;
 		}
 
