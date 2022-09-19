@@ -86,6 +86,19 @@ class ArrayExtensions {
 	}
 
 	/**
+		Returns a shallow copy of the array reversed
+	**/
+	public static function reversed<T>(arr: Array<T>): Array<T> {
+		final out: Array<T> = [];
+		var i = arr.length - 1;
+		while (i >= 0) {
+			out.push(arr[i]);
+			i -= 1;
+		}
+		return out;
+	}
+
+	/**
 		Get a random item from an Array using hxd.Rand
 	**/
 	public static function randomItem<T>(arr: Array<T>, r: hxd.Rand, pop: Bool = false): Null<T> {
