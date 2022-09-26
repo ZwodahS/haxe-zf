@@ -292,10 +292,14 @@ class Game extends hxd.App {
 	public var currentScreen(default, null): zf.Screen;
 	public var incomingScreen(default, null): zf.Screen;
 	public var outgoingScreen(default, null): zf.Screen;
+	public var isChangingScreen(get, never): Bool;
+
+	inline function get_isChangingScreen() return this.outgoingScreen != null || this.incomingScreen != null;
 
 	var screenState: ScreenState;
 
 	public function switchScreen(screen: zf.Screen) {
+		if (this.isChangingScreen == true) return;
 		if (this.currentScreen == screen) return;
 		if (this.currentScreen != null) this.outgoingScreen = this.currentScreen;
 		screen.game = this;
