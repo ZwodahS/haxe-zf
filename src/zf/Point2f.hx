@@ -5,7 +5,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 	public var y(get, set): Float;
 	public var unit(get, never): Point2f;
 	public var abs(get, never): Point2f;
-	public var rad(get, never): Float;
+	public var rad(get, set): Float;
 
 	public function new(x: Float = 0, y: Float = 0) {
 		this = [x, y];
@@ -59,6 +59,12 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 	public function update(rhs: Point2f): Point2f {
 		this[0] = rhs[0];
 		this[1] = rhs[1];
+		return this;
+	}
+
+	public function xy(x: Float, y: Float): Point2f {
+		this[0] = x;
+		this[1] = y;
 		return this;
 	}
 
@@ -122,5 +128,12 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
 	public function get_rad(): Float {
 		return hxd.Math.atan2(this[1], this[0]);
+	}
+
+	public function set_rad(r: Float): Float {
+		final mag = hxd.Math.sqrt(hxd.Math.pow(this[0], 2) + hxd.Math.pow(this[1], 2));
+		this[0] = Math.cos(r) * mag;
+		this[1] = Math.sin(r) * mag;
+		return r;
 	}
 }
