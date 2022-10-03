@@ -5,7 +5,7 @@ import zf.h2d.WrappedBatchElement;
 class Explode extends Update {
 	// takes in an bitmap, split into certain number of square and move them into different direction
 	var original: h2d.Bitmap;
-	var animations: Array<Animation>;
+	var animations: Array<Update>;
 	var started: Bool;
 	var spritebatch: h2d.SpriteBatch;
 
