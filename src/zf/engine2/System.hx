@@ -44,7 +44,16 @@ class System {
 	public function reset() {}
 
 	/**
+		Dispose the system data
+	**/
+	public function dispose() {}
+
+	/**
 		update loop
 	**/
 	public function update(dt: Float) {}
+
+	public function onEntityAdded(e: Entity) {}
+
+	public function onEntityRemoved(e: Entity) {}
 }

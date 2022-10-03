@@ -51,9 +51,23 @@ class World {
 		this.__entities__.clear();
 	}
 
+	/**
+		Destroy world
+	**/
+	public function dispose() {
+		for (e in this.__entities__) e.dispose();
+		for (s in this.__systems__) s.dispose();
+	}
+
 	// ---- Entities ---- //
 	public function registerEntity(e: Entity) {
 		this.__entities__.add(e);
+		for (s in this.__systems__) s.onEntityAdded(e);
+	}
+
+	public function unregisterEntity(e: Entity) {
+		this.__entities__.remove(e);
+		for (s in this.__systems__) s.onEntityRemoved(e);
 	}
 
 	// ---- Systems ---- //
