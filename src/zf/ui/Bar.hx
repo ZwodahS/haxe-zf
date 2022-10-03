@@ -51,7 +51,7 @@ class Bar extends h2d.Object {
 		this.bar.height = height;
 		this.barColor = barColor;
 
-		if (barType != EmptyBar) {
+		if (barType != EmptyBar && font != null) {
 			this.text = new h2d.Text(font);
 			text.textColor = textColor;
 			text.x = 0;
@@ -104,6 +104,7 @@ class Bar extends h2d.Object {
 	public function set_value(value: Int): Int {
 		if (this.value == value) return value;
 		this.value = value;
+		updateBarSize();
 		updateText();
 		return this.value;
 	}
@@ -111,6 +112,7 @@ class Bar extends h2d.Object {
 	public function set_maxValue(v: Int): Int {
 		if (this.maxValue == v) return v;
 		this.maxValue = v;
+		updateBarSize();
 		updateText();
 		return this.maxValue;
 	}
@@ -129,26 +131,25 @@ class Bar extends h2d.Object {
 	}
 
 	function updateText() {
-		if (this.text == null) return;
-		switch (this.barType) {
-			case Normal:
-				if (this.textValue != null) {
-					this.text.text = this.textValue;
-				} else {
-					this.text.text = '${this.value}/${this.maxValue}';
-				}
-			case SingleValue:
-				if (this.textValue != null) {
-					this.text.text = this.textValue;
-				} else {
-					this.text.text = '${this.value}';
-				}
-			case StringBar:
-				this.text.text = this.textValue == null ? '' : this.textValue;
-			default:
+		if (this.text != null) {
+			switch (this.barType) {
+				case Normal:
+					if (this.textValue != null) {
+						this.text.text = this.textValue;
+					} else {
+						this.text.text = '${this.value}/${this.maxValue}';
+					}
+				case SingleValue:
+					if (this.textValue != null) {
+						this.text.text = this.textValue;
+					} else {
+						this.text.text = '${this.value}';
+					}
+				case StringBar:
+					this.text.text = this.textValue == null ? '' : this.textValue;
+				default:
+			}
 		}
-		this.text.x = (this.bar.x + width / 2) - this.text.textWidth / 2;
-		updateBarSize();
 	}
 
 	function updateBarSize() {
@@ -169,7 +170,7 @@ class Bar extends h2d.Object {
 
 	function updateTextPosition() {
 		if (this.text == null) return;
-		this.text.x = this.bar.x + ((width - this.text.textWidth) / 2);
+		this.text.x = 0;
 		this.text.y = this.bar.y + this.yOffset + ((height - this.text.textHeight) / 2);
 	}
 }
