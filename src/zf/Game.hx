@@ -158,7 +158,7 @@ class Game extends hxd.App {
 		});
 
 		this.console.addCommand("printString", "print a string",
-			[{"name": "string", "t": h2d.Console.ConsoleArg.AString},], function(string) {
+			[{"name": "string", "t": zf.Console.ConsoleArg.AString},], function(string) {
 				this.console.log(string);
 		});
 
@@ -174,7 +174,7 @@ class Game extends hxd.App {
 		this.console.addAlias("fr", "framerate");
 
 		this.console.addCommand("printObject", "print dynamic object fields",
-			[{"name": "fields", "t": h2d.Console.ConsoleArg.AString},], this.printObject);
+			[{"name": "fields", "t": zf.Console.ConsoleArg.AString},], this.printObject);
 		this.console.addAlias("po", "printObject");
 	}
 
