@@ -21,4 +21,6 @@ class Component {
 	}
 
 	public function loadStruct(conf: Dynamic) {}
+
+	public function update(dt: Float) {}
 }

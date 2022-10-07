@@ -62,12 +62,14 @@ class World {
 	// ---- Entities ---- //
 	public function registerEntity(e: Entity) {
 		this.__entities__.add(e);
+		e.__world__ = this;
 		for (s in this.__systems__) s.onEntityAdded(e);
 	}
 
 	public function unregisterEntity(e: Entity) {
 		this.__entities__.remove(e);
 		for (s in this.__systems__) s.onEntityRemoved(e);
+		e.__world__ = null;
 	}
 
 	// ---- Systems ---- //

@@ -39,14 +39,23 @@ class Entity {
 	// ---- Entity fields ---- //
 
 	/**
-		The id of the entity. This should not be set outside of
+		The id of the entity. Ideally this should not be set outside of
 		- constructor
 		- loading
 
 		id -1 is reserved for undefined id, i.e. temporary id.
 		World will check if for id -1 entity during registerEntity
+
+		We will allow id to be set if the id is -1. This can be useful from converting a temp entity
+		to a permanent entity.
 	**/
-	public var id(default, null): Int;
+	public var id(default, set): Int = -1;
+
+	inline public function set_id(id: Int): Int {
+		// we will only allow id to be set if the id is -1
+		if (this.id != -1) return this.id;
+		return this.id = id;
+	}
 
 	/**
 		A string represeting what type of entity this is.
@@ -124,7 +133,9 @@ class Entity {
 
 	public function get_rotation() return this.__rotation__;
 
-	public function set_rotation(r: Float) return this.__rotation__ = r;
+	public function set_rotation(r: Float) {
+		return this.__rotation__ = r;
+	}
 
 	// ---- Dispose method ---- //
 
@@ -143,7 +154,9 @@ class Entity {
 	/**
 		The main update method of entity.
 	**/
-	public function update(dt: Float) {}
+	public function update(dt: Float) {
+		for (component in this.__components__) component.update(dt);
+	}
 
 	public function toString(): String {
 		return '[Entity/${this.typeId}:${this.id}]';
