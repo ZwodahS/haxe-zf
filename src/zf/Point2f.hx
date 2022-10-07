@@ -6,6 +6,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 	public var unit(get, never): Point2f;
 	public var abs(get, never): Point2f;
 	public var rad(get, set): Float;
+	public var mag(get, set): Float;
 
 	public function new(x: Float = 0, y: Float = 0) {
 		this = [x, y];
@@ -102,8 +103,11 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 	}
 
 	public function distance(point: Point2f): Float {
-		return hxd.Math.sqrt(hxd.Math.pow(hxd.Math.abs(this[0] - point.x), 2)
-			+ hxd.Math.pow(hxd.Math.abs(this[1] - point.y), 2));
+		return distanceXY(point.x, point.y);
+	}
+
+	public function distanceXY(x: Float, y: Float): Float {
+		return hxd.Math.sqrt(hxd.Math.pow(this[0] - x, 2) + hxd.Math.pow(this[1] - y, 2));
 	}
 
 	public function get_unit(): Point2f {
@@ -135,5 +139,17 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 		this[0] = Math.cos(r) * mag;
 		this[1] = Math.sin(r) * mag;
 		return r;
+	}
+
+	inline public function get_mag(): Float {
+		return hxd.Math.sqrt(hxd.Math.pow(this[0], 2) + hxd.Math.pow(this[1], 2));
+	}
+
+	inline public function set_mag(m: Float): Float {
+		// get the current mag
+		final c = hxd.Math.sqrt(hxd.Math.pow(this[0], 2) + hxd.Math.pow(this[1], 2));
+		this[0] *= (1 / c * m);
+		this[1] *= (1 / c * m);
+		return m;
 	}
 }
