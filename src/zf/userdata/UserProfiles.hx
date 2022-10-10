@@ -18,45 +18,29 @@ class UserProfiles {
 	}
 
 	public function init() {
-		// create the profiles in case it doesn't exists
+		// create the profiles directory in case it doesn't exists
 		savefile.userdata.createDirectory("profiles");
-		// load settings
-		final loadResult = this.savefile.userdata.loadFromPath("profiles/settings.json");
-		switch (loadResult) {
-			case SuccessContent(data):
-				final settings: UserProfilesSettings = data;
-			default:
-#if sys
-				final jsonString = haxe.format.JsonPrinter.print({profiles: [], "default": "default"}, "  ");
-#else
-				final jsonString = haxe.Json.stringify({profiles: []});
-#end
-				this.savefile.userdata.saveToPath("profiles/settings.json", jsonString);
-		}
 	}
 
-	public function getProfile(profileName: String = "default"): UserProfile {
-		if (profiles[profileName] == null) {
+	public function getProfile(profileName: String = "default", create: Bool = true): UserProfile {
+		final folderExists = this.savefile.userdata.exists('profiles/${profileName}');
+		if (profiles[profileName] == null && (folderExists == true || create == true)) {
 			final profile = new UserProfile(this, profileName);
 			profile.init();
 			this.profiles[profileName] = profile;
-			save();
 		}
 		return this.profiles[profileName];
 	}
-
-	/**
-		Save the list of profiles
-	**/
-	public function save() {
-		final struct = {
-			profiles: [for (key => _ in this.profiles) key],
-		}
-#if sys
-		final jsonString = haxe.format.JsonPrinter.print(struct, "  ");
-#else
-		final jsonString = haxe.Json.stringify(struct);
-#end
-		this.savefile.userdata.saveToPath("profiles/settings.json", jsonString);
-	}
 }
+/**
+	Mon 13:28:03 10 Oct 2022
+
+	Removed settings.json from profiles/ path.
+	This should be handled by each game since they might have different saving requirement.
+	For example,
+	games that are profile based might opt to have a final set of profile.
+	games that are more savefile based might opt to use each profile as a world save.
+	Some games might even choose to do both, like having different world save tied to different profiles
+		and also allow for multiple profiles. The requirements for these are hard to know so I don't want to
+		put it in zf yet.
+**/
