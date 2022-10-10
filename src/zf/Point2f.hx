@@ -152,4 +152,39 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 		this[1] *= (1 / c * m);
 		return m;
 	}
+
+	/**
+		Clamp the sum of vector
+
+		start will be modified with the outcome.
+
+		this will return [start.x + move.x, start.y + move.y].
+		if the movement exceed the bound, then the value will be bounded by bound
+
+		Assumption
+		if start / move / bound is not a straight line, the outcome might look weird.
+		if start + move is moving away from bound, it will immediately be set to bound.
+	**/
+	public static function clamp(start: Point2f, move: Point2f, bound: Point2f): Point2f {
+		// handle each axis independently
+		// handle x
+		var valueX = start.x + move.x;
+		if (move.x >= 0) {
+			if (valueX >= bound.x) valueX = bound.x;
+		} else {
+			if (valueX <= bound.x) valueX = bound.x;
+		}
+		start.x = valueX;
+
+		// handle y
+		var valueY = start.y + move.y;
+		if (move.y >= 0) {
+			if (valueY >= bound.y) valueY = bound.y;
+		} else {
+			if (valueY <= bound.y) valueY = bound.y;
+		}
+		start.y = valueY;
+
+		return start;
+	}
 }
