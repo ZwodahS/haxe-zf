@@ -1,5 +1,12 @@
 package zf.ui.builder.components;
 
+typedef AbsoluteLayoutConf = {
+	/**
+		All item in this horizontal
+	**/
+	public var ?items: Array<ComponentConf>;
+}
+
 class AbsoluteLayout extends Component {
 	public function new() {
 		super("layout-absolute");
@@ -27,6 +34,26 @@ class AbsoluteLayout extends Component {
 			if (x != null) c.x = x;
 			if (y != null) c.y = y;
 			obj.addChild(c);
+		}
+		return obj;
+	}
+
+	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
+		final conf: AbsoluteLayoutConf = c;
+		final obj = new h2d.Object();
+		if (conf.items != null) {
+			for (item in conf.items) {
+				final c = context.makeObjectFromStruct(item);
+				if (c == null) {
+					final e = new ComponentException();
+					e.structNode = item;
+					throw e;
+				}
+				final compConf: DynamicAccess<Dynamic> = item.conf;
+				if (compConf.get("x") != null) c.x = compConf.get("x");
+				if (compConf.get("y") != null) c.y = compConf.get("y");
+				obj.addChild(c);
+			}
 		}
 		return obj;
 	}
