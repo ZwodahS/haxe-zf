@@ -148,7 +148,12 @@ class UserData {
 #if sys
 		final actualPath = [this.rootDir, path];
 		final actualPathString = Path.join(actualPath);
-		if (FileSystem.exists(actualPathString)) FileSystem.deleteDirectory(actualPathString);
+		try {
+			if (FileSystem.exists(actualPathString)) FileSystem.deleteDirectory(actualPathString);
+		} catch (e) {
+			Logger.exception(e);
+			return FailureReason("exception", e.toString());
+		}
 #end
 		return Success;
 	}

@@ -35,6 +35,10 @@ class UserProfile {
 		return this.savefile.userdata.createDirectory(path(pathString));
 	}
 
+	public function deleteProfile() {
+		return this.savefile.userdata.deleteDirectory(path(""));
+	}
+
 	public function deleteDirectory(pathString: String) {
 		return this.savefile.userdata.deleteDirectory(path(pathString));
 	}
