@@ -241,7 +241,7 @@ class Game extends hxd.App {
 			if (this.incomingScreen != null) this.incomingScreen.update(dt);
 			if (this.outgoingScreen != null) this.outgoingScreen.update(dt);
 #if debug
-			this.framerate.text = '${zf.MathUtils.round(1 / dt, 1)}';
+			this.framerate.text = '${(1 / dt).round(1)}';
 			if (this.cursorDetail.visible) this.cursorDetail.text = '(${s2d.mouseX}. ${s2d.mouseY})';
 #end
 			if (this.screenState == Exiting) {

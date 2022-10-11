@@ -23,7 +23,7 @@ class MoveByAmountBySpeed extends Update {
 			return;
 		}
 
-		var moveX = dt * this.speed.x * MathUtils.sign(this.amountLeft.x);
+		var moveX = dt * this.speed.x * this.amountLeft.x.sign();
 		if (moveX < 0) {
 			moveX = Math.max(this.amountLeft.x, moveX);
 		} else {
@@ -32,7 +32,7 @@ class MoveByAmountBySpeed extends Update {
 		this.amountLeft.x -= moveX;
 		this.object.x += moveX;
 
-		var moveY = dt * this.speed.y * MathUtils.sign(this.amountLeft.y);
+		var moveY = dt * this.speed.y * this.amountLeft.y.sign();
 		if (moveY < 0) {
 			moveY = Math.max(this.amountLeft.y, moveY);
 		} else {

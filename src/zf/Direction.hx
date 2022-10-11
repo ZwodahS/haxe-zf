@@ -2,9 +2,6 @@ package zf;
 
 import haxe.ds.ArraySort;
 
-using zf.RandExtensions;
-using zf.ds.ArrayExtensions;
-
 /**
 	Direction provide the implementation to handle the 8 direction on a 2D area.
 
@@ -89,8 +86,8 @@ enum abstract Direction(String) from String to String {
 	**/
 	public static function fromXY(x: Int, y: Int): Direction {
 		// clamp the 2 values
-		var xDiff = MathUtils.clampI(x, -1, 1);
-		var yDiff = MathUtils.clampI(y, -1, 1);
+		var xDiff = x.clamp(-1, 1);
+		var yDiff = y.clamp(-1, 1);
 
 		if (xDiff == 0) {
 			if (yDiff == 0) {
