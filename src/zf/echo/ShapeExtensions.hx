@@ -1,8 +1,8 @@
 package zf.echo;
 
+#if echo
 import echo.data.Data.CollisionData;
 
-#if echo
 class ShapeExtensions {
 	public static function getCollisionData(shape1: echo.Shape, body2: echo.Body = null, shape2: echo.Shape = null,
 			shapes2: Array<echo.Shape> = null): CollisionData {
