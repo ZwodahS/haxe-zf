@@ -220,6 +220,13 @@ class ObjectExtensions {
 		return setY(obj, height, AlignCenter, startY);
 	}
 
+	inline public static function center(obj: h2d.Object): h2d.Object {
+		final size = obj.getSize();
+		obj.x = -size.width / 2;
+		obj.y = -size.height / 2;
+		return obj;
+	}
+
 	/** Chain Functions set values and return the object **/
 	/**
 		A chain method for setting the x position
