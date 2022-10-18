@@ -8,7 +8,13 @@ class Component {
 
 	inline function get_typeId() return "Component";
 
-	public var __entity__: Entity;
+	public var __entity__(default, set): Entity;
+
+	inline function set___entity__(e: Entity) {
+		this.__entity__ = e;
+		onEntityUpdated();
+		return this.__entity__;
+	}
 
 	public function dispose() {}
 
@@ -23,4 +29,6 @@ class Component {
 	public function loadStruct(conf: Dynamic) {}
 
 	public function update(dt: Float) {}
+
+	function onEntityUpdated() {}
 }
