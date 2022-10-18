@@ -11,4 +11,8 @@ package zf;
 		this.first = first;
 		this.second = second;
 	}
+
+	public function toString(): String {
+		return '[${this.first},${this.second}]';
+	}
 }
