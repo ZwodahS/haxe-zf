@@ -221,9 +221,9 @@ class ObjectExtensions {
 	}
 
 	inline public static function center(obj: h2d.Object): h2d.Object {
-		final size = obj.getSize();
-		obj.x = -size.width / 2;
-		obj.y = -size.height / 2;
+		final bounds = obj.getBounds();
+		obj.x = bounds.xMin - (bounds.width / 2);
+		obj.y = bounds.yMin - (bounds.height / 2);
 		return obj;
 	}
 
