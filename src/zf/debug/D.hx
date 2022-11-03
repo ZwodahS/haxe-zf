@@ -1,5 +1,6 @@
 package zf.debug;
 
+import zf.ui.UIElement;
 import zf.h2d.Interactive;
 
 /**
@@ -11,21 +12,25 @@ import zf.h2d.Interactive;
 	WIP, will upgrade this later on
 **/
 class UIElementMove extends h2d.Object {
-	public var object: h2d.Object;
+	public static var FontSize: Int = 6;
 
-	public var interactive: Interactive;
-	public var infoObject: h2d.Object;
-	public var text: h2d.Text;
-	public var bg: h2d.Bitmap;
-	public var f: Int = 0;
+	var object: h2d.Object;
+	var uiElement: UIElement;
+	var interactive: Interactive;
+
+	var infoObject: h2d.Object;
+	var text: h2d.Text;
+	var bg: h2d.Bitmap;
+	var f: Int = 0;
 
 	public function new(object: h2d.Object) {
 		super();
 		this.object = object;
 		final size = this.object.getSize();
-		this.interactive = new Interactive(Std.int(size.width), Std.int(size.height), object);
+		final isUIElement = Std.isOfType(object, UIElement);
 		final font = hxd.res.DefaultFont.get().clone();
-		font.resizeTo(6);
+		font.resizeTo(FontSize);
+
 		this.text = new h2d.Text(font);
 		this.infoObject = new h2d.Object();
 		this.bg = new h2d.Bitmap(h2d.Tile.fromColor(0x000000, 1, 1));
@@ -35,49 +40,92 @@ class UIElementMove extends h2d.Object {
 		this.infoObject.addChild(bg);
 		this.infoObject.addChild(this.text);
 
-		this.interactive.onPush = (e) -> {
-			final scene = this.object.getScene();
-			this.interactive.startCapture(function(e) {
-				switch (e.kind) {
-					case ERelease, EReleaseOutside:
-						scene.stopCapture();
-						final bound = this.object.getBounds();
-						final parentBound = this.object.parent.getBounds();
-						this.text.text = [
-							'[${bound.xMin}, ${bound.yMin}, ${bound.xMax}, ${bound.yMax}]',
-							'[${parentBound.xMax - bound.xMax}, ${parentBound.yMax - bound.yMax}]',
-						].join("\n");
-						this.text.textColor = 0xffffffff;
-						final scene = this.getScene();
-						if (scene != null) {
-							scene.addChild(this.infoObject);
-							infoObject.x = scene.mouseX;
-							infoObject.y = scene.mouseY;
-							final size = this.text.getSize();
-							this.bg.width = size.width + 4;
-							this.bg.height = size.height + 4;
-						}
-						this.f = 300;
-					case EPush:
-					case EMove:
-						final parent = object.parent;
-						if (parent == null) {
-							scene.stopCapture();
-							return;
-						}
-						final positionX = scene.mouseX;
-						final positionY = scene.mouseY;
-						final pos = parent.globalToLocal(new h2d.col.Point(positionX, positionY));
-						object.x = pos.x - this.interactive.width / 2;
-						object.y = pos.y - this.interactive.height / 2;
-					case EKeyDown:
-					case EKeyUp:
-					default:
-				}
-				e.propagate = false;
-			});
+		if (isUIElement == true) {
+			this.uiElement = cast object;
+			this.uiElement.addOnPushListener("D", onPush);
+			this.uiElement.addOnClickListener("D", onClick);
+		} else {
+			this.interactive = new Interactive(Std.int(size.width), Std.int(size.height), object);
+			this.interactive.enableRightButton = true;
+			this.interactive.onPush = onPush;
+			this.interactive.onClick = onClick;
 		}
+
 		this.object.addChild(this);
+	}
+
+	function onClick(e: hxd.Event) {
+		if (e.button == 1) {
+			final bound = this.object.getBounds(this.object.parent);
+			final global = this.object.getBounds();
+			var parentBound = null;
+			if (this.object.parent.parent == null) { // parent is at the root level
+				parentBound = this.object.parent.getBounds();
+			} else {
+				parentBound = this.object.parent.getBounds(this.object.parent.parent);
+			}
+			final bottomX = parentBound.xMax - bound.xMax;
+			final bottomY = parentBound.yMax - bound.yMax;
+			this.text.text = [
+				'Object position      : [${object.x}, ${object.y}]',
+				'Object Bound (parent): [${bound.xMin}, ${bound.yMin}, ${bound.xMax}, ${bound.yMax}]',
+				'Object Bound (global): [${global.xMin}, ${global.yMin}, ${global.xMax}, ${global.yMax}]',
+				'Object Bottom Anchor : [${bottomX}, ${bottomY}]',
+			].join("\n");
+			trace(this.text.text);
+			this.text.textColor = 0xffffffff;
+			final scene = this.getScene();
+			if (scene != null) {
+				scene.addChild(this.infoObject);
+				infoObject.x = scene.mouseX;
+				infoObject.y = scene.mouseY;
+				final size = this.text.getSize();
+				this.bg.width = size.width + 4;
+				this.bg.height = size.height + 4;
+				this.f = 300;
+			}
+		}
+	}
+
+	function onPush(e: hxd.Event) {
+		if (e.button == 1) return;
+		final scene = this.object.getScene();
+		var offsetX = e.relX;
+		var offsetY = e.relY;
+		if (this.uiElement != null) {
+			@:privateAccess var pos = this.uiElement.interactive.localToGlobal(new h2d.col.Point(offsetX, offsetY));
+			pos = this.uiElement.globalToLocal(pos);
+			offsetX = pos.x;
+			offsetY = pos.y;
+
+			@:privateAccess this.uiElement.interactive.startCapture(capture.bind(offsetX, offsetY));
+		} else {
+			this.interactive.startCapture(capture.bind(offsetX, offsetY));
+		}
+	}
+
+	function capture(offsetX: Float, offsetY: Float, e: hxd.Event) {
+		final scene = this.object.getScene();
+		switch (e.kind) {
+			case ERelease, EReleaseOutside:
+				scene.stopCapture();
+			case EPush:
+			case EMove:
+				final parent = object.parent;
+				if (parent == null) {
+					scene.stopCapture();
+					return;
+				}
+				final positionX = scene.mouseX;
+				final positionY = scene.mouseY;
+				final pos = parent.globalToLocal(new h2d.col.Point(positionX, positionY));
+				object.x = pos.x - offsetX;
+				object.y = pos.y - offsetY;
+			case EKeyDown:
+			case EKeyUp:
+			default:
+		}
+		e.propagate = false;
 	}
 
 	override function sync(ctx: h2d.RenderContext) {
