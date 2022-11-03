@@ -173,6 +173,16 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 		};
 	}
 
+	@:to
+	public function toh2dBounds(): h2d.col.Bounds {
+		final b = new h2d.col.Bounds();
+		b.xMin = this[0];
+		b.yMin = this[1];
+		b.xMax = this[2];
+		b.yMax = this[3];
+		return b;
+	}
+
 	public static function intersectType(aMin: Float, aMax: Float, bMin: Float,
 			bMax): {amount: Float, type: IntersectType} {
 		if (aMin >= bMax || bMin >= aMax) return {amount: 0, type: None};
