@@ -74,15 +74,41 @@ class Logger {
 #end
 	}
 
-	inline public static function exception(e: haxe.Exception) {
+	inline public static function exception(e: haxe.Exception, stackItems: Array<haxe.CallStack.StackItem> = null) {
 #if debug
 		if (Std.isOfType(e, AssertionFail)) {
 			haxe.Log.trace(e.message, null);
 		} else {
 			for (es in haxe.CallStack.exceptionStack()) trace(es);
 			haxe.Log.trace(e, null);
-			trace(e.stack);
+			if (stackItems != null) {
+				for (s in stackItems) {
+					haxe.Log.trace('Called from ${stackItemToString(s)}', null);
+				}
+			} else {
+				haxe.Log.trace(e.stack, null);
+			}
 		}
 #end
+	}
+
+	public static function stackItemToString(s: haxe.CallStack.StackItem) {
+		switch (s) {
+			case Module(m):
+				return '${m}';
+			case FilePos(s, file, line, _):
+				if (s == null) {
+					return '${file}:${line}';
+				} else {
+					return '${stackItemToString(s)} (${file}:${line})';
+				}
+			case Method(cn, method):
+				if (cn == null) return '${method}';
+				return '${cn}.${method}';
+			case LocalFunction(v):
+				return '$' + '${v}';
+			case CFunction:
+				return 'CFunction';
+		}
 	}
 }
