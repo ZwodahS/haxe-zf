@@ -1,7 +1,11 @@
-package zf.ui;
+package zf.deprecated.ui;
 
 /**
 	Generic Text Button without any image
+
+	Wed 11:52:37 09 Nov 2022
+	This is deprecated as part of the move towards using zf.ui.UIElement
+	Kept here as there are some games that are still using it and I am not ready to move them yet.
 **/
 class GenericTextButton extends Button {
 	public var text: h2d.Text;

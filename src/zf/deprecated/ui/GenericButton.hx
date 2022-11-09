@@ -1,9 +1,13 @@
-package zf.ui;
+package zf.deprecated.ui;
 
 using zf.h2d.ObjectExtensions;
 
 /**
 	Generic Button using a h2d.Object as background with a text
+
+	Wed 11:34:48 09 Nov 2022
+	This is deprecated as part of the move towards using zf.ui.UIElement
+	Kept here as there are some games that are still using it and I am not ready to move them yet.
 **/
 class GenericButton extends Button {
 	/**

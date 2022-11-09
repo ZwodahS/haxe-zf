@@ -20,6 +20,10 @@ import zf.h2d.Interactive;
 	WIP, might want to change of the code here but the idea should be quite fixed.
 	Essentially this will be a generalised form of zf.ui.Button
 	Ideally that will be refactored to extend this instead.
+
+	Mon 11:44:42 07 Nov 2022
+	Another question is whether or not we want Windows to extends this.
+	For now we will opt not to do that.
 **/
 class UIElement extends h2d.Object {
 	var interactive(default, set): Interactive;
@@ -41,6 +45,20 @@ class UIElement extends h2d.Object {
 		return this.interactive;
 	}
 
+	/**
+		This bounds "overrides" the bound instead of using the rendering bound
+		@todo override getBounds() and getSize() method later
+	**/
+	public var bounds: h2d.col.Bounds = null;
+
+	public var width(get, never): Float;
+
+	function get_width() return getSize().width;
+
+	public var height(get, never): Float;
+
+	function get_height() return getSize().height;
+
 	public function new() {
 		super();
 	}
@@ -48,6 +66,7 @@ class UIElement extends h2d.Object {
 	function onInteractiveAttached() {
 		if (this.interactive == null) return;
 		this.interactive.enableRightButton = true;
+		this.interactive.propagateEvents = false;
 
 		this.interactive.dyOnRemove = function() {
 			_dyOnRemove();
@@ -146,7 +165,6 @@ class UIElement extends h2d.Object {
 	var onClickListeners: Array<Pair<String, hxd.Event->Void>> = [];
 
 	public function _onClick(e: hxd.Event) {
-		// ISTOPHERE
 		for (p in this.onClickListeners) p.second(e);
 	}
 

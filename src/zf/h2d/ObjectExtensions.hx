@@ -436,6 +436,11 @@ class ObjectExtensions {
 		return obj;
 	}
 
+	public static function cSetColor(obj: h2d.Drawable, color: Int): h2d.Drawable {
+		obj.color.setColor(color);
+		return obj;
+	}
+
 	public static function isReallyVisible(obj: h2d.Object): Bool {
 		// recursively check if parent is visible
 		if (!obj.visible) return false;
