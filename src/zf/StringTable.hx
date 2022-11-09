@@ -2,6 +2,7 @@ package zf;
 
 class StringTable {
 	public var langs: Map<String, Map<String, haxe.Template>>;
+	public var conf: Map<String, DynamicAccess<Dynamic>>;
 
 	public static final Default = "en";
 
@@ -9,6 +10,7 @@ class StringTable {
 
 	public function new() {
 		this.langs = new Map<String, Map<String, haxe.Template>>();
+		this.conf = new Map<String, DynamicAccess<Dynamic>>();
 	}
 
 	public function getTemplate(id: String): haxe.Template {
@@ -32,6 +34,8 @@ class StringTable {
 		try {
 			final data = hxd.Res.load(path).toText();
 			final conf: DynamicAccess<Dynamic> = haxe.Json.parse(data);
+			// @todo if we have multiple strings, we will need to merge this later.
+			this.conf[lang] = conf;
 			final strings = new Map<String, haxe.Template>();
 
 			function parse(c: DynamicAccess<Dynamic>, path: Array<String>) {
