@@ -5,6 +5,8 @@ using zf.ds.ArrayExtensions;
 using StringTools;
 
 typedef TextConf = {
+	public var ?name: String;
+
 	/**
 		font to use
 	**/
@@ -140,6 +142,7 @@ class Text extends Component {
 				hasText = true;
 			}
 		}
+		if (conf.get("name") != null) textObject.name = conf.get("name");
 
 		return {text: textObject, hasText: hasText};
 	}
