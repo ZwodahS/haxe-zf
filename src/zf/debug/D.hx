@@ -28,6 +28,7 @@ class UIElementMove extends h2d.Object {
 		this.object = object;
 		final size = this.object.getSize();
 		final isUIElement = Std.isOfType(object, UIElement);
+		if (isUIElement == true) this.uiElement = cast object;
 		final font = hxd.res.DefaultFont.get().clone();
 		font.resizeTo(FontSize);
 
@@ -40,8 +41,8 @@ class UIElementMove extends h2d.Object {
 		this.infoObject.addChild(bg);
 		this.infoObject.addChild(this.text);
 
-		if (isUIElement == true) {
-			this.uiElement = cast object;
+		@:privateAccess
+		if (isUIElement == true && this.uiElement.interactive != null) {
 			this.uiElement.addOnPushListener("D", onPush);
 			this.uiElement.addOnClickListener("D", onClick);
 		} else {
@@ -92,7 +93,8 @@ class UIElementMove extends h2d.Object {
 		final scene = this.object.getScene();
 		var offsetX = e.relX;
 		var offsetY = e.relY;
-		if (this.uiElement != null) {
+		@:privateAccess
+		if (this.uiElement != null && this.uiElement.interactive != null) {
 			@:privateAccess var pos = this.uiElement.interactive.localToGlobal(new h2d.col.Point(offsetX, offsetY));
 			pos = this.uiElement.globalToLocal(pos);
 			offsetX = pos.x;
@@ -119,8 +121,8 @@ class UIElementMove extends h2d.Object {
 				final positionX = scene.mouseX;
 				final positionY = scene.mouseY;
 				final pos = parent.globalToLocal(new h2d.col.Point(positionX, positionY));
-				object.x = pos.x - offsetX;
-				object.y = pos.y - offsetY;
+				object.x = Std.int(pos.x - offsetX);
+				object.y = Std.int(pos.y - offsetY);
 			case EKeyDown:
 			case EKeyUp:
 			default:
