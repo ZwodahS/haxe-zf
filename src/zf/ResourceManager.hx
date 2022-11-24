@@ -47,17 +47,19 @@ class ResourceManager {
 	}
 
 	public function getTiles(id: String, start: Int = 0, end: Int = -1): Array<h2d.Tile> {
-		final asset = getAsset2D(id);
+		var asset = getAsset2D(id);
 		return asset == null ? null : asset.getTiles(start, end);
 	}
 
-	public function getBitmap(id: String, index: Int = 0): h2d.Bitmap {
-		final asset = getAsset2D(id);
+	public function getBitmap(id: String, index: Int = 0, fallback: String = null): h2d.Bitmap {
+		var asset = getAsset2D(id);
+		if (fallback != null && asset == null) asset = getAsset2D(fallback);
 		return asset == null ? null : asset.getBitmap(index);
 	}
 
-	public function getBitmaps(id: String, start: Int = 0, end: Int = -1): Array<h2d.Bitmap> {
-		final asset = getAsset2D(id);
+	public function getBitmaps(id: String, start: Int = 0, end: Int = -1, fallback: String = null): Array<h2d.Bitmap> {
+		var asset = getAsset2D(id);
+		if (fallback != null && asset == null) asset = getAsset2D(fallback);
 		return asset == null ? null : asset.getBitmaps(start, end);
 	}
 
