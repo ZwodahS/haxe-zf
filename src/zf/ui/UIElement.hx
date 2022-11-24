@@ -98,6 +98,10 @@ class UIElement extends h2d.Object {
 			updateRendering();
 			_onRelease(e);
 		}
+		this.interactive.onWheel = function(e: hxd.Event) {
+			updateRendering();
+			_onWheel(e);
+		}
 	}
 
 	function updateRendering() {}
@@ -280,6 +284,31 @@ class UIElement extends h2d.Object {
 		for (o in this.onReleaseListeners) {
 			if (o.first == id) {
 				this.onReleaseListeners.remove(o);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// ---- On Wheel ---- //
+	var onWheelListeners: Array<Pair<String, hxd.Event->Void>> = [];
+
+	public function _onWheel(e: hxd.Event) {
+		for (p in this.onWheelListeners) p.second(e);
+	}
+
+	public function addOnWheelListener(id: String, func: hxd.Event->Void): Bool {
+		for (o in this.onWheelListeners) {
+			if (o.first == id) return false;
+		}
+		this.onWheelListeners.push(new Pair(id, func));
+		return true;
+	}
+
+	public function removeOnWheelListener(id: String): Bool {
+		for (o in this.onWheelListeners) {
+			if (o.first == id) {
+				this.onWheelListeners.remove(o);
 				return true;
 			}
 		}
