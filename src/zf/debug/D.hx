@@ -147,4 +147,13 @@ class D {
 		return new UIElementMove(object);
 #end
 	}
+
+	public static function makeDebugDraw(object: h2d.Object): DebugDraw {
+#if !debug
+		Logger.warn("D is used outside of debug mode");
+		return null;
+#else
+		return new DebugDraw(object);
+#end
+	}
 }
