@@ -62,4 +62,14 @@ class Debug {
 	}
 
 	static var counter: Int = 0;
+
+	public static function callstack() {
+#if !debug
+		try {
+			throw new haxe.Exception('e');
+		} catch (e) {
+			Logger.error('${e.stack}');
+		}
+#end
+	}
 }
