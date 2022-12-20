@@ -14,6 +14,8 @@ class Bitmap extends Component {
 	}
 
 	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
-		return context.getBitmap(conf);
+		final bm = context.getBitmap(conf);
+		if (conf.get("name") != null) bm.name = conf.get("name");
+		return bm;
 	}
 }
