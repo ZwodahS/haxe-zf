@@ -102,6 +102,14 @@ class UIElement extends h2d.Object {
 			updateRendering();
 			_onWheel(e);
 		}
+		this.interactive.onKeyDown = function(e: hxd.Event) {
+			updateRendering();
+			_onKeyDown(e);
+		}
+		this.interactive.onKeyUp = function(e: hxd.Event) {
+			updateRendering();
+			_onKeyUp(e);
+		}
 	}
 
 	function updateRendering() {}
@@ -340,6 +348,56 @@ class UIElement extends h2d.Object {
 		return false;
 	}
 
+	// ---- On Key Down ---- //
+	var onKeyDownListeners: Array<Pair<String, hxd.Event->Void>> = [];
+
+	public function _onKeyDown(e: hxd.Event) {
+		for (p in this.onKeyDownListeners) p.second(e);
+	}
+
+	public function addOnKeyDownListener(id: String, func: hxd.Event->Void): Bool {
+		for (o in this.onKeyDownListeners) {
+			if (o.first == id) return false;
+		}
+		this.onKeyDownListeners.push(new Pair(id, func));
+		return true;
+	}
+
+	public function removeOnKeyDownListener(id: String): Bool {
+		for (o in this.onKeyDownListeners) {
+			if (o.first == id) {
+				this.onKeyDownListeners.remove(o);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// ---- On Key Up ---- //
+	var onKeyUpListeners: Array<Pair<String, hxd.Event->Void>> = [];
+
+	public function _onKeyUp(e: hxd.Event) {
+		for (p in this.onKeyUpListeners) p.second(e);
+	}
+
+	public function addOnKeyUpListener(id: String, func: hxd.Event->Void): Bool {
+		for (o in this.onKeyUpListeners) {
+			if (o.first == id) return false;
+		}
+		this.onKeyUpListeners.push(new Pair(id, func));
+		return true;
+	}
+
+	public function removeOnKeyUpListener(id: String): Bool {
+		for (o in this.onKeyUpListeners) {
+			if (o.first == id) {
+				this.onKeyUpListeners.remove(o);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// ---- remove all listeners ---- //
 	public function removeAllListeners(id: String) {
 		removeOnOutListener(id);
@@ -349,5 +407,10 @@ class UIElement extends h2d.Object {
 		removeOnPushListener(id);
 		removeOnReleaseListener(id);
 		removeOnRemoveListener(id);
+	}
+
+	public function reset() {
+		this.isOver = false;
+		updateRendering();
 	}
 }
