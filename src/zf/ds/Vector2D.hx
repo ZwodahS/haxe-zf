@@ -324,4 +324,12 @@ class Vector2D<T> extends ReadOnlyVector2D<T> {
 	public function getRegion(): Vector2DRegion<T> {
 		return new Vector2DRegion(this);
 	}
+
+	public function loadArray(arr: Array<T>): Bool {
+		if (this.size.x * this.size.y != arr.length) return false;
+		for (i => value in arr) {
+			this.data[i] = value;
+		}
+		return true;
+	}
 }
