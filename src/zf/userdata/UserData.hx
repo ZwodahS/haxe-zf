@@ -144,15 +144,30 @@ class UserData {
 #end
 	}
 
-	public function deleteDirectory(path: String): UserDataResult {
+	public function deleteDirectory(path: String, recursively: Bool = false): UserDataResult {
 #if sys
-		final actualPath = [this.rootDir, path];
-		final actualPathString = Path.join(actualPath);
-		try {
-			if (FileSystem.exists(actualPathString)) FileSystem.deleteDirectory(actualPathString);
-		} catch (e) {
-			Logger.exception(e);
-			return FailureReason("exception", e.toString());
+		final dirFullPath = Path.join([this.rootDir, path]);
+		if (FileSystem.exists(dirFullPath) == false) return Failure;
+		if (recursively == false) {
+			try {
+				if (FileSystem.exists(dirFullPath)) FileSystem.deleteDirectory(dirFullPath);
+			} catch (e) {
+				Logger.exception(e);
+				return FailureReason("exception", e.toString());
+			}
+		} else {
+			// read all the item
+			final names = FileSystem.readDirectory(dirFullPath);
+			for (name in names) {
+				final fullpath = haxe.io.Path.join([dirFullPath, name]);
+				final relativeFullPath = haxe.io.Path.join([path, name]);
+				if (FileSystem.isDirectory(fullpath) == true) {
+					deleteDirectory(relativeFullPath, true);
+				} else {
+					FileSystem.deleteFile(fullpath);
+				}
+			}
+			FileSystem.deleteDirectory(dirFullPath);
 		}
 #end
 		return Success;
