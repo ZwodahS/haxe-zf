@@ -3,7 +3,7 @@ package zf.engine2;
 import zf.engine2.messages.MOnComponentAttached;
 import zf.engine2.messages.MOnComponentDetached;
 
-class Entity {
+class Entity implements Identifiable {
 	// ---- Engine level fields ---- //
 
 	/**
@@ -55,6 +55,10 @@ class Entity {
 		// we will only allow id to be set if the id is -1
 		if (this.id != -1) return this.id;
 		return this.id = id;
+	}
+
+	public function identifier(): String {
+		return 'entity:${id}';
 	}
 
 	/**

@@ -22,12 +22,6 @@ class Component {
 		return '{Component:${this.typeId}}';
 	}
 
-	public function toStruct(): Dynamic {
-		return {};
-	}
-
-	public function loadStruct(conf: Dynamic) {}
-
 	public function update(dt: Float) {}
 
 	function onEntityUpdated() {}

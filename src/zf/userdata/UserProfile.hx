@@ -47,7 +47,7 @@ class UserProfile {
 		return this.savefile.userdata.deleteFile(path(pathString));
 	}
 
-	inline function path(pathString: String): String {
+	public function path(pathString: String): String {
 		return Path.join(["profiles", this.profileName, pathString]);
 	}
 

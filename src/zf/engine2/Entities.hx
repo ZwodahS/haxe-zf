@@ -135,7 +135,16 @@ class ReadOnlyEntities<E: Entity> {
 
 @:access(zf.engine2.Iterator)
 @:access(zf.engine2.KeyValueIterator)
-class Entities<E: Entity> extends ReadOnlyEntities<E> {
+class Entities<E: Entity> extends ReadOnlyEntities<E> implements Identifiable {
+	/**
+		Allow this to be added as Identifiable
+	**/
+	public var id: String = "entities";
+
+	public function identifier(): String {
+		return this.id;
+	}
+
 	public function new() {
 		super();
 	}
