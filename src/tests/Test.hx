@@ -1,7 +1,7 @@
 package tests;
 
-import zf.tests.TestCase;
-import zf.tests.TestRunner;
+import zf.deprecated.tests.TestCase;
+import zf.deprecated.tests.TestRunner;
 
 import tests.zf.ds.*;
 import tests.zf.*;

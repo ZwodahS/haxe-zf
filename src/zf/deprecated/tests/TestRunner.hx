@@ -1,5 +1,8 @@
-package zf.tests;
+package zf.deprecated.tests;
 
+/**
+	@stage:deprecating
+**/
 class TestRunner {
 	var cases: List<TestCase>;
 
@@ -17,3 +20,8 @@ class TestRunner {
 		}
 	}
 }
+
+/**
+	Thu 14:06:39 05 Jan 2023
+	Deprecate this eventually. See zf.tests.TestCase
+**/

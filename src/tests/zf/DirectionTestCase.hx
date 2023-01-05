@@ -3,7 +3,7 @@ package tests.zf;
 import zf.Assert;
 import zf.Point2i;
 import zf.Direction;
-import zf.tests.TestCase;
+import zf.deprecated.tests.TestCase;
 
 class DirectionTestCase extends TestCase {
 	function test_equality() {

@@ -1,10 +1,10 @@
-package zf.tests;
-
-import Console;
+package zf.deprecated.tests;
 
 using StringTools;
 
-// The Console used here comes from console module, not h2d.Console
+/**
+	@stage:deprecating
+**/
 class TestCase {
 	var currentContext: String = "";
 
@@ -13,7 +13,7 @@ class TestCase {
 	public function run() {
 		var c = Type.getClass(this);
 		var className = Type.getClassName(c);
-		Console.log('Running ${className}');
+		trace('Running ${className}');
 		for (name in Type.getInstanceFields(c)) {
 			var field = Reflect.field(this, name);
 			var success = false;
@@ -36,11 +36,11 @@ class TestCase {
 				}
 				this.currentContext = null;
 				if (success) {
-					Console.log('---- Done: ${className}.${name}: <green>Pass</>');
+					trace('---- Done: ${className}.${name}: <green>Pass</>');
 				} else {
-					Console.log('---- Done: ${className}.${name}: <red>Fail</>');
+					trace('---- Done: ${className}.${name}: <red>Fail</>');
 					if (message != null) {
-						Console.log('     <red>Failure</>: ${message}');
+						trace('     <red>Failure</>: ${message}');
 					}
 				}
 			}
@@ -62,9 +62,9 @@ class TestCase {
 			success = false;
 		}
 		if (success) {
-			Console.log('---- Done: SubTest ${className}.${this.currentContext}:${subTestId} <green>Pass</>');
+			trace('---- Done: SubTest ${className}.${this.currentContext}:${subTestId} <green>Pass</>');
 		} else {
-			Console.log('---- Done: SubTest ${className}.${this.currentContext}:${subTestId} <red>Fail</>');
+			trace('---- Done: SubTest ${className}.${this.currentContext}:${subTestId} <red>Fail</>');
 		}
 	}
 
@@ -72,7 +72,7 @@ class TestCase {
 		if (!v) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
 			var msg = '[AssertTrue] [${pos.fileName}:${pos.lineNumber}]: ${v} is not True ${additionalMsg}';
-			Console.error(msg);
+			trace(msg);
 			throw 'Assertion Fail';
 		}
 	}
@@ -81,7 +81,7 @@ class TestCase {
 		if (v1 != v2) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
 			var msg = '[AssertEqual] [${pos.fileName}:${pos.lineNumber}]: ${v1} != ${v2} ${additionalMsg}';
-			Console.error(msg);
+			trace(msg);
 			throw 'Assertion Fail';
 		}
 	}
@@ -90,7 +90,7 @@ class TestCase {
 		if (v1 == v2) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
 			var msg = '[AssertNotEqual] [${pos.fileName}:${pos.lineNumber}]: ${v1} == ${v2} ${additionalMsg}';
-			Console.error(msg);
+			trace(msg);
 			throw 'Assertion Fail';
 		}
 	}
@@ -106,8 +106,15 @@ class TestCase {
 		if (!found) {
 			additionalMsg = additionalMsg == null ? '' : '${additionalMsg}';
 			var msg = '[AssertIn] [${pos.fileName}:${pos.lineNumber}]: ${v1} not found in ${v2} ${additionalMsg}';
-			Console.error(msg);
+			trace(msg);
 			throw 'Assertion Fail';
 		}
 	}
 }
+
+/**
+	Wed 22:19:07 04 Jan 2023
+	I want to deprecate this eventually.
+	Many of the assertion are in the old style, and I should be using Assert.assert instead.
+	We will also need to upgrade the TestRunner later.
+**/

@@ -3,7 +3,7 @@ package tests.zf.ds;
 import zf.Point2i;
 import zf.ds.Vector2D;
 import zf.ds.Vector2DRegion;
-import zf.tests.TestCase;
+import zf.deprecated.tests.TestCase;
 
 class Vector2DRegionTestCase extends TestCase {
 	function test_basic_region_iteration() {

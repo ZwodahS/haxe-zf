@@ -2,7 +2,7 @@ package tests.zf;
 
 import zf.Point2i;
 import zf.Recti;
-import zf.tests.TestCase;
+import zf.deprecated.tests.TestCase;
 
 class RectiTestCase extends TestCase {
 	function test_recti_boundRect() {

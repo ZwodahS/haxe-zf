@@ -1,6 +1,6 @@
 package tests.zf.ds;
 
-import zf.tests.TestCase;
+import zf.deprecated.tests.TestCase;
 import zf.ds.ListExtensions;
 
 class ListExtensionsTestCase extends TestCase {
