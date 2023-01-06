@@ -3,6 +3,8 @@ package zf;
 import haxe.DynamicAccess;
 
 /**
+	@stage:stable
+
 	Allow wrapping of different type of data object and provide generic functions to access properties.
 
 	Currently supported:

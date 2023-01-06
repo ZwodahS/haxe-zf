@@ -5,6 +5,9 @@ import haxe.macro.Context;
 
 import zf.exceptions.AssertionFail;
 
+/**
+	@stage:stable
+**/
 class Logger {
 	macro public static function error(msg: ExprOf<String>, tag: String = null) {
 #if (!loggingLevel || loggingLevel < 10)

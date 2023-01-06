@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class StringUtils {
 	inline public static function formatFloat(v: Float, dp: Int = 0): String {
 		var str = '${v}';

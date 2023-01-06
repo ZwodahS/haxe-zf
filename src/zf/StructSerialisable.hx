@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 interface StructSerialisable {
 	/**
 		Convert a serialisable to a struct

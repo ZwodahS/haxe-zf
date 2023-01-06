@@ -1,5 +1,8 @@
 package zf.ds;
 
+/**
+	@stage:stable
+**/
 class MapExtensions {
 	/**
 		Counter the number of item in a map

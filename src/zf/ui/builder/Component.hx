@@ -1,5 +1,8 @@
 package zf.ui.builder;
 
+/**
+	@stage:stable
+**/
 class Component {
 	public var type: String;
 

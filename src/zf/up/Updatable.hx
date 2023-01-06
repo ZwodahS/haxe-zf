@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	See zf.up.Updater for detailed documentation
 **/
 typedef Updatable = {

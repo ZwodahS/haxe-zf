@@ -4,9 +4,12 @@ import haxe.ds.Vector;
 import haxe.ds.List;
 
 /**
+	@stage:deprecated
+
 	Provide various functionalities related to grid.
 
 	This is mostly deprecated and many of the functionality is moved to more appropriate places.
+	@todo Need to move the last method to Point2i
 **/
 class GridUtils {
 	public static function getCircle(center: Point2i, radius: Int): List<Point2i> {

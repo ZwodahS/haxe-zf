@@ -1,6 +1,8 @@
 package zf;
 
 /**
+	@stage:stable
+
 	Extends hxd.Rand to provide additional functionality.
 **/
 class RandExtensions {

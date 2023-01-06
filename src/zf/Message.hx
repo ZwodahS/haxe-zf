@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class Message {
 	public var type(get, null): String;
 	public var log(get, null): String;

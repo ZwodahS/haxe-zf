@@ -2,6 +2,9 @@ package zf.up.animations;
 
 import zf.h2d.WrappedBatchElement;
 
+/**
+	@stage:stable
+**/
 class Explode extends Update {
 	// takes in an bitmap, split into certain number of square and move them into different direction
 	var original: h2d.Bitmap;

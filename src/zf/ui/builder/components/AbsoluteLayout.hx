@@ -7,6 +7,9 @@ typedef AbsoluteLayoutConf = {
 	public var ?items: Array<ComponentConf>;
 }
 
+/**
+	@stage:stable
+**/
 class AbsoluteLayout extends Component {
 	public function new() {
 		super("layout-absolute");

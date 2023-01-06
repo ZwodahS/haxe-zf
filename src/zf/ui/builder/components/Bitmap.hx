@@ -1,5 +1,8 @@
 package zf.ui.builder.components;
 
+/**
+	@stage:stable
+**/
 class Bitmap extends Component {
 	public function new() {
 		super("bitmap");

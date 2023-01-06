@@ -5,6 +5,9 @@ using zf.h2d.ObjectExtensions;
 import zf.ui.UIElement;
 import zf.h2d.Interactive;
 
+/**
+	@stage:stable
+**/
 class UIElementResize extends h2d.Object {
 	public static var FontSize: Int = 6;
 

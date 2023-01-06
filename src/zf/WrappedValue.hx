@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class WrappedValue<T> {
 	public var value(default, set): T;
 

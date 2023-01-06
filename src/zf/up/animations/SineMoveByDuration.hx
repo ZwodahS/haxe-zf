@@ -1,6 +1,8 @@
 package zf.up.animations;
 
 /**
+	@stage:stable
+
 	Move the object by an amount then returning it back to the original spot.
 
 	This uses sine + time elapsed to calculate the position

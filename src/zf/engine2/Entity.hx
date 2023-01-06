@@ -3,6 +3,9 @@ package zf.engine2;
 import zf.engine2.messages.MOnComponentAttached;
 import zf.engine2.messages.MOnComponentDetached;
 
+/**
+	@stage:stable
+**/
 class Entity implements Identifiable {
 	// ---- Engine level fields ---- //
 

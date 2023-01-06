@@ -1,6 +1,8 @@
 package zf;
 
 /**
+	@stage:stable
+
 	Color will be immutable, so all method will return a new instance of Color
 
 	Methods will be added when needed

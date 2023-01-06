@@ -8,6 +8,9 @@ typedef UserProfilesSettings = {
 	profiles: Array<String>,
 }
 
+/**
+	@stage:stable
+**/
 class UserProfiles {
 	public final savefile: Savefile;
 	public final profiles: Map<String, UserProfile>;
@@ -32,6 +35,7 @@ class UserProfiles {
 		return this.profiles[profileName];
 	}
 }
+
 /**
 	Mon 13:28:03 10 Oct 2022
 

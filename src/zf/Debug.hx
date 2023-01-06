@@ -4,6 +4,11 @@ import haxe.macro.Expr;
 import haxe.macro.PositionTools;
 import haxe.macro.Context;
 
+/**
+	@stage:stable
+
+	Provide various commands and utility for debugging
+**/
 class Debug {
 	macro public static function debug(e: Expr) {
 #if debug
@@ -13,6 +18,7 @@ class Debug {
 #end
 	}
 
+	@:deprecated
 	macro public static function breakpoint() {
 #if debugger
 		// this is currently hardcoded to find "src/ and remove everything before it

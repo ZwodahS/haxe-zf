@@ -1,6 +1,9 @@
 package zf;
 
 /**
+	@stage:stable
+**/
+/**
 	from https://code.haxe.org/category/data-structures/reverse-iterator.html
 **/
 class ReverseIntIterator {

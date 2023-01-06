@@ -1,5 +1,8 @@
 package zf.up.animations;
 
+/**
+	@stage:stable
+**/
 class MoveToLocationBySpeed extends Update {
 	var object: Positionable;
 	var destination: Point2f;

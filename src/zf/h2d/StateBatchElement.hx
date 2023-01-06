@@ -1,11 +1,13 @@
 package zf.h2d;
 
 /**
+	@stage:stable
+
 	StateBatchElement does the same thing as StateObject, except as a BatchElement.
 **/
 class StateBatchElement extends h2d.SpriteBatch.BatchElement {
 	/**
-		Tue Aug  4 12:15:41 2020
+		Tue 12:15:41 04 Aug 2020
 		For now we will deal with each state being a Tile.
 		At some time we will have to handle animation.
 		In StateObject, we uses Anim. In this case, we need the same logic as Anim, and

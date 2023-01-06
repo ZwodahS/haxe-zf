@@ -1,6 +1,8 @@
 package zf;
 
 /**
+	@stage:stable
+
 	Standard compare functions for sorting
 
 	Usage:

@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
 	public var x(get, set): Int;
 	public var y(get, set): Int;

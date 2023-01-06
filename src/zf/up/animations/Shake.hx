@@ -2,6 +2,9 @@ package zf.up.animations;
 
 import zf.Point2f;
 
+/**
+	@stage:stable
+**/
 class Shake extends Update {
 	var object: Positionable;
 	var duration: Float;

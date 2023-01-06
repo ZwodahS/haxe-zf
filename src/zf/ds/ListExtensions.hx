@@ -3,6 +3,8 @@ package zf.ds;
 using zf.ds.ArrayExtensions;
 
 /**
+	@stage:stable
+
 	extends the List with various utility
 **/
 @:access(haxe.ds.List)

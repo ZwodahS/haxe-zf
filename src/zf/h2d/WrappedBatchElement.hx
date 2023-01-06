@@ -4,6 +4,9 @@ import zf.up.animations.Alphable;
 import zf.up.animations.Scalable;
 import zf.up.animations.Positionable;
 
+/**
+	@stage:stable
+**/
 class WrappedBatchElement implements Alphable implements Scalable implements Positionable {
 	public var element: h2d.SpriteBatch.BatchElement;
 

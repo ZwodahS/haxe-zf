@@ -1,5 +1,8 @@
 package zf.debug;
 
+/**
+	@stage:stable
+**/
 class D {
 	public static function makeMovable(object: h2d.Object): UIElementMove {
 #if !debug

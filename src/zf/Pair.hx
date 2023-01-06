@@ -1,6 +1,8 @@
 package zf;
 
 /**
+	@stage:stable
+
 	Sometimes we just want to return 2 data.
 **/
 @:structInit class Pair<A, B> {

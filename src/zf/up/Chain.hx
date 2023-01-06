@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	Chain Update takes in a list of updates, and run them one after another
 **/
 class Chain extends Update {

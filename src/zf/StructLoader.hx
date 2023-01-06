@@ -13,6 +13,8 @@ import zf.exceptions.ResourceLoadException;
 import haxe.DynamicAccess;
 
 /**
+	@stage:stable
+
 	# Motivation
 	When building game, most of the time we will need to have some type of game data be loaded from json.
 	Eventually when that happen, we will create a very big file.
@@ -63,32 +65,6 @@ import haxe.DynamicAccess;
 	3. Key of different types
 	If 2 keys is of different type, it will be replaced if they are both primitive.
 	If one of them is a struct, and the other is a primitive, then an error will occur.
-
-	@todo Fri 14:09:09 18 Mar 2022
-	we might eventually need something that remove all the keys in the parent class,
-	but we will leave it for another day.
-
-	You can also load files within another files
-
-	Example
-
-	File1
-	{
-		"tree": {
-			"$load": ["tree.json"]
-		}
-	}
-
-	tree.json
-	{
-		"leaves": {
-			"$load": ["leaves.json"],
-		},
-		"name": "tree"
-	}
-
-	There may also be a chance for recursive loading because of this. So any recursive load will result in
-	an exception.
 
 	# Usage
 	var struct: zf.Struct = new StructLoader().load(path);
@@ -211,3 +187,32 @@ class StructLoader {
 		}
 	}
 }
+
+/**
+	@todo Fri 14:09:09 18 Mar 2022
+	we might eventually need something that remove all the keys in the parent class,
+	but we will leave it for another day.
+
+	You can also load files within another files
+
+	Example
+
+	File1
+	{
+		"tree": {
+			"$load": ["tree.json"]
+		}
+	}
+
+	tree.json
+	{
+		"leaves": {
+			"$load": ["leaves.json"],
+		},
+		"name": "tree"
+	}
+
+	There may also be a chance for recursive loading because of this. So any recursive load will result in
+	an exception.
+
+**/

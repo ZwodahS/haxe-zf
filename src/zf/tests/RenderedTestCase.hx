@@ -6,6 +6,8 @@ import zf.h2d.Interactive;
 using zf.HtmlUtils;
 
 /**
+	@stage:stable
+
 	Wrap test cases to render onto the screen
 **/
 class RenderedTestCase extends UIElement {

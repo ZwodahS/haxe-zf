@@ -4,9 +4,10 @@ import zf.Assets;
 import zf.exceptions.ResourceLoadException;
 
 /**
+	@stage:stable
+
 	Opinionated Res Manager
 
-	Fri 13:08:23 28 Jan 2022
 	Motivation
 
 	It is quite bad to use spritesheet in the current form because I need to know which sheet

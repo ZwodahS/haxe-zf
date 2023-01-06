@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class Line2i {
 	public static function getLineXYSymmetry(start: Point2i, end: Point2i, reversed: Bool = false): List<Point2i> {
 		// http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm

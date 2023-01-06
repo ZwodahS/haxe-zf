@@ -11,6 +11,9 @@ enum BarType {
 	EmptyBar;
 }
 
+/**
+	@stage:stable
+**/
 class Bar extends h2d.Object {
 	var bg: h2d.Bitmap;
 	var bar: h2d.Bitmap;

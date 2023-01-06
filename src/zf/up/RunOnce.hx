@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	A generic run once update that only run once.
 
 	Optionally, if the function returns a update, it will be run in place.

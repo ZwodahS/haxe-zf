@@ -1,5 +1,8 @@
 package zf.tests;
 
+/**
+	@stage:unstable
+**/
 typedef LogEntry = {
 	/**
 		0 - Info

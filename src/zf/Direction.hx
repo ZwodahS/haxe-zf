@@ -3,24 +3,12 @@ package zf;
 import haxe.ds.ArraySort;
 
 /**
+	@stage:stable
+
 	Direction provide the implementation to handle the 8 direction on a 2D area.
 
 	Notes on using Direction:
 	1. When using direction, it should be used like a primitive.
-
-	Wed 15:34:55 18 Aug 2021
-	Refactored Direction to enum abstract.
-	We will store them as String as Int does not allow for null value and we need it.
-
-	Still testing how I want direction to be implemented.
-	There is no need to know how it is implemented when using it so it should be fine.
-
-	For now we will implement it using String, previously it was implemented using 2 type of enums which was
-	quite hard handle switch statement.
-
-	There might also be some advantage to handle it via bitmask instead to allow for North | East to create NorthEast.
-	However, that creates confusions in cases like North | South.
-	Therefore, it is better not to have to think about it.
 **/
 enum abstract Direction(String) from String to String {
 	public var North = "North";
@@ -472,3 +460,18 @@ enum abstract Direction(String) from String to String {
 		return [ for (x in directionsWithDistance) x.direction ];
 	}
 }
+/**
+	Wed 15:34:55 18 Aug 2021
+	Refactored Direction to enum abstract.
+	We will store them as String as Int does not allow for null value and we need it.
+
+	Still testing how I want direction to be implemented.
+	There is no need to know how it is implemented when using it so it should be fine.
+
+	For now we will implement it using String, previously it was implemented using 2 type of enums which was
+	quite hard handle switch statement.
+
+	There might also be some advantage to handle it via bitmask instead to allow for North | East to create NorthEast.
+	However, that creates confusions in cases like North | South.
+	Therefore, it is better not to have to think about it.
+**/

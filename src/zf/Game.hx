@@ -3,6 +3,8 @@ package zf;
 using zf.h2d.ObjectExtensions;
 
 /**
+	@stage:stable
+
 	Parent Game.hx
 **/
 enum ScreenState {
@@ -343,3 +345,7 @@ class Game extends hxd.App {
 		if (this.currentScreen != null) this.currentScreen.resize(this.s2d.width, this.s2d.height);
 	}
 }
+/**
+	Fri 10:49:27 06 Jan 2023
+	I think the cursor position and debug stuffs should be moved into debug to make the code cleaner.
+**/

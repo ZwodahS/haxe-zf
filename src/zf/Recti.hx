@@ -1,6 +1,8 @@
 package zf;
 
 /**
+	@stage:stable
+
 	Note that Recti behaves differently from Rectf, due to the discrete nature of Recti
 
 	For example, right in this case denote the right most position, rather than the first position after the right

@@ -3,15 +3,8 @@ package zf.up;
 using zf.ds.ListExtensions;
 
 /**
-	Fri 13:08:05 08 Apr 2022
-	- merged Animator from zf.animations -> Updater
-	- move Updater into zf.up to make the updater more multi purpose.
+	@stage:stable
 
-	Also took the opportunity to rename and add new functionalities to the updater
-
-	onFinish in run is also deprecated
-**/
-/**
 	Manage "updates" and provide various wrapper for handling them.
 
 	# Basic
@@ -209,3 +202,13 @@ class Updater {
 		this.updates.clear();
 	}
 }
+
+/**
+	Fri 13:08:05 08 Apr 2022
+	- merged Animator from zf.animations -> Updater
+	- move Updater into zf.up to make the updater more multi purpose.
+
+	Also took the opportunity to rename and add new functionalities to the updater
+
+	onFinish in run is also deprecated
+**/

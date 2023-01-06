@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class StringTable {
 	public var langs: Map<String, Map<String, haxe.Template>>;
 	public var conf: Map<String, DynamicAccess<Dynamic>>;

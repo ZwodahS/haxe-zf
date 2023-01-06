@@ -3,6 +3,8 @@ package zf;
 using zf.ds.ListExtensions;
 
 /**
+	@stage:stable
+
 	Usage:
 		MessageDispatcher.get().listen(Message.TYPE, function(m: Message) {
 			trace("I received a message");

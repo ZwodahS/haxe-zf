@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class Line2f {
 	public var start(get, set): Point2f;
 	public var end(get, set): Point2f;

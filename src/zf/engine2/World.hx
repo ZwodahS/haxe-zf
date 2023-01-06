@@ -2,6 +2,9 @@ package zf.engine2;
 
 import zf.MessageDispatcher;
 
+/**
+	@stage:stable
+**/
 class World {
 	/**
 		List of systems.

@@ -3,6 +3,9 @@ package zf.ui;
 import zf.h2d.ScaleGrid;
 import zf.Assets;
 
+/**
+	@stage:stable
+**/
 class ScaleGridFactory {
 	var borderLeft: Int;
 	var borderRight: Int;

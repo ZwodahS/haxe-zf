@@ -1,5 +1,8 @@
 package zf.math;
 
+/**
+	@stage:stable
+**/
 function round(cls: Class<Math>, number: Float, ?precision = 2): Float {
 	number *= Math.pow(10, precision);
 	return Math.round(number) / Math.pow(10, precision);

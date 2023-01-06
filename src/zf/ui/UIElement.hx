@@ -3,27 +3,9 @@ package zf.ui;
 import zf.h2d.Interactive;
 
 /**
-	Motivation:
+	@stage:stable
 
-	Often I want to create UI Element onto the screen that are not static, like icons, etc.
-	These UI elements usually have features like
-
-	- handling click events
-	- tooltips
-	- disabling
-
-	Due to the architecture, most of the logic are not in the UIElement, but are in the systems.
-	Because of that, I will need to have dynamic functions to handle these interactions,
-	and most of the time I need access to the interactive object.
-
-	Wed 19:58:48 02 Nov 2022
-	WIP, might want to change of the code here but the idea should be quite fixed.
-	Essentially this will be a generalised form of zf.ui.Button
-	Ideally that will be refactored to extend this instead.
-
-	Mon 11:44:42 07 Nov 2022
-	Another question is whether or not we want Windows to extends this.
-	For now we will opt not to do that.
+	A parent class for all UIElement
 **/
 class UIElement extends h2d.Object {
 	var interactive(default, set): Interactive;
@@ -414,3 +396,27 @@ class UIElement extends h2d.Object {
 		updateRendering();
 	}
 }
+
+/**
+	Motivation:
+
+	Often I want to create UI Element onto the screen that are not static, like icons, etc.
+	These UI elements usually have features like
+
+	- handling click events
+	- tooltips
+	- disabling
+
+	Due to the architecture, most of the logic are not in the UIElement, but are in the systems.
+	Because of that, I will need to have dynamic functions to handle these interactions,
+	and most of the time I need access to the interactive object.
+
+	Wed 19:58:48 02 Nov 2022
+	WIP, might want to change of the code here but the idea should be quite fixed.
+	Essentially this will be a generalised form of zf.ui.Button
+	Ideally that will be refactored to extend this instead.
+
+	Mon 11:44:42 07 Nov 2022
+	Another question is whether or not we want Windows to extends this.
+	For now we will opt not to do that.
+**/

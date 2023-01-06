@@ -1,5 +1,8 @@
 package zf.ui.builder;
 
+/**
+	@stage:stable
+**/
 @:structInit
 class BuilderContext {
 	public var builder: Builder;

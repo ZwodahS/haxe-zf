@@ -4,6 +4,8 @@ import zf.ui.WindowRenderSystem.ShowWindowConf;
 import zf.h2d.Interactive;
 
 /**
+	@stage:stable
+
 	A generic tooltip helper
 **/
 class TooltipHelper {

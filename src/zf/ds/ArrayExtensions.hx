@@ -2,6 +2,9 @@ package zf.ds;
 
 using zf.RandExtensions;
 
+/**
+	@stage:stable
+**/
 class ArrayExtensions {
 	/**
 		shuffle an array using hxd.Rand

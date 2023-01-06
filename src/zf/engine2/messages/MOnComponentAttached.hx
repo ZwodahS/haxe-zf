@@ -1,6 +1,8 @@
 package zf.engine2.messages;
 
 /**
+	@stage:stable
+
 	Sent when a component is attached to an entity.
 **/
 class MOnComponentAttached extends zf.Message {

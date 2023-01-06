@@ -4,6 +4,9 @@ interface IntCounter {
 	public function getNextInt(): Int;
 }
 
+/**
+	@stage:stable
+**/
 class SimpleIntCounter implements IntCounter {
 	public var counter(default, null): Int = 0;
 

@@ -1,6 +1,8 @@
 package zf.ui;
 
 /**
+	@stage:stable
+
 	A Html text that can be used to buffer a list of strings
 **/
 class BufferedHtmlText extends h2d.HtmlText {

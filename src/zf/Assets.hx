@@ -3,8 +3,7 @@ package zf;
 import zf.Logger;
 
 /**
-	Fri May 14 00:45:58 2021
-	The old code is moved into zf.deprecated, only the aseprite loading is kept.
+	@stage:stable
 **/
 class AssetsMap {
 	public var map: Map<String, Asset2D>;
@@ -236,3 +235,7 @@ class Assets {
 		return ss;
 	}
 }
+/**
+	Fri 00:45:58 14 May 2021
+	The old code is moved into zf.deprecated, only the aseprite loading is kept.
+**/

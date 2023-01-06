@@ -4,6 +4,9 @@ import haxe.io.Path;
 
 import zf.userdata.UserData;
 
+/**
+	@stage:stable
+**/
 class UserProfile {
 	public final userProfiles: UserProfiles;
 	public final savefile: Savefile;

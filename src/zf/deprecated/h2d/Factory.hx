@@ -1,5 +1,8 @@
-package zf.h2d;
+package zf.deprecated.h2d;
 
+/**
+	@stage:deprecated
+**/
 /**
 	Thu Apr 15 13:02:21 2021
 	Deprecated. Use Object exists instead

@@ -3,6 +3,8 @@ package zf.engine2;
 import zf.MessageDispatcher;
 
 /**
+	@stage:stable
+
 	Abstract parent class of all System.
 **/
 class System {

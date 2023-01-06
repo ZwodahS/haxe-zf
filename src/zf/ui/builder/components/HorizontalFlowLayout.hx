@@ -13,6 +13,8 @@ typedef HorizontalFlowLayoutConf = {
 }
 
 /**
+	@stage:stable
+
 	attributes:
 
 	spacing: Int - the spacing between each item

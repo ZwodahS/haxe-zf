@@ -4,12 +4,10 @@ import zf.ui.UIElement;
 import zf.h2d.Interactive;
 
 /**
+	@stage:stable
+
 	Utility class to help me move ui element around to allow me to place them
-
-	Use this only during development
-
-	Fri 14:43:16 14 Oct 2022
-	WIP, will upgrade this later on
+	Use this only during development/debugging
 **/
 class UIElementMove extends h2d.Object {
 	public static var FontSize: Int = 6;

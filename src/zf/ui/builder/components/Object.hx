@@ -4,6 +4,9 @@ typedef ObjectConf = {
 	public var object: h2d.Object;
 }
 
+/**
+	@stage:stable
+**/
 class Object extends Component {
 	public function new() {
 		super("object");

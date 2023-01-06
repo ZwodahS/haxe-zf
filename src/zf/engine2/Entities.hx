@@ -1,5 +1,8 @@
 package zf.engine2;
 
+/**
+	@stage:stable
+**/
 class Iterator<E: Entity> {
 	var map: ReadOnlyEntities<E>;
 	var keys: Array<Int>;

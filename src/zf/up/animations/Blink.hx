@@ -1,5 +1,8 @@
 package zf.up.animations;
 
+/**
+	@stage:stable
+**/
 class Blink extends Update {
 	var object: Alphable;
 	var duration: Float;

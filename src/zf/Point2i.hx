@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	/**
 		x component of the point

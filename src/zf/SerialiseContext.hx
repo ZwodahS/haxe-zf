@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:unstable
+**/
 class SerialiseContext {
 	public final objects: Map<String, Identifiable>;
 

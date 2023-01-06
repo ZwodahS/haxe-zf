@@ -1,5 +1,8 @@
 package zf.up.animations;
 
+/**
+	@stage:stable
+**/
 class AlphaTo extends Update {
 	var object: Alphable;
 	var alphaTo: Float;

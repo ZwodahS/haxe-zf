@@ -22,6 +22,9 @@ enum IntersectType {
 	}
 }
 
+/**
+	@stage:stable
+**/
 abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 	public var xMin(get, set): Float;
 	public var xMax(get, set): Float;

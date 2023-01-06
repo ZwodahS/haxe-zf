@@ -7,6 +7,8 @@ import sys.FileSystem;
 #end
 
 /**
+	@stage:stable
+
 	A simple save file implementation, wrapped around UserData
 
 	This is opinionated, with a semi fixed folder structure.

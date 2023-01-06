@@ -4,6 +4,9 @@ import zf.h2d.Interactive;
 
 using zf.h2d.ObjectExtensions;
 
+/**
+	@stage:stable
+**/
 @:allow(zf.ui.Button)
 class ObjectsButton extends Button {
 	/**

@@ -3,6 +3,8 @@ package zf.ds;
 import haxe.ds.Vector;
 
 /**
+	@stage:stable
+
 	This provides a 2D Vector by wrapping around a Vector
 **/
 @:access(zf.ds.ReadOnlyVector2D)

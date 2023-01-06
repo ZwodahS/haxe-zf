@@ -9,6 +9,8 @@ import sys.FileSystem;
 import haxe.io.Path;
 
 /**
+	@stage:stable
+
 	UserData is a simple wrapper to handle the saving of data between local file storage and js local storage.
 **/
 class UserData {

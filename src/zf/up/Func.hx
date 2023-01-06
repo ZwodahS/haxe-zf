@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	A generic run function that takes in a delta and run untils it returns true
 **/
 class Func extends Update {

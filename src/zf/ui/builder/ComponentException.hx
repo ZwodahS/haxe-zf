@@ -1,5 +1,8 @@
 package zf.ui.builder;
 
+/**
+	@stage:stable
+**/
 class ComponentException extends haxe.Exception {
 	public var xmlNode: Xml;
 	public var structNode: Dynamic;

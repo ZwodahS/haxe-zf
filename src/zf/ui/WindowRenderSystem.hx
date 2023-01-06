@@ -24,6 +24,8 @@ typedef ShowWindowConf = {
 }
 
 /**
+	@stage:stable
+
 	Manage Window within a certain bound.
 **/
 class WindowRenderSystem {

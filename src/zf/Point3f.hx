@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
 	public var x(get, set): Float;
 	public var y(get, set): Float;

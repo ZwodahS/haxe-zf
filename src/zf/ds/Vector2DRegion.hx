@@ -1,6 +1,8 @@
 package zf.ds;
 
 /**
+	@stage:stable
+
 	This provide a wrapper around a Vector2D to handle sub region.
 **/
 class Vector2DRegionIterator<T> {

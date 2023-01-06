@@ -2,6 +2,9 @@ package zf.h2d.col;
 
 import zf.Rectf;
 
+/**
+	@stage:stable
+**/
 class BoundsExtensions {
 	/**
 		Check if a bound is fully contain in another.

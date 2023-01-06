@@ -64,6 +64,8 @@ class ProbabilityTableRandomIterator<T> {
 }
 
 /**
+	@stage:stable
+
 	The Readonly version of the table.
 	Doesn't not guaranteed immutability since the object can be casted
 **/

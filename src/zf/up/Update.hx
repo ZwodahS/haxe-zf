@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	A generic parent class for all Updatable and provide various useful method
 **/
 class Update {

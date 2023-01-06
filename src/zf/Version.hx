@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class Version {
 	public var major: Int = 0;
 	public var minor: Int = 0;

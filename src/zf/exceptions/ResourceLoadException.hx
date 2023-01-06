@@ -2,6 +2,9 @@ package zf.exceptions;
 
 import haxe.Exception;
 
+/**
+	@stage:stable
+**/
 class ResourceLoadException extends Exception {
 	public var path: String;
 

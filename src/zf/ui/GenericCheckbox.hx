@@ -1,6 +1,8 @@
 package zf.ui;
 
 /**
+	@stage:stable
+
 	Generic Checkbox using h2d.Object as image
 **/
 class GenericCheckbox extends h2d.Layers {

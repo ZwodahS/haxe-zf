@@ -1,5 +1,8 @@
 package zf.up.animations;
 
+/**
+	@stage:stable
+**/
 class Rotate extends Update {
 	var object: Rotatable;
 	var rotateSpeed: Float; // in radians

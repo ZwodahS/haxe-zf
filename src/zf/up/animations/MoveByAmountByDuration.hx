@@ -1,5 +1,8 @@
 package zf.up.animations;
 
+/**
+	@stage:stable
+**/
 class MoveByAmountByDuration extends Update {
 	var object: Positionable;
 	var start: Point2f;

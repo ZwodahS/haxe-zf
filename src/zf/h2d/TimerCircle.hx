@@ -1,5 +1,8 @@
 package zf.h2d;
 
+/**
+	@stage:stable
+**/
 class TimerCircle extends h2d.Layers {
 	public var maxTime(default, set): Float;
 	public var autoReset(default, set): Bool;

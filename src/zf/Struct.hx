@@ -3,6 +3,8 @@ package zf;
 import haxe.DynamicAccess;
 
 /**
+	@stage:stable
+
 	wrapped around a struct (likely a Json) and provide safe method for accessing nested values.
 
 	This is similar to DynamicAccess, but provide better accessor.

@@ -1,6 +1,8 @@
 package zf.ui;
 
 /**
+	@stage:stable
+
 	Provide a data container for
 
 	1. Storing menu items

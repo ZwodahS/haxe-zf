@@ -22,8 +22,9 @@ typedef VerticalFlowLayoutConf = {
 }
 
 /**
-	attributes:
+	@stage:stable
 
+	# Attributes
 	spacing: Int - the spacing between each item
 	align: String - "left"(default), "middle", "right"
 **/

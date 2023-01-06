@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	Batch Update takes in a list of updates, run them together.
 **/
 class Batch extends Update {

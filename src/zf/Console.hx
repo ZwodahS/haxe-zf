@@ -1,11 +1,5 @@
 package zf;
 
-/**
-	Thu 10:57:06 06 Oct 2022
-	Migrate the entire Console over.
-
-	Will probably rewrite this to suit my need in the future.
-**/
 import hxd.Key;
 
 /**
@@ -68,6 +62,8 @@ typedef ConsoleArgDesc = {
 }
 
 /**
+	@stage:stable
+
 	A simple debug console integration.
 
 	Console can be focused manually through `Console.show` and `Console.hide` methods
@@ -642,3 +638,10 @@ class Console #if !macro extends h2d.Object #end {
 	}
 #end
 }
+
+/**
+	Thu 10:57:06 06 Oct 2022
+	Migrate the entire Console over.
+
+	Will probably rewrite this to suit my need in the future.
+**/

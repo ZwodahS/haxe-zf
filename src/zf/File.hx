@@ -2,7 +2,15 @@ package zf;
 
 using StringTools;
 
+/**
+	@stage:deprecating
+**/
 class File {
+	/**
+		Fri 10:47:38 06 Jan 2023
+		I think there should be a better place to handle this.
+		Also, the code should be better if we first replace \r\n with \n then split by \n
+	**/
 	public static function loadStringsFromFile(path: String): Array<String> {
 		var f: hxd.res.Any = null;
 		try {

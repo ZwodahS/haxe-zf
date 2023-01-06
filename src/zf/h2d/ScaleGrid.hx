@@ -3,6 +3,8 @@ package zf.h2d;
 import h2d.RenderContext;
 
 /**
+	@stage:stable
+
 	A simple 9-slice bitmap renderer, forked from h2d.ScaleGrid
 
 	Changes:

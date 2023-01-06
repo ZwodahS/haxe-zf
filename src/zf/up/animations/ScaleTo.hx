@@ -1,5 +1,8 @@
 package zf.up.animations;
 
+/**
+	@stage:stable
+**/
 class ScaleTo extends Update {
 	var object: Scalable;
 	var scaleTo: Point2f;

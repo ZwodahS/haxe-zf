@@ -10,6 +10,9 @@ enum SetMode {
 	AlignCenter;
 }
 
+/**
+	@stage:stable
+**/
 class ObjectExtensions {
 	/**
 		Put an object above another object

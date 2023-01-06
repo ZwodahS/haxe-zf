@@ -3,6 +3,8 @@ package zf.debug;
 using zf.h2d.ObjectExtensions;
 
 /**
+	@stage:stable
+
 	Draw bounding boxes around Interactive.
 
 	Limitation: unable to deal with rotated entity at the moment.

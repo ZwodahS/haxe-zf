@@ -2,6 +2,9 @@ package zf.up.animations;
 
 using zf.h2d.ObjectExtensions;
 
+/**
+	@stage:stable
+**/
 class WrappedObject implements Alphable implements Scalable implements Positionable implements Rotatable {
 	public var object: h2d.Object;
 

@@ -1,6 +1,8 @@
 package zf.ui.builder;
 
 /**
+	@stage:stable
+
 	Build static h2d.Object from xml/struct
 	Unlike domkit, this will not have any css.
 	This should be used only to generate static object that doesn't change, i.e. help screen etc.

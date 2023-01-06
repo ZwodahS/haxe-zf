@@ -46,6 +46,8 @@ typedef TextConf = {
 typedef DropShadowConf = {dx: Float, dy: Float, color: Int, alpha: Float};
 
 /**
+	@stage:stable
+
 	Create HTML Text component
 **/
 class Text extends Component {

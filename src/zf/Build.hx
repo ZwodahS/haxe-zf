@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class Build {
 	/**
 		Taken from https://code.haxe.org/category/macros/add-git-commit-hash-in-build.html

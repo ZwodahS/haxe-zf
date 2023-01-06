@@ -1,6 +1,8 @@
 package zf.up;
 
 /**
+	@stage:stable
+
 	Wait just wait for a duration before finishing
 **/
 class Wait extends Update {

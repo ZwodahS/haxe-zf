@@ -3,6 +3,8 @@ package zf.h2d;
 import hxd.Cursor;
 
 /**
+	@stage:stable
+
 	Override h2d.Interactive to provide a few more functionalities.
 **/
 class Interactive extends h2d.Interactive {

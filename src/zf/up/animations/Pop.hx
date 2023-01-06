@@ -1,6 +1,8 @@
 package zf.up.animations;
 
 /**
+	@stage:stable
+
 	Pop (aka scale) the object, and return it back to the original size.
 **/
 class Pop extends Update {

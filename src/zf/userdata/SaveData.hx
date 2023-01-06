@@ -1,5 +1,8 @@
 package zf.userdata;
 
+/**
+	@stage:stable
+**/
 class SaveData<T: StructData> {
 	public final profile: UserProfile;
 	public final path: String;

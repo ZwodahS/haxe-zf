@@ -1,5 +1,8 @@
 package zf.up;
 
+/**
+	@stage:stable
+**/
 class UpdatableWrap extends Update {
 	var updatable: Updatable;
 

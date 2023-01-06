@@ -1,5 +1,8 @@
 package zf.userdata;
 
+/**
+	@stage:stable
+**/
 enum UserDataResult {
 	NotSupported;
 	BrowserNotEnabled;

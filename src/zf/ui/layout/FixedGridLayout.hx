@@ -2,6 +2,9 @@ package zf.ui.layout;
 
 import zf.ds.Vector2D;
 
+/**
+	@stage:stable
+**/
 class FixedGridLayout extends h2d.Object {
 	var gridSize: Point2i;
 	var items: Vector2D<h2d.Object>;

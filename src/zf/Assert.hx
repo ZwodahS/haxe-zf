@@ -6,6 +6,8 @@ import haxe.macro.Expr;
 import haxe.macro.ExprTools;
 
 /**
+	@stage:stable
+
 	Macro assert function.
 
 	This can be use directly for actual assertion, or in a test case by catching AssertionFail.
@@ -13,6 +15,9 @@ import haxe.macro.ExprTools;
 	when the assertion is not present.
 **/
 class Assert {
+	/**
+		Assert expression is true
+	**/
 	macro public static function assert(expression: ExprOf<Bool>, terminate: Bool = true) {
 #if no_assertion
 		return macro {};
@@ -36,6 +41,9 @@ class Assert {
 #end
 	}
 
+	/**
+		Assert expression is true
+	**/
 	macro public static function assertTrue(expression: ExprOf<Bool>, terminate: Bool = true) {
 #if no_assertion
 		return macro {};
@@ -164,6 +172,9 @@ class Assert {
 #end
 	}
 
+	/**
+		Assert that this is unreachable
+	**/
 	macro public static function unreachable(terminate: Bool = true) {
 #if no_assertion
 		return macro {};

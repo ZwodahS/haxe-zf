@@ -1,6 +1,8 @@
 package zf.engine2;
 
 /**
+	@stage:stable
+
 	Generic Component object
 **/
 class Component {

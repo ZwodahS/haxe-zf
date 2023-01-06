@@ -3,6 +3,8 @@ package zf;
 import zf.ds.Vector2D;
 
 /**
+	@stage:stable
+
 	ChunkMap is a 2D array that allow for infinite coordinates system
 **/
 @:structInit class TranslatedCoord {

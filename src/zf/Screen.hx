@@ -1,5 +1,8 @@
 package zf;
 
+/**
+	@stage:stable
+**/
 class Screen extends h2d.Layers {
 	public var game(default, set): Game;
 
