@@ -1,7 +1,7 @@
 package zf.ui;
 
 /**
-	@stage:stable
+	@stage:unstable
 **/
 class Window extends h2d.Layers {
 	public function new() {
