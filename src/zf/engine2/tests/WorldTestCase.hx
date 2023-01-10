@@ -17,8 +17,11 @@ class WorldTestCase extends TestCase {
 	**/
 	var __world__: zf.engine2.World;
 
-	public function new(testId: String, name: String, world: World) {
+	public function new(testId: String, name: String) {
 		super(testId, name);
+	}
+
+	function initWorld(world: zf.engine2.World) {
 		this.__world__ = world;
 	}
 
