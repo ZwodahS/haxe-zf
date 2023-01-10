@@ -384,6 +384,7 @@ class UIElement extends h2d.Object {
 	public function removeAllListeners(id: String) {
 		removeOnOutListener(id);
 		removeOnOverListener(id);
+		removeOnClickListener(id);
 		removeOnLeftClickListener(id);
 		removeOnRightClickListener(id);
 		removeOnPushListener(id);
