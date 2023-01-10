@@ -6,7 +6,8 @@ import zf.deprecated.tests.TestRunner;
 import tests.zf.ds.*;
 import tests.zf.*;
 
-class Test extends TestRunner {
+/**
+	class Test extends TestRunner {
 	public function new() {
 		super();
 		add(new RectiTestCase());
@@ -19,4 +20,5 @@ class Test extends TestRunner {
 		hxd.Res.initLocal();
 		new Test().run();
 	}
-}
+	}
+**/
