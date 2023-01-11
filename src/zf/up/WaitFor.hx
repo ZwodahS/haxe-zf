@@ -3,7 +3,7 @@ package zf.up;
 /**
 	@stage:stable
 
-	WaitFor animation wait for a function to return true before finishing
+	WaitFor wait for a function to return true before finishing
 	Because this runs on every update, the waitFunc should be something light.
 **/
 class WaitFor extends Update {
