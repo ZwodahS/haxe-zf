@@ -8,7 +8,7 @@ import zf.h2d.Interactive;
 	A parent class for all UIElement
 **/
 class UIElement extends h2d.Object {
-	var interactive(default, set): Interactive;
+	public var interactive(default, set): Interactive;
 
 	public var disabled(default, set): Bool = false;
 
