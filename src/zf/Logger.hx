@@ -9,6 +9,8 @@ import zf.exceptions.AssertionFail;
 	@stage:stable
 **/
 class Logger {
+	public static var PadLength: Int = 15;
+
 	macro public static function error(msg: ExprOf<String>, tag: String = null) {
 #if (!loggingLevel || loggingLevel < 10)
 		return macro {};
@@ -18,7 +20,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ' [Error] ' + $e{msg}, null);
+			haxe.Log.trace(StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' Error: ' + $e{msg}, null);
 		}
 #end
 	}
@@ -32,7 +34,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ' [Warn] ' + $e{msg}, null);
+			haxe.Log.trace(StringTools.lpad($v{tag}, " ", Logger.PadLength) + '  Warn: ' + $e{msg}, null);
 		}
 #end
 	}
@@ -46,7 +48,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ' [Info] ' + $e{msg}, null);
+			haxe.Log.trace(StringTools.lpad($v{tag}, " ", Logger.PadLength) + '  Info: ' + $e{msg}, null);
 		}
 #end
 	}
@@ -58,7 +60,7 @@ class Logger {
 		var location = PositionTools.toLocation(Context.currentPos());
 		final tag = location.file + ":" + location.range.start.line;
 		return macro {
-			haxe.Log.trace($v{tag} + ' [Debug] this code is deprecated.');
+			haxe.Log.trace(StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' Debug: this code is deprecated.');
 		}
 #end
 	}
@@ -72,7 +74,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			haxe.Log.trace($v{tag} + ' [Debug] ' + $e{msg}, null);
+			haxe.Log.trace(StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' Debug: ' + $e{msg}, null);
 		}
 #end
 	}
