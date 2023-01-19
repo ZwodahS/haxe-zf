@@ -14,7 +14,6 @@ class TestCommands {
 		testNames.push("--all");
 		// ---- Test Related commands ----//
 		{
-			@:privateAccess console.bg.alpha = 1;
 			Globals.console.addCommand("test.run", "run a specific test", [
 				{
 					"name": "testName",
@@ -50,6 +49,28 @@ class TestCommands {
 					if (Std.isOfType(game.currentScreen, TestScreen) == false) return;
 					screen = cast(game.currentScreen, TestScreen);
 					screen.concurrent = count;
+				} catch (e) {
+					Logger.exception(e);
+				}
+			});
+		}
+		{
+			Globals.console.addCommand("test.list", "List all the test case name", [], function() {
+				for (testName in testNames) {
+					console.log(testName);
+				}
+			});
+		}
+		{
+			Globals.console.addCommand("test.screen", "Open Test Screen", [], function() {
+				try {
+					var screen: TestScreen = null;
+					if (Std.isOfType(game.currentScreen, TestScreen)) {
+						screen = cast(game.currentScreen, TestScreen);
+					} else {
+						screen = makeScreen();
+						game.switchScreen(screen);
+					}
 				} catch (e) {
 					Logger.exception(e);
 				}

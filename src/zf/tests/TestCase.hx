@@ -115,6 +115,8 @@ class TestCase {
 	**/
 	public function shouldRunNext(): Bool {
 		if (this.waitDelta > 0) return false;
+		if (this.waitFunc != null && this.waitFunc() == false) return false;
+		this.waitFunc = null;
 		return true;
 	}
 
@@ -134,13 +136,37 @@ class TestCase {
 	/**
 		Wait for X seconds before moving to the next step.
 	**/
-	public function wait(w: Float) {
-		this.steps.push({
-			id: "Wait",
-			func: () -> {
-				this.waitDelta = w;
-			}
-		});
+	public function wait(id: String = null, w: Float) {
+		// if the test case is already running, we don't add it to the steps, we just run it
+		if (this.ind != -1) {
+			this.waitDelta = w;
+		} else {
+			this.steps.push({
+				id: id == null ? "Wait" : id,
+				func: () -> {
+					this.waitDelta = w;
+				}
+			});
+		}
+	}
+
+	var waitFunc: Void->Bool = null;
+
+	/**
+		Wait until a function return true
+	**/
+	public function waitFor(id: String = null, f: Void->Bool) {
+		// if the test case is already running, we don't add it to the steps, we just run it
+		if (this.ind != -1) {
+			this.waitFunc = f;
+		} else {
+			this.steps.push({
+				id: id == null ? "WaitFor" : id,
+				func: () -> {
+					this.waitFunc = f;
+				}
+			});
+		}
 	}
 
 	// ---- Logging ---- //

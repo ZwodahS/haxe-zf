@@ -46,7 +46,7 @@ class TestRunner {
 				stackItems: stackItems,
 				exception: e,
 				step: this.current.ind,
-				stepId: this.current.steps[this.current.ind].id,
+				stepId: this.current.ind < 0 ? null : this.current.steps[this.current.ind].id,
 			});
 			return;
 		}

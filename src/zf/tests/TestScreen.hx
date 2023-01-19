@@ -403,7 +403,6 @@ class TestScreen extends zf.Screen {
 
 	function runTests(tests: Iterator<String>) {
 		for (t in tests) {
-			trace(t);
 			final tc = availableTests[t];
 			if (tc == null) continue;
 
