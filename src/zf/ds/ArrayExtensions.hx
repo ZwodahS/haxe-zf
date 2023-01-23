@@ -122,6 +122,24 @@ class ArrayExtensions {
 		return arr.length == 0 ? null : arr[arr.length - 1];
 	}
 
+	/**
+		Split an array into multiple array with groupSize.
+		Return Array of Array<T>
+		The first N-1 array will contain `groupSize` elements and last array will contain up to groupSize elements.
+	**/
+	public static function splitIntoGroups<T>(arr: Array<T>, groupSize: Int): Array<Array<T>> {
+		var groups: Array<Array<T>> = [];
+		var i = 0;
+		while (i < arr.length) {
+			var end = i + groupSize;
+			if (end > arr.length) end = arr.length;
+			final group = arr.slice(i, end);
+			groups.push(group);
+			i += groupSize;
+		}
+		return groups;
+	}
+
 	public static function isEqual<T>(arr1: Array<T>, arr2: Array<T>): Bool {
 		if (arr1.length != arr2.length) return false;
 		for (ind in 0...arr1.length) {
