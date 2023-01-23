@@ -141,6 +141,10 @@ class TestScreen extends zf.Screen {
 	**/
 	public var incomplete: Array<RenderedTestCase>;
 
+	public var success: Array<TestCase>;
+	public var failure: Array<TestCase>;
+	public var running: Array<TestCase>;
+
 	/**
 		Store all the test cases that are available.
 
@@ -173,6 +177,8 @@ class TestScreen extends zf.Screen {
 	var testsScrollMask: h2d.Mask;
 	var testsScrollBar: ScrollBar;
 
+	var testHeader: h2d.HtmlText;
+
 	public var ready(default, null): Bool = false;
 
 	public function new() {
@@ -180,6 +186,9 @@ class TestScreen extends zf.Screen {
 		this.tests = [];
 		this.incomplete = [];
 		this.availableTests = [];
+		this.success = [];
+		this.failure = [];
+		this.running = [];
 		this.runners = [];
 		this.freeRunners = [];
 		this.concurrent = 1;
@@ -353,6 +362,12 @@ class TestScreen extends zf.Screen {
 		this.testsScrollBar.attachTo(this.testsScrollMask);
 		display.addChild(this.testsScrollBar);
 
+		this.testHeader = new h2d.HtmlText(this.fonts[2]);
+		this.testHeader.text = '0 Running | 0/0 Success | 0 Failure';
+		display.addChild(this.testHeader);
+		this.testHeader.x = 0;
+		this.testHeader.y = -10;
+
 		display.x = windowBounds.x;
 		display.y = windowBounds.y;
 		this.controlLayers.addChild(display);
@@ -370,6 +385,15 @@ class TestScreen extends zf.Screen {
 		this.testsScrollMask.scrollBounds = bounds;
 		this.testsScrollMask.scrollY = 0;
 		this.testsScrollBar.onMaskUpdate();
+		updateTestHeader();
+	}
+
+	function updateTestHeader() {
+		this.testHeader.text = [
+			'${this.running.length} ' + 'Running'.font(this.conf.testItem.text.runningColor),
+			'${this.success.length}/${this.tests.length} ' + 'Success'.font(this.conf.testItem.text.successColor),
+			'${this.failure.length} ' + 'Failure'.font(this.conf.testItem.text.failureColor)
+		].join(" | ");
 	}
 
 	public function runCommand(args: Array<String>) {
@@ -500,6 +524,8 @@ class TestScreen extends zf.Screen {
 		final runner = this.freeRunners.shift();
 		Assert.assert(runner.current == null);
 		runner.runTest(tc.test);
+		this.running.push(tc.test);
+		updateTestHeader();
 	}
 
 	function onTestCaseCompleted(runner: TestRunner, testcase: TestCase, testResult: TestResult) {
@@ -511,6 +537,13 @@ class TestScreen extends zf.Screen {
 			// return it back to free runners
 			this.freeRunners.push(runner);
 		}
+		if (testResult.success == true) {
+			this.success.push(testcase);
+		} else {
+			this.failure.push(testcase);
+		}
+		this.running.remove(testcase);
+		updateTestHeader();
 	}
 
 	override public function onEvent(event: hxd.Event) {
