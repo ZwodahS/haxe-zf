@@ -146,7 +146,7 @@ class TestScreen extends zf.Screen {
 
 		All test case's constructor should only take 1 argument, which is the testId
 	**/
-	public var availableTests: Map<String, Class<TestCase>>;
+	public var availableTests: Map<String, (String) -> TestCase>;
 
 	var runners: Array<TestRunner>;
 	var freeRunners: Array<TestRunner>;
@@ -202,8 +202,8 @@ class TestScreen extends zf.Screen {
 		this.fonts.push(font);
 	}
 
-	public function addTestCase(name: String, testcase: Class<TestCase>) {
-		this.availableTests[name] = testcase;
+	public function addTestCase(name: String, makeFunc: String->TestCase) {
+		this.availableTests[name] = makeFunc;
 	}
 
 	function setupUI() {
@@ -406,7 +406,7 @@ class TestScreen extends zf.Screen {
 			final tc = availableTests[t];
 			if (tc == null) continue;
 
-			final test = Type.createInstance(tc, ['${this.game.r.randomInt(zf.Constants.SeedMax)}']);
+			final test = tc('${this.game.r.randomInt(zf.Constants.SeedMax)}');
 
 			final rtc = new RenderedTestCase(this, test);
 			bindTest(rtc);
