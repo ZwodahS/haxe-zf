@@ -71,6 +71,8 @@ class TestCase {
 
 	public var state(default, set): TestCaseState = Init;
 
+	public var updateException: Bool = false;
+
 	public function set_state(s: TestCaseState): TestCaseState {
 		var prev = this.state;
 		this.state = s;

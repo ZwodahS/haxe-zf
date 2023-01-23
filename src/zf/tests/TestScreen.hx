@@ -483,8 +483,9 @@ class TestScreen extends zf.Screen {
 		if (this.selectedTest != null) {
 			if (this.selectedTest.test.runner == null && this.selectedTest.test.state != Init) {
 				try {
-					this.selectedTest.test.update(dt);
+					if (this.selectedTest.test.updateException == false) this.selectedTest.test.update(dt);
 				} catch (e) {
+					this.selectedTest.test.updateException = true;
 					Logger.exception(e);
 				}
 			}

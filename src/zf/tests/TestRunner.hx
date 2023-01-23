@@ -73,12 +73,12 @@ class TestRunner {
 				stepId: nextStep.id,
 			});
 		} catch (e) {
-			this.current.error('Exception !!');
-			this.current.error('${e}');
+			final stackItems = haxe.CallStack.exceptionStack();
+			this.current.exception(e, stackItems);
 			testcaseComplete({
 				success: false,
 				failure: 'EXCEPTION',
-				stackItems: haxe.CallStack.exceptionStack(),
+				stackItems: stackItems,
 				exception: e,
 				step: this.current.ind,
 				stepId: nextStep.id,
