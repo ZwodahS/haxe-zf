@@ -37,6 +37,18 @@ class ResourceManager {
 		}
 	}
 
+	public function addBitmap(id: String, path: String) {
+		final tile = hxd.Res.load(path).toTile();
+
+		/**
+			Wed 20:26:36 25 Jan 2023
+			Hopefully this is not a problem.
+		**/
+		final asset = new Asset2D(id, null, [new zf.Assets.Tile(tile, new h3d.Vector(1, 1, 1, 1), 1, [0, 0])]);
+
+		this.assets2D.add(asset);
+	}
+
 	// ---- Proxy method for Asset2D ---- //
 	inline public function getAsset2D(id: String): Asset2D {
 		return this.assets2D.get(id);
