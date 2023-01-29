@@ -76,7 +76,7 @@ class TestCase {
 	public function set_state(s: TestCaseState): TestCaseState {
 		var prev = this.state;
 		this.state = s;
-		onStateChanged(prev, s);
+		_onStateChanged(prev, s);
 		return this.state;
 	}
 
@@ -203,6 +203,10 @@ class TestCase {
 	}
 
 	dynamic public function onLogAdded(logEntry: LogEntry) {}
+
+	function _onStateChanged(prev: TestCaseState, next: TestCaseState) {
+		this.onStateChanged(prev, next);
+	}
 
 	dynamic public function onStateChanged(prev: TestCaseState, next: TestCaseState) {}
 }
