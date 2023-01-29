@@ -1,5 +1,7 @@
 package zf.ui.builder;
 
+import zf.resources.ResourceManager;
+
 /**
 	@stage:stable
 

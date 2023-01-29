@@ -1,4 +1,4 @@
-package zf;
+package zf.resources;
 
 import zf.Assets;
 import zf.exceptions.ResourceLoadException;
@@ -19,65 +19,80 @@ import zf.exceptions.ResourceLoadException;
 	Need to figure out how I want to handle translation and different font for different languages first.
 **/
 class ResourceManager {
-	var assets2D: AssetsMap;
+	var images: Map<String, ImageResource>;
 
-	/**
-		Stores font name to a map of different font sizes.
-
-		Fri 13:44:41 28 Jan 2022 not sure if we need to store the bitmap version.
-		for now we will not.
-	**/
 	public function new() {
-		this.assets2D = new AssetsMap();
+		this.images = new Map<String, ImageResource>();
 	}
 
+	@:deprecated("Use loadSpritesheet directly")
 	public function addSpritesheet(ss: LoadedSpritesheet) {
 		for (asset in ss.assets) {
-			this.assets2D.add(asset);
+			final resource = new ImageResource(asset.id, asset.tiles);
+			addImageResource(resource);
 		}
 	}
 
-	public function addBitmap(id: String, path: String) {
-		final tile = hxd.Res.load(path).toTile();
+	public function loadSpritesheet(path: String) {
+		final ss = Assets.loadAseSpritesheetConfig(path);
+		if (ss == null) {
+			Logger.warn('Fail to load spritesheet: ${path}');
+			return;
+		}
 
-		/**
-			Wed 20:26:36 25 Jan 2023
-			Hopefully this is not a problem.
-		**/
-		final asset = new Asset2D(id, null, [new zf.Assets.Tile(tile, new h3d.Vector(1, 1, 1, 1), 1, [0, 0])]);
-
-		this.assets2D.add(asset);
+		for (asset in ss.assets) {
+			final resource = new ImageResource(asset.id, asset.tiles);
+			addImageResource(resource);
+		}
 	}
 
-	// ---- Proxy method for Asset2D ---- //
-	inline public function getAsset2D(id: String): Asset2D {
-		return this.assets2D.get(id);
+	public function registerBitmap(id: String, path: String) {
+		final tile = hxd.Res.load(path).toTile();
+		final t = new Tile(tile, new h3d.Vector(1, 1, 1, 1), 1.0, [0, 0]);
+		final resource = new ImageResource(id, [t]);
+		addImageResource(resource);
+	}
+
+	function addImageResource(resource: ImageResource) {
+		if (this.images[resource.id] != null) Logger.warn('Duplicated image loaded: ${resource.id}');
+		this.images[resource.id] = resource;
+	}
+
+	// ---- Getters ---- //
+
+	@:deprecated
+	inline public function getAsset2D(id: String): ImageResource {
+		return getImageResource(id);
+	}
+
+	inline public function getImageResource(id: String): ImageResource {
+		return this.images[id];
 	}
 
 	public function getTile(id: String, index: Int = 0): h2d.Tile {
-		final asset = getAsset2D(id);
+		final asset = getImageResource(id);
 		return asset == null ? null : asset.getTile(index);
 	}
 
 	public function getTiles(id: String, start: Int = 0, end: Int = -1): Array<h2d.Tile> {
-		var asset = getAsset2D(id);
+		var asset = getImageResource(id);
 		return asset == null ? null : asset.getTiles(start, end);
 	}
 
 	public function getBitmap(id: String, index: Int = 0, fallback: String = null): h2d.Bitmap {
-		var asset = getAsset2D(id);
-		if (fallback != null && asset == null) asset = getAsset2D(fallback);
+		var asset = getImageResource(id);
+		if (fallback != null && asset == null) asset = getImageResource(fallback);
 		return asset == null ? null : asset.getBitmap(index);
 	}
 
 	public function getBitmaps(id: String, start: Int = 0, end: Int = -1, fallback: String = null): Array<h2d.Bitmap> {
-		var asset = getAsset2D(id);
-		if (fallback != null && asset == null) asset = getAsset2D(fallback);
+		var asset = getImageResource(id);
+		if (fallback != null && asset == null) asset = getImageResource(fallback);
 		return asset == null ? null : asset.getBitmaps(start, end);
 	}
 
 	public function getAnim(id: String): h2d.Anim {
-		final asset = getAsset2D(id);
+		final asset = getImageResource(id);
 		return asset == null ? null : asset.getAnim();
 	}
 
@@ -93,3 +108,9 @@ class ResourceManager {
 		}
 	}
 }
+
+/**
+	Sun 23:21:48 29 Jan 2023
+	Refactor this slightly to decouple from Asset2D.
+	Eventually might want to deprecate the old Assets
+**/
