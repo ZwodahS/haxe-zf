@@ -8,8 +8,23 @@ import zf.h2d.Interactive;
 	A parent class for all UIElement
 **/
 class UIElement extends h2d.Object {
+	// ---- Interactive Fields ---- //
+
+	/**
+		The main interactive for the UIElement
+	**/
 	public var interactive(default, set): Interactive;
 
+	inline function set_interactive(i: Interactive): Interactive {
+		this.interactive = i;
+		// note that the interactive is not added to any parent.
+		onInteractiveAttached();
+		return this.interactive;
+	}
+
+	/**
+		Set if the element is disabled
+	**/
 	public var disabled(default, set): Bool = false;
 
 	function set_disabled(b: Bool): Bool {
@@ -18,14 +33,12 @@ class UIElement extends h2d.Object {
 		return this.disabled;
 	}
 
+	/**
+		Flag for whether the mouse is over the element
+	**/
 	public var isOver(default, null): Bool = false;
 
-	inline function set_interactive(i: Interactive): Interactive {
-		this.interactive = i;
-		// note that the interactive is not added to any parent.
-		onInteractiveAttached();
-		return this.interactive;
-	}
+	// ---- Bounds Fields ---- //
 
 	/**
 		This bounds "overrides" the bound instead of using the rendering bound
@@ -45,6 +58,10 @@ class UIElement extends h2d.Object {
 		super();
 	}
 
+	/**
+		Handling on Interactive attached.
+		Do not remove super call when overriding
+	**/
 	function onInteractiveAttached() {
 		if (this.interactive == null) return;
 		this.interactive.enableRightButton = true;
@@ -94,7 +111,68 @@ class UIElement extends h2d.Object {
 		}
 	}
 
+	/**
+		Called to update the rendering of the element.
+	**/
 	function updateRendering() {}
+
+	/**
+		Called when the element is shown via WindowRenderSystem
+	**/
+	public function onShow() {}
+
+	/**
+		Called when the element is removed
+	**/
+	public function onHide() {}
+
+	// ---- Tooltips ---- //
+
+	/**
+		If tooltip window is set, this will be shown when on over
+		The tooltipHelper must also be set so we can show the window properly
+	**/
+	public var tooltipWindow(default, set): UIElement;
+
+	public function set_tooltipWindow(e: UIElement): UIElement {
+		this.tooltipWindow = e;
+		if (tooltipWindow == null) {
+			this.removeAllListeners("UIElement.tooltip");
+		} else {
+			this.addOnOverListener("UIElement.tooltip", showTooltip);
+			this.addOnOutListener("UIElement.tooltip", hideTooltip);
+		}
+		return this.tooltipWindow;
+	}
+
+	function showTooltip(e: hxd.Event) {
+		if (this.tooltipWindow == null) return;
+		if (this.tooltipHelper == null) return;
+		this.tooltipHelper.showWindow(this.tooltipWindow, getTooltipBounds(), this.tooltipShowConf);
+	}
+
+	function hideTooltip(e: hxd.Event) {
+		if (this.tooltipWindow == null) return;
+		this.tooltipWindow.remove();
+	}
+
+	/**
+		The relative bound to show the tooltip
+		Ideally, this should return the bounds relative to a common parent of window layer and this element.
+	**/
+	dynamic public function getTooltipBounds(): h2d.col.Bounds {
+		return null;
+	}
+
+	/**
+		The tooltip helper used to show the tooltip window
+	**/
+	public var tooltipHelper: TooltipHelper;
+
+	/**
+		The conf used to show the window
+	**/
+	public var tooltipShowConf: zf.ui.WindowRenderSystem.ShowWindowConf = null;
 
 	// ---- Event handling for the interactive ---- //
 
@@ -396,6 +474,40 @@ class UIElement extends h2d.Object {
 		this.isOver = false;
 		updateRendering();
 	}
+
+	// ---- Override parent methods ---- //
+	override function onRemove() {
+		super.onRemove();
+		this.onHide();
+		if (this.tooltipWindow != null) this.tooltipWindow.remove();
+	}
+
+	// ---- Factory method ---- //
+
+	/**
+		Create a UIElement.
+
+		Tue 16:10:52 31 Jan 2023
+		Extending this class the main way to use this.
+		The child class should handle the interactive creation manually.
+
+		However, sometimes we just want to create a simple element around the object with a interactive
+	**/
+	public static function makeWithObject(object: h2d.Object) {
+		final uie = new UIElement();
+		uie.addChild(object);
+		final bounds = object.getBounds();
+		uie.interactive = new Interactive(bounds.width, bounds.height);
+		uie.addChild(uie.interactive);
+		return uie;
+	}
+
+	public static function makeWithInteractive(size: Point2i) {
+		final uie = new UIElement();
+		uie.interactive = new Interactive(size.x, size.y);
+		uie.addChild(uie.interactive);
+		return uie;
+	}
 }
 
 /**
@@ -420,4 +532,7 @@ class UIElement extends h2d.Object {
 	Mon 11:44:42 07 Nov 2022
 	Another question is whether or not we want Windows to extends this.
 	For now we will opt not to do that.
+
+	Tue 15:08:30 31 Jan 2023
+	Add tooltip handling
 **/

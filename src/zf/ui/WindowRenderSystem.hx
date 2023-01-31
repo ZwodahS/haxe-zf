@@ -61,6 +61,10 @@ class WindowRenderSystem {
 			cast(w, zf.ui.Window).onShow();
 		}
 
+		if (Std.isOfType(w, zf.ui.UIElement)) {
+			cast(w, zf.ui.UIElement).onShow();
+		}
+
 		this.layer.addChild(w);
 
 		if (adjustWindow == true) {
