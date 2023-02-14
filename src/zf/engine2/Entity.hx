@@ -175,4 +175,10 @@ class Entity implements Identifiable {
 		Handle when world is set to the entity.
 	**/
 	function onWorldSet() {}
+
+	public function onStateChanged() {
+		for (component in this.__components__) {
+			component.onStateChanged();
+		}
+	}
 }

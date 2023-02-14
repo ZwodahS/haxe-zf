@@ -27,4 +27,6 @@ class Component {
 	public function update(dt: Float) {}
 
 	function onEntityUpdated() {}
+
+	public function onStateChanged() {}
 }
