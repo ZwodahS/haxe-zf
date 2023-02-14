@@ -8,7 +8,10 @@ using zf.h2d.ObjectExtensions;
 	Draw bounding boxes around Interactive.
 
 	Limitation: unable to deal with rotated entity at the moment.
-	Limitation: only draw h2d.Interactive without shapes or polygon shapes.
+	Limitation: only draw h2d.Interactive without shapes or polygon shapes / circle shapes.
+
+	Thu 13:40:07 09 Feb 2023
+	Some of the code comes from echo library
 **/
 class DebugDraw {
 	public var shape_outline_width: Float = 1;
@@ -23,19 +26,27 @@ class DebugDraw {
 
 	public inline function draw_rect(min_x: Float, min_y: Float, width: Float, height: Float, color: Int,
 			?stroke: Int, alpha: Float = 1.) {
-		canvas.beginFill(color, alpha);
-		stroke != null ? canvas.lineStyle(shape_outline_width, stroke, 1) : canvas.lineStyle();
-		canvas.drawRect(min_x, min_y, width, height);
-		canvas.endFill();
+		this.canvas.beginFill(color, alpha);
+		stroke != null ? this.canvas.lineStyle(shape_outline_width, stroke, 1) : this.canvas.lineStyle();
+		this.canvas.drawRect(min_x, min_y, width, height);
+		this.canvas.endFill();
 	}
 
 	public function draw_polygon(count: Int, vertices: Array<h2d.col.Point>, color: Int, ?stroke: Int,
 			alpha: Float = 1, offsetX: Float = .0, offsetY: Float = .0) {
 		if (count < 2) return;
-		canvas.beginFill(color, alpha);
-		stroke != null ? canvas.lineStyle(shape_outline_width, stroke, 1) : canvas.lineStyle();
-		canvas.moveTo(vertices[count - 1].x + offsetX, vertices[count - 1].y + offsetY);
-		for (i in 0...count) canvas.lineTo(vertices[i].x + offsetX, vertices[i].y + offsetY);
+		this.canvas.beginFill(color, alpha);
+		stroke != null ? this.canvas.lineStyle(shape_outline_width, stroke, 1) : this.canvas.lineStyle();
+		this.canvas.moveTo(vertices[count - 1].x + offsetX, vertices[count - 1].y + offsetY);
+		for (i in 0...count) this.canvas.lineTo(vertices[i].x + offsetX, vertices[i].y + offsetY);
+	}
+
+	public function draw_circle(x: Float, y: Float, radius: Float, color: Int, ?stroke: Int, alpha: Float = 1.,
+			offsetX: Float = .0, offsetY: Float = .0) {
+		this.canvas.beginFill(color, alpha);
+		stroke != null ? this.canvas.lineStyle(shape_outline_width, stroke, 1) : this.canvas.lineStyle();
+		this.canvas.drawCircle(x + offsetX, y + offsetY, radius);
+		this.canvas.endFill();
 	}
 
 	public function draw(parent: h2d.Object) {
@@ -55,6 +66,9 @@ class DebugDraw {
 					for (polygon in shape.polygons) {
 						draw_polygon(polygon.length, polygon, 0xffff0000, 0xffff0000, 0, bounds.xMin, bounds.yMin);
 					}
+				} else if (Std.isOfType(i.shape, h2d.col.Circle)) {
+					final shape: h2d.col.Circle = cast i.shape;
+					draw_circle(shape.x, shape.y, shape.ray, 0xffff0000, 0xffff0000, 0, bounds.xMin, bounds.yMin);
 				}
 			} else {
 				draw_rect(bounds.xMin, bounds.yMin, i.width, i.height, 0xffff0000, 0xffff0000, 0);
