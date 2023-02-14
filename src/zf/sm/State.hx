@@ -4,6 +4,7 @@ package zf.sm;
 	@stage:unstable
 **/
 class State {
+	public var manager: StateManager;
 	public var name: String;
 
 	public function new(name: String) {

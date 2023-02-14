@@ -39,6 +39,7 @@ class StateManager {
 
 	public function registerState(state: State): State {
 		this.states[state.name] = state;
+		state.manager = this;
 		return state;
 	}
 
@@ -51,12 +52,14 @@ class StateManager {
 	public function get(name: String): State {
 		if (this.states[name] == null) return null;
 		final state = this.states[name].copy();
+		state.manager = this;
 		return state;
 	}
 
 	public function set(name: String): State {
 		if (this.states[name] == null) return null;
 		final state = this.states[name].copy();
+		state.manager = this;
 		switchState(state);
 		return state;
 	}
