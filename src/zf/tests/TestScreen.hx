@@ -181,6 +181,8 @@ class TestScreen extends zf.Screen {
 
 	public var ready(default, null): Bool = false;
 
+	public var testfilePath: String = null;
+
 	public function new() {
 		super();
 		this.tests = [];
@@ -405,12 +407,31 @@ class TestScreen extends zf.Screen {
 			}
 		}
 
+		// check for --testfile
+		{
+			final i = args.indexOf("--testfile");
+			if (i != -1) {
+				this.testfilePath = args[i + 1];
+				args.splice(i, 2);
+			}
+		}
+
 		if (args.indexOf("--all") != -1) {
 			runTests(availableTests.keys());
 			return;
 		}
 
 		final toRun = new Map<String, Bool>();
+		{
+			final i = args.indexOf("--infile");
+			if (i != -1) {
+				final infile = args[i + 1];
+				final tests = parseInFile(infile);
+				args.splice(i, 2);
+				for (t in tests) toRun[t] = true;
+			}
+		}
+
 		for (tn in args) {
 			if (tn.endsWith(".*")) {
 				final match = tn.substr(0, tn.length - 2);
@@ -544,6 +565,7 @@ class TestScreen extends zf.Screen {
 		}
 		this.running.remove(testcase);
 		updateTestHeader();
+		if (this.incomplete.length == 0 && this.running.length == 0) this.onAllTestCompleted();
 	}
 
 	override public function onEvent(event: hxd.Event) {
@@ -589,4 +611,48 @@ class TestScreen extends zf.Screen {
 	override public function onScreenExited() {}
 
 	dynamic public function onTestCaseSelected(testcase: TestCase) {}
+
+	public function onAllTestCompleted() {
+		if (this.testfilePath != null) saveTestFile();
+	}
+
+	function parseInFile(infile: String): Array<String> {
+		var tests: Array<String> = [];
+#if sys
+		final content = sys.io.File.getContent(infile);
+		final lines = content.split("\n");
+		for (line in lines) {
+			if (line.startsWith("Failure") == false) continue;
+			final split = line.split("|");
+			tests.push(split[1]);
+		}
+#end
+		return tests;
+	}
+
+	function saveTestFile() {
+		/**
+			File format
+			name,profileid,success|fail
+		**/
+		final success: Array<String> = [];
+
+		final failure: Array<String> = [];
+		for (s in this.success) {
+			success.push('Success|${s.name}|${s.testId}');
+		}
+		success.sort(Compare.string.bind(true, 1));
+
+		for (f in this.failure) {
+			failure.push('Failure|${f.name}|${f.testId}');
+		}
+		failure.sort(Compare.string.bind(true, 1));
+
+		final strs = [];
+		strs.push('--success--');
+		strs.pushArray(success);
+		strs.push('--failure--');
+		strs.pushArray(failure);
+		sys.io.File.saveContent(this.testfilePath, strs.join("\n"));
+	}
 }
