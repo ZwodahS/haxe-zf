@@ -125,6 +125,37 @@ class ReadOnlyProbabilityTable<T> {
 	}
 
 	/**
+		Returns random items from the table
+	**/
+	public function randomItems(count: Int, ?r: Rand, allowDuplicate: Bool = false): Array<T> {
+		r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
+		// make a copy of both
+		var totalChance = this.totalChance;
+		var items: Array<Chance<T>> = [for (c in this.chances) c];
+
+		final out: Array<T> = [];
+		for (_ in 0...count) {
+			final c = r.randomInt(totalChance);
+			final index = _select(items, c);
+			final item = items[index];
+			out.push(item.item);
+			items.splice(index, 1);
+			totalChance -= item.chance;
+			if (items.length == 0) break;
+		}
+		return out;
+	}
+
+	static function _select<T>(chances: Array<Chance<T>>, chance: Int): Int {
+		for (ind => c in chances) {
+			if (c.chance == 0) continue;
+			if (chance < c.chance) return ind;
+			chance -= chance;
+		}
+		return 0;
+	}
+
+	/**
 		return a randomed Iterator of the item in this table
 	**/
 	public function randomList(?r: Rand): ProbabilityTableRandomIterator<T> {
