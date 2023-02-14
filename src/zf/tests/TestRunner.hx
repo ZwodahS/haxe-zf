@@ -24,8 +24,8 @@ class TestRunner {
 		this.current = test;
 		test.runner = this;
 
-		setupTest(test);
 		this.current.state = Running;
+		setupTest(test);
 	}
 
 	public function update(dt: Float) {
@@ -110,7 +110,20 @@ class TestRunner {
 		Can be overriden to provide more functionalities.
 	**/
 	public function setupTest(test: TestCase) {
-		test.setup();
+		try {
+			test.setup();
+		} catch (e) {
+			final stackItems = haxe.CallStack.exceptionStack();
+			this.current.exception(e, stackItems);
+			testcaseComplete({
+				success: false,
+				failure: 'EXCEPTION',
+				stackItems: stackItems,
+				exception: e,
+				step: -1,
+				stepId: 'Setup',
+			});
+		}
 	}
 
 	public function onEvent(event: hxd.Event) {
