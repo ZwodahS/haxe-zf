@@ -135,6 +135,7 @@ class ReadOnlyProbabilityTable<T> {
 
 		final out: Array<T> = [];
 		for (_ in 0...count) {
+			if (items.length == 0) break;
 			final c = r.randomInt(totalChance);
 			final index = _select(items, c);
 			final item = items[index];
