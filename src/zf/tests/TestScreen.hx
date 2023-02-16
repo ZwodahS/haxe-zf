@@ -631,6 +631,7 @@ class TestScreen extends zf.Screen {
 	}
 
 	function saveTestFile() {
+#if sys
 		/**
 			File format
 			name,profileid,success|fail
@@ -654,5 +655,6 @@ class TestScreen extends zf.Screen {
 		strs.push('--failure--');
 		strs.pushArray(failure);
 		sys.io.File.saveContent(this.testfilePath, strs.join("\n"));
+#end
 	}
 }
