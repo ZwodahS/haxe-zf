@@ -544,8 +544,8 @@ class TestScreen extends zf.Screen {
 		final tc = this.incomplete.shift();
 		final runner = this.freeRunners.shift();
 		Assert.assert(runner.current == null);
-		runner.runTest(tc.test);
 		this.running.push(tc.test);
+		runner.runTest(tc.test);
 		updateTestHeader();
 	}
 
