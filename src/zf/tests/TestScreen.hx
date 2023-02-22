@@ -10,7 +10,7 @@ using zf.HtmlUtils;
 using StringTools;
 
 /**
-	@stage:unstable
+	@stage:stable
 
 	Provide a common TestScreen that can be used across all games to run test cases.
 	The test cases can be a normal test case or even simulation of worlds.
@@ -177,11 +177,13 @@ class TestScreen extends zf.Screen {
 	var testsScrollMask: h2d.Mask;
 	var testsScrollBar: ScrollBar;
 
-	var testHeader: h2d.HtmlText;
-
 	public var ready(default, null): Bool = false;
 
 	public var testfilePath: String = null;
+
+	var runningText: zf.ui.TextUIElement;
+	var successText: zf.ui.TextUIElement;
+	var failureText: zf.ui.TextUIElement;
 
 	public function new() {
 		super();
@@ -364,11 +366,36 @@ class TestScreen extends zf.Screen {
 		this.testsScrollBar.attachTo(this.testsScrollMask);
 		display.addChild(this.testsScrollBar);
 
-		this.testHeader = new h2d.HtmlText(this.fonts[2]);
-		this.testHeader.text = '0 Running | 0/0 Success | 0 Failure';
-		display.addChild(this.testHeader);
-		this.testHeader.x = 0;
-		this.testHeader.y = -10;
+		// set up the 3 html
+		this.runningText = new zf.ui.TextUIElement(this.fonts[2]);
+		this.runningText.innerText.textColor = this.conf.testItem.text.runningColor;
+		this.runningText.addOnClickListener("TestScreen", (e) -> {
+			toggleTestsList("running");
+		});
+		this.successText = new zf.ui.TextUIElement(this.fonts[2]);
+		this.successText.innerText.textColor = this.conf.testItem.text.successColor;
+		this.successText.addOnClickListener("TestScreen", (e) -> {
+			toggleTestsList("success");
+		});
+		this.failureText = new zf.ui.TextUIElement(this.fonts[2]);
+		this.failureText.innerText.textColor = this.conf.testItem.text.failureColor;
+		this.failureText.addOnClickListener("TestScreen", (e) -> {
+			toggleTestsList("failure");
+		});
+
+		final testHeaderFlow = new h2d.Flow();
+		testHeaderFlow.layout = Horizontal;
+		testHeaderFlow.horizontalSpacing = 10;
+		testHeaderFlow.addChild(this.runningText);
+		testHeaderFlow.addChild(this.successText);
+		testHeaderFlow.addChild(this.failureText);
+		testHeaderFlow.x = 0;
+		testHeaderFlow.y = -10;
+		display.addChild(testHeaderFlow);
+
+		this.runningText.text = "0 Running";
+		this.successText.text = "0/0 Success";
+		this.failureText.text = "0 Failure";
 
 		display.x = windowBounds.x;
 		display.y = windowBounds.y;
@@ -391,11 +418,35 @@ class TestScreen extends zf.Screen {
 	}
 
 	function updateTestHeader() {
-		this.testHeader.text = [
-			'${this.running.length} ' + 'Running'.font(this.conf.testItem.text.runningColor),
-			'${this.success.length}/${this.tests.length} ' + 'Success'.font(this.conf.testItem.text.successColor),
-			'${this.failure.length} ' + 'Failure'.font(this.conf.testItem.text.failureColor)
-		].join(" | ");
+		this.runningText.text = '${this.running.length} ' + 'Running';
+		this.successText.text = '${this.success.length}/${this.tests.length} ' + 'Success';
+		this.failureText.text = '${this.failure.length} ' + 'Failure';
+	}
+
+	var show: String = null;
+
+	function toggleTestsList(type: String) {
+		if (type == show) type = "all";
+
+		final tests = [];
+		for (test in this.tests) {
+			switch (type) {
+				case "running":
+					if (test.test.state == Running) tests.push(test);
+				case "success":
+					if (test.test.state == Completed && test.test.result.success == true) tests.push(test);
+				case "failure":
+					if (test.test.state == Completed && test.test.result.success == false) tests.push(test);
+				default:
+					tests.push(test);
+			}
+		}
+		this.testsDisplayArea.removeChildren();
+		for (t in tests) {
+			this.testsDisplayArea.addChild(t);
+		}
+		onTestListUpdated();
+		this.show = type;
 	}
 
 	public function runCommand(args: Array<String>) {
