@@ -16,19 +16,19 @@ class StringTable {
 		this.conf = new Map<String, DynamicAccess<Dynamic>>();
 	}
 
-	public function getTemplate(id: String): haxe.Template {
+	public function getTemplate(id: String, logError: Bool = true): haxe.Template {
 		final table = langs[currentLang];
 		if (table != null && table[id] != null) return table[id];
 		final table = langs[Default];
 #if debug
-		if (table[id] == null) Logger.debug('- String not found in default lang: ${id}');
+		if (logError == true && table[id] == null) Logger.debug('- String not found in default lang: ${id}');
 #end
 		return table[id];
 	}
 
-	public function get(id: String, context: Dynamic = null): String {
+	public function get(id: String, context: Dynamic = null, logError: Bool = true): String {
 		if (context == null) context = {}
-		final template = this.getTemplate(id);
+		final template = this.getTemplate(id, logError);
 		if (template == null) return "";
 		return template.execute(context);
 	}
