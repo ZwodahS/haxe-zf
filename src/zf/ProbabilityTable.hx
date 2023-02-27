@@ -151,7 +151,7 @@ class ReadOnlyProbabilityTable<T> {
 		for (ind => c in chances) {
 			if (c.chance == 0) continue;
 			if (chance < c.chance) return ind;
-			chance -= chance;
+			chance -= c.chance;
 		}
 		return 0;
 	}
