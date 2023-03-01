@@ -35,8 +35,17 @@ class ObjectsButton extends Button {
 	var disabledObject: h2d.Object;
 	var selectedObject: h2d.Object;
 
+	public var textOffset(default, set): Point2f;
+
+	public function set_textOffset(v: Point2f): Point2f {
+		this.textOffset = v;
+		alignText();
+		return this.textOffset;
+	}
+
 	function new() {
 		super();
+		this.textOffset = [0, 0];
 	}
 
 	public function set_text(t: String): String {
@@ -51,7 +60,11 @@ class ObjectsButton extends Button {
 	function updateTextLabel() {
 		if (this.textLabel == null) return;
 		this.textLabel.text = this.text;
-		this.textLabel.setY(this.height, AlignCenter);
+	}
+
+	function alignText() {
+		if (this.textLabel == null) return;
+		this.textLabel.setX(this.textOffset.x).setY(this.height, AlignCenter, this.textOffset.y);
 	}
 
 	override function updateRendering() {
