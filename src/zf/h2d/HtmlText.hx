@@ -91,6 +91,13 @@ class HtmlText extends h2d.Text {
 	}
 
 	/**
+		Instead of color #fff for font, use colorId this will be used
+	**/
+	public static dynamic function defaultGetColor(c: String): Int {
+		return 0xffffffff;
+	}
+
+	/**
 		When enabled, condenses extra spaces (carriage-return, line-feed, tabulation and space character) to one space.
 		If not set, uncondensed whitespace is left as is, as well as line-breaks.
 	**/
@@ -183,6 +190,10 @@ class HtmlText extends h2d.Text {
 		var f = defaultLoadFont(name);
 		if (f == null) return this.font;
 		return f;
+	}
+
+	public dynamic function getColor(cId: String): Int {
+		return defaultGetColor(cId);
 	}
 
 	/**
@@ -675,14 +686,25 @@ class HtmlText extends h2d.Text {
 
 			switch (nodeName) {
 				case "font":
+					var hasColorId = false;
 					for (a in e.attributes()) {
 						var v = e.get(a);
 						switch (a.toLowerCase()) {
 							case "color":
+								if (hasColorId == true) continue;
+								/**
+									Technically we want to deprecate this and use colorId instead.
+									We will keep both color and colorId to allow us to have both
+									and always take colorId over color.
+									This way, the old repo will still work.
+								**/
 								if (prevColor == null) prevColor = @:privateAccess this.glyphs.curColor.clone();
 								if (v.charCodeAt(0) == '#'.code && v.length == 4) v = "#" + v.charAt(1)
 									+ v.charAt(1) + v.charAt(2) + v.charAt(2) + v.charAt(3) + v.charAt(3);
 								this.glyphs.setDefaultColor(Std.parseInt("0x" + v.substr(1)));
+							case "colorid":
+								hasColorId = true;
+								this.glyphs.setDefaultColor(this.getColor(v));
 							case "opacity":
 								if (prevColor == null) prevColor = @:privateAccess this.glyphs.curColor.clone();
 								@:privateAccess this.glyphs.curColor.a *= Std.parseFloat(v);
