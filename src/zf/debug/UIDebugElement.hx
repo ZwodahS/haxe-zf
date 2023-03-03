@@ -6,30 +6,54 @@ import zf.h2d.Interactive;
 /**
 	@stage:stable
 
-	Utility class to help me move ui element around to allow me to place them
 	Use this only during development/debugging
+
+	Fri 14:00:05 03 Mar 2023
+	Rename MoveElement to a generic UIDebugElement
+	Extends UIElement instead
 **/
-class UIElementMove extends h2d.Object {
+class UIDebugElement extends UIElement {
 	public static var FontSize: Int = 6;
 
 	var object: h2d.Object;
 	var uiElement: UIElement;
-	var interactive: Interactive;
 
 	var infoObject: h2d.Object;
 	var text: h2d.Text;
 	var bg: h2d.Bitmap;
 	var f: Int = 0;
 
-	public function new(object: h2d.Object) {
+	var moveInteractive: Interactive;
+
+	public function new(object: h2d.Object, allowMove: Bool = true) {
 		super();
 		this.object = object;
-		final size = this.object.getSize();
-		final isUIElement = Std.isOfType(object, UIElement);
-		if (isUIElement == true) this.uiElement = cast object;
+		if (Std.isOfType(object, UIElement) == true) this.uiElement = cast object;
+
+		makeInfoObject();
+
+		if (allowMove == true) makeMove();
+
+		this.object.addChild(this);
+	}
+
+	function makeMove() {
+		@:privateAccess
+		if (this.uiElement != null && this.uiElement.interactive != null) {
+			this.uiElement.addOnPushListener("UIDebugElement.Move", onPush);
+			this.uiElement.addOnClickListener("UIDebugElement.Move", onClick);
+		} else {
+			final size = this.object.getSize();
+			this.moveInteractive = new Interactive(Std.int(size.width), Std.int(size.height), object);
+			this.moveInteractive.enableRightButton = true;
+			this.moveInteractive.onPush = onPush;
+			this.moveInteractive.onClick = onClick;
+		}
+	}
+
+	function makeInfoObject() {
 		final font = hxd.res.DefaultFont.get().clone();
 		font.resizeTo(FontSize);
-
 		this.text = new h2d.Text(font);
 		this.infoObject = new h2d.Object();
 		this.bg = new h2d.Bitmap(h2d.Tile.fromColor(0x000000, 1, 1));
@@ -38,19 +62,6 @@ class UIElementMove extends h2d.Object {
 		this.text.y = 2;
 		this.infoObject.addChild(bg);
 		this.infoObject.addChild(this.text);
-
-		@:privateAccess
-		if (isUIElement == true && this.uiElement.interactive != null) {
-			this.uiElement.addOnPushListener("D", onPush);
-			this.uiElement.addOnClickListener("D", onClick);
-		} else {
-			this.interactive = new Interactive(Std.int(size.width), Std.int(size.height), object);
-			this.interactive.enableRightButton = true;
-			this.interactive.onPush = onPush;
-			this.interactive.onClick = onClick;
-		}
-
-		this.object.addChild(this);
 	}
 
 	function onClick(e: hxd.Event) {
@@ -100,7 +111,7 @@ class UIElementMove extends h2d.Object {
 
 			@:privateAccess this.uiElement.interactive.startCapture(capture.bind(offsetX, offsetY));
 		} else {
-			this.interactive.startCapture(capture.bind(offsetX, offsetY));
+			this.moveInteractive.startCapture(capture.bind(offsetX, offsetY));
 		}
 	}
 

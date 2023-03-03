@@ -4,12 +4,12 @@ package zf.debug;
 	@stage:stable
 **/
 class D {
-	public static function makeMovable(object: h2d.Object): UIElementMove {
+	public static function makeMovable(object: h2d.Object): UIDebugElement {
 #if !debug
 		Logger.warn("D is used outside of debug mode");
 		return null;
 #else
-		return new UIElementMove(object);
+		return new UIDebugElement(object);
 #end
 	}
 
@@ -28,6 +28,15 @@ class D {
 		return null;
 #else
 		return new UIElementResize(object);
+#end
+	}
+
+	public static function make(object: h2d.Object): UIDebugElement {
+#if !debug
+		Logger.warn("D is used outside of debug mode");
+		return null;
+#else
+		return new UIDebugElement(object);
 #end
 	}
 }
