@@ -107,6 +107,16 @@ class ResourceManager {
 			return null;
 		}
 	}
+
+	public static function getXml(path: String, exception: Bool = true): String {
+		try {
+			final string = hxd.Res.load(path).toText();
+			return string;
+		} catch (e) {
+			if (exception) throw new ResourceLoadException(path, e);
+			return null;
+		}
+	}
 }
 
 /**
