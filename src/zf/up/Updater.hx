@@ -92,32 +92,9 @@ class Updater {
 	}
 
 	/**
-		Fri 16:29:28 08 Apr 2022
-		deprecating onFinish.
+		Run a Update
 	**/
-	@:deprecated("onFinish param is deprecated. use whenDone instead")
-	overload public extern inline function run(u: Updatable = null, onFinish: Void->Void = null): Update {
-		return _run(u, null, onFinish);
-	}
-
-	@:deprecated("onFinish param is deprecated. use whenDone instead")
-	overload public extern inline function run(updates: Array<Updatable> = null, onFinish: Void->Void = null): Update {
-		return _run(null, updates, onFinish);
-	}
-
-	overload public extern inline function run(update: Updatable = null): Update {
-		return _run(update, null);
-	}
-
-	overload public extern inline function run(updates: Array<Updatable> = null): Update {
-		return _run(null, updates);
-	}
-
-	/**
-		the main run function.
-	**/
-	@:native('run') @:noCompletion
-	public function _run(u: Updatable = null, updates: Array<Updatable> = null, onFinish: Void->Void = null): Update {
+	public function run(u: Updatable = null, updates: Array<Updatable> = null): Update {
 		// handle the 2 different configurations
 		if (u != null) {
 			var up: Update = null;
@@ -130,13 +107,11 @@ class Updater {
 			}
 			up.init(this);
 			this.updates.push(up);
-			if (onFinish != null) up.whenDone(onFinish);
 			return up;
 		} else if (updates != null) {
 			final batch = new Batch(updates);
 			batch.init(this);
 			this.updates.push(batch);
-			if (onFinish != null) batch.whenDone(onFinish);
 			return batch;
 		} else {
 			return null;
@@ -211,4 +186,7 @@ class Updater {
 	Also took the opportunity to rename and add new functionalities to the updater
 
 	onFinish in run is also deprecated
+
+	Fri 11:18:47 03 Mar 2023
+	- Removed all the deprecated functions / externs for run method
 **/
