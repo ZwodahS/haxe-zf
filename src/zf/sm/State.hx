@@ -28,4 +28,8 @@ class State {
 	public function is(name: String): Bool {
 		return this.name == name;
 	}
+
+	public function toString(): String {
+		return '[State:${name}]';
+	}
 }
