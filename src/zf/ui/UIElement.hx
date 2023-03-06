@@ -2,6 +2,16 @@ package zf.ui;
 
 import zf.h2d.Interactive;
 
+typedef TooltipShowConf = {
+	> zf.ui.WindowRenderSystem.ShowWindowConf,
+
+	/**
+		If this is set to true, then instead of showing above the bounds,
+		the window will be shown at the cursor instead.
+	**/
+	public var ?relativeToCursor: Bool;
+}
+
 /**
 	@stage:stable
 
@@ -109,6 +119,10 @@ class UIElement extends h2d.Object {
 			updateRendering();
 			_onKeyUp(e);
 		}
+		this.interactive.onMove = function(e: hxd.Event) {
+			updateRendering();
+			_onMove(e);
+		}
 	}
 
 	/**
@@ -141,6 +155,7 @@ class UIElement extends h2d.Object {
 		} else {
 			this.addOnOverListener("UIElement.tooltip", showTooltip);
 			this.addOnOutListener("UIElement.tooltip", hideTooltip);
+			this.addOnMoveListener("UIElement.tooltip", moveTooltip);
 		}
 		return this.tooltipWindow;
 	}
@@ -149,11 +164,24 @@ class UIElement extends h2d.Object {
 		if (this.tooltipWindow == null) return;
 		if (this.tooltipHelper == null) return;
 		this.tooltipHelper.showWindow(this.tooltipWindow, getTooltipBounds(), this.tooltipShowConf);
+		if (this.tooltipShowConf != null && this.tooltipShowConf.relativeToCursor == true) {
+			moveTooltip(e);
+		}
 	}
 
 	function hideTooltip(e: hxd.Event) {
 		if (this.tooltipWindow == null) return;
 		this.tooltipWindow.remove();
+	}
+
+	function moveTooltip(e: hxd.Event) {
+		if (this.tooltipWindow == null || this.tooltipWindow.parent == null) return;
+		if (this.tooltipShowConf == null || this.tooltipShowConf.relativeToCursor != true) return;
+		final scene = this.getScene();
+		final positionX = scene.mouseX;
+		final positionY = scene.mouseY;
+		this.tooltipHelper.windowRenderSystem.adjustWindowPosition(this.tooltipWindow,
+			h2d.col.Bounds.fromValues(positionX - 2, positionY - 2, 4, 4), this.tooltipShowConf);
 	}
 
 	/**
@@ -172,7 +200,7 @@ class UIElement extends h2d.Object {
 	/**
 		The conf used to show the window
 	**/
-	public var tooltipShowConf: zf.ui.WindowRenderSystem.ShowWindowConf = null;
+	public var tooltipShowConf: TooltipShowConf = null;
 
 	// ---- Event handling for the interactive ---- //
 
@@ -458,6 +486,31 @@ class UIElement extends h2d.Object {
 		return false;
 	}
 
+	// ---- On Move ---- //
+	var onMoveListeners: Array<Pair<String, hxd.Event->Void>> = [];
+
+	public function _onMove(e: hxd.Event) {
+		for (p in this.onMoveListeners) p.second(e);
+	}
+
+	public function addOnMoveListener(id: String, func: hxd.Event->Void): Bool {
+		for (o in this.onMoveListeners) {
+			if (o.first == id) return false;
+		}
+		this.onMoveListeners.push(new Pair(id, func));
+		return true;
+	}
+
+	public function removeOnMoveListener(id: String): Bool {
+		for (o in this.onMoveListeners) {
+			if (o.first == id) {
+				this.onMoveListeners.remove(o);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// ---- remove all listeners ---- //
 	public function removeAllListeners(id: String) {
 		removeOnOutListener(id);
@@ -468,6 +521,9 @@ class UIElement extends h2d.Object {
 		removeOnPushListener(id);
 		removeOnReleaseListener(id);
 		removeOnRemoveListener(id);
+		removeOnMoveListener(id);
+		removeOnKeyUpListener(id);
+		removeOnKeyDownListener(id);
 	}
 
 	public function reset() {
