@@ -50,8 +50,8 @@ class WindowRenderSystem {
 	}
 
 	/**
-		Thu 15:35:36 24 Feb 2022
-		For now we will accept all h2d.Object, might change before moving to zf
+		Thu 11:44:29 09 Mar 2023
+		Deprecating Window and use UIElement instead
 	**/
 	public function showWindow(w: h2d.Object, relativeTo: h2d.col.Bounds = null, conf: ShowWindowConf = null) {
 		var adjustWindow: Bool = true;
