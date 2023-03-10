@@ -15,6 +15,18 @@ enum SetMode {
 **/
 class ObjectExtensions {
 	/**
+		Wrap a object around a object and center it
+	**/
+	public static function centerWrapped(obj: h2d.Object): h2d.Object {
+		final newObject = new h2d.Object();
+		newObject.addChild(obj);
+		final bounds = obj.getBounds();
+		obj.x = -bounds.width / 2;
+		obj.y = -bounds.height / 2;
+		return newObject;
+	}
+
+	/**
 		Put an object above another object
 
 		@param obj the object to be placed
