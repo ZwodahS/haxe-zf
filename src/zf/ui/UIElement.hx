@@ -538,6 +538,14 @@ class UIElement extends h2d.Object {
 		if (this.tooltipWindow != null) this.tooltipWindow.remove();
 	}
 
+	// ---- For effects ---- //
+
+	/**
+		Store all the effects added to the element.
+		Do not add directly to this.
+	**/
+	public var uiEffects: Array<zf.effects.Effect>;
+
 	// ---- Factory method ---- //
 
 	/**
