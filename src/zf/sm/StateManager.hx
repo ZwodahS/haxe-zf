@@ -44,6 +44,7 @@ class StateManager {
 	}
 
 	public function is(s: String = null, ss: Array<String> = null): Bool {
+		if (this.current == null) return false;
 		if (s != null && this.current.name == s) return true;
 		if (ss != null && ss.contains(this.current.name)) return true;
 		return false;
