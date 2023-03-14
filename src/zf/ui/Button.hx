@@ -1,5 +1,6 @@
 package zf.ui;
 
+import zf.h2d.HtmlText;
 import zf.h2d.Interactive;
 
 using zf.h2d.ObjectExtensions;
@@ -151,7 +152,7 @@ class Button extends UIElement {
 		btn.addChild(btn.selectedObject = new h2d.Bitmap(h2d.Tile.fromColor(selectedColor, width, height)));
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new h2d.HtmlText(conf.font));
+			btn.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -179,7 +180,7 @@ class Button extends UIElement {
 		btn.addChild(btn.selectedObject = new h2d.Bitmap(selectedTile));
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new h2d.HtmlText(conf.font));
+			btn.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -209,7 +210,7 @@ class Button extends UIElement {
 		btn.addChild(btn.selectedObject = selectedObject);
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new h2d.HtmlText(conf.font));
+			btn.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -238,7 +239,7 @@ class Button extends UIElement {
 		btn.addChild(btn.selectedObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new h2d.HtmlText(conf.font));
+			btn.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;

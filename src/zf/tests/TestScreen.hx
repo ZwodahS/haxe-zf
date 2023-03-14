@@ -1,5 +1,6 @@
 package zf.tests;
 
+import zf.h2d.HtmlText;
 import zf.ui.ScrollBar;
 import zf.h2d.Interactive;
 import zf.ui.ScaleGridFactory;
@@ -168,7 +169,7 @@ class TestScreen extends zf.Screen {
 
 	var logsWindowBG: h2d.Object;
 	var logsDisplayArea: h2d.Object;
-	var logsText: h2d.HtmlText;
+	var logsText: HtmlText;
 	var logsScrollMask: h2d.Mask;
 	var logsScrollBar: ScrollBar;
 
@@ -261,7 +262,7 @@ class TestScreen extends zf.Screen {
 		this.logsWindowBG = logsWindowBG;
 		display.addChild(logsWindowBG);
 
-		final text = new h2d.HtmlText(this.fonts[1]);
+		final text = new HtmlText(this.fonts[1]);
 		text.maxWidth = windowBounds.width
 			- (this.conf.logsWindow.text.xSpacing * 2)
 			- this.conf.scrollBar.barWidth

@@ -1,5 +1,6 @@
 package zf.tests;
 
+import zf.h2d.HtmlText;
 import zf.ui.UIElement;
 import zf.h2d.Interactive;
 
@@ -17,7 +18,7 @@ class RenderedTestCase extends UIElement {
 
 	public var testName(get, never): String;
 
-	public var text: h2d.HtmlText;
+	public var text: HtmlText;
 
 	public var isSelected(default, set): Bool = false;
 
@@ -38,7 +39,7 @@ class RenderedTestCase extends UIElement {
 		this.screen = screen;
 		this.test = test;
 
-		this.text = new h2d.HtmlText(screen.fonts[1]);
+		this.text = new HtmlText(screen.fonts[1]);
 		text.text = this.testName;
 		text.textColor = screen.conf.testItem.text.defaultColor;
 		final bounds = text.getBounds();

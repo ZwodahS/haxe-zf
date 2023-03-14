@@ -1,5 +1,7 @@
 package zf;
 
+import zf.h2d.HtmlText;
+
 import hxd.Key;
 
 /**
@@ -88,7 +90,7 @@ class Console #if !macro extends h2d.Object #end {
 	var bg: h2d.Bitmap;
 	var tf: h2d.TextInput;
 	var hintTxt: h2d.Text;
-	var logTxt: h2d.HtmlText;
+	var logTxt: HtmlText;
 	var lastLogTime: Float;
 	var commands: Map<String, {help: String, args: Array<ConsoleArgDesc>, callb: Dynamic}>;
 	var aliases: Map<String, String>;
@@ -119,7 +121,7 @@ class Console #if !macro extends h2d.Object #end {
 		super(parent);
 		this.g = g;
 		height = Math.ceil(font.lineHeight) + 2;
-		logTxt = new h2d.HtmlText(font, this);
+		logTxt = new HtmlText(font, this);
 		logTxt.x = 2;
 		logTxt.dropShadow = {
 			dx: 0,

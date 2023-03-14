@@ -1,5 +1,7 @@
 package zf;
 
+import zf.h2d.HtmlText;
+
 using zf.h2d.ObjectExtensions;
 
 /**
@@ -128,14 +130,14 @@ class Game extends hxd.App {
 	function setupFramerate() {
 		var font: h2d.Font = getDebugFont();
 
-		this.s2d.add(this.framerate = new h2d.HtmlText(font), 150);
+		this.s2d.add(this.framerate = new HtmlText(font), 150);
 		this.framerate.textAlign = Left;
 		this.framerate.text = '0';
 		this.framerate.x = 2;
 		this.framerate.y = 2;
 		this.framerate.visible = false;
 
-		this.s2d.add(this.drawCalls = new h2d.HtmlText(font), 151);
+		this.s2d.add(this.drawCalls = new HtmlText(font), 151);
 		this.drawCalls.textAlign = Left;
 		this.drawCalls.text = '0';
 		this.drawCalls.putBelow(this.framerate, [0, 2]);

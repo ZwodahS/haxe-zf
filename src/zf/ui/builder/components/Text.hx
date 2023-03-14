@@ -1,5 +1,7 @@
 package zf.ui.builder.components;
 
+import zf.h2d.HtmlText;
+
 using zf.ds.ArrayExtensions;
 
 using StringTools;
@@ -97,7 +99,7 @@ class Text extends Component {
 		return strings.join(eol);
 	}
 
-	function make(conf: zf.Access, context: BuilderContext): {text: h2d.HtmlText, hasText: Bool} {
+	function make(conf: zf.Access, context: BuilderContext): {text: HtmlText, hasText: Bool} {
 		var font: h2d.Font = null;
 		if (conf.get("font") != null) font = cast(conf.get("font"));
 		if (font == null) {
@@ -117,7 +119,7 @@ class Text extends Component {
 
 		final maxWidth = conf.getInt("maxWidth");
 
-		final textObject = new h2d.HtmlText(font);
+		final textObject = new HtmlText(font);
 		textObject.textColor = textColor;
 		if (maxWidth != null) textObject.maxWidth = maxWidth;
 

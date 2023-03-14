@@ -1,5 +1,7 @@
 package zf.ui;
 
+import zf.h2d.HtmlText;
+
 /**
 	@stage:unstable
 
@@ -11,7 +13,7 @@ package zf.ui;
 	The other events will be handled on a on need basis, i.e. updating font
 **/
 class TextUIElement extends UIElement {
-	public var innerText: h2d.HtmlText;
+	public var innerText: HtmlText;
 
 	public var text(get, set): String;
 
@@ -27,7 +29,7 @@ class TextUIElement extends UIElement {
 
 	public function new(font: h2d.Font) {
 		super();
-		this.innerText = new h2d.HtmlText(font);
+		this.innerText = new HtmlText(font);
 
 		this.interactive = new zf.h2d.Interactive(1, 1);
 		this.addChild(this.interactive);
