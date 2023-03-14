@@ -97,6 +97,6 @@ class ScrollArea extends UIElement {
 		bound.yMax = Math.max(size.y, scrollArea.getSize().height + 2);
 		mask.scrollBounds = bound;
 		this.scrollbar.onMaskUpdate();
-		this.mask.scrollY = bound.yMax;
+		this.mask.scrollY = Math.clampF(this.mask.scrollY, 0, bound.yMax);
 	}
 }
