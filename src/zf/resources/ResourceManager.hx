@@ -2,6 +2,12 @@ package zf.resources;
 
 import zf.Assets;
 import zf.exceptions.ResourceLoadException;
+import zf.resources.LanguageFont;
+
+enum ResourceSource {
+	Pak;
+	Dir;
+}
 
 /**
 	@stage:stable
@@ -10,19 +16,46 @@ import zf.exceptions.ResourceLoadException;
 
 	Motivation
 
-	It is quite bad to use spritesheet in the current form because I need to know which sheet
-	the resource is located. The res manager goal is to allow spritesheet to be registered so that
-	resource can just be directly access by name.
+	There are a few reasons why this is created.
 
-	Eventually other resources like Audio etc will be added.
-	For now, fonts will also not be added here.
-	Need to figure out how I want to handle translation and different font for different languages first.
+	1. We want to load images or any resources and be able to access them via a name, regardless of where it came from.
+	2. We need to be able to load from both pak and userdata/mods
+
+	One different between this and UserData is that we will not handle loading on web.
+	This is because "Resource" is not the same as "Data" so we will not allow that on the web build
+
+	Currently managing
+	- Images
+	- Text (unparsed)
+
+	Mon 11:42:06 13 Mar 2023
+	Not adding the mod handling stuffs yet until I figure out how I want to handle it.
+	We will slowly add the other resources later
+
+	@todo
+	- Add Structloader here
+	Probably need 2 struct loader, one for struct loader and one for non-structloader
 **/
 class ResourceManager {
+	/**
+		Loaded images
+	**/
 	var images: Map<String, ImageResource>;
+
+	/**
+		Loaded Strings
+	**/
+	var texts: Map<String, String>;
+
+	/**
+		Loaded fonts
+	**/
+	var fonts: Map<String, LanguageFont>;
 
 	public function new() {
 		this.images = new Map<String, ImageResource>();
+		this.texts = new Map<String, String>();
+		this.fonts = new Map<String, LanguageFont>();
 	}
 
 	@:deprecated("Use loadSpritesheet directly")
@@ -58,7 +91,7 @@ class ResourceManager {
 		this.images[resource.id] = resource;
 	}
 
-	// ---- Getters ---- //
+	// ---- Images ---- //
 
 	@:deprecated
 	inline public function getAsset2D(id: String): ImageResource {
@@ -96,22 +129,66 @@ class ResourceManager {
 		return asset == null ? null : asset.getAnim();
 	}
 
-	public static function getJson(path: String, exception: Bool = true): Dynamic {
+	// ---- Fonts ---- //
+	public function loadFonts(path: String, source: ResourceSource = Pak, exception: Bool = true): LanguageFont {
 		try {
-			final file = hxd.Res.load(path);
-			final text = file.toText();
-			final parsed = haxe.Json.parse(text);
-			return parsed;
+			final conf = getJson(path, source, exception);
+			if (conf == null) return null;
+
+			var langConf: LanguageFontConf = conf;
+			final lang = langConf.language;
+
+			final allFonts: Map<String, SingleLanguageFontType> = [];
+
+			for (key => value in (langConf.fonts: DynamicAccess<Dynamic>)) {
+				final c: FontConf = value;
+				if (c.type == "msdf") {
+					final msdfConf: MSDFConf = c.conf;
+					// @todo, figure out how to load font from non-pak later
+					final font = hxd.Res.load(msdfConf.file).to(hxd.res.BitmapFont);
+					final fonts = [];
+					for (v in msdfConf.size) fonts.push(font.toSdfFont(v, MultiChannel));
+					allFonts[key] = {sourceFont: font, fonts: fonts};
+				}
+			}
+
+			return {language: lang, fonts: allFonts};
+		} catch (e) {
+			Logger.exception(e);
+			if (exception) throw new ResourceLoadException(path, e);
+			return null;
+		}
+	}
+
+	// ---- Static Loader ---- //
+	public static function getString(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
+		try {
+			var text: String = null;
+			switch (source) {
+				case Pak:
+					final file = hxd.Res.load(path);
+					text = file.toText();
+				case Dir:
+					// if not sys then we will not handle this
+#if !sys
+					return null;
+#else
+					text = sys.io.File.getContent(path);
+#end
+			}
+			return text;
 		} catch (e) {
 			if (exception) throw new ResourceLoadException(path, e);
 			return null;
 		}
 	}
 
-	public static function getXml(path: String, exception: Bool = true): String {
+	public static function getJson(path: String, source: ResourceSource = Pak, exception: Bool = true): Dynamic {
 		try {
-			final string = hxd.Res.load(path).toText();
-			return string;
+			final text = getString(path, source, exception);
+			if (text == null) return null;
+			final parsed = haxe.Json.parse(text);
+			return parsed;
 		} catch (e) {
 			if (exception) throw new ResourceLoadException(path, e);
 			return null;
