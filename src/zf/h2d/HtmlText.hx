@@ -1,7 +1,5 @@
 package zf.h2d;
 
-import zf.h2d.Interactive;
-
 import h2d.RenderContext;
 import h2d.Text.Align;
 
@@ -129,7 +127,6 @@ class HtmlText extends h2d.Text {
 	var dropMatrix: h3d.shader.ColorMatrix;
 	var prevChar: Int;
 	var newLine: Bool;
-	var aInteractive: Interactive;
 
 	/**
 		Override the default set_text from h2d.Text
@@ -527,7 +524,7 @@ class HtmlText extends h2d.Text {
 				if (align == MultilineCenter || align == MultilineRight) {
 					max = hxd.Math.ceil(calcWidth);
 				} else if (calcWidth >= 0) {
-					hxd.Math.ceil(realMaxWidth);
+					max = hxd.Math.ceil(realMaxWidth);
 				}
 
 				var k = align == Center || align == MultilineCenter ? 0.5 : 1;
@@ -865,9 +862,18 @@ class HtmlText extends h2d.Text {
 	}
 
 	override function getBoundsRec(relativeTo: h2d.Object, out: h2d.col.Bounds, forSize: Bool) {
-		if (forSize) for (i in elements) if (hxd.impl.Api.isOfType(i, h2d.Bitmap)) i.visible = false;
+		if (forSize) {
+			for (i in elements) {
+				// we need to remove these from the bounds calculation so that they don't go out of bound.
+				if (hxd.impl.Api.isOfType(i, h2d.Bitmap) || hxd.impl.Api.isOfType(i, Interactive)) {
+					i.visible = false;
+				}
+			}
+		}
 		super.getBoundsRec(relativeTo, out, forSize);
-		if (forSize) for (i in elements) i.visible = true;
+		if (forSize) {
+			for (i in elements) i.visible = true;
+		}
 	}
 
 	dynamic public function onInteractiveCreated(interactive: Interactive, name: String) {}
