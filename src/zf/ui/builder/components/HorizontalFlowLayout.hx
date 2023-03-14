@@ -10,6 +10,11 @@ typedef HorizontalFlowLayoutConf = {
 		x spacing between each object
 	**/
 	public var ?spacing: Int;
+
+	/**
+		Max Horizontal width
+	**/
+	public var ?maxWidth: Int;
 }
 
 /**
@@ -59,6 +64,12 @@ class HorizontalFlowLayout extends Component {
 		}
 		final spacing = conf.getInt("spacing");
 		if (spacing != null) flow.horizontalSpacing = spacing;
+		final maxWidth = conf.getInt("maxWidth");
+		if (maxWidth != null) {
+			flow.maxWidth = maxWidth;
+			flow.multiline = true;
+			flow.verticalSpacing = spacing;
+		}
 		return flow;
 	}
 }
