@@ -78,8 +78,7 @@ typedef ConsoleArgDesc = {
 
 	To add custom commands, use `Console.add` and `Console.addCommand` methods.
 **/
-class Console #if !macro extends h2d.Object #end {
-#if !macro
+class Console extends h2d.Object {
 	/**
 		The timeout in seconds before log will automatically hide after the last message.
 	**/
@@ -175,60 +174,7 @@ class Console #if !macro extends h2d.Object #end {
 	public function addCommand(name, ?help, args: Array<ConsoleArgDesc>, callb: Dynamic) {
 		commands.set(name, {help: help == null ? "" : help, args: args, callb: callb});
 	}
-#end
 
-	/**
-		Add a new command to console. <span class="label">Macro method</span>
-
-		The `callb` method arguments are used to determine console argument type and names. Due to that,
-		only the following callback argument types are supported: `Int`, `Float`, `String` and `Bool`.
-		Another limitation is that commands added via macro do not contain description.
-
-		For example:
-		```haxe
-		function addItem(id:Int, ?amount:Int) {
-			var item = findItemById(id)
-			if (amount == null) amount = 1;
-			player.giveItem(item, amount);
-			console.log('Added $amount x ${item.name} to player!');
-		}
-		// Macro call automatically takes addItem arguments.
-		console.add("additem", addItem);
-		// And is equivalent to using addCommand describing each argument manually:
-		console.addCommand("additem", null, [{ name: "id", t: AInt }, { name: "amount", t: AInt, opt: true }], addItem);
-		```
-
-		@param name A String expression of the command name.
-		@param callb An expression that points at the callback method.
-	**/
-	public macro function add(ethis, name, callb) {
-		var args = [];
-		var et = haxe.macro.Context.typeExpr(callb);
-		switch (haxe.macro.Context.follow(et.t)) {
-			case TFun(fargs, _):
-				for (a in fargs) {
-					var t = haxe.macro.Context.followWithAbstracts(a.t);
-					var tstr = haxe.macro.TypeTools.toString(t);
-					var tval = switch (tstr) {
-						case "Int": AInt;
-						case "Float": AFloat;
-						case "String": AString;
-						case "Bool": ABool;
-						default: haxe.macro.Context.error("Unsupported parameter type "
-								+ tstr
-								+ " for argument "
-								+ a.name, callb.pos);
-					}
-					var tname = "" + tval;
-					args.push(macro {name: $v{a.name}, t: h2d.Console.ConsoleArg.$tname, opt: $v{a.opt}});
-				}
-			default:
-				haxe.macro.Context.error(haxe.macro.TypeTools.toString(et.t) + " should be a function", callb.pos);
-		}
-		return macro $ethis.addCommand($name, null, $a{args}, $callb);
-	}
-
-#if !macro
 	/**
 		Add an alias to an existing command.
 		@param name Command alias.
@@ -638,7 +584,6 @@ class Console #if !macro extends h2d.Object #end {
 		}
 		super.sync(ctx);
 	}
-#end
 }
 
 /**
@@ -646,4 +591,7 @@ class Console #if !macro extends h2d.Object #end {
 	Migrate the entire Console over.
 
 	Will probably rewrite this to suit my need in the future.
+
+	Wed 13:28:42 15 Mar 2023
+	Removed macro stuffs, as they are clashing with some of the other code.
 **/
