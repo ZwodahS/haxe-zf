@@ -4,6 +4,16 @@ import zf.Assets;
 import zf.exceptions.ResourceLoadException;
 import zf.resources.LanguageFont;
 
+typedef ResourceConf = {
+	public var spritesheets: Array<{
+		public var path: String;
+	}>;
+
+	public var fonts: Array<{
+		public var path: String;
+	}>;
+}
+
 enum ResourceSource {
 	Pak;
 	Dir;
@@ -28,10 +38,6 @@ enum ResourceSource {
 	- Images
 	- Text (unparsed)
 
-	Mon 11:42:06 13 Mar 2023
-	Not adding the mod handling stuffs yet until I figure out how I want to handle it.
-	We will slowly add the other resources later
-
 	@todo
 	- Add Structloader here
 	Probably need 2 struct loader, one for struct loader and one for non-structloader
@@ -50,12 +56,40 @@ class ResourceManager {
 	/**
 		Loaded fonts
 	**/
-	var fonts: Map<String, LanguageFont>;
+	public var fonts: Map<String, LanguageFont>;
 
 	public function new() {
 		this.images = new Map<String, ImageResource>();
 		this.texts = new Map<String, String>();
 		this.fonts = new Map<String, LanguageFont>();
+	}
+
+	public function load(p: String) {
+		/**
+			Thu 11:47:20 16 Mar 2023
+			Eventually I want this to be smarter.
+
+			For example, to be able to load them from res and also mod directory.
+			Then we will need to be able to smarter and know the relative path.
+
+			For nowe we don't have to deal with that.
+		**/
+
+		final path = new haxe.io.Path(p);
+
+		final config: ResourceConf = getJson(p);
+		if (config.spritesheets != null) {
+			for (ssConf in config.spritesheets) {
+				loadSpritesheet(ssConf.path);
+			}
+		}
+
+		if (config.fonts != null) {
+			for (fPath in config.fonts) {
+				final f = loadFonts("fonts/fonts.json");
+				this.fonts[f.language] = f;
+			}
+		}
 	}
 
 	@:deprecated("Use loadSpritesheet directly")
@@ -190,6 +224,7 @@ class ResourceManager {
 			final parsed = haxe.Json.parse(text);
 			return parsed;
 		} catch (e) {
+			Logger.exception(e);
 			if (exception) throw new ResourceLoadException(path, e);
 			return null;
 		}
@@ -200,4 +235,8 @@ class ResourceManager {
 	Sun 23:21:48 29 Jan 2023
 	Refactor this slightly to decouple from Asset2D.
 	Eventually might want to deprecate the old Assets
+
+	Mon 11:42:06 13 Mar 2023
+	Not adding the mod handling stuffs yet until I figure out how I want to handle it.
+	We will slowly add the other resources later
 **/
