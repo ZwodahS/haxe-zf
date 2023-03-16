@@ -16,17 +16,6 @@ class ObjectsButton extends Button {
 	public var text(default, set): String;
 
 	/**
-		flag for if the button is toggled/selected.
-	**/
-	public var toggled(default, set): Bool = false;
-
-	public function set_toggled(b: Bool): Bool {
-		this.toggled = b;
-		updateRendering();
-		return this.toggled;
-	}
-
-	/**
 		Get the actual underlying text button
 	**/
 	var textLabel: h2d.Text;
@@ -132,6 +121,17 @@ typedef TilesColorConf = {
 **/
 class Button extends UIElement {
 	/**
+		flag for if the button is toggled/selected.
+	**/
+	public var toggled(default, set): Bool = false;
+
+	public function set_toggled(b: Bool): Bool {
+		this.toggled = b;
+		updateRendering();
+		return this.toggled;
+	}
+
+	/**
 		Various builder methods.
 	**/
 	/**
@@ -143,7 +143,7 @@ class Button extends UIElement {
 		final defaultColor = conf.defaultColor;
 		final hoverColor = conf.hoverColor == null ? defaultColor : conf.hoverColor;
 		final disabledColor = conf.disabledColor == null ? defaultColor : conf.disabledColor;
-		final selectedColor = conf.defaultColor == null ? defaultColor : conf.defaultColor;
+		final selectedColor = conf.selectedColor == null ? defaultColor : conf.selectedColor;
 
 		if (btn == null) btn = new ObjectsButton();
 		btn.addChild(btn.defaultObject = new h2d.Bitmap(h2d.Tile.fromColor(defaultColor, width, height)));
@@ -158,6 +158,7 @@ class Button extends UIElement {
 			btn.textLabel.maxWidth = width;
 			btn.textLabel.textAlign = Center;
 		}
+		btn.alignText();
 
 		btn.addChild(btn.interactive = new Interactive(width, height));
 		btn.updateRendering();
@@ -187,6 +188,7 @@ class Button extends UIElement {
 			btn.textLabel.textAlign = Center;
 		}
 		btn.updateRendering();
+		btn.alignText();
 
 		btn.addChild(btn.interactive = new Interactive(width, height));
 
@@ -217,6 +219,7 @@ class Button extends UIElement {
 			btn.textLabel.textAlign = Center;
 		}
 		btn.updateRendering();
+		btn.alignText();
 
 		btn.addChild(btn.interactive = new Interactive(width, height));
 
@@ -246,6 +249,7 @@ class Button extends UIElement {
 			btn.textLabel.textAlign = Center;
 		}
 		btn.updateRendering();
+		btn.alignText();
 
 		btn.addChild(btn.interactive = new Interactive(width, height));
 
