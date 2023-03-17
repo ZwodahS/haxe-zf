@@ -168,6 +168,7 @@ class DebugOverlay extends UIElement {
 		this.inspectorBtn.toggled = true;
 		this.console.visible = false;
 		this.inspector.visible = true;
+		this.inspector.onShow();
 	}
 
 	public function hide() {
