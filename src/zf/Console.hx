@@ -64,7 +64,7 @@ typedef ConsoleArgDesc = {
 }
 
 /**
-	@stage:stable
+	@stage:deprecated
 
 	A simple debug console integration.
 
@@ -77,7 +77,11 @@ typedef ConsoleArgDesc = {
 	describing all commands and clears the console logs respectively.
 
 	To add custom commands, use `Console.add` and `Console.addCommand` methods.
+
+	Fri 12:47:01 17 Mar 2023
+	Deprecated, use DebugOverlay
 **/
+@:deprecated(zf.debug.DebugOverlay)
 class Console extends h2d.Object {
 	/**
 		The timeout in seconds before log will automatically hide after the last message.
@@ -266,9 +270,6 @@ class Console extends h2d.Object {
 		tf.text = "";
 		hintTxt.text = "";
 		tf.cursorIndex = -1;
-#if debug
-		@:privateAccess g.consoleBg.visible = false;
-#end
 	}
 
 	/**
@@ -279,9 +280,6 @@ class Console extends h2d.Object {
 		tf.focus();
 		tf.cursorIndex = tf.text.length;
 		logIndex = -1;
-#if debug
-		@:privateAccess g.consoleBg.visible = true;
-#end
 	}
 
 	function splitCommands(command: String): Array<String> {

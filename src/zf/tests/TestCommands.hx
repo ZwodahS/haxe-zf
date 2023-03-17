@@ -1,5 +1,7 @@
 package zf.tests;
 
+import zf.debug.OverlayConsole.ConsoleArg;
+
 /**
 	@stage:unstable
 
@@ -10,14 +12,14 @@ class TestCommands {
 		return new TestScreen();
 	}
 
-	public static function setupCommands(game: Game, console: zf.Console, testNames: Array<String>) {
+	public static function setupCommands(game: Game, console: zf.debug.OverlayConsole, testNames: Array<String>) {
 		testNames.push("--all");
 		// ---- Test Related commands ----//
 		{
-			Globals.console.addCommand("test.run", "run a specific test", [
+			console.addCommand("test.run", "run a specific test", [
 				{
 					"name": "testName",
-					"t": zf.Console.ConsoleArg.AString,
+					"t": ConsoleArg.AString,
 					"argSuggestions": function(tokenized: Array<String>, arg: String) {
 						return zf.StringUtils.findClosestMatch(testNames, arg);
 					}
@@ -38,10 +40,10 @@ class TestCommands {
 			});
 		}
 		{
-			Globals.console.addCommand("test.concurrent", "set the number of concurrent runner", [
+			console.addCommand("test.concurrent", "set the number of concurrent runner", [
 				{
 					"name": "count",
-					"t": zf.Console.ConsoleArg.AInt,
+					"t": ConsoleArg.AInt,
 				}
 			], function(count: Int) {
 				try {
@@ -55,14 +57,14 @@ class TestCommands {
 			});
 		}
 		{
-			Globals.console.addCommand("test.list", "List all the test case name", [], function() {
+			console.addCommand("test.list", "List all the test case name", [], function() {
 				for (testName in testNames) {
 					console.log(testName);
 				}
 			});
 		}
 		{
-			Globals.console.addCommand("test.screen", "Open Test Screen", [], function() {
+			console.addCommand("test.screen", "Open Test Screen", [], function() {
 				try {
 					var screen: TestScreen = null;
 					if (Std.isOfType(game.currentScreen, TestScreen)) {

@@ -99,4 +99,8 @@ class ScrollArea extends UIElement {
 		this.scrollbar.onMaskUpdate();
 		this.mask.scrollY = Math.clampF(this.mask.scrollY, 0, bound.yMax);
 	}
+
+	public function toBottom() {
+		this.mask.scrollY = this.mask.scrollBounds.yMax;
+	}
 }

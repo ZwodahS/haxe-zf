@@ -85,9 +85,9 @@ class TestScreen extends zf.Screen {
 				y: 110
 			},
 			background: 0xfffffbe5,
-			xSpacing: 5,
-			ySpacing: 5,
-			verticalSpacing: 2,
+			xSpacing: 2,
+			ySpacing: 0,
+			verticalSpacing: 0,
 		},
 		testItem: {
 			text: {
@@ -262,7 +262,7 @@ class TestScreen extends zf.Screen {
 		this.logsWindowBG = logsWindowBG;
 		display.addChild(logsWindowBG);
 
-		final text = new HtmlText(this.fonts[1]);
+		final text = new HtmlText(this.fonts[0]);
 		text.maxWidth = windowBounds.width
 			- (this.conf.logsWindow.text.xSpacing * 2)
 			- this.conf.scrollBar.barWidth
@@ -368,17 +368,17 @@ class TestScreen extends zf.Screen {
 		display.addChild(this.testsScrollBar);
 
 		// set up the 3 html
-		this.runningText = new zf.ui.TextUIElement(this.fonts[2]);
+		this.runningText = new zf.ui.TextUIElement(this.fonts[1]);
 		this.runningText.innerText.textColor = this.conf.testItem.text.runningColor;
 		this.runningText.addOnClickListener("TestScreen", (e) -> {
 			toggleTestsList("running");
 		});
-		this.successText = new zf.ui.TextUIElement(this.fonts[2]);
+		this.successText = new zf.ui.TextUIElement(this.fonts[1]);
 		this.successText.innerText.textColor = this.conf.testItem.text.successColor;
 		this.successText.addOnClickListener("TestScreen", (e) -> {
 			toggleTestsList("success");
 		});
-		this.failureText = new zf.ui.TextUIElement(this.fonts[2]);
+		this.failureText = new zf.ui.TextUIElement(this.fonts[1]);
 		this.failureText.innerText.textColor = this.conf.testItem.text.failureColor;
 		this.failureText.addOnClickListener("TestScreen", (e) -> {
 			toggleTestsList("failure");
@@ -391,7 +391,7 @@ class TestScreen extends zf.Screen {
 		testHeaderFlow.addChild(this.successText);
 		testHeaderFlow.addChild(this.failureText);
 		testHeaderFlow.x = 0;
-		testHeaderFlow.y = -10;
+		testHeaderFlow.y = -this.fonts[1].lineHeight - 2;
 		display.addChild(testHeaderFlow);
 
 		this.runningText.text = "0 Running";

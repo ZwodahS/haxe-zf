@@ -39,7 +39,7 @@ class RenderedTestCase extends UIElement {
 		this.screen = screen;
 		this.test = test;
 
-		this.text = new HtmlText(screen.fonts[1]);
+		this.text = new HtmlText(screen.fonts[0]);
 		text.text = this.testName;
 		text.textColor = screen.conf.testItem.text.defaultColor;
 		final bounds = text.getBounds();

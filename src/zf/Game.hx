@@ -1,5 +1,6 @@
 package zf;
 
+import zf.debug.DebugOverlay;
 import zf.h2d.HtmlText;
 
 using zf.h2d.ObjectExtensions;
@@ -93,7 +94,6 @@ class Game extends hxd.App {
 		this.s2d.addEventListener(this.onEvent);
 		this.s2d.camera.clipViewport = true;
 #if debug
-		this.setupConsole();
 		this.setupFramerate();
 		this.setupCursor();
 #end
@@ -115,11 +115,24 @@ class Game extends hxd.App {
 		}
 	}
 
+	// ---- DebugOverlay ---- //
+
+	/**
+		This replace console and provide more functionality
+	**/
+#if debug
+	var debugOverlay(default, set): DebugOverlay;
+
+	function set_debugOverlay(overlay: DebugOverlay): DebugOverlay {
+		this.debugOverlay = overlay;
+		this.s2d.add(this.debugOverlay, 1000);
+		return this.debugOverlay;
+	}
+#end
+
 #if debug
 	var framerate: h2d.Text;
 	var drawCalls: h2d.Text;
-	var console: zf.Console;
-	var consoleBg: h2d.Bitmap;
 
 	function getDebugFont(): h2d.Font {
 		var font = hxd.res.DefaultFont.get().clone();
@@ -142,87 +155,6 @@ class Game extends hxd.App {
 		this.drawCalls.text = '0';
 		this.drawCalls.putBelow(this.framerate, [0, 2]);
 		this.drawCalls.visible = false;
-	}
-
-	function setupConsole() {
-		var font = getDebugFont();
-
-		this.consoleBg = new h2d.Bitmap(h2d.Tile.fromColor(1, 1, 1, 1));
-		this.consoleBg.alpha = .5;
-		this.consoleBg.tile.scaleToSize(s2d.width, s2d.height);
-		this.consoleBg.visible = false;
-
-		this.console = new Console(font, this);
-		this.s2d.add(this.consoleBg, 999);
-		this.s2d.add(console, 1000);
-
-		this.console.addCommand("getWindowSize", "get the window size", [], function() {
-			var window = hxd.Window.getInstance();
-			this.console.log('Window Size: ${window.width},${window.height}');
-		});
-
-		this.console.addCommand("printString", "print a string",
-			[{"name": "string", "t": zf.Console.ConsoleArg.AString},], function(string) {
-				this.console.log(string);
-		});
-
-		this.console.addCommand("mousePos", "Show mouse position", [], function() {
-			this.cursorDetail.visible = !this.cursorDetail.visible;
-		});
-		this.console.addAlias("mp", "mousePos");
-
-		this.console.addCommand("framerate", "toggle framerate", [], function() {
-			this.framerate.visible = !this.framerate.visible;
-			this.drawCalls.visible = !this.drawCalls.visible;
-		});
-		this.console.addAlias("fr", "framerate");
-
-		this.console.addCommand("printObject", "print dynamic object fields",
-			[{"name": "fields", "t": zf.Console.ConsoleArg.AString},], this.printObject);
-		this.console.addAlias("po", "printObject");
-	}
-
-	function printObject(fields: String) {
-		var fieldSplit = fields.split(".");
-		if (fieldSplit.length == 0) return;
-		var objectName = fieldSplit[0];
-		var obj: Dynamic = this.monitoredObjects == null ? null : this.monitoredObjects[objectName];
-		if (obj == null) {
-			this.console.log('Object ${objectName} Not monitored');
-			return;
-		}
-
-		var i = 1;
-		var value: Dynamic = obj;
-		while (i < fieldSplit.length) {
-			if (fieldSplit[i] == "") {} else {
-				value = Reflect.getProperty(value, fieldSplit[i]);
-				if (value == null) {
-					this.console.log('null');
-					return;
-				}
-			}
-			i++;
-		}
-		try {
-			var valueString = cast(value, String);
-			for (s in valueString.split('\n')) {
-				this.console.log('${s}');
-			}
-		} catch (e) {
-			this.console.log('${value}');
-		}
-	}
-
-	var monitoredObjects: Map<String, Dynamic>;
-
-	public function monitorObject(obj: Dynamic, objectName: String) {
-		if (this.monitoredObjects == null) this.monitoredObjects = new Map<String, Dynamic>();
-		this.monitoredObjects[objectName] = obj;
-	}
-
-	public function unmonitorObject(objectName: String) {
-		this.monitoredObjects.remove(objectName);
 	}
 
 	var cursorDetail: TextLabel;
@@ -279,6 +211,35 @@ class Game extends hxd.App {
 
 	function onEvent(event: hxd.Event) {
 		if (this.currentScreen != null) this.currentScreen.onEvent(event);
+
+#if debug
+		if (this.debugOverlay != null) {
+			if (this.debugOverlay.visible == false) {
+				switch (event.kind) {
+					case EKeyDown:
+						switch (event.keyCode) {
+							case hxd.Key.F1:
+								this.debugOverlay.show();
+								this.debugOverlay.selectConsole();
+							case hxd.Key.F2:
+								this.debugOverlay.show();
+								this.debugOverlay.selectInspector();
+						}
+					default:
+				}
+			} else {
+				switch (event.kind) {
+					case EKeyDown:
+						switch (event.keyCode) {
+							case hxd.Key.ESCAPE:
+								this.debugOverlay.hide();
+								this.debugOverlay.selectConsole();
+						}
+					default:
+				}
+			}
+		}
+#end
 	}
 
 	override function render(engine: h3d.Engine) {
