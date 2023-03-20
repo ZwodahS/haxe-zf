@@ -235,10 +235,10 @@ class ObjectExtensions {
 		return setY(obj, height, AlignCenter, startY);
 	}
 
-	inline public static function center(obj: h2d.Object): h2d.Object {
+	inline public static function center(obj: h2d.Object, centerX: Bool = true, centerY: Bool = true): h2d.Object {
 		final bounds = obj.getBounds();
-		obj.x = bounds.xMin - (bounds.width / 2);
-		obj.y = bounds.yMin - (bounds.height / 2);
+		if (centerX == true) obj.x = bounds.xMin - (bounds.width / 2);
+		if (centerY == true) obj.y = bounds.yMin - (bounds.height / 2);
 		return obj;
 	}
 
