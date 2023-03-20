@@ -84,6 +84,7 @@ class DebugOverlay extends UIElement {
 			if (this.visible == false) return;
 			if (e.keyCode == Key.ESCAPE) hide();
 		});
+		this.interactive.propagateEvents = false;
 		initButtons();
 		initConsole();
 		initInspector();

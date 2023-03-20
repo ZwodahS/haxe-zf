@@ -126,7 +126,26 @@ class Game extends hxd.App {
 	function set_debugOverlay(overlay: DebugOverlay): DebugOverlay {
 		this.debugOverlay = overlay;
 		this.s2d.add(this.debugOverlay, 1000);
+		@:privateAccess this.s2d.window.addEventTarget(debugOnEvent);
+
 		return this.debugOverlay;
+	}
+
+	function debugOnEvent(event: hxd.Event) {
+		if (this.debugOverlay != null) {
+			switch (event.kind) {
+				case EKeyDown:
+					switch (event.keyCode) {
+						case hxd.Key.F1:
+							if (this.debugOverlay.visible == false) this.debugOverlay.show();
+							this.debugOverlay.selectConsole();
+						case hxd.Key.F2:
+							if (this.debugOverlay.visible == false) this.debugOverlay.show();
+							this.debugOverlay.selectInspector();
+					}
+				default:
+			}
+		}
 	}
 #end
 
@@ -211,35 +230,6 @@ class Game extends hxd.App {
 
 	function onEvent(event: hxd.Event) {
 		if (this.currentScreen != null) this.currentScreen.onEvent(event);
-
-#if debug
-		if (this.debugOverlay != null) {
-			if (this.debugOverlay.visible == false) {
-				switch (event.kind) {
-					case EKeyDown:
-						switch (event.keyCode) {
-							case hxd.Key.F1:
-								this.debugOverlay.show();
-								this.debugOverlay.selectConsole();
-							case hxd.Key.F2:
-								this.debugOverlay.show();
-								this.debugOverlay.selectInspector();
-						}
-					default:
-				}
-			} else {
-				switch (event.kind) {
-					case EKeyDown:
-						switch (event.keyCode) {
-							case hxd.Key.ESCAPE:
-								this.debugOverlay.hide();
-								this.debugOverlay.selectConsole();
-						}
-					default:
-				}
-			}
-		}
-#end
 	}
 
 	override function render(engine: h3d.Engine) {
