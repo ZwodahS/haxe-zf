@@ -700,6 +700,7 @@ class HtmlText extends h2d.Text {
 									+ v.charAt(1) + v.charAt(2) + v.charAt(2) + v.charAt(3) + v.charAt(3);
 								this.glyphs.setDefaultColor(Std.parseInt("0x" + v.substr(1)));
 							case "colorid":
+								if (prevColor == null) prevColor = @:privateAccess this.glyphs.curColor.clone();
 								hasColorId = true;
 								this.glyphs.setDefaultColor(this.getColor(v));
 							case "opacity":
