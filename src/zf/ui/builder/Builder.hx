@@ -74,6 +74,21 @@ class Builder {
 	// ---- Various building method  ---- //
 
 	/**
+		Overloaded make method
+	**/
+	public function make(xmlString: String = null, element: Xml = null, struct: ComponentConf = null,
+			context: BuilderContext = null): h2d.Object {
+		if (xmlString != null) {
+			return makeObjectFromXMLString(xmlString, context);
+		} else if (element != null) {
+			return makeObjectFromXMLElement(element, context);
+		} else if (struct != null) {
+			return makeObjectFromStruct(struct, context);
+		}
+		return null;
+	}
+
+	/**
 		Make object from a XML String.
 	**/
 	public function makeObjectFromXMLString(xmlString: String, context: BuilderContext = null): h2d.Object {
