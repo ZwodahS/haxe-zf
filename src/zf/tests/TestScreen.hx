@@ -658,9 +658,16 @@ class TestScreen extends zf.Screen {
 
 	override public function onScreenEntered() {
 		this.ready = true;
+		this.onTestScreenEntered();
 	}
 
-	override public function onScreenExited() {}
+	override public function onScreenExited() {
+		this.onTestScreenExited();
+	}
+
+	dynamic public function onTestScreenEntered() {}
+
+	dynamic public function onTestScreenExited() {}
 
 	dynamic public function onTestCaseSelected(testcase: TestCase) {}
 
