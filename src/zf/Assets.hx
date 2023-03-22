@@ -87,7 +87,7 @@ class Asset2D {
 	}
 
 	public function getBitmaps(start: Int = 0, end: Int = -1): Array<h2d.Bitmap> {
-		if (end <= 0) end = this.tiles.length;
+		if (end <= 0 || end > this.tiles.length) end = this.tiles.length;
 		if (start < 0 || start >= end) start = end - 1;
 		var out = new Array<h2d.Bitmap>();
 		for (i in start...end) out.push(this.tiles[i].getBitmap());
