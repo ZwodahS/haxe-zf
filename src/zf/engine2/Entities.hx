@@ -41,8 +41,8 @@ class KeyValueIterator<E: Entity> {
 
 	public function next(): {key: Int, value: Null<E>} {
 		if (!hasNext()) return null;
-		var key = curr;
-		var value = this.map.get(this.keys[this.curr++]);
+		var key = this.keys[curr++];
+		var value = this.map.get(key);
 		return {key: key, value: value};
 	}
 }
