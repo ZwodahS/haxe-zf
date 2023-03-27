@@ -50,7 +50,7 @@ private class TreeNode extends UIElement {
 			case TObject:
 				type = 'Struct';
 			case TClass(Array):
-				type = 'Array';
+				type = 'Array (${cast (this.data, Array<Dynamic>).length})';
 			case TClass(String):
 				type = 'String';
 				value = '"${this.data}"';
