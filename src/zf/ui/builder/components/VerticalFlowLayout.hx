@@ -86,6 +86,7 @@ class VerticalFlowLayout extends Component {
 
 		final maxWidth = conf.getInt("maxWidth");
 		if (maxWidth != null) flow.maxWidth = maxWidth;
+		if (conf.get("name") != null) flow.name = conf.get("name");
 		return flow;
 	}
 }

@@ -70,6 +70,7 @@ class HorizontalFlowLayout extends Component {
 			flow.multiline = true;
 			flow.verticalSpacing = spacing;
 		}
+		if (conf.get("name") != null) flow.name = conf.get("name");
 		return flow;
 	}
 }
