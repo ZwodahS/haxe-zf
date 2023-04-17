@@ -183,6 +183,21 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 		this.totalChance += chance;
 	}
 
+	public function remove(item: T): Bool {
+		var i = -1;
+		for (ind => c in this.chances) {
+			if (c.item == item) {
+				i = ind;
+				break;
+			}
+		}
+		if (i == -1) return false;
+		final chance = this.chances[i];
+		this.chances.splice(i, 1);
+		this.totalChance -= chance.chance;
+		return true;
+	}
+
 	/**
 		create a prob table from chances, such that the value returns is the index of the array
 	**/
