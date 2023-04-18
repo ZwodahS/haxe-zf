@@ -535,6 +535,7 @@ class UIElement extends h2d.Object {
 	override function onRemove() {
 		super.onRemove();
 		this.onHide();
+		this.delay = 0;
 		if (this.tooltipWindow != null) this.tooltipWindow.remove();
 	}
 
@@ -545,6 +546,30 @@ class UIElement extends h2d.Object {
 		Do not add directly to this.
 	**/
 	public var uiEffects: Array<zf.effects.Effect>;
+
+	// ---- Other ---- //
+	override function sync(ctx: h2d.RenderContext) {
+		super.sync(ctx);
+		handleShowDelay(ctx.elapsedTime);
+	}
+
+	// ---- Delay showing ---- //
+
+	/**
+		If enabled, after the element is added, it will show after X seconds
+	**/
+	public var showDelay: Float = 0;
+
+	public var useShowDelay: Bool = false;
+
+	var delay: Float = 0.;
+
+	function handleShowDelay(delta: Float) {
+		if (this.visible == false && this.useShowDelay == true) {
+			this.delay += delta;
+			if (this.delay >= showDelay) this.visible = true;
+		}
+	}
 
 	// ---- Factory method ---- //
 
