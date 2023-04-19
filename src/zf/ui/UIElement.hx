@@ -582,12 +582,18 @@ class UIElement extends h2d.Object {
 
 		However, sometimes we just want to create a simple element around the object with a interactive
 	**/
-	public static function makeWithObject(object: h2d.Object) {
+	public static function makeWithObject(object: h2d.Object, center: Bool = false) {
 		final uie = new UIElement();
 		uie.addChild(object);
 		final bounds = object.getBounds();
 		uie.interactive = new Interactive(bounds.width, bounds.height);
 		uie.addChild(uie.interactive);
+		if (center == true) {
+			object.x = -bounds.width / 2;
+			object.y = -bounds.height / 2;
+			uie.interactive.x = -bounds.width / 2;
+			uie.interactive.y = -bounds.height / 2;
+		}
 		return uie;
 	}
 
