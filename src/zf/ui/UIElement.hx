@@ -1,5 +1,7 @@
 package zf.ui;
 
+import zf.ui.layout.DynamicLayout;
+import zf.ui.layout.DynamicLayout.DynamicPosition;
 import zf.h2d.Interactive;
 
 typedef TooltipShowConf = {
@@ -551,6 +553,53 @@ class UIElement extends h2d.Object {
 	override function sync(ctx: h2d.RenderContext) {
 		super.sync(ctx);
 		handleShowDelay(ctx.elapsedTime);
+	}
+
+	// ---- Dynamic Layout Stuffs ---- //
+
+	/**
+		This part of the code works with DynamicLayout
+
+		See DynamicLayout for more information
+	**/
+	public var position: DynamicPosition;
+
+	/**
+		Reposition the UIElement relative to the parent resize.
+		If parent is not a DynamicLayout or if the dynamic position is not set, nothing happens.
+
+		Child class can override this
+	**/
+	public function reposition() {
+		// if there is no position, return
+		if (this.position == null) return;
+		if (this.parent == null || Std.isOfType(this.parent, DynamicLayout) == false) return;
+		final layout: DynamicLayout = cast this.parent;
+		@:privateAccess final size: Point2i = layout.size;
+
+		/**
+		**/
+		switch (this.position) {
+			case Fixed(x, y):
+				this.x = x;
+				this.y = y;
+			case AnchorTopLeft(spacingX, spacingY):
+				final bounds = this.getBounds();
+				this.x = spacingX - bounds.xMin;
+				this.y = spacingY - bounds.yMin;
+			case AnchorTopRight(spacingX, spacingY):
+				final bounds = this.getBounds();
+				this.x = size.x - bounds.width - bounds.xMin - spacingX;
+				this.y = spacingY - bounds.yMin;
+			case AnchorBottomLeft(spacingX, spacingY):
+				final bounds = this.getBounds();
+				this.x = spacingX - bounds.xMin;
+				this.y = size.y - bounds.height - bounds.yMin - spacingY;
+			case AnchorBottomRight(spacingX, spacingY):
+				final bounds = this.getBounds();
+				this.x = size.x - bounds.width - bounds.xMin - spacingX;
+				this.y = size.y - bounds.height - bounds.yMin - spacingY;
+		}
 	}
 
 	// ---- Delay showing ---- //
