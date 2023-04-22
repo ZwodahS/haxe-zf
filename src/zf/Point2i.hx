@@ -331,4 +331,23 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	inline public static function rowColumn(columnPerRow: Int, index: Int): Point2i {
 		return [Std.int(index % columnPerRow), Std.int(index / columnPerRow)];
 	}
+
+	/**
+		Return a point2i representing row and column based on index
+
+		Example, if rowPerColumn is 4, then index will return
+
+		[0] [4]
+		[1] [5]
+		[2] [6]
+		[3] [7]
+
+		so 6 will return [1, 2]
+
+		@param rowPerColumn number of item in each column
+		@param index the index in the grid
+	**/
+	inline public static function columnRow(rowPerColumn: Int, index: Int): Point2i {
+		return [Std.int(index / rowPerColumn), Std.int(index % rowPerColumn)];
+	}
 }
