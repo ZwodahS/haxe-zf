@@ -2,16 +2,30 @@ package zf.ui.layout;
 
 import zf.ds.Vector2D;
 
+enum FixedGridLayoutOrdering {
+	ByRow; // fill up then row then column
+	ByColumn; // fill up the column then row
+}
+
 /**
 	@stage:stable
 **/
 class FixedGridLayout extends h2d.Object {
+	/**
+		Number of rows and column
+	**/
 	var size: Point2i;
+
+	/**
+		Size of each grid
+	**/
 	var gridSize: Point2i;
 
 	var items: Array<h2d.Object>;
 
 	public var alignCenter(default, set): Bool = false;
+
+	public var ordering: FixedGridLayoutOrdering = ByRow;
 
 	public function set_alignCenter(v: Bool = true): Bool {
 		this.alignCenter = v;
@@ -44,7 +58,10 @@ class FixedGridLayout extends h2d.Object {
 	}
 
 	function pos(index: Int): Point2f {
-		final position = Point2i.rowColumn(this.size.x, index);
+		final position = switch (this.ordering) {
+			case ByRow: Point2i.rowColumn(this.size.x, index);
+			case ByColumn: Point2i.columnRow(this.size.y, index);
+		}
 		if (this.alignCenter == true) {
 			return [
 				(position.x * (this.gridSize.x + this.spacing.x)) + (gridSize.x / 2),
