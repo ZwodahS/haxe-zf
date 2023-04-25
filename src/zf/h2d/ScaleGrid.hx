@@ -359,4 +359,15 @@ class ScaleGrid extends h2d.TileGroup {
 		checkUpdate();
 		super.sync(ctx);
 	}
+
+	// ---- Chaining method ---- //
+	public function setWidth(width: Float): ScaleGrid {
+		this.width = width;
+		return this;
+	}
+
+	public function setHeight(height: Float): ScaleGrid {
+		this.height = height;
+		return this;
+	}
 }
