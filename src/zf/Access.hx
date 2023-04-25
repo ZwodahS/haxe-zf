@@ -69,6 +69,17 @@ class Access {
 		}
 	}
 
+	public function getArray<T>(name: String, defaultValue: Array<T> = null): Array<T> {
+		final rawValue = _get(name);
+		if (rawValue == null) return defaultValue;
+		try {
+			final arr: Array<T> = cast rawValue;
+			return arr;
+		} catch (e) {
+			return defaultValue;
+		}
+	}
+
 	// ---- Factory methods ---- //
 	static public function xml(xml: Xml): Access {
 		return new Access(xml, null);
