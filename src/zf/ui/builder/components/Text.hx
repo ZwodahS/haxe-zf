@@ -140,9 +140,15 @@ class Text extends Component {
 		var hasText = false;
 		if (conf.get("stringId") != null) {
 			final stringId = conf.get("stringId");
-			final template = context.builder.getStringTemplate(stringId);
-			if (template != null) {
-				textObject.text = trimText(context.formatTemplate(template), "<br />");
+			// take from context first if the string Id exist
+			var string = context.data.get(stringId);
+			// if stringId not found, we take it from the builder's StringTemplate
+			if (string == null) {
+				final template = context.builder.getStringTemplate(stringId);
+				if (template != null) string = context.formatTemplate(template);
+			}
+			if (string != null) {
+				textObject.text = trimText(string, "<br />");
 				hasText = true;
 			}
 		}
