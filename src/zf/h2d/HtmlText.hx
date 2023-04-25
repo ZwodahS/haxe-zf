@@ -881,7 +881,7 @@ class HtmlText extends h2d.Text {
 }
 
 /**
-	Motivation:
+	# Motivation:
 
 	h2d.HtmlText support most of the functionality but I want to add more functionality to it.
 
@@ -892,12 +892,13 @@ class HtmlText extends h2d.Text {
 	There might be more that I want to do, so I rather just fork HtmlText and upgrade it instead of
 	using HtmlText
 
+	# TODO
+	- Add a <u> / <underline> tag to draw a line below the text
+
 	Fri 22:57:31 24 Feb 2023
 	Forked h2d.HtmlText
 	However, I do think that some functionality is not as useful.
 	For example, <a> is really a specialised version of <interactive>.
 	<a> is removed and is replaced by <interactive> instead.
 	Override onInteractiveCreated to handle it
-
-	Eventually I might rewrite this.
 **/
