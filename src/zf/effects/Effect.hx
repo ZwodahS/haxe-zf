@@ -15,24 +15,12 @@ import zf.ui.UIElement;
 
 	This also allow us to have the effect be automatically removed once the object is removed.
 
-	Key difference here is
-
-	1. Effect should be used when we want effect to be looped indefinitely.
-	2. The effect we want cannot be done using a shader of some sort
-	3. There should *NEVER* be any logic.
-
-	For example, there can be a Shake effect that is similar to the Shake animation.
-	In the Shake animation, there might be an end to the animation.
-	However, in the shake effect, the effect should continue, perhaps with a pause between the shake.
-
-	This don't have to be the case.
-	We can also have one off effect that removes itself once it is completed.
-
 	Effect hijack the sync method of h2d.Object to do this.
 	All Effect should override update method
 
 	Effect can also be removed after they are added to the object.
-	Child class of effect should override onEffectRemove to handle any cleanup.
+	Child class of effect should override onRemove to handle any cleanup.
+
 	For example, some effect may make use of filter / shader.
 	In those case, we need to clean them up when the effect is removed
 	This also means that we can use Effect as a wrapper for filter
@@ -54,11 +42,20 @@ class Effect extends h2d.Object {
 	}
 
 	override function sync(ctx: h2d.RenderContext) {
-		update(ctx.elapsedTime);
 		super.sync(ctx);
+		if (update(ctx.elapsedTime) == true) {
+			this.onEffectFinished();
+			this.removeFromObject();
+			return;
+		}
 	}
 
-	function update(dt: Float) {}
+	/**
+		Return true if this should terminates, false otherwise
+	**/
+	function update(dt: Float): Bool {
+		return true;
+	}
 
 	override function onAdd() {
 		super.onAdd();
@@ -70,9 +67,11 @@ class Effect extends h2d.Object {
 		onEffectRemove();
 	}
 
-	function onEffectAdd() {}
+	dynamic public function onEffectAdd() {}
 
-	function onEffectRemove() {}
+	dynamic public function onEffectRemove() {}
+
+	dynamic public function onEffectFinished() {}
 
 	/**
 		Remove the effect from the object

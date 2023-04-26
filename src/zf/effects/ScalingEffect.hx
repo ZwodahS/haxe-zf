@@ -32,7 +32,7 @@ class ScalingEffect extends Effect {
 		this.object.scaleY = this.conf.maxScale;
 	}
 
-	override function update(dt: Float) {
+	override function update(dt: Float): Bool {
 		this.dt += dt;
 		this.dt = this.dt % this.conf.cycleDuration;
 		// update scale
@@ -45,5 +45,6 @@ class ScalingEffect extends Effect {
 			this.object.scaleY = this.conf.minScale
 				+ (scaleDiff - (scaleDiff * ((this.dt - halfDuration) / halfDuration)));
 		}
+		return false;
 	}
 }
