@@ -19,6 +19,11 @@ typedef VerticalFlowLayoutConf = {
 		set flow.maxWidth
 	**/
 	public var ?maxWidth: Int;
+
+	/**
+		Take items from builder context instead.
+	**/
+	public var ?itemsId: String;
 }
 
 /**
@@ -79,6 +84,19 @@ class VerticalFlowLayout extends Component {
 			case "right": Right;
 			case "middle": Middle;
 			default: Left;
+		}
+
+		final itemsKey = conf.get("itemsKey");
+		if (itemsKey != null && context.data.exists(itemsKey)) {
+			try {
+				final arr: Array<Dynamic> = cast context.data.get(itemsKey);
+				for (item in arr) {
+					final obj: h2d.Object = cast item;
+					if (obj != null) flow.addChild(item);
+				}
+			} catch (e) {
+				Logger.exception(e);
+			}
 		}
 
 		final spacing = conf.getInt("spacing");
