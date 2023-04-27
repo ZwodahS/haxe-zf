@@ -16,16 +16,6 @@ class Builder {
 	public var components: Map<String, Component>;
 
 	/**
-		Registered fonts that can be used / referenced from other template
-	**/
-	var fonts: Map<String, h2d.Font>;
-
-	/**
-		Default font if all else fails
-	**/
-	public var defaultFont: h2d.Font;
-
-	/**
 		Registered colors
 	**/
 	var colors: Map<String, Color>;
@@ -34,9 +24,7 @@ class Builder {
 
 	public function new(registerDefaultComponents = true) {
 		this.components = new Map<String, Component>();
-		this.fonts = new Map<String, h2d.Font>();
 		this.colors = new Map<String, Color>();
-		this.defaultFont = hxd.res.DefaultFont.get();
 
 		CompileTime.importPackage("zf.ui.builder.components");
 		if (registerDefaultComponents) {
@@ -61,10 +49,6 @@ class Builder {
 		Logger.debug('Builder Component: ${component} registered as "${component.type}"', "[UIBuilder]");
 #end
 		this.components[component.type] = component;
-	}
-
-	inline public function registerFont(name: String, font: h2d.Font) {
-		this.fonts[name] = font;
 	}
 
 	inline public function registerColor(name: String, color: Color) {
@@ -138,16 +122,15 @@ class Builder {
 	/**
 		Get a predefined font by name
 	**/
-	inline public function getFont(name: String): h2d.Font {
-		if (this.fonts.exists(name)) return this.fonts[name];
-		return this.defaultFont;
+	dynamic public function getFont(name: String): h2d.Font {
+		return hxd.res.DefaultFont.get().clone();
 	}
 
 	/**
 		Get a predefined color by name
 	**/
-	inline public function getColor(name: String): Color {
-		return this.colors.exists(name) ? this.colors[name] : 0xFFFFFF;
+	dynamic public function getColor(name: String): Color {
+		return 0xFFFFFF;
 	}
 
 	public function parseColorString(cs: String): Color {
