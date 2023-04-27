@@ -47,7 +47,7 @@ class Entity implements Identifiable {
 		- loading
 
 		id -1 is reserved for undefined id, i.e. temporary id.
-		World will check if for id -1 entity during registerEntity
+		World can check for id == -1
 
 		We will allow id to be set if the id is -1. This can be useful from converting a temp entity
 		to a permanent entity.
@@ -66,6 +66,7 @@ class Entity implements Identifiable {
 
 	/**
 		A string represeting what type of entity this is.
+		This should be same as the id of the entity factory
 	**/
 	public var typeId(default, null): String;
 
@@ -84,10 +85,8 @@ class Entity implements Identifiable {
 		No default components at the moment.
 
 		All components should look something like this
-	**/
-	/**
-		public var renderComponent(default, set): RenderComponent;
 
+		public var renderComponent(default, set): RenderComponent;
 		public function set_renderComponent(rc: RenderComponent): RenderComponent {
 			final prev = this.renderComponent;
 			this.renderComponent = rc;
@@ -95,6 +94,9 @@ class Entity implements Identifiable {
 			onComponentChanged(prev, this.renderComponent);
 			return this.renderComponent;
 		}
+	**/
+	/**
+		Trigger onComponentChanged when component are add or removed
 	**/
 	public function onComponentChanged(prev: Component, next: Component) {
 		if (prev != null) {
@@ -111,39 +113,6 @@ class Entity implements Identifiable {
 		}
 	}
 
-	// ---- Positions for entity ---- //
-	var __x__: Float = 0;
-
-	var __y__: Float = 0;
-
-	public var x(get, set): Float;
-
-	public function set_x(x: Float) return this.__x__ = x;
-
-	public function get_x() return __x__;
-
-	public var y(get, set): Float;
-
-	public function set_y(y: Float) return this.__y__ = y;
-
-	public function get_y() return __y__;
-
-	public function setPosition(x: Float, y: Float) {
-		this.__x__ = x;
-		this.__y__ = y;
-	}
-
-	// ---- Rotation ---- //
-	var __rotation__: Float = 0;
-
-	public var rotation(get, set): Float;
-
-	public function get_rotation() return this.__rotation__;
-
-	public function set_rotation(r: Float) {
-		return this.__rotation__ = r;
-	}
-
 	// ---- Dispose method ---- //
 
 	/**
@@ -151,9 +120,7 @@ class Entity implements Identifiable {
 		Only dispose entity when it confirmed that it will not be used.
 	**/
 	public function dispose() {
-		for (component in this.__components__) {
-			component.dispose();
-		}
+		for (component in this.__components__) component.dispose();
 	}
 
 	// ---- Methods to be override ---- //
@@ -173,12 +140,11 @@ class Entity implements Identifiable {
 
 	/**
 		Handle when world is set to the entity.
+		To be override by the child entity in each game.
 	**/
 	function onWorldSet() {}
 
 	public function onStateChanged() {
-		for (component in this.__components__) {
-			component.onStateChanged();
-		}
+		for (component in this.__components__) component.onStateChanged();
 	}
 }
