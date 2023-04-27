@@ -194,6 +194,23 @@ class ResourceManager {
 		}
 	}
 
+	public function getFont(lang: String, id: String, sizeIndex: Int): h2d.Font {
+		final fonts = getFonts(lang, id);
+		if (fonts == null) return hxd.res.DefaultFont.get().clone();
+		if (sizeIndex >= fonts.fonts.length) {
+			sizeIndex = fonts.fonts.length - 1;
+		}
+		return fonts.fonts[sizeIndex];
+	}
+
+	public function getFonts(lang: String, id: String): SingleLanguageFontType {
+		var langFont = this.fonts[lang];
+		if (langFont == null) this.fonts["default"];
+		var fonts = langFont.fonts[id];
+		if (fonts == null) fonts = langFont.fonts["default"];
+		return fonts;
+	}
+
 	// ---- Static Loader ---- //
 	public static function getString(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
 		try {
