@@ -116,6 +116,16 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	}
 
 	/**
+		Move the point in this direction.
+		Returns itself
+	**/
+	public function move(direction: Direction): Point2i {
+		this[0] += direction.x;
+		this[1] += direction.y;
+		return this;
+	}
+
+	/**
 		Make a copy of this point
 	**/
 	inline public function copy(): Point2i {
