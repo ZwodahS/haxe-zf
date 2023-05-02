@@ -180,6 +180,8 @@ class MessageDispatcher {
 		var t0 = Sys.time();
 #end
 
+		onBeforeMessage(message);
+
 		for (listener in this.allMessageDispatcherListeners) {
 			listener.callback(message);
 		}
@@ -199,9 +201,14 @@ class MessageDispatcher {
 		var t1 = Sys.time();
 		haxe.Log.trace('[Dispatcher] ${message} took ${(t1 - t0) * 100}ms', null);
 #end
+		onAfterMessage(message);
 
 		this.dispatchStack.pop();
 	}
+
+	dynamic public function onBeforeMessage(m: Message) {}
+
+	dynamic public function onAfterMessage(m: Message) {}
 
 	/**
 		listen to a message and provide a callback for handling the message
