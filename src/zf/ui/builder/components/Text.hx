@@ -92,7 +92,7 @@ class Text extends Component {
 		return textObject;
 	}
 
-	function trimText(t: String, eol = "::eol::"): String {
+	function trimText(t: String, eol = "<br />"): String {
 		t = t.trim();
 		var strings = t.split("\n");
 		strings = [for (s in strings) s.trim()];
