@@ -58,6 +58,56 @@ enum abstract Direction(String) from String to String {
 		return [0, 0];
 	}
 
+	public var x(get, never): Int;
+
+	public function get_x(): Int {
+		return switch (this) {
+			case West:
+				return -1;
+			case NorthWest:
+				return -1;
+			case North:
+				return 0;
+			case NorthEast:
+				return 1;
+			case East:
+				return 1;
+			case SouthEast:
+				return 1;
+			case South:
+				return 0;
+			case SouthWest:
+				return -1;
+			default:
+				return 0;
+		}
+	}
+
+	public var y(get, never): Int;
+
+	public function get_y(): Int {
+		return switch (this) {
+			case West:
+				return 0;
+			case NorthWest:
+				return -1;
+			case North:
+				return -1;
+			case NorthEast:
+				return -1;
+			case East:
+				return 0;
+			case SouthEast:
+				return 1;
+			case South:
+				return 1;
+			case SouthWest:
+				return 1;
+			default:
+				return 0;
+		}
+	}
+
 	public function toPoint2i(): Point2i {
 		return get_point();
 	}
