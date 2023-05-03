@@ -23,7 +23,7 @@ typedef VerticalFlowLayoutConf = {
 	/**
 		Take items from builder context instead.
 	**/
-	public var ?itemsId: String;
+	public var ?itemsKey: String;
 }
 
 /**

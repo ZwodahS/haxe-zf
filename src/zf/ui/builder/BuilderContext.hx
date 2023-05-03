@@ -49,4 +49,16 @@ class BuilderContext {
 	public function getBitmap(conf: zf.Access): h2d.Object {
 		return this.builder.getBitmap(conf);
 	}
+
+	public function getFont(fontName: String): h2d.Font {
+		return this.builder.getFont(fontName);
+	}
+
+	public function getColor(color: String): Color {
+		return this.builder.getColor(color);
+	}
+
+	public function getString(id: String, context: Dynamic): String {
+		return this.builder.getString(id, context);
+	}
 }

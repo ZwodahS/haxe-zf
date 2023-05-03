@@ -5,9 +5,12 @@ import zf.resources.ResourceManager;
 /**
 	@stage:stable
 
-	Build static h2d.Object from xml/struct
-	Unlike domkit, this will not have any css.
-	This should be used only to generate static object that doesn't change, i.e. help screen etc.
+	Wed 15:55:50 03 May 2023
+	Dev Note:
+	UI Builder. This is very similar to domkit.
+	I started this as a static UI builder, but slowly it becomes more like domkit.
+	Honestly, at this point I should just switch to domkit, but I haven't really find this lacking.
+	Any time I need new feature, I could just add in.
 **/
 class Builder {
 	/**
@@ -117,6 +120,20 @@ class Builder {
 		return object;
 	}
 
+	public function fromFile(path: String, context: Dynamic): h2d.Object {
+		/**
+			Quick way to create object from file
+		**/
+		try {
+			final xml = ResourceManager.getString(path);
+			final object = make(xml, new BuilderContext(context));
+			return object;
+		} catch (e) {
+			zf.Logger.exception(e);
+			return null;
+		}
+	}
+
 	// ---- Methods for getting predefined configurations, i.e fonts,colors etc ---- //
 
 	/**
@@ -143,6 +160,10 @@ class Builder {
 		Get a haxe Template
 	**/
 	dynamic public function getStringTemplate(id: String): haxe.Template {
+		return null;
+	}
+
+	dynamic public function getString(id: String, context: Dynamic): String {
 		return null;
 	}
 
