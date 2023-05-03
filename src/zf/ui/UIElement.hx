@@ -173,6 +173,8 @@ class UIElement extends h2d.Object {
 
 	function hideTooltip(e: hxd.Event) {
 		if (this.tooltipWindow == null) return;
+		if (this.tooltipHelper != null && this.tooltipWindow.parent != this.tooltipHelper.windowRenderSystem.layer)
+			return;
 		this.tooltipWindow.remove();
 	}
 
@@ -620,7 +622,10 @@ class UIElement extends h2d.Object {
 	function handleShowDelay(delta: Float) {
 		if (this.visible == false && this.useShowDelay == true) {
 			this.delay += delta;
-			if (this.delay >= showDelay) this.visible = true;
+			if (this.delay >= showDelay) {
+				this.visible = true;
+				this.delay = 0;
+			}
 		}
 	}
 

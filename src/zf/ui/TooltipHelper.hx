@@ -31,13 +31,17 @@ class TooltipHelper {
 		}
 
 		interactive.onOut = function(e: hxd.Event) {
-			window.remove();
-			window.onHide();
+			// need to check that we are still managed by windowRenderSystem before removing
+			if (window.parent != null && window.parent == windowRenderSystem.layer) {
+				windowRenderSystem.layer.removeChild(window);
+				window.onHide();
+			}
 		}
 
 		interactive.dyOnRemove = function() {
-			if (window.parent != null) {
-				window.remove();
+			// need to check that we are still managed by windowRenderSystem before removing
+			if (window.parent != null && window.parent == windowRenderSystem.layer) {
+				windowRenderSystem.layer.removeChild(window);
 				window.onHide();
 			}
 		}
