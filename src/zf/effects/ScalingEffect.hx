@@ -16,6 +16,8 @@ typedef ScalingEffectConf = {
 class ScalingEffect extends Effect {
 	public var conf: ScalingEffectConf;
 
+	var object: h2d.Object;
+
 	public var dt: Float = 0;
 
 	var scaleDiff: Float;
@@ -27,8 +29,6 @@ class ScalingEffect extends Effect {
 		@param object the object to scale
 		@param conf the configuration effect
 	**/
-	var object: h2d.Object;
-
 	public function new(object: h2d.Object, conf: ScalingEffectConf) {
 		super(conf);
 		this.conf = conf;
