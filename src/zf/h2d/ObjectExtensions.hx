@@ -456,6 +456,11 @@ class ObjectExtensions {
 		return obj;
 	}
 
+	public static function cSetAlpha(obj: h2d.Object, alpha: Float): h2d.Object {
+		obj.alpha = alpha;
+		return obj;
+	}
+
 	public static function isReallyVisible(obj: h2d.Object): Bool {
 		// recursively check if parent is visible
 		if (!obj.visible) return false;
