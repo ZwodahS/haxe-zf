@@ -6,14 +6,22 @@ typedef MoveEffectConf = {
 	public var ?moveAmount: Point2f;
 	public var ?moveFunction: (Float, Point2f) -> Point2f;
 	public var ?duration: Float;
+
+	// terminate after the move completes
+	public var ?terminate: Bool; // default true
+	// reset after removal
+	public var ?resetOnRemove: Bool; // default false
 }
 
 /**
 	@stage:stable
+	Effect that change the position of an object.
 
-	Move the object and move itself afterward.
-
-	This effect will terminate once the move amount is reached.
+	There were different ways to use this.
+	1. terminate true + resetOnRemove false
+	Animation: move the object by an amount and terminate afterward
+	2. terminate false + resetOnRemove true
+	Effect: hold the object by an amount, and return back to the object to the original amount.
 **/
 class MoveEffect extends Effect {
 	public var conf: MoveEffectConf;
@@ -48,7 +56,6 @@ class MoveEffect extends Effect {
 				return m;
 			}
 		}
-
 		this.reset();
 	}
 
@@ -62,10 +69,12 @@ class MoveEffect extends Effect {
 	function defaultConf(conf: MoveEffectConf) {
 		if (conf.moveFunction == null && conf.moveAmount == null) conf.moveAmount = [0, 0];
 		if (conf.duration == null) conf.duration = 0;
+		if (conf.terminate == null) conf.terminate = true;
+		if (conf.resetOnRemove == null) conf.resetOnRemove = false;
 	}
 
 	override public function update(dt: Float): Bool {
-		if (this.delta >= conf.duration) return true;
+		if (this.delta >= conf.duration) return this.conf.terminate;
 		this.delta += dt;
 		if (this.delta >= conf.duration) this.delta = conf.duration;
 
@@ -78,5 +87,12 @@ class MoveEffect extends Effect {
 		this.object.y += this.movedAmount.y;
 
 		return false;
+	}
+
+	override public function onEffectRemove() {
+		if (this.conf.resetOnRemove == true) {
+			this.object.x -= this.movedAmount.x;
+			this.object.y -= this.movedAmount.y;
+		}
 	}
 }

@@ -69,6 +69,16 @@ class EffectWrap extends h2d.Object {
 	- Chain (for running effects after one another)
 	- Wait (wait for X seconds, only make sense in Chain)
 
+	There are also 2 kinds of effect.
+	The first kind is meant to be loop (i.e. effect)
+	The second is run and terminate (i.e. animations)
+
+	The second kind is almost a mirror of zf.up.animations, just that the owner now is the object rather than an updater.
+	The first kind is an effect that loops, which means we will need to reset the object to the original state
+	when the effect is removed from the object.
+
+	Sometimes effect can have both, i.e. be configured to behave like either
+
 	# Note
 	1. What happen when the effect finishes, i.e. update returning true
 	If the owner is a ownerObject, i.e. update via sync function, when the effect finishes, it will be removed
@@ -102,32 +112,38 @@ class Effect {
 	var uiElement: UIElement;
 
 	public function set_ownerObject(v: h2d.Object): h2d.Object {
-		if (init == true) return this.ownerObject;
+		if (v == this.ownerObject) return this.ownerObject;
+
+		if (this.wrapper == null) this.wrapper = new EffectWrap(this);
+
+		// remove from the previous owner
+		if (this.ownerObject != null) this.wrapper.remove();
+		if (this.uiElement != null) this.uiElement.uiEffects.remove(this);
+
+		this.ownerObject = null;
+		this.uiElement = null;
+
+		if (v == null) return v;
+		this.reset();
 
 		// set the owner
 		this.ownerObject = v;
-		this.ownerObject.addChild(this.wrapper = new EffectWrap(this));
+		this.ownerObject.addChild(this.wrapper);
 		if (Std.isOfType(ownerObject, UIElement)) this.uiElement = cast ownerObject;
 
 		if (this.uiElement != null) {
 			if (this.uiElement.uiEffects == null) this.uiElement.uiEffects = [];
 			this.uiElement.uiEffects.push(this);
 		}
-		// marked it as init
-		this.init = true;
 		return this.ownerObject;
 	}
 
 	public var ownerEffect(default, set): Effect;
 
 	public function set_ownerEffect(v: Effect): Effect {
-		if (init == true) return this.ownerEffect;
 		this.ownerEffect = v;
-		this.init = true;
 		return this.ownerEffect;
 	}
-
-	var init: Bool = false;
 
 	public function new(conf: EffectConf) {}
 
@@ -138,11 +154,11 @@ class Effect {
 		return true;
 	}
 
-	dynamic public function onEffectAdd() {}
+	public function onEffectAdd() {}
 
-	dynamic public function onEffectRemove() {}
+	public function onEffectRemove() {}
 
-	dynamic public function onEffectFinished() {}
+	public function onEffectFinished() {}
 
 	/**
 		Reset the effect to the start of the effect.
