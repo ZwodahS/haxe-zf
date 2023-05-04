@@ -539,7 +539,10 @@ class UIElement extends h2d.Object {
 	override function onRemove() {
 		super.onRemove();
 		this.onHide();
-		this.delay = 0;
+		if (this.useShowDelay == true) {
+			this.visible = false;
+			this.delay = 0;
+		}
 		if (this.tooltipWindow != null) this.tooltipWindow.remove();
 	}
 
