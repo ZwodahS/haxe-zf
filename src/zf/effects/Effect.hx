@@ -171,13 +171,14 @@ class Effect {
 		Remove the first instance of this effect from an object.
 	**/
 	public function removeFrom(object: h2d.Object) {
+		// This handles non-copy usage of the effect
 		if (this.ownerObject == object) {
 			this.remove();
 			return;
 		}
+		// This handles when the effect is copied
 		if (Std.isOfType(object, UIElement)) {
-			// Thu 13:02:52 04 May 2023 This should almost NEVER happen, so I am going to put a Assert here.
-			Assert.unreachable();
+			// if the element is uielement, we can just loop the uiEffects
 			final uie: UIElement = cast object;
 			if (uie.uiEffects == null) return;
 			for (effect in uie.uiEffects) {
