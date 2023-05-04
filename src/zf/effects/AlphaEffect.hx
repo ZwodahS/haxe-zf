@@ -8,8 +8,7 @@ typedef AlphaEffectConf = {
 }
 
 class AlphaEffect extends Effect {
-	public var conf: AlphaEffectConf;
-
+	var conf: AlphaEffectConf;
 	var object: h2d.Object;
 
 	var delta: Float = 0;
@@ -19,17 +18,11 @@ class AlphaEffect extends Effect {
 		@param object the object
 		@param conf the configuration
 	**/
-	public function new(object: h2d.Object, conf: AlphaEffectConf) {
+	public function new(conf: AlphaEffectConf) {
 		super(conf);
 		this.conf = conf;
-		this.object = object;
 		defaultConf(conf);
-	}
-
-	override function reset() {
-		super.reset();
-		this.delta = 0;
-		this.changed = 0;
+		reset();
 	}
 
 	function defaultConf(conf: AlphaEffectConf) {
@@ -47,5 +40,23 @@ class AlphaEffect extends Effect {
 		this.object.alpha += this.changed;
 
 		return false;
+	}
+
+	override function reset() {
+		super.reset();
+		this.delta = 0;
+		this.changed = 0;
+	}
+
+	override public function copy(): AlphaEffect {
+		return new AlphaEffect(this.conf);
+	}
+
+	override public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
+		final e = super.applyTo(object, copy);
+		if (copy == true) return e;
+
+		this.object = object;
+		return this;
 	}
 }

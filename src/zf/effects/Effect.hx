@@ -4,6 +4,7 @@ import zf.ui.UIElement;
 
 typedef EffectConf = {};
 
+@:allow(zf.effects.Effect)
 class EffectWrap extends h2d.Object {
 	var effect: Effect;
 
@@ -26,46 +27,31 @@ class EffectWrap extends h2d.Object {
 		super.sync(ctx);
 		if (this.effect.update(ctx.elapsedTime) == true) {
 			this.effect.onEffectFinished();
-			this.removeFromObject();
+			this.effect.ownerObject = null;
 			return;
 		}
-	}
-
-	/**
-		Remove the effect from the object
-	**/
-	public function removeFromObject() {
-		this.remove(); // remove from the object
-		this.effect.cleanup();
 	}
 }
 
 /**
-	@stage:stable
-
+	@stage:unstable
 	Parent class for Effect
 
-	The idea behind effect class is to provide a different way to handle animation, similar to the zf.up.animations.
+	The idea behind effect is to provide a different way to handle animation or apply effect to an object.
+	The previous method of handling this is to use the animator/updater.
+	This means that the ownership of the animations is at the updater.
 
-	The goal is to provide a way to do this such that the object owns the animation rather than having
-	another class owns it.
-
-	This also allow us to have the effect be automatically removed once the object is removed.
-
-	Effect hijack the sync method of h2d.Object to do this.
-	All Effect should override update method
+	The goal with the effect system is to provide a way that the object owns the animations rather
+	than a class outside. This allow us to have the effect be automatically removed once the object is removed.
+	Effect hijack the sync method of h2d.Object to achieve this.
 
 	Effect can also be removed after they are added to the object.
-	Child class of effect should override onRemove to handle any cleanup.
-
-	For example, some effect may make use of filter / shader.
-	In those case, we need to clean them up when the effect is removed
-	This also means that we can use Effect as a wrapper for filter
+	Child class of effect should override onEffectRemove to handle any cleanup.
 
 	All Effect object should be self-contained.
 
 	A lot of the same functionality from zf.up can be found here.
-	- Batch (for running multiple uieffects at once)
+	- Batch (for running multiple effect at once)
 	- Chain (for running effects after one another)
 	- Wait (wait for X seconds, only make sense in Chain)
 
@@ -73,20 +59,35 @@ class EffectWrap extends h2d.Object {
 	The first kind is meant to be loop (i.e. effect)
 	The second is run and terminate (i.e. animations)
 
-	The second kind is almost a mirror of zf.up.animations, just that the owner now is the object rather than an updater.
 	The first kind is an effect that loops, which means we will need to reset the object to the original state
 	when the effect is removed from the object.
+	The second kind is almost a mirror of zf.up.animations, just that the owner now is the object rather
+	than an animator.
 
 	Sometimes effect can have both, i.e. be configured to behave like either
 
-	# Note
-	1. What happen when the effect finishes, i.e. update returning true
-	If the owner is a ownerObject, i.e. update via sync function, when the effect finishes, it will be removed
-	from the object. If the owner is effect, then when update finishes, the parent effect should handle it by itself.
-	In summary, the owner is in charge of what happen when the updates finishes.
+	Usage (Ideal):
 
-	2. Don't create the EffectWrap directly.
-	Set ownerObject and the effect wrap will be created automatically
+	var effect = new ....Effect(conf); // stored in a global state or something (created once like a factory)
+	.
+	.
+	.
+	.
+	effect.applyTo(object);
+
+	If we do not want to apply as a factory, i.e. the effect will be use as it is.
+
+	effect.applyTo(object, false);
+
+	Once a effect has been applied to an object but is not removed, applyTo will first remove itself,
+	then apply to the new object.
+
+	Key method to override for *All* effects
+
+	1. reset - reset the effect to the initial state after construction
+	2. copy - make a copy of the effect (recursively)
+	3. update - main update method to update the effect
+	4. applyTo - apply the effect to an object (recursively)
 **/
 @:allow(zf.effects.EffectWrap)
 class Effect {
@@ -101,30 +102,39 @@ class Effect {
 		If both are not provided, we will assume that it will be handled later by the child
 
 		If ownerObject is also a UIElement, this effect will be added to the UIElement
+
+		Note: Do not use these directly, use apply or removeFrom or remove to modify the effect
 	**/
 	/**
 		These needs to be set by the child.
 
 		Only one of the owner can be set at once.
 	**/
-	public var ownerObject(default, set): h2d.Object;
+	var ownerObject(default, set): h2d.Object;
 
 	var uiElement: UIElement;
 
-	public function set_ownerObject(v: h2d.Object): h2d.Object {
+	/**
+		Parent effect object.
+		This is set when effect is created as a "factory"
+	**/
+	var parent: Effect;
+
+	function set_ownerObject(v: h2d.Object): h2d.Object {
 		if (v == this.ownerObject) return this.ownerObject;
 
-		if (this.wrapper == null) this.wrapper = new EffectWrap(this);
-
 		// remove from the previous owner
-		if (this.ownerObject != null) this.wrapper.remove();
-		if (this.uiElement != null) this.uiElement.uiEffects.remove(this);
+		if (this.wrapper != null && this.wrapper.parent != null) this.wrapper.remove();
+		if (this.ownerObject != null && this.wrapper != null) this.wrapper.remove();
+		if (this.uiElement != null && this.uiElement.uiEffects != null) this.uiElement.uiEffects.remove(this);
 
 		this.ownerObject = null;
 		this.uiElement = null;
 
-		if (v == null) return v;
-		this.reset();
+		if (v == null) return null;
+
+		// create the wrapper if not exist
+		if (this.wrapper == null) this.wrapper = new EffectWrap(this);
 
 		// set the owner
 		this.ownerObject = v;
@@ -138,36 +148,14 @@ class Effect {
 		return this.ownerObject;
 	}
 
-	public var ownerEffect(default, set): Effect;
+	var ownerEffect(default, set): Effect;
 
-	public function set_ownerEffect(v: Effect): Effect {
+	function set_ownerEffect(v: Effect): Effect {
 		this.ownerEffect = v;
 		return this.ownerEffect;
 	}
 
 	public function new(conf: EffectConf) {}
-
-	/**
-		returns true if this effect is done, false otherwise
-	**/
-	function update(dt: Float): Bool {
-		return true;
-	}
-
-	public function onEffectAdd() {}
-
-	public function onEffectRemove() {}
-
-	public function onEffectFinished() {}
-
-	/**
-		Reset the effect to the start of the effect.
-	**/
-	public function reset() {}
-
-	function cleanup() {
-		if (this.uiElement != null && this.uiElement.uiEffects != null) this.uiElement.uiEffects.remove(this);
-	}
 
 	/**
 		Remove the effect
@@ -176,6 +164,92 @@ class Effect {
 		If the parent is a effect, this will have no effect, the parent will manage it.
 	**/
 	public function remove() {
-		if (this.wrapper != null) this.wrapper.removeFromObject();
+		if (this.ownerObject != null) this.ownerObject = null;
 	}
+
+	/**
+		Remove the first instance of this effect from an object.
+	**/
+	public function removeFrom(object: h2d.Object) {
+		if (this.ownerObject == object) {
+			this.remove();
+			return;
+		}
+		if (Std.isOfType(object, UIElement)) {
+			// Thu 13:02:52 04 May 2023 This should almost NEVER happen, so I am going to put a Assert here.
+			Assert.unreachable();
+			final uie: UIElement = cast object;
+			if (uie.uiEffects == null) return;
+			for (effect in uie.uiEffects) {
+				if (effect.parent == this) {
+					effect.remove();
+					break;
+				}
+			}
+		} else {
+			// sadly I will have to loop all children
+			@:privateAccess for (child in object.children) {
+				if (Std.isOfType(child, EffectWrap) == false) continue;
+				if (cast(child, EffectWrap).effect.parent == this) {
+					child.remove();
+					break;
+				}
+			}
+		}
+	}
+
+	// ---- Key methods to be overridden by children ---- //
+
+	/**
+		Reset the effect to the start of the effect.
+		Do not remove the parent call when overriding
+	**/
+	public function reset() {}
+
+	/**
+		Make a copy of the effect. Do not call parent when overriding
+	**/
+	public function copy(): Effect {
+		throw new zf.exceptions.NotImplemented();
+	}
+
+	/**
+		Main update method
+
+		@return true if this effect is to be terminated, false otherwise
+	**/
+	function update(dt: Float): Bool {
+		return true;
+	}
+
+	/**
+		Apply the effect to an object.
+		Do not remove the parent call when overriding.
+
+		If copy is true, child should do *NOTHING*
+
+		@return the effect that is applied to the child. If copy is false, this is returned.
+	**/
+	public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
+		// if copy, make a copy and apply
+		if (copy == true) {
+			final effect = this.copy();
+			effect.parent = this;
+			effect.applyTo(object, false);
+			return effect;
+		}
+
+		// reset the effect
+		this.reset();
+
+		// if we are not owned by another effect, we will wrap this object.
+		if (this.ownerEffect == null) this.ownerObject = object;
+		return this;
+	}
+
+	public function onEffectAdd() {}
+
+	public function onEffectRemove() {}
+
+	public function onEffectFinished() {}
 }

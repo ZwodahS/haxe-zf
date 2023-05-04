@@ -14,37 +14,38 @@ typedef ScalingEffectConf = {
 	Scale and object to min and max with a cycle
 **/
 class ScalingEffect extends Effect {
-	public var conf: ScalingEffectConf;
-
+	var conf: ScalingEffectConf;
 	var object: h2d.Object;
-
-	public var dt: Float = 0;
 
 	var scaleDiff: Float;
 	var halfDuration: Float;
 
+	var dt: Float = 0;
 	var numCycleLeft: Int = -1;
 
 	/**
 		@param object the object to scale
 		@param conf the configuration effect
 	**/
-	public function new(object: h2d.Object, conf: ScalingEffectConf) {
+	public function new(conf: ScalingEffectConf) {
 		super(conf);
+		defaultConf(conf);
 		this.conf = conf;
-		this.object = object;
 
-		if (this.conf.minScale == null) this.conf.minScale = 1.;
-		if (this.conf.maxScale == null) this.conf.maxScale = 1.;
-		if (this.conf.cycleDuration == null) this.conf.cycleDuration = 1.;
+		// precompute some values
 		this.scaleDiff = this.conf.maxScale - this.conf.minScale;
 		this.halfDuration = this.conf.cycleDuration / 2;
-		// we will first set the object scale to min straight away
 		this.reset();
 	}
 
+	function defaultConf(conf: ScalingEffectConf) {
+		if (conf.minScale == null) conf.minScale = 1.;
+		if (conf.maxScale == null) conf.maxScale = 1.;
+		if (conf.cycleDuration == null) conf.cycleDuration = 1.;
+	}
+
 	override function update(dt: Float): Bool {
-		if (this.numCycleLeft == 0) return true;
+		if (this.object == null || this.numCycleLeft == 0) return true;
 		this.dt += dt;
 		if (this.dt >= this.conf.cycleDuration) {
 			this.numCycleLeft -= 1;
@@ -69,8 +70,20 @@ class ScalingEffect extends Effect {
 	}
 
 	override function reset() {
+		if (this.conf.numCycle != null) this.numCycleLeft = this.conf.numCycle;
+	}
+
+	override public function copy(): ScalingEffect {
+		return new ScalingEffect(this.conf);
+	}
+
+	override public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
+		final e = super.applyTo(object, copy);
+		if (copy == true) return e;
+
+		this.object = object;
 		this.object.scaleX = this.conf.minScale;
 		this.object.scaleY = this.conf.minScale;
-		if (this.conf.numCycle != null) this.numCycleLeft = this.conf.numCycle;
+		return this;
 	}
 }

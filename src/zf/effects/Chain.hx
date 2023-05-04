@@ -14,10 +14,12 @@ class Chain extends Effect {
 	var currentIndex: Int = 0;
 	var effects: Array<Effect>;
 	var loop: Bool = true;
+	var conf: ChainConf;
 
 	public function new(effects: Array<Effect>, conf: ChainConf) {
 		super(conf);
 		this.effects = effects;
+		this.conf = conf;
 		for (effect in effects) {
 			effect.ownerEffect = this;
 		}
@@ -40,5 +42,24 @@ class Chain extends Effect {
 	override function reset() {
 		for (effect in this.effects) effect.reset();
 		this.currentIndex = 0;
+	}
+
+	override public function copy(): Chain {
+		var effects: Array<Effect> = [];
+		for (e in this.effects) {
+			effects.push(e.copy());
+		}
+		var chain = new Chain(effects, Reflect.copy(this.conf));
+		return chain;
+	}
+
+	override public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
+		final e = super.applyTo(object, copy);
+		if (copy == true) return e;
+
+		for (effect in this.effects) {
+			effect.applyTo(object, copy);
+		}
+		return this;
 	}
 }

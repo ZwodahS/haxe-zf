@@ -551,10 +551,6 @@ class UIElement extends h2d.Object {
 	**/
 	public var uiEffects: Array<zf.effects.Effect>;
 
-	public function addEffect(effect: zf.effects.Effect) {
-		effect.ownerObject = this;
-	}
-
 	// ---- Other ---- //
 	override function sync(ctx: h2d.RenderContext) {
 		super.sync(ctx);

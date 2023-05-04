@@ -19,10 +19,12 @@ class Batch extends Effect {
 	var effects: Array<Effect>;
 	var runningEffects: Array<Effect>;
 	var loop: Bool = true;
+	var conf: BatchConf;
 
 	public function new(effects: Array<Effect>, conf: BatchConf) {
 		super(conf);
 		this.effects = effects;
+		this.conf = conf;
 		this.runningEffects = [];
 		for (effect in effects) {
 			effect.ownerEffect = this;
@@ -48,5 +50,25 @@ class Batch extends Effect {
 		for (effect in this.effects) effect.reset();
 		this.runningEffects.clear();
 		this.runningEffects.pushArray(this.effects);
+	}
+
+	override public function copy(): Batch {
+		trace('batch copy');
+		var effects: Array<Effect> = [];
+		for (e in this.effects) {
+			effects.push(e.copy());
+		}
+		var batch = new Batch(effects, Reflect.copy(this.conf));
+		return batch;
+	}
+
+	override public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
+		final e = super.applyTo(object, copy);
+		if (copy == true) return e;
+
+		for (effect in this.effects) {
+			effect.applyTo(object, copy);
+		}
+		return this;
 	}
 }

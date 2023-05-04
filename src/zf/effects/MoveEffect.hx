@@ -6,7 +6,6 @@ typedef MoveEffectConf = {
 	public var ?moveAmount: Point2f;
 	public var ?moveFunction: (Float, Point2f) -> Point2f;
 	public var ?duration: Float;
-
 	// terminate after the move completes
 	public var ?terminate: Bool; // default true
 	// reset after removal
@@ -24,12 +23,10 @@ typedef MoveEffectConf = {
 	Effect: hold the object by an amount, and return back to the object to the original amount.
 **/
 class MoveEffect extends Effect {
-	public var conf: MoveEffectConf;
-
+	var conf: MoveEffectConf;
 	var object: h2d.Object;
 
 	var delta: Float = 0;
-
 	var moveAmount: Point2f;
 	var movedAmount: Point2f;
 	var moveFunction: (Float, Point2f) -> Point2f;
@@ -38,10 +35,9 @@ class MoveEffect extends Effect {
 		@param object the object
 		@param conf the configuration
 	**/
-	public function new(object: h2d.Object, conf: MoveEffectConf) {
+	public function new(conf: MoveEffectConf) {
 		super(conf);
 		this.conf = conf;
-		this.object = object;
 		defaultConf(conf);
 
 		this.moveAmount = conf.moveAmount;
@@ -56,14 +52,7 @@ class MoveEffect extends Effect {
 				return m;
 			}
 		}
-		this.reset();
-	}
-
-	override function reset() {
-		super.reset();
-		this.movedAmount.x = 0;
-		this.movedAmount.y = 0;
-		this.delta = 0;
+		reset();
 	}
 
 	function defaultConf(conf: MoveEffectConf) {
@@ -89,10 +78,29 @@ class MoveEffect extends Effect {
 		return false;
 	}
 
+	override function reset() {
+		super.reset();
+		this.movedAmount.x = 0;
+		this.movedAmount.y = 0;
+		this.delta = 0;
+	}
+
 	override public function onEffectRemove() {
 		if (this.conf.resetOnRemove == true) {
 			this.object.x -= this.movedAmount.x;
 			this.object.y -= this.movedAmount.y;
 		}
+	}
+
+	override public function copy(): MoveEffect {
+		return new MoveEffect(this.conf);
+	}
+
+	override public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
+		final e = super.applyTo(object, copy);
+		if (copy == true) return e;
+
+		this.object = object;
+		return this;
 	}
 }
