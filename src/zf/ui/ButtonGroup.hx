@@ -13,7 +13,7 @@ class ButtonGroup {
 	/**
 		The first button will be toggled by default
 	**/
-	public function new(buttons: Array<Button>) {
+	public function new(buttons: Array<Button>, defaultToggle: Button = null) {
 		this.buttons = buttons;
 
 		for (btn in this.buttons) {
@@ -22,15 +22,16 @@ class ButtonGroup {
 			});
 		}
 
-		if (this.buttons.length != 0) toggleButton(this.buttons[0]);
+		if (defaultToggle == null) defaultToggle = this.buttons.length != 0 ? this.buttons[0] : null;
+		if (defaultToggle == null) toggleButton(defaultToggle);
 	}
 
 	function toggleButton(btn: Button) {
 		for (i => b in this.buttons) {
 			b.toggled = btn == b;
 		}
-		onToggled(btn);
+		this.onToggle(btn);
 	}
 
-	dynamic public function onToggled(btn: Button) {}
+	dynamic public function onToggle(btn: Button) {}
 }

@@ -18,12 +18,14 @@ class ObjectsButton extends Button {
 	/**
 		Get the actual underlying text button
 	**/
-	var textLabel: h2d.Text;
+	var textLabel: HtmlText;
 
 	var defaultObject: h2d.Object;
 	var hoverObject: h2d.Object;
 	var disabledObject: h2d.Object;
 	var selectedObject: h2d.Object;
+
+	public var display: h2d.Object;
 
 	public var textOffset(default, set): Point2f;
 
@@ -36,6 +38,7 @@ class ObjectsButton extends Button {
 	function new() {
 		super();
 		this.textOffset = [0, 0];
+		this.addChild(this.display = new h2d.Object());
 	}
 
 	public function set_text(t: String): String {
@@ -146,13 +149,13 @@ class Button extends UIElement {
 		final selectedColor = conf.selectedColor == null ? defaultColor : conf.selectedColor;
 
 		if (btn == null) btn = new ObjectsButton();
-		btn.addChild(btn.defaultObject = new h2d.Bitmap(h2d.Tile.fromColor(defaultColor, width, height)));
-		btn.addChild(btn.hoverObject = new h2d.Bitmap(h2d.Tile.fromColor(hoverColor, width, height)));
-		btn.addChild(btn.disabledObject = new h2d.Bitmap(h2d.Tile.fromColor(disabledColor, width, height)));
-		btn.addChild(btn.selectedObject = new h2d.Bitmap(h2d.Tile.fromColor(selectedColor, width, height)));
+		btn.display.addChild(btn.defaultObject = new h2d.Bitmap(h2d.Tile.fromColor(defaultColor, width, height)));
+		btn.display.addChild(btn.hoverObject = new h2d.Bitmap(h2d.Tile.fromColor(hoverColor, width, height)));
+		btn.display.addChild(btn.disabledObject = new h2d.Bitmap(h2d.Tile.fromColor(disabledColor, width, height)));
+		btn.display.addChild(btn.selectedObject = new h2d.Bitmap(h2d.Tile.fromColor(selectedColor, width, height)));
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new HtmlText(conf.font));
+			btn.display.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -160,7 +163,7 @@ class Button extends UIElement {
 		}
 		btn.alignText();
 
-		btn.addChild(btn.interactive = new Interactive(width, height));
+		btn.display.addChild(btn.interactive = new Interactive(width, height));
 		btn.updateRendering();
 
 		return btn;
@@ -175,13 +178,13 @@ class Button extends UIElement {
 		final selectedTile = conf.tiles.length < 4 || conf.tiles[3] == null ? defaultTile : conf.tiles[3];
 
 		if (btn == null) btn = new ObjectsButton();
-		btn.addChild(btn.defaultObject = new h2d.Bitmap(defaultTile));
-		btn.addChild(btn.hoverObject = new h2d.Bitmap(hoverTile));
-		btn.addChild(btn.disabledObject = new h2d.Bitmap(disabledTile));
-		btn.addChild(btn.selectedObject = new h2d.Bitmap(selectedTile));
+		btn.display.addChild(btn.defaultObject = new h2d.Bitmap(defaultTile));
+		btn.display.addChild(btn.hoverObject = new h2d.Bitmap(hoverTile));
+		btn.display.addChild(btn.disabledObject = new h2d.Bitmap(disabledTile));
+		btn.display.addChild(btn.selectedObject = new h2d.Bitmap(selectedTile));
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new HtmlText(conf.font));
+			btn.display.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -190,7 +193,7 @@ class Button extends UIElement {
 		btn.updateRendering();
 		btn.alignText();
 
-		btn.addChild(btn.interactive = new Interactive(width, height));
+		btn.display.addChild(btn.interactive = new Interactive(width, height));
 
 		return btn;
 	}
@@ -206,13 +209,13 @@ class Button extends UIElement {
 		final selectedObject = conf.objects[3];
 
 		if (btn == null) btn = new ObjectsButton();
-		btn.addChild(btn.defaultObject = defaultObject);
-		btn.addChild(btn.hoverObject = hoverObject);
-		btn.addChild(btn.disabledObject = disabledObject);
-		btn.addChild(btn.selectedObject = selectedObject);
+		btn.display.addChild(btn.defaultObject = defaultObject);
+		btn.display.addChild(btn.hoverObject = hoverObject);
+		btn.display.addChild(btn.disabledObject = disabledObject);
+		btn.display.addChild(btn.selectedObject = selectedObject);
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new HtmlText(conf.font));
+			btn.display.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -221,7 +224,7 @@ class Button extends UIElement {
 		btn.updateRendering();
 		btn.alignText();
 
-		btn.addChild(btn.interactive = new Interactive(width, height));
+		btn.display.addChild(btn.interactive = new Interactive(width, height));
 
 		return btn;
 	}
@@ -236,13 +239,13 @@ class Button extends UIElement {
 		final selectedColor = conf.colors.length < 4 ? defaultColor : conf.colors[3];
 
 		if (btn == null) btn = new ObjectsButton();
-		btn.addChild(btn.defaultObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
-		btn.addChild(btn.hoverObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
-		btn.addChild(btn.disabledObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
-		btn.addChild(btn.selectedObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
+		btn.display.addChild(btn.defaultObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
+		btn.display.addChild(btn.hoverObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
+		btn.display.addChild(btn.disabledObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
+		btn.display.addChild(btn.selectedObject = (new h2d.Bitmap(tile)).cSetColor(defaultColor));
 
 		if (conf.font != null) {
-			btn.addChild(btn.textLabel = new HtmlText(conf.font));
+			btn.display.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
 			btn.textLabel.maxWidth = width;
@@ -251,7 +254,7 @@ class Button extends UIElement {
 		btn.updateRendering();
 		btn.alignText();
 
-		btn.addChild(btn.interactive = new Interactive(width, height));
+		btn.display.addChild(btn.interactive = new Interactive(width, height));
 
 		return btn;
 	}
