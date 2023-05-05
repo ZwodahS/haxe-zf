@@ -30,8 +30,7 @@ class Wait extends Effect {
 	}
 
 	override public function copy(): Wait {
-		trace('wait copy');
-		return new Wait(Reflect.copy(this.conf));
+		return new Wait(this.conf);
 	}
 
 	override public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
