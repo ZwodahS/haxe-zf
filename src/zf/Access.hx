@@ -80,6 +80,35 @@ class Access {
 		}
 	}
 
+	public function parseArrayInt(name: String, defaultValue: Array<Int> = null): Array<Int> {
+		if (this.d != null) {
+			final rawValue = _get(name);
+			if (rawValue == null) return defaultValue;
+			try {
+				final arr: Array<Int> = cast rawValue;
+				return arr;
+			} catch (e) {
+				return defaultValue;
+			}
+		} else if (this.x != null) {
+			final string = getString(name);
+			if (string == null) return defaultValue;
+			final split = string.split(",");
+			final ints: Array<Int> = [];
+			for (s in split) {
+				try {
+					final p = Std.parseInt(s);
+					if (p == null) return defaultValue;
+					ints.push(p);
+				} catch (e) {
+					return defaultValue;
+				}
+			}
+			return ints;
+		}
+		return defaultValue;
+	}
+
 	// ---- Factory methods ---- //
 	static public function xml(xml: Xml): Access {
 		return new Access(xml, null);
