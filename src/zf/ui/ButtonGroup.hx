@@ -10,6 +10,15 @@ import zf.ui.Button;
 class ButtonGroup {
 	var buttons: Array<Button>;
 
+	public var selected(get, never): Button;
+
+	public function get_selected(): Button {
+		for (b in this.buttons) {
+			if (b.toggled) return b;
+		}
+		return null;
+	}
+
 	/**
 		The first button will be toggled by default
 	**/
@@ -26,7 +35,7 @@ class ButtonGroup {
 		if (defaultToggle == null) toggleButton(defaultToggle);
 	}
 
-	function toggleButton(btn: Button) {
+	public function toggleButton(btn: Button) {
 		for (i => b in this.buttons) {
 			b.toggled = btn == b;
 		}
