@@ -78,7 +78,7 @@ class ScrollArea extends UIElement {
 		if (conf.cursorFactory != null) {
 			scrollArea.cursorFactory = conf.cursorFactory;
 		} else {
-			scrollArea.cursorFactory = new zf.ui.ScaleGridFactory(h2d.Tile.fromColor(0xff393836), 0, 0, 0, 0);
+			scrollArea.cursorFactory = new zf.ui.ScaleGridFactory(h2d.Tile.fromColor(cursorColor), 0, 0, 0, 0);
 		}
 
 		scrollArea.build();
