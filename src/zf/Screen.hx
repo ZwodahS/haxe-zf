@@ -1,9 +1,19 @@
 package zf;
 
+enum ScreenState {
+	Init;
+	Entering;
+	Ready;
+	Exiting;
+	Exited;
+}
+
 /**
 	@stage:stable
 **/
 class Screen extends h2d.Layers {
+	public var state: ScreenState = Init;
+
 	public var game(default, set): Game;
 
 	public function set_game(g: Game): Game {

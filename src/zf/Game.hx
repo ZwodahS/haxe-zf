@@ -5,58 +5,29 @@ import zf.h2d.HtmlText;
 
 using zf.h2d.ObjectExtensions;
 
+enum GameScreenState {
+	InTransition;
+	Ready;
+}
+
 /**
 	@stage:stable
 
 	Parent Game.hx
 **/
-enum ScreenState {
-	Exiting;
-	Entering;
-	Ready;
-}
-
-#if debug
-class TextLabel extends h2d.Object {
-	public var text(default, set): String;
-
-	var t: h2d.Text;
-	var bm: h2d.Bitmap;
-	var label: String;
-	var size: Point2i;
-
-	public function new(label: String, font: h2d.Font, size: Point2i) {
-		super(null);
-		this.label = label;
-		this.size = size;
-		var bm = new h2d.Bitmap(h2d.Tile.fromColor(0xAAAAAA, 1, 1));
-		bm.alpha = .3;
-		bm.width = size.x;
-		bm.height = size.y;
-		this.addChild(bm);
-		this.t = new h2d.Text(font);
-		this.addChild(this.t);
-		this.text = '';
-	}
-
-	public function set_text(text: String): String {
-		this.text = text;
-		this.t.text = '${this.label}: ${text}';
-		this.t.x = 1;
-		this.t.y = (this.size.y - this.t.textHeight) / 2;
-		return this.text;
-	}
-}
-#end
-
 class Game extends hxd.App {
-	// ---- Proxy methods to scene ---- //
+	/**
+		The width of the game
+	**/
 	public var gameWidth(get, null): Int;
 
 	public function get_gameWidth(): Int {
 		return this.s2d.width;
 	}
 
+	/**
+		The height of the game
+	**/
 	public var gameHeight(get, null): Int;
 
 	public function get_gameHeight(): Int {
@@ -80,11 +51,22 @@ class Game extends hxd.App {
 
 	public var r: hxd.Rand;
 
+	/**
+		The main display layer
+	**/
+	var display: h2d.Object;
+
+	/**
+		Mask things outside of the display area
+	**/
+	var mask: h2d.Mask;
+
 	override function new(size: Point2i = null, pixelPerfect: Bool = false, autoResize: Bool = true) {
 		super();
 		this.r = new hxd.Rand(Random.int(0, zf.Constants.SeedMax));
 		if (size == null) size = [800, 600];
 		this.pixelPerfect = pixelPerfect;
+
 		this.boundedSize = size;
 		this.autoResize = autoResize;
 	}
@@ -93,9 +75,12 @@ class Game extends hxd.App {
 		// add event handler
 		this.s2d.addEventListener(this.onEvent);
 		this.s2d.camera.clipViewport = true;
+
+		this.mask = new h2d.Mask(this.boundedSize.x, this.boundedSize.y);
+		this.mask.addChild(this.display = new h2d.Object());
+		this.s2d.addChild(this.mask);
 #if debug
 		this.setupFramerate();
-		this.setupCursor();
 #end
 		this.screenState = Ready;
 
@@ -147,9 +132,7 @@ class Game extends hxd.App {
 			}
 		}
 	}
-#end
 
-#if debug
 	var framerate: h2d.Text;
 	var drawCalls: h2d.Text;
 
@@ -175,55 +158,15 @@ class Game extends hxd.App {
 		this.drawCalls.putBelow(this.framerate, [0, 2]);
 		this.drawCalls.visible = false;
 	}
-
-	var cursorDetail: TextLabel;
-
-	function setupCursor() {
-		var font = getDebugFont();
-		this.cursorDetail = new TextLabel("c", font, [100, 20]);
-		this.cursorDetail.x = 2;
-		this.cursorDetail.y = 2;
-		this.s2d.add(cursorDetail, 101);
-		this.cursorDetail.visible = false;
-	}
 #end
 
-	// end of debug
+	// ---- End of DebugOverlay ---- //
 
 	override function update(dt: Float) {
-		try {
-			if (this.currentScreen != null) this.currentScreen.update(dt);
-			if (this.incomingScreen != null) this.incomingScreen.update(dt);
-			if (this.outgoingScreen != null) this.outgoingScreen.update(dt);
 #if debug
-			this.framerate.text = '${(1 / dt).round(1)}';
-			if (this.cursorDetail.visible) this.cursorDetail.text = '(${s2d.mouseX}. ${s2d.mouseY})';
+		if (this.framerate.visible == true) this.framerate.text = '${(1 / dt).round(1)}';
 #end
-			if (this.screenState == Exiting) {
-				if (outgoingScreen.doneExiting()) {
-					this.s2d.removeChild(this.outgoingScreen);
-					this.outgoingScreen.onScreenExited();
-					screenExited(this.outgoingScreen);
-					this.outgoingScreen.destroy();
-					this.outgoingScreen = null;
-					if (this.incomingScreen != null) {
-						beginIncommingScreen();
-					} else {
-						this.screenState = Ready;
-					}
-				}
-			} else if (this.screenState == Entering) {
-				if (this.incomingScreen.doneEntering()) {
-					this.incomingScreen.onScreenEntered();
-					screenEntered(this.incomingScreen);
-					this.screenState = Ready;
-					this.currentScreen = this.incomingScreen;
-					this.incomingScreen = null;
-				}
-			}
-		} catch (e) {
-			onException(e, haxe.CallStack.exceptionStack());
-		}
+		updateScreens(dt);
 	}
 
 	function onException(e: haxe.Exception, cs: Array<haxe.CallStack.StackItem>) {}
@@ -244,41 +187,97 @@ class Game extends hxd.App {
 	}
 
 	// ---- Screen Management ---- //
+
+	/**
+		Sun 22:06:50 07 May 2023
+		Screen transitions is changed
+
+		Sometimes we need to show the incoming and outgoing screen at the same time.
+	**/
 	public var currentScreen(default, null): zf.Screen;
+
 	public var incomingScreen(default, null): zf.Screen;
 	public var outgoingScreen(default, null): zf.Screen;
 	public var isChangingScreen(get, never): Bool;
 
 	inline function get_isChangingScreen() return this.outgoingScreen != null || this.incomingScreen != null;
 
-	var screenState: ScreenState;
+	var screenState: GameScreenState;
 
-	public function switchScreen(screen: zf.Screen) {
+	/**
+		Switch to the screen.
+		@param screen the screen to show
+		@param showImmediately if true, the incoming screen will be added immediately
+	**/
+	public function switchScreen(screen: zf.Screen, showImmediately: Bool = false) {
 		if (this.isChangingScreen == true) return;
 		if (this.currentScreen == screen) return;
+
+		// set the outgoing screen
 		if (this.currentScreen != null) this.outgoingScreen = this.currentScreen;
-		screen.game = this;
-		this.currentScreen = null;
+		// set the incoming screen
 		this.incomingScreen = screen;
+		screen.game = this;
+		// set current screen to null
+		this.currentScreen = null;
+
+		this.screenState = InTransition;
+		if (showImmediately || this.outgoingScreen == null) {
+			beginIncomingScreen();
+		}
 
 		if (this.outgoingScreen != null) {
-			this.screenState = Exiting;
+			this.outgoingScreen.state = Exiting;
 			this.outgoingScreen.beginScreenExit();
-		} else if (this.incomingScreen != null) {
-			beginIncommingScreen();
 		}
 	}
 
-	function beginIncommingScreen() {
-		this.screenState = Entering;
+	function beginIncomingScreen() {
+		this.incomingScreen.state = Entering;
 		this.incomingScreen.beginScreenEnter();
-		this.s2d.add(this.incomingScreen, 100);
+		this.display.addChild(this.incomingScreen);
 	}
 
 	function screenExited(screen: zf.Screen) {}
 
 	function screenEntered(screen: zf.Screen) {
 		screen.resize(this.gameWidth, this.gameHeight);
+	}
+
+	function updateScreens(dt: Float) {
+		try {
+			if (this.currentScreen != null) this.currentScreen.update(dt);
+			if (this.incomingScreen != null) this.incomingScreen.update(dt);
+			if (this.outgoingScreen != null) this.outgoingScreen.update(dt);
+
+			if (this.screenState == InTransition) {
+				if (this.outgoingScreen != null && this.outgoingScreen.doneExiting() == true) {
+					this.outgoingScreen.remove();
+					this.outgoingScreen.onScreenExited();
+					screenExited(this.outgoingScreen);
+					this.outgoingScreen.state = Exited;
+					this.outgoingScreen.destroy();
+					this.outgoingScreen = null;
+
+					// if the incoming is not added yet, means we did not add it immediately
+					if (this.currentScreen == null && this.incomingScreen.parent == null) {
+						beginIncomingScreen();
+					}
+				}
+				if (this.incomingScreen != null && this.incomingScreen.parent != null
+					&& this.incomingScreen.doneEntering() == true) {
+					this.incomingScreen.onScreenEntered();
+					this.incomingScreen.state = Ready;
+					screenEntered(this.incomingScreen);
+					this.currentScreen = this.incomingScreen;
+					this.incomingScreen = null;
+				}
+				if (this.outgoingScreen == null && this.incomingScreen == null) this.screenState = Ready;
+			}
+		} catch (e) {
+			Logger.exception(e);
+			onException(e, haxe.CallStack.exceptionStack());
+		}
 	}
 
 	public function toggleFullScreen(fullscreen: Bool) {
@@ -298,6 +297,7 @@ class Game extends hxd.App {
 		if (this.currentScreen != null) this.currentScreen.resize(this.s2d.width, this.s2d.height);
 	}
 }
+
 /**
 	Fri 10:49:27 06 Jan 2023
 	I think the cursor position and debug stuffs should be moved into debug to make the code cleaner.
