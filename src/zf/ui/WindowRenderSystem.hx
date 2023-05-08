@@ -18,6 +18,18 @@ typedef ShowWindowConf = {
 	public var ?preferredDirection: Array<Direction>;
 
 	/**
+		Vertical alignment when the window is placed on the left or right
+		default: top
+	**/
+	public var ?verticalAlignment: VerticalAlignment;
+
+	/**
+		Horizontal alignment when the window is placed on the up or down
+		default: left
+	**/
+	public var ?horizontalAlignment: HorizontalAlignment;
+
+	/**
 		If provided, this will override the spacing defined in WindowRenderSystem
 	**/
 	public var ?overrideSpacing: Float;
@@ -42,6 +54,9 @@ class WindowRenderSystem {
 	public var defaultSpacing: Float = 1;
 
 	public var defaultRenderDirection: Array<Direction> = [Down, Right, Up, Left];
+
+	public var defaultHorizontalAlignment: HorizontalAlignment = Left;
+	public var defaultVerticalAlignment: VerticalAlignment = Top;
 
 	public function new(bounds: h2d.col.Bounds, layer: h2d.Layers = null) {
 		layer = layer != null ? layer : new h2d.Layers();
@@ -86,21 +101,43 @@ class WindowRenderSystem {
 		if (conf != null && conf.overrideSpacing != null) spacing = conf.overrideSpacing;
 
 		final wBounds = w.getBounds();
+		var horizontalAlignment: HorizontalAlignment = this.defaultHorizontalAlignment;
+		var verticalAlignment: VerticalAlignment = this.defaultVerticalAlignment;
+		if (conf != null && conf.horizontalAlignment != null) horizontalAlignment = conf.horizontalAlignment;
+		if (conf != null && conf.verticalAlignment != null) verticalAlignment = conf.verticalAlignment;
 		function getBoundsInDirection(direction: Direction): h2d.col.Bounds {
 			var b = wBounds.clone();
 			switch (direction) {
 				case Up:
+					b.x = switch (horizontalAlignment) {
+						case Left: relativeTo.xMin;
+						case Center: relativeTo.xMin + (relativeTo.width / 2) - (wBounds.width / 2);
+						case Right: relativeTo.xMax - wBounds.width;
+					}
 					b.x = relativeTo.xMin;
 					b.y = relativeTo.yMin - spacing - b.height;
 				case Down:
-					b.x = relativeTo.xMin;
+					b.x = switch (horizontalAlignment) {
+						case Left: relativeTo.xMin;
+						case Center: relativeTo.xMin + (relativeTo.width / 2) - (wBounds.width / 2);
+						case Right: relativeTo.xMax - wBounds.width;
+					}
 					b.y = relativeTo.yMax + spacing;
 				case Left:
 					b.x = relativeTo.xMin - spacing - b.width;
-					b.y = relativeTo.yMin;
+					b.y = switch (verticalAlignment) {
+						case Top: relativeTo.yMin;
+						case Center: relativeTo.yMin + (relativeTo.height / 2) - (wBounds.height / 2);
+						case Bottom: relativeTo.yMax - wBounds.height;
+					}
 				case Right:
 					b.x = relativeTo.xMax + spacing;
 					b.y = relativeTo.yMin;
+					b.y = switch (verticalAlignment) {
+						case Top: relativeTo.yMin;
+						case Center: relativeTo.yMin + (relativeTo.height / 2) - (wBounds.height / 2);
+						case Bottom: relativeTo.yMax - wBounds.height;
+					}
 				default:
 					return null;
 			}
