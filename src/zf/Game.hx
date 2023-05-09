@@ -78,7 +78,7 @@ class Game extends hxd.App {
 
 		this.mask = new h2d.Mask(this.boundedSize.x, this.boundedSize.y);
 		this.mask.addChild(this.display = new h2d.Object());
-		this.s2d.addChild(this.mask);
+		this.s2d.add(this.mask, 100);
 #if debug
 		this.setupFramerate();
 #end
