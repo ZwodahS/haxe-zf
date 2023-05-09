@@ -152,7 +152,10 @@ class Text extends Component {
 				hasText = true;
 			}
 		}
-		if (conf.get("name") != null) textObject.name = conf.get("name");
+		if (conf.get("name") != null) {
+			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
+			textObject.name = conf.get("name");
+		}
 
 		return {text: textObject, hasText: hasText};
 	}

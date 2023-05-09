@@ -15,7 +15,10 @@ class Layer extends zf.ui.builder.Component {
 
 	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
 		final component = new h2d.Layers();
-		if (conf.getString("name") != null) component.name = conf.getString("name");
+		if (conf.getString("name") != null) {
+			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
+			component.name = conf.getString("name");
+		}
 		return component;
 	}
 }

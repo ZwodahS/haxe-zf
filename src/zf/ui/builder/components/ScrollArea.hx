@@ -57,7 +57,11 @@ class ScrollArea extends zf.ui.builder.Component {
 			cursorColor: color,
 			cursorFactory: cursorFactory
 		});
-		if (conf.getString("name") != null) component.name = conf.getString("name");
+
+		if (conf.getString("name") != null) {
+			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
+			component.name = conf.getString("name");
+		}
 
 		return component;
 	}

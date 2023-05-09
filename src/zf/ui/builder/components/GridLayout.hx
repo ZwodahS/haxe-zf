@@ -57,7 +57,10 @@ class GridLayout extends zf.ui.builder.Component {
 		final component = new zf.ui.layout.FixedGridLayout(size, gridSize);
 		component.spacing = spacing;
 
-		if (conf.getString("name") != null) component.name = conf.getString("name");
+		if (conf.getString("name") != null) {
+			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
+			component.name = conf.getString("name");
+		}
 
 		return component;
 	}

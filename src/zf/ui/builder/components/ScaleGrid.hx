@@ -31,7 +31,10 @@ class ScaleGrid extends Component {
 		final height = conf.getInt("height", 1);
 
 		final obj = factory.make([width, height]);
-		if (conf.get("name") != null) obj.name = conf.get("name");
+		if (conf.get("name") != null) {
+			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
+			obj.name = conf.get("name");
+		}
 		return obj;
 	}
 }

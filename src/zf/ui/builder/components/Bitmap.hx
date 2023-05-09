@@ -18,7 +18,10 @@ class Bitmap extends Component {
 
 	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
 		final bm = context.getBitmap(conf);
-		if (conf.get("name") != null) bm.name = conf.get("name");
+		if (conf.get("name") != null) {
+			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
+			bm.name = conf.get("name");
+		}
 		return bm;
 	}
 }
