@@ -30,11 +30,7 @@ class DynamicLayout extends Component {
 		final layout = new zf.ui.layout.DynamicLayout([width, height]);
 		for (child in element.elements()) {
 			var c = context.makeObjectFromXMLElement(child);
-			if (c == null) {
-				final e = new ComponentException();
-				e.xmlNode = child;
-				throw e;
-			}
+			if (c == null) continue;
 
 			var uie: UIElement = null;
 			// if it is not uielement, we wrap it around a uielement
@@ -81,11 +77,7 @@ class DynamicLayout extends Component {
 		if (conf.items != null) {
 			for (item in conf.items) {
 				final c = context.makeObjectFromStruct(item);
-				if (c == null) {
-					final e = new ComponentException();
-					e.structNode = item;
-					throw e;
-				}
+				if (c == null) continue;
 				final compConf: DynamicAccess<Dynamic> = item.conf;
 				if (compConf.get("x") != null) c.x = compConf.get("x");
 				if (compConf.get("y") != null) c.y = compConf.get("y");
