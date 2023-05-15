@@ -61,8 +61,11 @@ class Game extends hxd.App {
 	**/
 	var mask: h2d.Mask;
 
+	var updater: zf.up.Updater;
+
 	override function new(size: Point2i = null, pixelPerfect: Bool = false, autoResize: Bool = true) {
 		super();
+		this.updater = new zf.up.Updater();
 		this.r = new hxd.Rand(Random.int(0, zf.Constants.SeedMax));
 		if (size == null) size = [800, 600];
 		this.pixelPerfect = pixelPerfect;
@@ -163,6 +166,7 @@ class Game extends hxd.App {
 	// ---- End of DebugOverlay ---- //
 
 	override function update(dt: Float) {
+		this.updater.update(dt);
 #if debug
 		if (this.framerate.visible == true) this.framerate.text = '${(1 / dt).round(1)}';
 #end

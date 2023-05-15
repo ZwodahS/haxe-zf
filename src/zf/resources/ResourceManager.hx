@@ -3,6 +3,7 @@ package zf.resources;
 import zf.Assets;
 import zf.exceptions.ResourceLoadException;
 import zf.resources.LanguageFont;
+import zf.resources.SoundResource;
 
 typedef ResourceConf = {
 	public var spritesheets: Array<{
@@ -10,6 +11,9 @@ typedef ResourceConf = {
 	}>;
 
 	public var fonts: Array<{
+		public var path: String;
+	}>;
+	public var sounds: Array<{
 		public var path: String;
 	}>;
 }
@@ -22,7 +26,7 @@ enum ResourceSource {
 /**
 	@stage:stable
 
-	Opinionated Res Manager
+	Opinionated Resource Manager
 
 	Motivation
 
@@ -31,12 +35,10 @@ enum ResourceSource {
 	1. We want to load images or any resources and be able to access them via a name, regardless of where it came from.
 	2. We need to be able to load from both pak and userdata/mods
 
-	One different between this and UserData is that we will not handle loading on web.
-	This is because "Resource" is not the same as "Data" so we will not allow that on the web build
-
 	Currently managing
 	- Images
 	- Text (unparsed)
+	- Sound
 
 	@todo
 	- Add Structloader here
@@ -53,6 +55,8 @@ class ResourceManager {
 	**/
 	var texts: Map<String, String>;
 
+	var sounds: Map<String, SoundResource>;
+
 	/**
 		Loaded fonts
 	**/
@@ -62,6 +66,7 @@ class ResourceManager {
 		this.images = new Map<String, ImageResource>();
 		this.texts = new Map<String, String>();
 		this.fonts = new Map<String, LanguageFont>();
+		this.sounds = new Map<String, SoundResource>();
 	}
 
 	public function load(p: String) {
@@ -72,7 +77,12 @@ class ResourceManager {
 			For example, to be able to load them from res and also mod directory.
 			Then we will need to be able to smarter and know the relative path.
 
-			For nowe we don't have to deal with that.
+			For now we don't have to deal with that.
+
+			Mon 16:40:01 15 May 2023
+			One idea is to always load from hxd.res
+			If the path starts with @workshop:/... then we will load from steamworkshop
+			If the path starts with @mod:/... then we will load from userdata/mod directory
 		**/
 
 		final path = new haxe.io.Path(p);
@@ -86,8 +96,14 @@ class ResourceManager {
 
 		if (config.fonts != null) {
 			for (fPath in config.fonts) {
-				final f = loadFonts("fonts/fonts.json");
+				final f = loadFonts(fPath.path);
 				this.fonts[f.language] = f;
+			}
+		}
+
+		if (config.sounds != null) {
+			for (c in config.sounds) {
+				loadSounds(c.path);
 			}
 		}
 	}
@@ -164,7 +180,7 @@ class ResourceManager {
 	}
 
 	// ---- Fonts ---- //
-	public function loadFonts(path: String, source: ResourceSource = Pak, exception: Bool = true): LanguageFont {
+	function loadFonts(path: String, source: ResourceSource = Pak, exception: Bool = true): LanguageFont {
 		try {
 			final conf = getJson(path, source, exception);
 			if (conf == null) return null;
@@ -191,6 +207,38 @@ class ResourceManager {
 			Logger.exception(e);
 			if (exception) throw new ResourceLoadException(path, e);
 			return null;
+		}
+	}
+
+	// ---- Sound ---- //
+	public function getSound(name: String) {
+		return this.sounds.get(name);
+	}
+
+	function loadSound(path: String): hxd.res.Sound {
+		return hxd.Res.load(path).toSound();
+	}
+
+	function loadSounds(path: String, source: ResourceSource = Pak, exception: Bool = true) {
+		try {
+			final conf = getJson(path, source, exception);
+			if (conf == null) return;
+			var soundConf: {sound: Array<SoundResourceConf>} = conf;
+			final sounds = soundConf.sound;
+			for (conf in sounds) {
+				final resource = new SoundResource(conf.id);
+				for (s in conf.items) {
+					final sound = new Sound();
+					if (s.name != null) sound.name = s.name;
+					if (s.ogg != null) sound.ogg = loadSound(s.ogg);
+					if (s.pitch != null) sound.pitch = s.pitch;
+					resource.items.push(sound);
+				}
+				this.sounds[resource.id] = resource;
+			}
+		} catch (e) {
+			Logger.exception(e);
+			if (exception) throw new ResourceLoadException(path, e);
 		}
 	}
 
