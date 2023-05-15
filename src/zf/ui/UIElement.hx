@@ -646,6 +646,8 @@ class UIElement extends h2d.Object {
 		uie.interactive = new Interactive(bounds.width, bounds.height);
 		uie.addChild(uie.interactive);
 		if (center == true) {
+			uie.x = object.x + (bounds.width / 2);
+			uie.y = object.y + (bounds.height / 2);
 			object.x = -bounds.width / 2;
 			object.y = -bounds.height / 2;
 			uie.interactive.x = -bounds.width / 2;
