@@ -16,4 +16,15 @@ class Object extends Component {
 		final conf: ObjectConf = c;
 		return conf.object;
 	}
+
+	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+		final conf = zf.Access.xml(element);
+		final objectKey = conf.getString("object");
+		try {
+			final object: h2d.Object = cast context.data.get(objectKey);
+			return object;
+		} catch (e) {
+			return null;
+		}
+	}
 }
