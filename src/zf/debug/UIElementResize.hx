@@ -57,6 +57,10 @@ class UIElementResize extends h2d.Object {
 			final scaleGrid: zf.h2d.ScaleGrid = cast this.object;
 			this.width = scaleGrid.width;
 			this.height = scaleGrid.height;
+		} else if (Std.isOfType(this.object, h2d.Bitmap)) {
+			final bitmap: h2d.Bitmap = cast this.object;
+			this.width = bitmap.width;
+			this.height = bitmap.height;
 		}
 	}
 
@@ -109,7 +113,11 @@ class UIElementResize extends h2d.Object {
 			final scaleGrid: zf.h2d.ScaleGrid = cast this.object;
 			scaleGrid.width = this.width + x;
 			scaleGrid.height = this.height + y;
-		} else {}
+		} else if (Std.isOfType(this.object, h2d.Bitmap)) {
+			final bitmap: h2d.Bitmap = cast this.object;
+			bitmap.width = this.width + x;
+			bitmap.height = this.height + y;
+		}
 	}
 
 	override function sync(ctx: h2d.RenderContext) {
