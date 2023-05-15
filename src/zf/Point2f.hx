@@ -15,6 +15,29 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 		this = [x, y];
 	}
 
+	/**
+		proxy this as min / max
+	**/
+	public var min(get, set): Float;
+
+	inline public function get_min(): Float {
+		return this[0];
+	}
+
+	inline public function set_min(v: Float): Float {
+		return this[0] = v;
+	}
+
+	public var max(get, set): Float;
+
+	inline public function get_max(): Float {
+		return this[1];
+	}
+
+	inline public function set_max(v: Float): Float {
+		return this[1] = v;
+	}
+
 	public function toString(): String {
 		return '{$x,$y}';
 	}
