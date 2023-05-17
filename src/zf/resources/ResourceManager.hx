@@ -51,9 +51,9 @@ class ResourceManager {
 	var images: Map<String, ImageResource>;
 
 	/**
-		Loaded Strings
+		Cache Loaded Strings from getString method
 	**/
-	var texts: Map<String, String>;
+	var strings: Map<String, String>;
 
 	var sounds: Map<String, SoundResource>;
 
@@ -64,7 +64,7 @@ class ResourceManager {
 
 	public function new() {
 		this.images = new Map<String, ImageResource>();
-		this.texts = new Map<String, String>();
+		this.strings = new Map<String, String>();
 		this.fonts = new Map<String, LanguageFont>();
 		this.sounds = new Map<String, SoundResource>();
 	}
@@ -262,10 +262,10 @@ class ResourceManager {
 		return fonts;
 	}
 
-	// ---- Static Loader ---- //
-	public static function getString(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
+	public function getString(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
 		try {
 			var text: String = null;
+			if (this.strings[path] != null) return this.strings[path];
 			switch (source) {
 				case Pak:
 					final file = hxd.Res.load(path);
@@ -278,6 +278,10 @@ class ResourceManager {
 					text = sys.io.File.getContent(path);
 #end
 			}
+#if !debug
+			// if not debug mode, we will cache this
+			this.strings[path] = text;
+#end
 			return text;
 		} catch (e) {
 			if (exception) throw new ResourceLoadException(path, e);
@@ -285,7 +289,8 @@ class ResourceManager {
 		}
 	}
 
-	public static function getJson(path: String, source: ResourceSource = Pak, exception: Bool = true): Dynamic {
+	// ---- Static Loader ---- //
+	public function getJson(path: String, source: ResourceSource = Pak, exception: Bool = true): Dynamic {
 		try {
 			final text = getString(path, source, exception);
 			if (text == null) return null;

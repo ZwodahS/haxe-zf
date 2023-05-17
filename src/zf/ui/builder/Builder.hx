@@ -125,8 +125,9 @@ class Builder {
 			Quick way to create object from file
 		**/
 		try {
-			final xml = ResourceManager.getString(path);
-			final object = make(xml, new BuilderContext(context));
+			final xml = this.res.getString(path);
+			final builderContext = Std.isOfType(context, BuilderContext) ? cast context : new BuilderContext(context);
+			final object = make(xml, builderContext);
 			return object;
 		} catch (e) {
 			zf.Logger.exception(e);
