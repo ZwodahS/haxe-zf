@@ -25,7 +25,19 @@ class EffectWrap extends h2d.Object {
 
 	override function sync(ctx: h2d.RenderContext) {
 		super.sync(ctx);
-		if (this.effect.update(ctx.elapsedTime) == true) {
+		var shouldRemove = false;
+		/**
+			Tue 16:50:11 16 May 2023
+			For effects, if it caused exception, we should just remove it and hope for the best 😭
+			Crashing because of a effect is not a good idea.
+		**/
+		try {
+			shouldRemove = this.effect.update(ctx.elapsedTime) == true;
+		} catch (e) {
+			Logger.exception(e);
+			shouldRemove = true;
+		}
+		if (shouldRemove == true) {
 			this.effect.onEffectFinished();
 			this.effect.ownerObject = null;
 			return;
