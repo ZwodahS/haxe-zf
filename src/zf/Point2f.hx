@@ -38,6 +38,15 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 		return this[1] = v;
 	}
 
+	/**
+		Difference between the 2 value, useful when we using this as min / max
+	**/
+	public var diff(get, never): Float;
+
+	inline public function get_diff(): Float {
+		return this[1] - this[0];
+	}
+
 	public function toString(): String {
 		return '{$x,$y}';
 	}
