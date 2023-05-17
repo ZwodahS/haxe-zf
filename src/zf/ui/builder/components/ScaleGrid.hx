@@ -24,7 +24,6 @@ class ScaleGrid extends Component {
 	}
 
 	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
-		final bm = context.getBitmap(conf);
 		final factoryId = conf.getString("factoryId");
 		final factory = (factoryId == null || factories.exists(factoryId) == false) ? this.defaultFactory : factories.get(factoryId);
 		final width = conf.getInt("width", 1);
