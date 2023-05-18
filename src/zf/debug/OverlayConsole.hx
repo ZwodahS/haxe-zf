@@ -192,6 +192,9 @@ class OverlayConsole extends h2d.Object {
 
 			case Key.W:
 				if (Key.isDown(Key.CTRL) == true) removeWord();
+
+			case Key.ESCAPE:
+				hide();
 		}
 	}
 
@@ -513,6 +516,8 @@ class OverlayConsole extends h2d.Object {
 	public function onShow() {
 		this.input.focus();
 	}
+
+	dynamic public function hide() {}
 }
 /**
 	Fri 12:13:02 17 Mar 2023

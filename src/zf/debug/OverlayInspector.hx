@@ -7,6 +7,8 @@ import zf.h2d.Interactive;
 
 using zf.StringExtensions;
 
+import hxd.Key;
+
 private class TreeNode extends UIElement {
 	public var level: Int;
 	public var text: HtmlText;
@@ -112,6 +114,10 @@ class OverlayInspector extends h2d.Object {
 		this.scrollArea.x = 2;
 		this.scrollArea.y = 2;
 		this.addChild(this.scrollArea);
+
+		this.scrollArea.addOnKeyDownListener("DebugOverlay", (e) -> {
+			if (e.keyCode == Key.ESCAPE) hide();
+		});
 	}
 
 	public function refresh() {
@@ -222,4 +228,6 @@ class OverlayInspector extends h2d.Object {
 		for (node in this.treeNodes) this.tree.addChild(node);
 		this.scrollArea.onObjectUpdated();
 	}
+
+	dynamic public function hide() {}
 }

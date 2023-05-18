@@ -143,6 +143,7 @@ class DebugOverlay extends UIElement {
 		this.console.y = this.displayAreaStartY;
 		this.console.init();
 		this.addChild(this.console);
+		this.console.hide = this.hide;
 	}
 
 	function initInspector() {
@@ -154,6 +155,7 @@ class DebugOverlay extends UIElement {
 		this.inspector.y = this.displayAreaStartY;
 		this.inspector.init();
 		this.addChild(this.inspector);
+		this.inspector.hide = this.hide;
 	}
 
 	public function selectConsole() {
