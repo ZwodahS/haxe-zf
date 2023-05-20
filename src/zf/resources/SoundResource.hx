@@ -18,6 +18,11 @@ typedef SoundConf = {
 		Pitch Effect
 	**/
 	public var ?pitch: Float;
+
+	/**
+		Volume
+	**/
+	public var ?volume: Float;
 }
 
 typedef SoundResourceConf = {
@@ -37,13 +42,14 @@ class Sound {
 	public var name: String = null;
 	public var ogg: hxd.res.Sound;
 	public var pitch: Null<Float>;
+	public var volume: Float = 1;
 
 	public function new() {}
 
-	public function play(loop: Bool, volume: Float, channelGroup: hxd.snd.ChannelGroup,
+	public function play(loop: Bool, channelGroup: hxd.snd.ChannelGroup,
 			soundGroup: hxd.snd.SoundGroup): hxd.snd.Channel {
 		if (this.ogg != null && hxd.res.Sound.supportedFormat(OggVorbis)) {
-			final chan = this.ogg.play(loop, volume, channelGroup, soundGroup);
+			final chan = this.ogg.play(loop, this.volume, channelGroup, soundGroup);
 			if (this.pitch != null) {
 				var effect = new hxd.snd.effect.Pitch(this.pitch);
 				chan.addEffect(effect);
@@ -66,11 +72,11 @@ class SoundResource {
 		this.items = [];
 	}
 
-	public function play(loop: Bool, volume: Float, channelGroup: hxd.snd.ChannelGroup,
+	public function play(loop: Bool, channelGroup: hxd.snd.ChannelGroup,
 			soundGroup: hxd.snd.SoundGroup): hxd.snd.Channel {
-		if (this.items.length == 1) return items[0].play(loop, volume, channelGroup, soundGroup);
+		if (this.items.length == 1) return items[0].play(loop, channelGroup, soundGroup);
 		if (this.items.length == 0) return null;
 		final s = this.items[Globals.game.r.random(this.items.length)];
-		return s.play(loop, volume, channelGroup, soundGroup);
+		return s.play(loop, channelGroup, soundGroup);
 	}
 }

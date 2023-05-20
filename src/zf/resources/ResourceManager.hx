@@ -235,6 +235,7 @@ class ResourceManager {
 					if (s.name != null) sound.name = s.name;
 					if (s.ogg != null) sound.ogg = loadSound(s.ogg);
 					if (s.pitch != null) sound.pitch = s.pitch;
+					if (s.volume != null) sound.volume = s.volume;
 					resource.items.push(sound);
 				}
 				this.sounds[resource.id] = resource;
