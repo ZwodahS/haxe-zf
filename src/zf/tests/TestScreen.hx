@@ -636,6 +636,7 @@ class TestScreen extends zf.Screen {
 		switch (event.kind) {
 			case EKeyDown:
 				if (event.keyCode == 27) toggleControlVisibility();
+				if (event.keyCode == hxd.Key.F12) toggleControlVisibility();
 			default:
 		}
 	}
