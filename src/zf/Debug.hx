@@ -71,11 +71,29 @@ class Debug {
 
 	public static function callstack() {
 #if debug
-		try {
-			throw new haxe.Exception('e');
-		} catch (e) {
-			Logger.warn('${e.stack}');
+		for (stackItem in haxe.CallStack.callStack()) {
+			Logger.debug(stackItemToString(stackItem));
 		}
 #end
+	}
+
+	public static function stackItemToString(s: haxe.CallStack.StackItem) {
+		switch (s) {
+			case Module(m):
+				return '${m}';
+			case FilePos(s, file, line, _):
+				if (s == null) {
+					return '${file}:${line}';
+				} else {
+					return '${stackItemToString(s)} (${file}:${line})';
+				}
+			case Method(cn, method):
+				if (cn == null) return '${method}';
+				return '${cn}.${method}';
+			case LocalFunction(v):
+				return '$' + '${v}';
+			case CFunction:
+				return 'CFunction';
+		}
 	}
 }
