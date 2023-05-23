@@ -63,9 +63,9 @@ class MoveEffect extends Effect {
 	}
 
 	override public function update(dt: Float): Bool {
-		if (this.delta >= conf.duration) return this.conf.terminate;
+		if (this.conf.duration != -1 && this.delta >= conf.duration) return this.conf.terminate;
 		this.delta += dt;
-		if (this.delta >= conf.duration) this.delta = conf.duration;
+		if (conf.duration != -1 && this.delta >= conf.duration) this.delta = conf.duration;
 
 		this.object.x -= this.movedAmount.x; // remove the moved amount first
 		this.object.y -= this.movedAmount.y;
