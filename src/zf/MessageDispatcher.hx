@@ -169,23 +169,6 @@ class MessageDispatcher {
 		return message;
 	}
 
-#if debug
-	public var debugMessages: Array<String>;
-#end
-
-	/**
-		Debug this message type.
-		This will add it to the list and print even more helpful statement to help debug this message
-
-		Running this outside of debug do nothing, but function still exists
-	**/
-	public function debug(messageType: String) {
-#if debug
-		if (this.debugMessages == null) this.debugMessages = [];
-		this.debugMessages.push(messageType);
-#end
-	}
-
 	/**
 		private function for dispatching the message
 	**/
@@ -193,23 +176,17 @@ class MessageDispatcher {
 		this.dispatchStack.push(message);
 		var listeners = this.listenersMap.get(message.type);
 
-#if dispatcher_timing
-		var t0 = Sys.time();
-#end
-
 		onBeforeMessage(message);
+
 #if debug
-		if (this.debugMessages != null && this.debugMessages.contains(message.type)) {
-			Logger.debug('Message State Initial: ${message}');
-		}
+		var t0 = Sys.time();
+		message.addDebugMessage('(Initial) ${message}');
 #end
 
 		for (listener in this.allMessageDispatcherListeners) {
 			listener.callback(message);
 #if debug
-			if (this.debugMessages != null && this.debugMessages.contains(message.type)) {
-				Logger.debug('Message State after [AllListener: ${listener.id}|(${listener.priority})]: ${message}');
-			}
+			message.addDebugMessage('(After [AllListener: ${listener.id}|(${listener.priority})]) ${message}');
 #end
 		}
 
@@ -218,9 +195,7 @@ class MessageDispatcher {
 				try {
 					listener.callback(message);
 #if debug
-					if (this.debugMessages != null && this.debugMessages.contains(message.type)) {
-						Logger.debug('Message State after [Listener: ${listener.id}|(${listener.priority})]: ${message}');
-					}
+					message.addDebugMessage('(After [Listener: ${listener.id}|(${listener.priority})]) ${message}');
 #end
 				} catch (e) {
 					Logger.exception(e);
@@ -230,15 +205,10 @@ class MessageDispatcher {
 		}
 
 #if debug
-		if (this.debugMessages != null && this.debugMessages.contains(message.type)) {
-			Logger.debug('Message State Complete: ${message}');
-		}
+		message.addDebugMessage('(OnFinish) ${message}');
+		message.addDebugMessage('(Time Taken) ${(Sys.time() - t0) * 100}ms');
 #end
 
-#if dispatcher_timing
-		var t1 = Sys.time();
-		haxe.Log.trace('[Dispatcher] ${message} took ${(t1 - t0) * 100}ms', null);
-#end
 		onAfterMessage(message);
 
 		this.dispatchStack.pop();

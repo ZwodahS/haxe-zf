@@ -130,6 +130,9 @@ class Game extends hxd.App {
 						case hxd.Key.F2:
 							if (this.debugOverlay.visible == false) this.debugOverlay.show();
 							this.debugOverlay.selectInspector();
+						case hxd.Key.F3:
+							if (this.debugOverlay.visible == false) this.debugOverlay.show();
+							this.debugOverlay.selectMessages();
 					}
 				default:
 			}

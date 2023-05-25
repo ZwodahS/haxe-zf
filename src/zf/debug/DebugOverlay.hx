@@ -10,8 +10,7 @@ import hxd.Key;
 /**
 	Motivation:
 
-	Console is good, but I needed something better.
-	The goal of this is to combine Console and other tools that I might need.
+	Provide a debug overlay for various tooling that can be attach to the game
 
 	- F1 (Console)
 	- F2 (Variable Inspector)
@@ -21,9 +20,10 @@ class DebugOverlay extends UIElement {
 
 	public var console: OverlayConsole;
 	public var inspector: OverlayInspector;
+	public var messages: OverlayMessages;
 
 	public var conf = {
-		alpha: 0.8,
+		alpha: 0.9,
 		padding: 5, // the padding around the console area
 		spacing: 5,
 		button: {
@@ -88,6 +88,7 @@ class DebugOverlay extends UIElement {
 		initButtons();
 		initConsole();
 		initInspector();
+		initMessages();
 		this.visible = false;
 
 		selectConsole();
@@ -95,6 +96,7 @@ class DebugOverlay extends UIElement {
 
 	var consoleBtn: Button;
 	var inspectorBtn: Button;
+	var messagesBtn: Button;
 
 	function initButtons() {
 		// init buttons
@@ -131,6 +133,15 @@ class DebugOverlay extends UIElement {
 			selectInspector();
 		});
 		this.addChild(this.inspectorBtn);
+
+		this.messagesBtn = makeButton("Messages");
+		this.messagesBtn.x = this.inspectorBtn.getBounds().xMax + this.conf.spacing;
+		this.messagesBtn.y = this.inspectorBtn.y;
+		this.messagesBtn.alpha = this.conf.alpha;
+		this.messagesBtn.addOnClickListener("DebugOverlay", (_) -> {
+			selectMessages();
+		});
+		this.addChild(this.messagesBtn);
 	}
 
 	function initConsole() {
@@ -158,20 +169,46 @@ class DebugOverlay extends UIElement {
 		this.inspector.hide = this.hide;
 	}
 
+	function initMessages() {
+		this.messages = new OverlayMessages(this.fonts, this.game);
+		this.messages.conf.width = this.displayAreaWidth;
+		this.messages.conf.height = this.displayAreaHeight;
+		this.messages.conf.alpha = this.conf.alpha;
+		this.messages.x = this.conf.padding;
+		this.messages.y = this.displayAreaStartY;
+		this.messages.init();
+		this.addChild(this.messages);
+		this.messages.hide = this.hide;
+	}
+
 	public function selectConsole() {
 		this.consoleBtn.toggled = true;
 		this.inspectorBtn.toggled = false;
+		this.messagesBtn.toggled = false;
 		this.console.visible = true;
 		this.inspector.visible = false;
+		this.messages.visible = false;
 		this.console.onShow();
 	}
 
 	public function selectInspector() {
 		this.consoleBtn.toggled = false;
 		this.inspectorBtn.toggled = true;
+		this.messagesBtn.toggled = false;
 		this.console.visible = false;
 		this.inspector.visible = true;
+		this.messages.visible = false;
 		this.inspector.onShow();
+	}
+
+	public function selectMessages() {
+		this.consoleBtn.toggled = false;
+		this.inspectorBtn.toggled = false;
+		this.messagesBtn.toggled = true;
+		this.console.visible = false;
+		this.inspector.visible = false;
+		this.messages.visible = true;
+		this.messages.onShow();
 	}
 
 	public function hide() {
