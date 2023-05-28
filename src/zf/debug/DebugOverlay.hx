@@ -56,6 +56,8 @@ class DebugOverlay extends UIElement {
 		return this.conf.padding + this.conf.spacing + this.conf.button.size[1];
 	}
 
+	var rect: zf.h2d.ScaleGrid;
+
 	public function new(game: Game) {
 		super();
 		this.game = game;
@@ -76,6 +78,13 @@ class DebugOverlay extends UIElement {
 		var font = hxd.res.DefaultFont.get().clone();
 		font.resizeTo(14);
 		this.fonts.push(font);
+
+		this.rect = new zf.h2d.ScaleGrid(h2d.Tile.fromColor(0xffffffff, 1, 1, 1), 1, 1, 1, 1);
+		rect.alpha = .2;
+		rect.width = 100;
+		rect.height = 100;
+		D.makeMovable(this.rect);
+		D.makeResizable(this.rect);
 	}
 
 	public function init() {
@@ -155,6 +164,20 @@ class DebugOverlay extends UIElement {
 		this.console.init();
 		this.addChild(this.console);
 		this.console.hide = this.hide;
+
+#if debug
+		this.console.addCommand("debugRect", "Toggle debug rect", [], () -> {
+			if (this.rect.parent != null) {
+				hideDebugRect();
+			} else {
+				showDebugRect();
+			}
+		});
+
+		this.console.addCommand("framerate", "Show Framerate", [], function() {
+			@:privateAccess this.game.framerate.visible = !this.game.framerate.visible;
+		});
+#end
 	}
 
 	function initInspector() {
@@ -217,5 +240,13 @@ class DebugOverlay extends UIElement {
 
 	public function show() {
 		this.visible = true;
+	}
+
+	public function showDebugRect() {
+		this.game.s2d.addChild(this.rect);
+	}
+
+	public function hideDebugRect() {
+		this.rect.remove();
 	}
 }
