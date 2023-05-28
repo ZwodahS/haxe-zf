@@ -4,6 +4,8 @@ import zf.ui.layout.DynamicLayout;
 import zf.ui.layout.DynamicLayout.DynamicPosition;
 import zf.h2d.Interactive;
 
+import hxd.Cursor;
+
 typedef TooltipShowConf = {
 	> zf.ui.WindowRenderSystem.ShowWindowConf,
 
@@ -141,6 +143,24 @@ class UIElement extends h2d.Object {
 		Called when the element is removed
 	**/
 	public function onHide() {}
+
+	// ---- For Interactive and handle custom cursors ---- //
+
+	/**
+		Add custom cursor to the UI Element.
+		This should not be used for logic, and instead use for just rendering and playing sound
+	**/
+	public function addCustomCursors(defaultCursor: Cursor, downCursor: Cursor, onDown: Void->Void = null) {
+		this.addOnPushListener("UIElement", (e) -> {
+			if (this.disabled == true) return;
+			hxd.System.setCursor(downCursor);
+			if (onDown != null) onDown();
+		});
+
+		this.addOnReleaseListener("UIElement", (e) -> {
+			hxd.System.setCursor(defaultCursor);
+		});
+	}
 
 	// ---- Tooltips ---- //
 
