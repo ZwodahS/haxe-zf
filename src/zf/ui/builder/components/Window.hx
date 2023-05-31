@@ -87,7 +87,7 @@ class Window extends zf.ui.builder.Component {
 		if (padding == null) padding = [0, 0, 0, 0];
 		final bounds = object.getBounds();
 		final windowSize = getWindowSize(bounds, padding, minWidth, maxWidth, minHeight);
-		final obj = new h2d.Object();
+		final obj = new UIElement();
 		obj.addChild(bgFactory.make(windowSize));
 		obj.addChild(object);
 		object.x = padding.xMin;

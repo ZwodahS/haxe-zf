@@ -22,6 +22,11 @@ class Bitmap extends Component {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			bm.name = conf.get("name");
 		}
+		if (conf.get("scale") != null) {
+			final s = conf.getInt("scale");
+			bm.scaleX = s;
+			bm.scaleY = s;
+		}
 		return bm;
 	}
 }
