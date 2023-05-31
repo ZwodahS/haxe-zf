@@ -467,4 +467,26 @@ class ObjectExtensions {
 		if (obj.parent == null) return true;
 		return isReallyVisible(obj.parent);
 	}
+
+	/**
+		Move an object from the current parent to a target parent keep the screen position.
+
+		@return object to be added
+
+		Note: this does not add it to target.
+		You can chain it to add it, i.e.
+		target.addChild(object.moveTo(target));
+
+		Main reason is we might want to add it using Layers.add or Object.addChild
+	**/
+	public static function moveTo(object: h2d.Object, target: h2d.Object) {
+		var pos = new h2d.col.Point(object.x, object.y);
+		if (object.parent != null) {
+			pos = object.parent.localToGlobal(pos);
+		}
+		pos = target.globalToLocal(pos);
+		object.x = pos.x;
+		object.y = pos.y;
+		return object;
+	}
 }
