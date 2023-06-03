@@ -146,6 +146,8 @@ class Text extends Component {
 			if (string == null) {
 				final template = context.builder.getStringTemplate(stringId);
 				if (template != null) string = context.formatTemplate(template);
+			} else {
+				string = context.formatTemplate(new haxe.Template(string));
 			}
 			if (string != null) {
 				textObject.text = trimText(string, "<br />");
