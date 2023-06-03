@@ -26,6 +26,18 @@ class ArrayExtensions {
 		}
 	}
 
+	public static function hasIntersection<T>(arr1: Array<T>, arr2: Array<T>, minCount = 1): Bool {
+		var count = 0;
+		for (item1 in arr1) {
+			for (item2 in arr2) {
+				if (item1 != item2) continue;
+				count += 1;
+				if (count >= minCount) return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 		Add the elements in an array to another array, modifying it.
 	**/

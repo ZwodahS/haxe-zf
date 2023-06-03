@@ -68,6 +68,11 @@ class ReadOnlyArrayMap<E: Identifiable> {
 		return this.itemsByIndex.length;
 	}
 
+	public function toArray(copy: Bool = true) {
+		if (copy == false) return this.itemsByIndex;
+		return [for (i in this.itemsByIndex) i];
+	}
+
 	public function new() {
 		this.itemsByIndex = [];
 		this.itemsById = [];
