@@ -70,6 +70,22 @@ function iMax(cls: Class<Math>, ints: Array<Int>): Int {
 	return m;
 }
 
+function fMin(cls: Class<Math>, floats: Array<Float>): Float {
+	var m = floats[0];
+	for (f in floats) {
+		if (f < m) m = f;
+	}
+	return m;
+}
+
+function fMax(cls: Class<Math>, floats: Array<Float>): Float {
+	var m = floats[0];
+	for (f in floats) {
+		if (f > m) m = f;
+	}
+	return m;
+}
+
 function iAbs(cls: Class<Math>, i: Int): Int {
 	return i >= 0 ? i : -i;
 }
