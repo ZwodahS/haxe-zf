@@ -48,4 +48,24 @@ class MapExtensions {
 		var keys = [for (k in map.keys()) k];
 		return ArrayExtensions.randomItem(keys, r);
 	}
+
+	/**
+		Convert a intmap to dynamic
+	**/
+	public static function toDynamic(map: Map<String, Int>): Dynamic {
+		if (map == null) return {};
+		final dy: DynamicAccess<Dynamic> = {};
+		for (key => value in map) {
+			dy.set(key, value);
+		}
+		return dy;
+	}
+
+	public static function loadIntMap(map: Map<String, Int>, data: Dynamic) {
+		for (key => value in (data: DynamicAccess<Dynamic>)) {
+			if (Std.isOfType(key, String) && Std.isOfType(value, Int)) {
+				map[cast key] = cast value;
+			}
+		}
+	}
 }
