@@ -62,14 +62,30 @@ class HorizontalFlowLayout extends Component {
 			case "middle": Middle;
 			default: Middle;
 		}
+
+		final itemsKey = conf.get("itemsKey");
+		if (itemsKey != null && context.data.exists(itemsKey)) {
+			try {
+				final arr: Array<Dynamic> = cast context.data.get(itemsKey);
+				for (item in arr) {
+					final obj: h2d.Object = cast item;
+					if (obj != null) flow.addChild(item);
+				}
+			} catch (e) {
+				Logger.exception(e);
+			}
+		}
+
 		final spacing = conf.getInt("spacing");
 		if (spacing != null) flow.horizontalSpacing = spacing;
+
 		final maxWidth = conf.getInt("maxWidth");
 		if (maxWidth != null) {
 			flow.maxWidth = maxWidth;
 			flow.multiline = true;
 			flow.verticalSpacing = spacing;
 		}
+
 		if (conf.get("name") != null) {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			flow.name = conf.get("name");

@@ -39,18 +39,29 @@ class VerticalFlowLayout extends Component {
 	}
 
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		final flow = make(zf.Access.xml(element), context);
+		final conf = zf.Access.xml(element);
+		final flow = make(conf, context);
 
-		for (children in element.elements()) {
-			final c = context.makeObjectFromXMLElement(children);
-			if (c == null) continue;
+		inline function addElement(e: Xml, newContext: BuilderContext) {
+			final c = newContext.makeObjectFromXMLElement(e);
+			if (c == null) return;
+
 			flow.addChild(c);
 			// modify the position of the child
-			final properties = flow.getProperties(c);
+			final conf = zf.Access.xml(e);
+			// Sun 11:06:45 11 Jun 2023 deprecate this.
+			if (conf.getInt("paddingTop") != null) Logger.warn("paddingTop is deprecated and removed. Do not use");
+		}
 
-			final a = zf.Access.xml(children);
-			var paddingTop = a.getInt("paddingTop");
-			if (paddingTop != null) properties.paddingTop = paddingTop;
+		final loopKey: String = conf.getString("loopData");
+		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
+		if (loopData != null) {
+			for (data in loopData) {
+				final ctx = context.expandTemplateContext(data);
+				for (e in element.elements()) addElement(e, ctx);
+			}
+		} else {
+			for (e in element.elements()) addElement(e, context);
 		}
 		return flow;
 	}
