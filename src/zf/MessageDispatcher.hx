@@ -178,7 +178,7 @@ class MessageDispatcher {
 
 		onBeforeMessage(message);
 
-#if debug
+#if (debug && sys)
 		var t0 = Sys.time();
 		message.addDebugMessage('(Initial) ${message}');
 #end
@@ -206,6 +206,9 @@ class MessageDispatcher {
 
 #if debug
 		message.addDebugMessage('(OnFinish) ${message}');
+#end
+
+#if (debug && sys)
 		message.addDebugMessage('(Time Taken) ${(Sys.time() - t0) * 100}ms');
 #end
 
