@@ -48,6 +48,17 @@ class UIElement extends h2d.Object {
 	}
 
 	/**
+		flag for if the button is toggled/selected.
+	**/
+	public var toggled(default, set): Bool = false;
+
+	public function set_toggled(b: Bool): Bool {
+		this.toggled = b;
+		updateRendering();
+		return this.toggled;
+	}
+
+	/**
 		Flag for whether the mouse is over the element
 	**/
 	public var isOver(default, null): Bool = false;
@@ -150,15 +161,17 @@ class UIElement extends h2d.Object {
 		Add custom cursor to the UI Element.
 		This should not be used for logic, and instead use for just rendering and playing sound
 	**/
-	public function addCustomCursors(defaultCursor: Cursor, downCursor: Cursor, onDown: Void->Void = null) {
+	public function addCustomCursors(defaultCursor: Cursor, downCursor: Cursor, toggledCursor: Cursor = null,
+			disabledCursor: Cursor = null, onDown: Void->Void = null) {
+		if (this.interactive != null) this.interactive.cursor = defaultCursor;
 		this.addOnPushListener("UIElement", (e) -> {
-			if (this.disabled == true) return;
+			if (this.disabled == true || this.toggled == true) return;
 			hxd.System.setCursor(downCursor);
 			if (onDown != null) onDown();
 		});
 
 		this.addOnReleaseListener("UIElement", (e) -> {
-			hxd.System.setCursor(defaultCursor);
+			hxd.System.setCursor(this.interactive.cursor);
 		});
 	}
 
@@ -632,7 +645,13 @@ class UIElement extends h2d.Object {
 	/**
 		If enabled, after the element is added, it will show after X seconds
 	**/
-	public var showDelay: Float = 0;
+	public var showDelay(default, set): Float = 0;
+
+	public function set_showDelay(f: Float): Float {
+		this.showDelay = f;
+		this.useShowDelay = this.showDelay > 0;
+		return this.showDelay;
+	}
 
 	public var useShowDelay: Bool = false;
 

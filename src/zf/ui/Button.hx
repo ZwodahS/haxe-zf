@@ -124,17 +124,6 @@ typedef TilesColorConf = {
 **/
 class Button extends UIElement {
 	/**
-		flag for if the button is toggled/selected.
-	**/
-	public var toggled(default, set): Bool = false;
-
-	public function set_toggled(b: Bool): Bool {
-		this.toggled = b;
-		updateRendering();
-		return this.toggled;
-	}
-
-	/**
 		Various builder methods.
 	**/
 	/**
