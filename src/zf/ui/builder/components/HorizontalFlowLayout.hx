@@ -31,11 +31,24 @@ class HorizontalFlowLayout extends Component {
 	}
 
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		final flow = make(zf.Access.xml(element), context);
-		for (children in element.elements()) {
-			final c = context.makeObjectFromXMLElement(children);
-			if (c == null) continue;
+		final conf = zf.Access.xml(element);
+		final flow = make(conf, context);
+
+		inline function addElement(e: Xml, newContext: BuilderContext) {
+			final c = newContext.makeObjectFromXMLElement(e);
+			if (c == null) return;
 			flow.addChild(c);
+		}
+
+		final loopKey: String = conf.getString("loopData");
+		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
+		if (loopData != null) {
+			for (data in loopData) {
+				final ctx = context.expandTemplateContext(data);
+				for (e in element.elements()) addElement(e, ctx);
+			}
+		} else {
+			for (e in element.elements()) addElement(e, context);
 		}
 		return flow;
 	}
