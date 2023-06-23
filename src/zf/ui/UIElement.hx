@@ -64,13 +64,6 @@ class UIElement extends h2d.Object {
 	public var isOver(default, null): Bool = false;
 
 	// ---- Bounds Fields ---- //
-
-	/**
-		This bounds "overrides" the bound instead of using the rendering bound
-		@todo override getBounds() and getSize() method later
-	**/
-	public var bounds: h2d.col.Bounds = null;
-
 	public var width(get, never): Float;
 
 	function get_width() return getSize().width;
@@ -171,6 +164,7 @@ class UIElement extends h2d.Object {
 		});
 
 		this.addOnReleaseListener("UIElement", (e) -> {
+			// Bug: If release outside, it will trigger. Need to fix this.... probably
 			hxd.System.setCursor(this.interactive.cursor);
 		});
 	}

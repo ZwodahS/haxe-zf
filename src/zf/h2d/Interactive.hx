@@ -22,4 +22,11 @@ class Interactive extends h2d.Interactive {
 	}
 
 	dynamic public function dyOnRemove() {}
+
+	public function getCollisonBounds(relativeTo: h2d.Object = null, b: h2d.col.Bounds = null): h2d.col.Bounds {
+		final bounds = getBounds(relativeTo, b);
+		bounds.width = this.width;
+		bounds.height = this.height;
+		return bounds;
+	}
 }
