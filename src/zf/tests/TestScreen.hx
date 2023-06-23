@@ -469,7 +469,9 @@ class TestScreen extends zf.Screen {
 		}
 
 		if (args.indexOf("--all") != -1) {
-			runTests(availableTests.keys());
+			final tests = [for (k in availableTests.keys()) k];
+			tests.sort(Compare.string.bind(false, 1));
+			runTests(tests);
 			return;
 		}
 
@@ -495,10 +497,12 @@ class TestScreen extends zf.Screen {
 			}
 		}
 
-		runTests(toRun.keys());
+		final tests = [for (k in toRun.keys()) k];
+		tests.sort(Compare.string.bind(false, 1));
+		runTests(tests);
 	}
 
-	function runTests(tests: Iterator<String>) {
+	function runTests(tests: Array<String>) {
 		for (t in tests) {
 			final tc = availableTests[t];
 			if (tc == null) continue;
