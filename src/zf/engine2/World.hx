@@ -89,7 +89,9 @@ class World {
 		removeSystem remove a system from the world
 	**/
 	public function removeSystem(system: System): Bool {
-		return this.__systems__.remove(system);
+		final success = this.__systems__.remove(system);
+		if (system != null) system.dispose();
+		return success;
 	}
 
 	/**
