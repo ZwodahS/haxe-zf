@@ -61,7 +61,8 @@ class TestRunner {
 		}
 
 		try {
-			this.current.info('---- Step: ${this.current.ind} ----');
+			var id = nextStep.id == null ? 'step${this.current.ind}' : nextStep.id;
+			this.current.info('---- Step: ${id} ----');
 			nextStep.func();
 		} catch (e: AssertionFail) {
 			this.current.warn('Assertion Fail');
