@@ -101,6 +101,13 @@ class ReadOnlyProbabilityTable<T> {
 		return 0;
 	}
 
+	public function getChance(item: T): Int {
+		for (c in this.chances) {
+			if (c.item == item) return c.chance;
+		}
+		return 0;
+	}
+
 	/**
 		An alias to randomItem, deprecated
 	**/
@@ -183,6 +190,18 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 		this.totalChance += chance;
 	}
 
+	public function reduce(item: T, amount: Int) {
+		for (c in this.chances) {
+			if (c.item == item) {
+				if (c.chance < amount) amount = c.chance;
+				c.chance -= amount;
+				if (c.chance == 0) this.chances.remove(c);
+				this.totalChance -= amount;
+				return;
+			}
+		}
+	}
+
 	public function remove(item: T): Bool {
 		var i = -1;
 		for (ind => c in this.chances) {
@@ -196,6 +215,25 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 		this.chances.splice(i, 1);
 		this.totalChance -= chance.chance;
 		return true;
+	}
+
+	/**
+		Make a copy of this probability table
+	**/
+	public function copy(): ProbabilityTable<T> {
+		return new zf.ProbabilityTable<T>(this.toList());
+	}
+
+	/**
+		Return a list of chance representing the probability table.
+		The chances are shallow-copied
+	**/
+	public function toList(): Array<Chance<T>> {
+		final chances: Array<Chance<T>> = [];
+		for (c in this.chances) {
+			chances.push(c.copy());
+		}
+		return chances;
 	}
 
 	/**

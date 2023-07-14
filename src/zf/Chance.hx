@@ -21,6 +21,13 @@ using zf.RandExtensions;
 	inline public function roll(r: hxd.Rand, base: Int = 100): Bool {
 		return r.randomChance(this.chance, base);
 	}
+
+	/**
+		Make a copy of shallow copy of chance
+	**/
+	public function copy(): Chance<T> {
+		return new Chance<T>(this.chance, this.item);
+	}
 }
 
 /**
