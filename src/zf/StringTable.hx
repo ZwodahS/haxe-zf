@@ -26,11 +26,19 @@ class StringTable {
 		return table[id];
 	}
 
-	public function get(id: String, context: Dynamic = null, logError: Bool = true): String {
+	public function get(id: String, context: Dynamic = null, fallback: Array<String> = null,
+			logError: Bool = true): String {
 		if (context == null) context = {}
-		final template = this.getTemplate(id, logError);
-		if (template == null) return "";
-		return template.execute(context);
+		final template = this.getTemplate(id, fallback == null ? logError : false);
+		if (template != null) return template.execute(context);
+		if (fallback == null) return "";
+
+		for (fId in fallback) {
+			final template = this.getTemplate(fId, false);
+			if (template != null) return template.execute(context);
+		}
+		if (logError == true && fallback != null) Logger.debug('- String not found: ${id}, with fallback: ${fallback}');
+		return "";
 	}
 
 	public function load(lang: String, path: String) {
