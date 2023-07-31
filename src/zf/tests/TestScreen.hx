@@ -153,6 +153,8 @@ class TestScreen extends zf.Screen {
 	**/
 	public var availableTests: Map<String, (String) -> TestCase>;
 
+	public var allTests: Map<String, (String) -> TestCase>;
+
 	var runners: Array<TestRunner>;
 	var freeRunners: Array<TestRunner>;
 
@@ -191,6 +193,7 @@ class TestScreen extends zf.Screen {
 		this.tests = [];
 		this.incomplete = [];
 		this.availableTests = [];
+		this.allTests = [];
 		this.success = [];
 		this.failure = [];
 		this.running = [];
@@ -216,8 +219,9 @@ class TestScreen extends zf.Screen {
 		this.fonts.push(font);
 	}
 
-	public function addTestCase(name: String, makeFunc: String->TestCase) {
+	public function addTestCase(name: String, makeFunc: String->TestCase, runWithAll: Bool) {
 		this.availableTests[name] = makeFunc;
+		if (runWithAll == true) this.allTests[name] = makeFunc;
 	}
 
 	function setupUI() {
@@ -469,7 +473,7 @@ class TestScreen extends zf.Screen {
 		}
 
 		if (args.indexOf("--all") != -1) {
-			final tests = [for (k in availableTests.keys()) k];
+			final tests = [for (k in allTests.keys()) k];
 			tests.sort(Compare.string.bind(false, 1));
 			runTests(tests);
 			return;
