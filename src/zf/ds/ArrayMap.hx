@@ -210,6 +210,10 @@ class ArrayMap<E: Identifiable> extends ReadOnlyArrayMap<E> {
 		return this;
 	}
 
+	public function sort(f: (v1: E, v2: E) -> Int) {
+		this.itemsByIndex.sort(f);
+	}
+
 	public function clear() {
 		this.itemsById.clear();
 		this.itemsByIndex.clear();
