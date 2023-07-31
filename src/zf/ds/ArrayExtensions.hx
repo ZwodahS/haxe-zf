@@ -7,7 +7,11 @@ using zf.RandExtensions;
 **/
 class ArrayExtensions {
 	/**
+		Fisher-Yates shuffle
+
 		shuffle an array using hxd.Rand
+
+		Reference: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 	**/
 	public static function shuffle<T>(array: Array<T>, r: hxd.Rand = null) {
 		if (array.length <= 1) return;
@@ -16,7 +20,8 @@ class ArrayExtensions {
 		}
 		var i = array.length - 1;
 		while (i >= 1) {
-			var j = r.randomInt(i);
+			// Note: We need to include the index itself.
+			var j = r.randomInt(i + 1);
 			if (i != j) {
 				var t = array[j];
 				array[j] = array[i];
