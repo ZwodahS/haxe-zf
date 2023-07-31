@@ -106,3 +106,20 @@ function decreaseAbsoluteValue(cls: Class<Math>, v: Float, amt: Float, wrap: Boo
 		return newValue;
 	}
 }
+
+function mediumInt(cls: Class<Math>, arr: Array<Int>): Float {
+	if (arr.length == 0) return 0;
+	if (arr.length % 2 == 0) {
+		var m = Std.int(arr.length / 2);
+		return ((arr[m] + arr[m - 1]) * 1.0 / 2);
+	} else {
+		var m = Std.int(arr.length / 2);
+		return arr[m] * 1.0;
+	}
+}
+
+function averageInt(cls: Class<Math>, arr: Array<Int>): Float {
+	var total = 0;
+	for (i in arr) total += i;
+	return total / arr.length;
+}
