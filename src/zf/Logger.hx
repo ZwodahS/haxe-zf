@@ -33,11 +33,17 @@ class FileLogger implements LoggerInf {
 
 	public function new(path: String) {
 		try {
+			final size = sys.FileSystem.stat(path).size;
+			if (size > 10 * 1024 * 1024) { // if log is more than 10 MB, we will just delete it first.
+				sys.FileSystem.deleteFile(path);
+				Logger.info('log file ${path} too big, deleting it');
+			}
+		} catch (e) {}
+		try {
 			this.file = sys.io.File.append(path, false);
 		} catch (e) {
 			this.file = null;
 		}
-		// @todo file rotate
 	}
 
 	public function print(logLevel: Int, message: String) {
