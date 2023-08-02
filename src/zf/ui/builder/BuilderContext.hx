@@ -21,6 +21,13 @@ class BuilderContext {
 		return template.execute(this.data);
 	}
 
+	public function get(key: String): Dynamic {
+		var value = data.get(key);
+		// if we already found the value, we will just return it.
+		if (value != null) return value;
+		return null;
+	}
+
 	public function expandTemplateContext(context: Dynamic): BuilderContext {
 		var ctx: BuilderContext = {data: data.copy()};
 		ctx.builder = this.builder;
