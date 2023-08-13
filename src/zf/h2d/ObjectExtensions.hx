@@ -489,4 +489,32 @@ class ObjectExtensions {
 		object.y = pos.y;
 		return object;
 	}
+
+	/**
+		Adjust position of the object based on a targetX, a delta and a movement speed
+	**/
+	public static function adjustPosition(object: h2d.Object, targetX: Float, targetY: Float, delta: Float,
+			movementSpeed: Point2f) {
+		if (object.x == targetX && object.y == targetY) return;
+
+		if (object.x > targetX) {
+			final move = delta * movementSpeed.x;
+			object.x -= move;
+			if (object.x < targetX) object.x = targetX;
+		} else if (object.x < targetX) {
+			final move = delta * movementSpeed.x;
+			object.x += move;
+			if (object.x > targetX) object.x = targetX;
+		}
+
+		if (object.y > targetY) {
+			final move = delta * movementSpeed.y;
+			object.y -= move;
+			if (object.y < targetY) object.y = targetY;
+		} else if (object.y < targetY) {
+			final move = delta * movementSpeed.y;
+			object.y += move;
+			if (object.y > targetY) object.y = targetY;
+		}
+	}
 }
