@@ -74,6 +74,7 @@ class UIElement extends h2d.Object {
 
 	public function new() {
 		super();
+		this.hoverDelay = UIElement.defaultHoverDelay;
 	}
 
 	/**
@@ -246,6 +247,7 @@ class UIElement extends h2d.Object {
 	var onOutListeners: Array<Pair<String, hxd.Event->Void>> = [];
 
 	public function _onOut(e: hxd.Event) {
+		this.hoverDelayEvent = null;
 		for (p in this.onOutListeners) p.second(e);
 	}
 
@@ -270,8 +272,37 @@ class UIElement extends h2d.Object {
 	// ---- On Over ---- //
 	var onOverListeners: Array<Pair<String, hxd.Event->Void>> = [];
 
+	/**
+		Hover delay
+		This is set to 0.05 (aka 3 frames @ 60fps) so that the on hover don't get triggered immediately for just moving
+		over elements, and 0.05 is quite reasonable.
+		This can be overriden if some part of the game feels sluggish
+	**/
+	public static var defaultHoverDelay: Float = 0.05;
+
+	public var hoverDelay: Float = 0.05;
+
+	var hoverDelayDelta: Float = 0.;
+	var hoverDelayEvent: hxd.Event = null;
+
 	public function _onOver(e: hxd.Event) {
+		if (this.hoverDelay > 0) {
+			this.hoverDelayDelta = 0;
+			this.hoverDelayEvent = e;
+			return;
+		}
 		for (p in this.onOverListeners) p.second(e);
+	}
+
+	function handleDelayOver(dt: Float) {
+		if (this.isOver == true && this.hoverDelay > 0 && this.hoverDelayEvent != null) {
+			this.hoverDelayDelta += dt;
+			if (this.hoverDelayDelta > this.hoverDelay) {
+				final e = this.hoverDelayEvent;
+				this.hoverDelayEvent = null;
+				for (p in this.onOverListeners) p.second(e);
+			}
+		}
 	}
 
 	public function addOnOverListener(id: String, func: hxd.Event->Void): Bool {
@@ -568,7 +599,7 @@ class UIElement extends h2d.Object {
 		this.onHide();
 		if (this.useShowDelay == true) {
 			this.visible = false;
-			this.delay = 0;
+			this.showDelayDelta = 0;
 		}
 		if (this.tooltipWindow != null) this.tooltipWindow.remove();
 	}
@@ -585,6 +616,7 @@ class UIElement extends h2d.Object {
 	override function sync(ctx: h2d.RenderContext) {
 		super.sync(ctx);
 		handleShowDelay(ctx.elapsedTime);
+		handleDelayOver(ctx.elapsedTime);
 	}
 
 	// ---- Dynamic Layout Stuffs ---- //
@@ -649,14 +681,14 @@ class UIElement extends h2d.Object {
 
 	public var useShowDelay: Bool = false;
 
-	var delay: Float = 0.;
+	var showDelayDelta: Float = 0.;
 
 	function handleShowDelay(delta: Float) {
 		if (this.visible == false && this.useShowDelay == true) {
-			this.delay += delta;
-			if (this.delay >= showDelay) {
+			this.showDelayDelta += delta;
+			if (this.showDelayDelta >= showDelay) {
 				this.visible = true;
-				this.delay = 0;
+				this.showDelayDelta = 0;
 			}
 		}
 	}
