@@ -18,6 +18,16 @@ enum DynamicPosition {
 	AnchorTopLeft(spacingX: Int, spacingY: Int);
 
 	/**
+		Anchor to the top center of the layout.
+	**/
+	AnchorTopCenter(spacingX: Int, spacingY: Int);
+
+	/**
+		Anchor to the center of the screen
+	**/
+	AnchorCenter(spacingX: Int, spacingY: Int);
+
+	/**
 		Anchor to the top right of the layout.
 	**/
 	AnchorTopRight(spacingX: Int, spacingY: Int);

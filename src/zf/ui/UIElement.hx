@@ -649,12 +649,20 @@ class UIElement extends h2d.Object {
 				this.y = y;
 			case AnchorTopLeft(spacingX, spacingY):
 				final bounds = this.getBounds(this);
-				this.x = spacingX - bounds.xMin;
-				this.y = spacingY - bounds.yMin;
+				this.x = 0 + spacingX - bounds.xMin;
+				this.y = 0 + spacingY - bounds.yMin;
+			case AnchorTopCenter(spacingX, spacingY):
+				final bounds = this.getBounds(this);
+				this.x = ((size.x - bounds.width) / 2) + spacingX - bounds.xMin;
+				this.y = 0 + spacingY - bounds.yMin;
 			case AnchorTopRight(spacingX, spacingY):
 				final bounds = this.getBounds(this);
 				this.x = size.x - bounds.width - bounds.xMin - spacingX;
 				this.y = spacingY - bounds.yMin;
+			case AnchorCenter(spacingX, spacingY):
+				final bounds = this.getBounds(this);
+				this.x = ((size.x - bounds.width) / 2) + spacingX - bounds.xMin;
+				this.y = ((size.y - bounds.height) / 2) + spacingY - bounds.yMin;
 			case AnchorBottomLeft(spacingX, spacingY):
 				final bounds = this.getBounds(this);
 				this.x = spacingX - bounds.xMin;

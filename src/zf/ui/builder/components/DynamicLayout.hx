@@ -47,10 +47,18 @@ class DynamicLayout extends Component {
 					var spacingX = parseInt(child.get("position-spacingX"), 0);
 					var spacingY = parseInt(child.get("position-spacingY"), 0);
 					position = AnchorTopLeft(spacingX, spacingY);
+				case "anchorTopCenter":
+					var spacingX = parseInt(child.get("position-spacingX"), 0);
+					var spacingY = parseInt(child.get("position-spacingY"), 0);
+					position = AnchorTopCenter(spacingX, spacingY);
 				case "anchorTopRight":
 					var spacingX = parseInt(child.get("position-spacingX"), 0);
 					var spacingY = parseInt(child.get("position-spacingY"), 0);
 					position = AnchorTopRight(spacingX, spacingY);
+				case "anchorCenter":
+					var spacingX = parseInt(child.get("position-spacingX"), 0);
+					var spacingY = parseInt(child.get("position-spacingY"), 0);
+					position = AnchorCenter(spacingX, spacingY);
 				case "anchorBottomLeft":
 					var spacingX = parseInt(child.get("position-spacingX"), 0);
 					var spacingY = parseInt(child.get("position-spacingY"), 0);
