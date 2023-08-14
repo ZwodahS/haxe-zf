@@ -106,8 +106,16 @@ class Text extends Component {
 			font = context.builder.getFont(conf.getString("fontName"));
 		}
 
-		final textColorString = conf.getString("textColor");
 		var textColor: Color = 0xFFFFFF;
+
+		final textColorKey = conf.getString("textColorKey");
+		var textColorString: String = null;
+		if (textColorKey != null) {
+			textColorString = context.get(textColorKey);
+		} else {
+			textColorString = conf.getString("textColor");
+		}
+
 		if (textColorString != null) {
 			final parsed = Std.parseInt(textColorString);
 			if (parsed == null) {
