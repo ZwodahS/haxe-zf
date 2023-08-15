@@ -294,7 +294,7 @@ class UIElement extends h2d.Object {
 		for (p in this.onOverListeners) p.second(e);
 	}
 
-	function handleDelayOver(dt: Float) {
+	function handleDelayHover(dt: Float) {
 		if (this.isOver == true && this.hoverDelay > 0 && this.hoverDelayEvent != null) {
 			this.hoverDelayDelta += dt;
 			if (this.hoverDelayDelta > this.hoverDelay) {
@@ -613,10 +613,15 @@ class UIElement extends h2d.Object {
 	public var uiEffects: Array<zf.effects.Effect>;
 
 	// ---- Other ---- //
+	/**
+		Tue 15:00:28 15 Aug 2023
+		I don't really like using this as the way to handle show delay and delay hover.
+		I don't really know how to do this otherwise without having to manually call a update function.
+	**/
 	override function sync(ctx: h2d.RenderContext) {
 		super.sync(ctx);
 		handleShowDelay(ctx.elapsedTime);
-		handleDelayOver(ctx.elapsedTime);
+		handleDelayHover(ctx.elapsedTime);
 	}
 
 	// ---- Dynamic Layout Stuffs ---- //
