@@ -9,6 +9,13 @@ class Message {
 	public var type(get, null): String;
 	public var log(get, null): String;
 
+#if debug
+	/**
+		Store the time taken for the message (in seconds)
+	**/
+	public var delta: Float = 0;
+#end
+
 	public function new(?type: String = "Message") {
 		this.type = type;
 #if debug

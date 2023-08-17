@@ -209,7 +209,9 @@ class MessageDispatcher {
 #end
 
 #if (debug && sys)
-		message.addDebugMessage('(Time Taken) ${(Sys.time() - t0) * 100}ms');
+		final delta = Sys.time() - t0;
+		message.delta = delta;
+		message.addDebugMessage('(Time Taken) ${delta * 100}ms');
 #end
 
 		onAfterMessage(message);
