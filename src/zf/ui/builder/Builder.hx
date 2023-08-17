@@ -130,6 +130,7 @@ class Builder {
 			final object = make(xml, builderContext);
 			return object;
 		} catch (e) {
+			zf.Logger.error(path);
 			zf.Logger.exception(e);
 			return null;
 		}

@@ -613,6 +613,7 @@ class UIElement extends h2d.Object {
 	public var uiEffects: Array<zf.effects.Effect>;
 
 	// ---- Other ---- //
+
 	/**
 		Tue 15:00:28 15 Aug 2023
 		I don't really like using this as the way to handle show delay and delay hover.
