@@ -627,6 +627,7 @@ class HtmlText extends h2d.Text {
 		inline function createInteractive() {
 			if (interactiveNames == null || interactiveNames.length == 0) return;
 			this.currentInteractive = new Interactive(0, metrics[sizePos].height, this);
+			this.currentInteractive.propagateEvents = true;
 			this.currentInteractive.x = xPos;
 			this.currentInteractive.y = yPos;
 			elements.push(this.currentInteractive);
