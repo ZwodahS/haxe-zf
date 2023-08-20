@@ -11,4 +11,5 @@ enum abstract ChangeType(String) from String to String {
 	public var BugFix = "fix";
 	public var Qol = "qol";
 	public var Balance = "balance";
+	public var Demo = "demo";
 }
