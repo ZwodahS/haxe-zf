@@ -61,6 +61,15 @@ class MapExtensions {
 		return dy;
 	}
 
+	public static function stringBoolMaptoDynamic(map: Map<String, Bool>): Dynamic {
+		if (map == null) return {};
+		final dy: DynamicAccess<Dynamic> = {};
+		for (key => value in map) {
+			dy.set(key, value);
+		}
+		return dy;
+	}
+
 	public static function loadIntMap(map: Map<String, Int>, data: Dynamic) {
 		for (key => value in (data: DynamicAccess<Dynamic>)) {
 			if (Std.isOfType(key, String) && Std.isOfType(value, Int)) {
