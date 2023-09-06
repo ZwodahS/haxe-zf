@@ -191,8 +191,13 @@ class WindowRenderSystem {
 				return;
 			}
 		}
+		centerWindowRelativeToBound(w, relativeTo);
+	}
 
-		// if all else fails, force the window within bound
+	function centerWindowRelativeToBound(w: h2d.Object, relativeTo: h2d.col.Bounds) {
+		final bounds = w.getBounds();
+		w.x = (bounds.width - relativeTo.width) / 2;
+		w.y = (bounds.height - relativeTo.height) / 2;
 		forceWindowWithinBound(w);
 	}
 
