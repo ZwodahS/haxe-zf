@@ -9,7 +9,7 @@ import hxd.Cursor;
 **/
 class Interactive extends h2d.Interactive {
 	// set the default cursor for all interactive
-	public static var defaultCursor: Cursor = Default;
+	public static var defaultCursor: Cursor = null;
 
 	public function new(width: Float, height: Float, ?parent: h2d.Object, ?shape: h2d.col.Collider) {
 		super(width, height, parent, shape);
