@@ -3,6 +3,7 @@ package zf.effects;
 typedef ChainConf = {
 	> Effect.EffectConf,
 	public var ?loop: Bool; // default true
+	public var ?onFinish: Void -> Void;
 }
 
 /**
@@ -32,7 +33,10 @@ class Chain extends Effect {
 		if (done == true) {
 			this.currentIndex += 1;
 			if (this.currentIndex >= this.effects.length) {
-				if (this.loop == false) return true;
+				if (this.loop == false) {
+					if (this.conf.onFinish != null) this.conf.onFinish();
+					return true;
+				}
 				reset();
 			}
 		}
