@@ -184,18 +184,40 @@ class MessageDispatcher {
 #end
 
 		for (listener in this.allMessageDispatcherListeners) {
-			listener.callback(message);
 #if debug
-			message.addDebugMessage('(After [AllListener: ${listener.id}|(${listener.priority})]) ${message}');
+			var callbackTime = .0;
+#end
+#if (debug && sys)
+			var tt0 = Sys.time();
+#end
+			listener.callback(message);
+#if (debug && sys)
+			final delta = Sys.time() - tt0;
+			callbackTime = delta;
+#end
+#if debug
+			var callbackTimeString = callbackTime == 0 ? '' : ', Took ${callbackTime * 100}ms';
+			message.addDebugMessage('(After [AllListener: ${listener.id}|(${listener.priority})]) ${message}${callbackTimeString}');
 #end
 		}
 
 		if (listeners != null) {
 			for (listener in listeners) {
 				try {
-					listener.callback(message);
 #if debug
-					message.addDebugMessage('(After [Listener: ${listener.id}|(${listener.priority})]) ${message}');
+					var callbackTime = .0;
+#end
+#if (debug && sys)
+					var tt0 = Sys.time();
+#end
+					listener.callback(message);
+#if (debug && sys)
+					final delta = Sys.time() - tt0;
+					callbackTime = delta;
+#end
+#if debug
+					var callbackTimeString = callbackTime == 0 ? '' : ', Took ${callbackTime * 100}ms';
+					message.addDebugMessage('(After [Listener: ${listener.id}|(${listener.priority})]) ${message}${callbackTimeString}');
 #end
 				} catch (e) {
 					Logger.exception(e);
