@@ -12,6 +12,7 @@ interface Recyclable {
 	public function recycle(): Void;
 }
 
+@:deprecated("Use macro based object pooling instead")
 class ObjectPool<T: Recyclable> {
 	var pool: List<T>;
 
