@@ -69,8 +69,10 @@ class Explode2 extends Update {
 	}
 
 	function initParticles() {
-		inline function srand() return hxd.Math.srand();
-		inline function rand() return hxd.Math.random();
+		inline function srand()
+			return hxd.Math.srand();
+		inline function rand()
+			return hxd.Math.random();
 
 		var width = this.original.tile.width / this.conf.split;
 		var height = this.original.tile.height / this.conf.split;

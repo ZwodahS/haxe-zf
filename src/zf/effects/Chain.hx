@@ -3,7 +3,7 @@ package zf.effects;
 typedef ChainConf = {
 	> Effect.EffectConf,
 	public var ?loop: Bool; // default true
-	public var ?onFinish: Void -> Void;
+	public var ?onFinish: Void->Void;
 }
 
 /**

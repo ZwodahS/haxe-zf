@@ -8,7 +8,8 @@ package zf.engine2;
 class Component {
 	public var typeId(get, never): String;
 
-	public function get_typeId() return "Component";
+	public function get_typeId()
+		return "Component";
 
 	public var __entity__(default, set): Entity;
 
