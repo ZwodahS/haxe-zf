@@ -202,6 +202,22 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 		}
 	}
 
+	public function updateChance(item: T, amount: Int) {
+		for (c in this.chances) {
+			if (c.item == item) {
+				final diff = c.chance - amount;
+				if (diff == 0) return;
+				if (amount == 0) {
+					this.chances.remove(c);
+				} else {
+					c.chance = amount;
+				}
+				this.totalChance -= diff;
+				return;
+			}
+		}
+	}
+
 	public function remove(item: T): Bool {
 		var i = -1;
 		for (ind => c in this.chances) {
