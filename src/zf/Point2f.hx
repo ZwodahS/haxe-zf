@@ -11,7 +11,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 	public var rad(get, set): Float;
 	public var mag(get, set): Float;
 
-	public function new(x: Float = 0, y: Float = 0) {
+	inline public function new(x: Float = 0, y: Float = 0) {
 		this = [x, y];
 	}
 

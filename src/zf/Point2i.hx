@@ -30,7 +30,7 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return this[1] = v;
 	}
 
-	public function new(x: Int = 0, y: Int = 0) {
+	inline public function new(x: Int = 0, y: Int = 0) {
 		this = [x, y];
 	}
 

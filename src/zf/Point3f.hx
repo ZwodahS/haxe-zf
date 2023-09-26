@@ -8,7 +8,7 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
 	public var y(get, set): Float;
 	public var z(get, set): Float;
 
-	public function new(x: Float = 0, y: Float = 0, z: Float = 0) {
+	inline public function new(x: Float = 0, y: Float = 0, z: Float = 0) {
 		this = [x, y, z];
 	}
 

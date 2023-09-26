@@ -51,7 +51,7 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 
 	public var points(get, never): Array<Point2i>;
 
-	public function new(xMin: Int = 0, yMin: Int = 0, xMax: Int = 0, yMax: Int = 0) {
+	inline public function new(xMin: Int = 0, yMin: Int = 0, xMax: Int = 0, yMax: Int = 0) {
 		this = [xMin, yMin, xMax, yMax];
 	}
 

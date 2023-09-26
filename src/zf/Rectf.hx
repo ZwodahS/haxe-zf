@@ -41,7 +41,7 @@ abstract Rectf(Array<Float>) from Array<Float> to Array<Float> {
 	public var width(get, set): Float;
 	public var height(get, set): Float;
 
-	public function new(xMin: Float = 0, yMin: Float = 0, xMax: Float = 0, yMax: Float = 0) {
+	inline public function new(xMin: Float = 0, yMin: Float = 0, xMax: Float = 0, yMax: Float = 0) {
 		this = [xMin, yMin, xMax, yMax];
 	}
 

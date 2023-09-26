@@ -8,7 +8,7 @@ abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
 	public var y(get, set): Int;
 	public var z(get, set): Int;
 
-	public function new(x: Int = 0, y: Int = 0, z: Int = 0) {
+	inline public function new(x: Int = 0, y: Int = 0, z: Int = 0) {
 		this = [x, y, z];
 	}
 
