@@ -109,7 +109,7 @@ class ObjectPool {
 					expr: macro {}, // do nothing
 					ret: macro : Void,
 				}),
-				access: [APublic],
+				access: [APublic, AInline],
 				doc: null,
 				meta: [],
 			});
@@ -130,7 +130,7 @@ class ObjectPool {
 				},
 				ret: macro : Void
 			}),
-			access: [APublic],
+			access: [APublic, AInline],
 		});
 
 		// add alloc method
@@ -151,7 +151,7 @@ class ObjectPool {
 				},
 				ret: Context.getLocalType().toComplexType(),
 			}),
-			access: [APublic, AStatic],
+			access: [APublic, AStatic, AInline],
 		});
 
 		return fields;
