@@ -1,12 +1,10 @@
 package zf.ui.builder.components;
 
-import zf.h2d.HtmlText;
-
 using zf.ds.ArrayExtensions;
 
 using StringTools;
 
-typedef TextConf = {
+typedef TextInputConf = {
 	public var ?name: String;
 
 	/**
@@ -52,10 +50,10 @@ private typedef DropShadowConf = {dx: Float, dy: Float, color: Int, alpha: Float
 
 	Create HTML Text component
 **/
-class Text extends Component {
+class TextInput extends Component {
 	public var defaultDropShadow: DropShadowConf = null;
 
-	public function new(type: String = "text", defaultDropShadow: DropShadowConf = null) {
+	public function new(type: String = "text-input", defaultDropShadow: DropShadowConf = null) {
 		super(type);
 		this.defaultDropShadow = defaultDropShadow;
 	}
@@ -80,7 +78,7 @@ class Text extends Component {
 	}
 
 	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
-		final conf: TextConf = c;
+		final conf: TextInputConf = c;
 		final result = make(zf.Access.struct(conf), context);
 		final textObject = result.text;
 
@@ -99,7 +97,7 @@ class Text extends Component {
 		return strings.join(eol);
 	}
 
-	function make(conf: zf.Access, context: BuilderContext): {text: HtmlText, hasText: Bool} {
+	function make(conf: zf.Access, context: BuilderContext): {text: h2d.TextInput, hasText: Bool} {
 		var font: h2d.Font = null;
 		if (conf.get("font") != null) font = cast(conf.get("font"));
 		if (font == null) {
@@ -127,7 +125,7 @@ class Text extends Component {
 
 		final maxWidth = conf.getInt("maxWidth");
 
-		final textObject = new HtmlText(font);
+		final textObject = new h2d.TextInput(font);
 		textObject.textColor = textColor;
 		if (maxWidth != null) textObject.maxWidth = maxWidth;
 
