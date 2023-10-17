@@ -150,7 +150,7 @@ class Effect {
 
 		// set the owner
 		this.ownerObject = v;
-		this.ownerObject.addChild(this.wrapper);
+		this.ownerObject.addChildAt(this.wrapper, 0);
 		if (Std.isOfType(ownerObject, UIElement)) this.uiElement = cast ownerObject;
 
 		if (this.uiElement != null) {

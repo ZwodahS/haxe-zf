@@ -2,9 +2,16 @@ package zf.effects;
 
 typedef FuncConf = {
 	> Effect.EffectConf,
-	public var func: Void->Void;
+	public var ?func: Void->Void;
+	public var ?funcUntil: Float->Bool;
 }
 
+/**
+	There are 2 way to use this.
+
+	1. func - the function will be run once and stop after
+	2. funcUntil - the function is run with dt until it returns true
+**/
 class Func extends Effect {
 	var conf: FuncConf;
 	var completed: Bool = false;
@@ -17,8 +24,15 @@ class Func extends Effect {
 
 	override function update(dt: Float): Bool {
 		if (completed == true) return true;
-		this.completed = true;
-		this.conf.func();
+		if (this.conf.func != null) {
+			this.conf.func();
+			this.completed = true;
+			return true;
+		} else if (this.conf.funcUntil != null) {
+			final f = this.conf.funcUntil(dt);
+			this.completed = f;
+			return this.completed;
+		}
 		return true;
 	}
 
