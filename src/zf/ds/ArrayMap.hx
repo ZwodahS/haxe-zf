@@ -233,4 +233,8 @@ class ArrayMap<E: Identifiable> extends ReadOnlyArrayMap<E> {
 		for (object in arr) am.push(object);
 		return am;
 	}
+
+	public function randomItem(r: hxd.Rand): E {
+		return this.itemsByIndex.randomItem(r);
+	}
 }
