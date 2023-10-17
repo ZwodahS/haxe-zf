@@ -15,7 +15,13 @@ class WorldTestCase extends TestCase {
 		This is stored as __world__ as there will be a specialised WorldTestCase in each game to provide
 		the actual World object specific to the game.
 	**/
-	var __world__: zf.engine2.World;
+	var __world__(default, set): zf.engine2.World;
+
+	public function set___world__(v: zf.engine2.World): zf.engine2.World {
+		this.__world__ = v;
+		onRenderLayersUpdated();
+		return this.__world__;
+	}
 
 	public function new(testId: String, name: String) {
 		super(testId, name);
