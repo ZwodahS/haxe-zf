@@ -209,6 +209,8 @@ class TestCase {
 	}
 
 	dynamic public function onStateChanged(prev: TestCaseState, next: TestCaseState) {}
+
+	dynamic public function onRenderLayersUpdated() {}
 }
 
 /**

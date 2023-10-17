@@ -527,6 +527,12 @@ class TestScreen extends zf.Screen {
 		rtc.addOnClickListener("TestScreen", (e) -> {
 			toggleTest(rtc);
 		});
+		rtc.test.onRenderLayersUpdated = () -> {
+			if (this.selectedTest == rtc) {
+				this.gameLayers.removeChildren();
+				this.gameLayers.addChild(rtc.test.renderLayers);
+			}
+		}
 	}
 
 	function toggleTest(rtc: RenderedTestCase) {
