@@ -123,3 +123,39 @@ function averageInt(cls: Class<Math>, arr: Array<Int>): Float {
 	for (i in arr) total += i;
 	return total / arr.length;
 }
+
+/**
+	Not to be used in production. Might have bug
+**/
+function percentile(cls: Class<Math>, arr: Array<Int>, p: Int): Float {
+	final percent = p / 100;
+	var position = percent * (arr.length);
+	var left = position % 1;
+	var right = 1 - left;
+	var p = Std.int(position);
+	trace(position, p, left, right);
+	if (left == 0) {
+		return arr[p];
+	}
+	final v1 = arr[p];
+	final v2 = arr[p + 1];
+	return left * v1 + right * v2;
+}
+
+function statisticInt(cls: Class<Math>, arr: Array<Int>): {
+	medium: Float,
+	average: Float,
+	min: Int,
+	max: Int,
+} {
+	arr.sort((x, y) -> {
+		return x - y;
+	});
+	final stats = {
+		medium: MathExtensions.mediumInt(cls, arr),
+		average: MathExtensions.averageInt(cls, arr),
+		min: arr.length == 0 ? 0 : arr[0],
+		max: arr.length == 0 ? 0 : arr[arr.length - 1],
+	}
+	return stats;
+}
