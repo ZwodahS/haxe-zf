@@ -60,6 +60,14 @@ class DynamicLayout extends UIElement {
 	**/
 	var size: Point2i;
 
+	override public function get_width() {
+		return size.x;
+	}
+
+	override public function get_height() {
+		return size.y;
+	}
+
 	public function new(size: Point2i) {
 		super();
 		this.size = size;

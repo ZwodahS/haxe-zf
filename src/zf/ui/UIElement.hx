@@ -66,13 +66,15 @@ class UIElement extends h2d.Object {
 	// ---- Bounds Fields ---- //
 	public var width(get, never): Float;
 
-	function get_width()
+	public function get_width() {
 		return getSize().width;
+	}
 
 	public var height(get, never): Float;
 
-	function get_height()
+	public function get_height() {
 		return getSize().height;
+	}
 
 	public function new() {
 		super();
