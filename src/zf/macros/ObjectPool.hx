@@ -3,6 +3,7 @@ package zf.macros;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.ComplexTypeTools;
 
 using haxe.macro.Tools;
 
@@ -12,25 +13,22 @@ using haxe.macro.Tools;
 	The following fields should not exists in the class.
 	- __pool__ will be created and used to store the pool
 	- __next__ will be created and used to make this object a linked list
-
-	# Dispose method
+	- dispose
 	dispose method will be added to return the object back to the pool.
 	This method should not defined by the class.
-
-	# Reset method
+	- reset
 	reset method, called when dispose() is called to free up resource in the object.
 	if not provided, an empty reset method will be created.
-
-	# Alloc method
+	- alloc
 	alloc method to get an instance of the object. If alloc exists, __alloc__ will be created instead.
 	Call __alloc__ in the custom alloc method to get the object.
 
-	In short add the following above any class
-
+	# Usage
 	#if !macro
 	@:build(zf.macros.ObjectPool.addObjectPool())
 	#end
 
+	# Summary
 	This will generate something similar to
 
 	static var __pool__: <ClassName>;
