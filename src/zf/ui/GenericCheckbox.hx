@@ -1,10 +1,11 @@
 package zf.ui;
 
 /**
-	@stage:stable
+	@stage:deprecated
 
 	Generic Checkbox using h2d.Object as image
 **/
+@:deprecated
 class GenericCheckbox extends h2d.Layers {
 	var uncheckedObject: h2d.Object;
 	var checkedObject: h2d.Object;
