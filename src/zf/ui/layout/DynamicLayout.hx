@@ -54,7 +54,7 @@ enum DynamicPosition {
 	4. For UIElement object (the best way to use this layout), the UIElement's reposition method will be called.
 	5. If the layout is resized, all children that is a UIElement will reposition
 **/
-class DynamicLayout extends h2d.Object {
+class DynamicLayout extends UIElement {
 	/**
 		Size of the layout. Do not set directly
 	**/
@@ -78,3 +78,8 @@ class DynamicLayout extends h2d.Object {
 		if (Std.isOfType(object, UIElement) == true) cast(object, UIElement).reposition();
 	}
 }
+
+/**
+	Wed 11:44:41 18 Oct 2023
+	Change from h2d.Object -> UIElement
+**/
