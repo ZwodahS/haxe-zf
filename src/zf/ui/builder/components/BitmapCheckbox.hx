@@ -28,6 +28,14 @@ class BitmapCheckboxComponent extends zf.ui.builder.Component {
 		final component = zf.ui.Checkbox.fromObjects({
 			objects: objects,
 		});
+
+		if (conf.get("onToggle") != null) {
+			try {
+				final func: Bool->Void = context.data.get(conf.get("onToggle"));
+				if (func != null) component.onToggled = func;
+			} catch (e) {}
+		}
+
 		return component;
 	}
 }

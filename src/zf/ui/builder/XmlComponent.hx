@@ -23,7 +23,6 @@ import zf.ui.UIElement;
 **/
 @:autoBuild(zf.macros.XmlComponentMacro.build())
 class XmlComponent extends UIElement {
-
 	public static var Builder: zf.ui.builder.Builder;
 
 	var filepath: String = null;

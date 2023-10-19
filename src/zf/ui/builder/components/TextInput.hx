@@ -103,6 +103,7 @@ class TextInput extends Component {
 		if (font == null) {
 			font = context.builder.getFont(conf.getString("fontName"));
 		}
+		final disableEdit = conf.getBool("disableEdit");
 
 		var textColor: Color = 0xFFFFFF;
 
@@ -128,6 +129,7 @@ class TextInput extends Component {
 		final textObject = new h2d.TextInput(font);
 		textObject.textColor = textColor;
 		if (maxWidth != null) textObject.maxWidth = maxWidth;
+		if (disableEdit == true) textObject.canEdit = false;
 
 		switch (conf.getString("textAlign")) {
 			case "center":
