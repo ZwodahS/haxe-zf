@@ -125,10 +125,14 @@ class TextInput extends Component {
 		}
 
 		final maxWidth = conf.getInt("maxWidth");
+		final inputWidth = conf.getInt("inputWidth");
+		final backgroundColor = conf.get("backgroundColor");
 
 		final textObject = new h2d.TextInput(font);
 		textObject.textColor = textColor;
 		if (maxWidth != null) textObject.maxWidth = maxWidth;
+		if (inputWidth != null) textObject.inputWidth = inputWidth;
+		if (backgroundColor != null) textObject.backgroundColor = backgroundColor;
 		if (disableEdit == true) textObject.canEdit = false;
 
 		switch (conf.getString("textAlign")) {
