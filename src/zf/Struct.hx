@@ -113,4 +113,16 @@ class Struct {
 			return {hasKey: false, value: null};
 		}
 	}
+
+	public static function setValueByKeys<T>(data: DynamicAccess<Dynamic>, keys: Array<String>, value: T,
+			ind: Int = 0) {
+		if (ind == keys.length - 1) {
+			data.set(keys[ind], value);
+			return;
+		}
+		if (data.exists(keys[ind]) == false) {
+			data.set(keys[ind], {});
+		}
+		setValueByKeys(data.get(keys[ind]), keys, value, ind + 1);
+	}
 }
