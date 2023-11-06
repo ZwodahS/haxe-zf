@@ -125,7 +125,7 @@ class Builder {
 			Quick way to create object from file
 		**/
 		try {
-			final xml = this.res.getString(path);
+			final xml = this.res.getStringFromPath(path);
 			final builderContext = Std.isOfType(context, BuilderContext) ? cast context : new BuilderContext(context);
 			final object = make(xml, builderContext);
 			return object;

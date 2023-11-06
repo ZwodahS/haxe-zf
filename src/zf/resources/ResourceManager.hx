@@ -1,27 +1,13 @@
 package zf.resources;
 
+using StringTools;
+
 import zf.Assets;
 import zf.exceptions.ResourceLoadException;
-import zf.resources.LanguageFont;
+import zf.resources.LanguageResource;
+import zf.resources.ResourceConf;
+import zf.resources.FontResource;
 import zf.resources.SoundResource;
-
-typedef ResourceConf = {
-	public var spritesheets: Array<{
-		public var path: String;
-	}>;
-
-	public var fonts: Array<{
-		public var path: String;
-	}>;
-	public var sounds: Array<{
-		public var path: String;
-	}>;
-}
-
-enum ResourceSource {
-	Pak;
-	Dir;
-}
 
 /**
 	@stage:stable
@@ -39,6 +25,8 @@ enum ResourceSource {
 	- Images
 	- Text (unparsed)
 	- Sound
+	- String Table
+	- Fonts
 
 	@todo
 	- Add Structloader here
@@ -48,25 +36,43 @@ class ResourceManager {
 	/**
 		Loaded images
 	**/
-	var images: Map<String, ImageResource>;
+	final images: Map<String, ImageResource>;
 
 	/**
 		Cache Loaded Strings from getString method
 	**/
-	var strings: Map<String, String>;
+	final strings: Map<String, String>;
 
-	var sounds: Map<String, SoundResource>;
+	final sounds: Map<String, SoundResource>;
 
 	/**
-		Loaded fonts
+		Loaded fonts for each language
 	**/
-	public var fonts: Map<String, LanguageFont>;
+	public final fonts: Map<String, Map<String, LoadedFontGroup>>;
+
+	/**
+		Loaded font groups
+	**/
+	public final fontGroups: Map<String, Map<String, LoadedFontGroup>>;
+
+	/**
+		Loaded languages
+	**/
+	public final languages: Map<String, LanguageResource>;
+
+	/**
+		Loaded String table
+	**/
+	public final stringTable: StringTable;
 
 	public function new() {
-		this.images = new Map<String, ImageResource>();
-		this.strings = new Map<String, String>();
-		this.fonts = new Map<String, LanguageFont>();
-		this.sounds = new Map<String, SoundResource>();
+		this.images = [];
+		this.strings = [];
+		this.fonts = [];
+		this.fontGroups = [];
+		this.sounds = [];
+		this.languages = [];
+		this.stringTable = new StringTable();
 	}
 
 	public function load(p: String) {
@@ -87,24 +93,21 @@ class ResourceManager {
 
 		final path = new haxe.io.Path(p);
 
-		final config: ResourceConf = getJson(p);
+		final config: ResourceConf = getJsonFromPath(p);
 		if (config.spritesheets != null) {
-			for (ssConf in config.spritesheets) {
-				loadSpritesheet(ssConf.path);
-			}
+			for (ssConf in config.spritesheets) loadSpritesheet(ssConf.path);
 		}
 
 		if (config.fonts != null) {
-			for (fPath in config.fonts) {
-				final f = loadFonts(fPath.path);
-				this.fonts[f.language] = f;
-			}
+			for (fPath in config.fonts) loadFonts(fPath.path);
 		}
 
 		if (config.sounds != null) {
-			for (c in config.sounds) {
-				loadSounds(c.path);
-			}
+			for (c in config.sounds) loadSounds(c.path);
+		}
+
+		if (config.languages != null) {
+			for (c in config.languages) loadLanguage(c.path);
 		}
 	}
 
@@ -143,7 +146,7 @@ class ResourceManager {
 
 	// ---- Images ---- //
 
-	@:deprecated
+	@:deprecated("Use getImageResource")
 	inline public function getAsset2D(id: String): ImageResource {
 		return getImageResource(id);
 	}
@@ -183,34 +186,55 @@ class ResourceManager {
 	}
 
 	// ---- Fonts ---- //
-	function loadFonts(path: String, source: ResourceSource = Pak, exception: Bool = true): LanguageFont {
+	function loadFonts(path: String, source: ResourceSource = Pak, exception: Bool = true) {
 		try {
-			final conf = getJson(path, source, exception);
-			if (conf == null) return null;
+			final conf = getJsonFromPath(path, source, exception);
+			if (conf == null) return;
 
-			var langConf: LanguageFontConf = conf;
-			final lang = langConf.language;
-
-			final allFonts: Map<String, SingleLanguageFontType> = [];
-
-			for (key => value in (langConf.fonts: DynamicAccess<Dynamic>)) {
-				final c: FontConf = value;
-				if (c.type == "msdf") {
-					final msdfConf: MSDFConf = c.conf;
-					// @todo, figure out how to load font from non-pak later
-					final font = hxd.Res.load(msdfConf.file).to(hxd.res.BitmapFont);
-					final fonts = [];
-					for (v in msdfConf.size) fonts.push(font.toSdfFont(v, MultiChannel));
-					allFonts[key] = {sourceFont: font, fonts: fonts};
+			final langFile: FontFile = conf;
+			// load all the defined font group in the file
+			for (group in langFile.fonts) {
+				if (this.fontGroups.exists(group.id) == false) this.fontGroups.set(group.id, []);
+				final loaded = this.fontGroups[group.id];
+				for (id => f in (group.fonts: DynamicAccess<Dynamic>)) {
+					final c: FontConf = f;
+					if (c.type == "msdf") {
+						final msdf: MSDFConf = c.conf;
+						if (msdf.file.startsWith("@")) {
+							// not implemented. Need to implement @workshop and @mod ??
+							Logger.debug('Not Implemented file path: "${msdf.file}"', "[Resource]");
+						} else {
+							// read from res
+							final font = hxd.Res.load(msdf.file).to(hxd.res.BitmapFont);
+							final fonts = [];
+							for (v in msdf.size) fonts.push(font.toSdfFont(v, MultiChannel));
+							loaded[id] = {sourceFont: font, fonts: fonts};
+							Logger.debug('Font loaded ${msdf.file} to ${group.id}.${id}', "[Resource]");
+						}
+					}
 				}
 			}
-
-			return {language: lang, fonts: allFonts};
 		} catch (e) {
 			Logger.exception(e);
 			if (exception) throw new ResourceLoadException(path, e);
-			return null;
 		}
+	}
+
+	inline public function getFont(lang: String, id: String, sizeIndex: Int): h2d.Font {
+		final fonts = getFonts(lang, id);
+		if (fonts == null) return hxd.res.DefaultFont.get().clone();
+		if (sizeIndex >= fonts.fonts.length) {
+			sizeIndex = fonts.fonts.length - 1;
+		}
+		return fonts.fonts[sizeIndex];
+	}
+
+	inline public function getFonts(lang: String, id: String): LoadedFontGroup {
+		var langFont = this.fonts[lang];
+		if (langFont == null) langFont = this.fontGroups["default"];
+		var fonts = langFont[id];
+		if (fonts == null) fonts = this.fontGroups["default"].get(id);
+		return fonts;
 	}
 
 	// ---- Sound ---- //
@@ -224,7 +248,7 @@ class ResourceManager {
 
 	function loadSounds(path: String, source: ResourceSource = Pak, exception: Bool = true) {
 		try {
-			final conf = getJson(path, source, exception);
+			final conf = getJsonFromPath(path, source, exception);
 			if (conf == null) return;
 			var soundConf: {sound: Array<SoundResourceConf>} = conf;
 			final sounds = soundConf.sound;
@@ -246,24 +270,37 @@ class ResourceManager {
 		}
 	}
 
-	public function getFont(lang: String, id: String, sizeIndex: Int): h2d.Font {
-		final fonts = getFonts(lang, id);
-		if (fonts == null) return hxd.res.DefaultFont.get().clone();
-		if (sizeIndex >= fonts.fonts.length) {
-			sizeIndex = fonts.fonts.length - 1;
+	// ---- Language ---- //
+	function loadLanguage(path: String, source: ResourceSource = Pak, exception: Bool = true) {
+		try {
+			final conf: LanguageResource = getJsonFromPath(path + "/config.json", source, exception);
+			if (conf == null) return;
+			for (stringPath in conf.strings) {
+				final languageStrings = getJsonFromPath(haxe.io.Path.join([path, stringPath]), source, exception);
+				this.stringTable.loadStrings(conf.key, languageStrings);
+			}
+			if (conf.font.name != null) {
+				this.fonts[conf.key] = new Map<String, LoadedFontGroup>();
+				for (key => d in this.fontGroups["default"]) {
+					var fg = d;
+					if (this.fontGroups.exists(conf.font.name) == true
+						&& this.fontGroups[conf.font.name].exists(key) == true) {
+						fg = this.fontGroups[conf.font.name][key];
+					}
+					this.fonts[conf.key].set(key, fg);
+				}
+			} else {
+				this.fonts[conf.key] = this.fontGroups["default"];
+			}
+		} catch (e) {
+			Logger.exception(e);
+			if (exception) throw new ResourceLoadException(path, e);
 		}
-		return fonts.fonts[sizeIndex];
 	}
 
-	public function getFonts(lang: String, id: String): SingleLanguageFontType {
-		var langFont = this.fonts[lang];
-		if (langFont == null) this.fonts["default"];
-		var fonts = langFont.fonts[id];
-		if (fonts == null) fonts = langFont.fonts["default"];
-		return fonts;
-	}
+	// ---- Static Loader ---- //
 
-	public function getString(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
+	public function getStringFromPath(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
 		try {
 			var text: String = null;
 			if (this.strings[path] != null) return this.strings[path];
@@ -290,10 +327,9 @@ class ResourceManager {
 		}
 	}
 
-	// ---- Static Loader ---- //
-	public function getJson(path: String, source: ResourceSource = Pak, exception: Bool = true): Dynamic {
+	public function getJsonFromPath(path: String, source: ResourceSource = Pak, exception: Bool = true): Dynamic {
 		try {
-			final text = getString(path, source, exception);
+			final text = getStringFromPath(path, source, exception);
 			if (text == null) return null;
 			final parsed = haxe.Json.parse(text);
 			return parsed;
@@ -313,4 +349,8 @@ class ResourceManager {
 	Mon 11:42:06 13 Mar 2023
 	Not adding the mod handling stuffs yet until I figure out how I want to handle it.
 	We will slowly add the other resources later
+
+	Mon 12:50:50 06 Nov 2023
+	Start moving more stuffs here.
+	Font loading is upgraded. StringTable is also stored here so we can load strings here.
 **/
