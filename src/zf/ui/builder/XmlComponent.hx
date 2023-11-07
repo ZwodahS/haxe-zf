@@ -38,8 +38,11 @@ class XmlComponent extends UIElement {
 		super();
 		this.filepath = filepath;
 		this.__context__ = {};
-		_initContext();
 		this.addChild(this.display = new h2d.Object());
+	}
+
+	function initContext() {
+		_initContext();
 	}
 
 	/**

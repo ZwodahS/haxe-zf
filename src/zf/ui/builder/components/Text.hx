@@ -102,8 +102,10 @@ class Text extends Component {
 	function make(conf: zf.Access, context: BuilderContext): {text: HtmlText, hasText: Bool} {
 		var font: h2d.Font = null;
 		if (conf.get("font") != null) font = cast(conf.get("font"));
-		if (font == null) {
-			font = context.builder.getFont(conf.getString("fontName"));
+		final fontName = conf.getString("fontName");
+		if (font == null && fontName != null) {
+			font = context.data.get(fontName);
+			if (font == null) font = context.builder.getFont(conf.getString("fontName"));
 		}
 
 		var textColor: Color = 0xFFFFFF;

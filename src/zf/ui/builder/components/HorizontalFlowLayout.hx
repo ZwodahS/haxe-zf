@@ -96,7 +96,12 @@ class HorizontalFlowLayout extends Component {
 		if (maxWidth != null) {
 			flow.maxWidth = maxWidth;
 			flow.multiline = true;
-			flow.verticalSpacing = spacing;
+			final spacingY = conf.getInt("spacingY");
+			if (spacingY != null) {
+				flow.verticalSpacing = spacingY;
+			} else {
+				flow.verticalSpacing = spacing;
+			}
 		}
 
 		if (conf.get("name") != null) {
