@@ -15,13 +15,6 @@ class XmlComponentMacro {
 
 	public function buildClass() {
 		final fields = Context.getBuildFields();
-		final className = Context.getLocalClass();
-		final type = Context.getLocalType();
-		final localClass = type.getClass();
-		final typePath = {
-			name: localClass.name,
-			pack: localClass.pack
-		}
 
 		var findChildVar: Array<{field: haxe.macro.Field, path: String}> = [];
 		var exposeContext: Array<{field: haxe.macro.Field, name: String}> = [];
