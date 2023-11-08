@@ -517,4 +517,14 @@ class ObjectExtensions {
 			if (object.y > targetY) object.y = targetY;
 		}
 	}
+
+	public static function toPng(object: h2d.Object, path: String = null): haxe.io.Bytes {
+		final size = object.getSize();
+		final mat = new h3d.mat.Texture(Math.floor(size.width), Math.floor(size.height), [Target]);
+		object.drawTo(mat);
+		final pixels = mat.capturePixels();
+		final bytes = pixels.toPNG();
+		if (path != null) sys.io.File.saveBytes(path, bytes);
+		return bytes;
+	}
 }
