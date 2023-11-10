@@ -52,9 +52,9 @@ using haxe.macro.TypeTools;
 	3. ObjectPool object should not be extended.
 **/
 class ObjectPool {
-	public function new() {}
+	function new() {}
 
-	public function setupObjectPool() {
+	function setupObjectPool() {
 		final fields = Context.getBuildFields();
 		final className = Context.getLocalClass();
 		final type = Context.getLocalType();
@@ -103,25 +103,22 @@ class ObjectPool {
 
 		{ // Build Reset Function
 			if (resetFunc == null) {
-				final access = [APublic];
 				if (superClass != null && TypeTools.findField(superClass, "reset") != null) {
-					access.push(AOverride);
+					// if parent has reset, we don't need to add it.
 				} else {
-					access.push(AInline);
+					fields.push({
+						name: "reset",
+						pos: Context.currentPos(),
+						kind: FFun({
+							args: [],
+							expr: macro {}, // do nothing
+							ret: macro : Void,
+						}),
+						access: [APublic, AInline],
+						doc: null,
+						meta: [],
+					});
 				}
-
-				fields.push({
-					name: "reset",
-					pos: Context.currentPos(),
-					kind: FFun({
-						args: [],
-						expr: macro {}, // do nothing
-						ret: macro : Void,
-					}),
-					access: access,
-					doc: null,
-					meta: [],
-				});
 			}
 		}
 
@@ -238,6 +235,10 @@ class ObjectPool {
 	}
 
 	public static function addObjectPool() {
+		return new ObjectPool().setupObjectPool();
+	}
+
+	public static function build() {
 		return new ObjectPool().setupObjectPool();
 	}
 }

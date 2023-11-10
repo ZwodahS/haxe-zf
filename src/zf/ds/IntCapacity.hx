@@ -86,4 +86,8 @@ class IntCapacity implements Serialisable {
 	}
 
 	dynamic public function onValueChanged() {}
+
+	public static function empty(): IntCapacity {
+		return new IntCapacity();
+	}
 }

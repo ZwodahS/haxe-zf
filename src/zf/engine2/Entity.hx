@@ -2,15 +2,15 @@ package zf.engine2;
 
 import zf.engine2.messages.MOnComponentAttached;
 import zf.engine2.messages.MOnComponentDetached;
+import zf.serialise.Serialisable;
+import zf.serialise.SerialiseContext;
 
 /**
 	@stage:stable
-
-	Mon 16:02:53 01 Jul 2024
-	Modify the class to handle object pool.
 **/
-class Entity implements Identifiable {
+class Entity implements Identifiable implements Serialisable implements EntityContainer {
 	// ---- Engine level fields ---- //
+	public var factory(default, null): EntityFactory;
 
 	/**
 		The world that the entity is contained in.
@@ -70,7 +70,11 @@ class Entity implements Identifiable {
 		A string represeting what type of entity this is.
 		This should be same as the id of the entity factory
 	**/
-	public var typeId(default, null): String = null;
+	public var typeId(get, never): String;
+
+	inline public function get_typeId(): String {
+		return this.factory == null ? null : this.factory.typeId;
+	}
 
 	/**
 		Constructor
@@ -131,6 +135,7 @@ class Entity implements Identifiable {
 		this.__components__.clear();
 		this.id = -1;
 		this.__world__ = null;
+		this.factory = null;
 	}
 
 	// ---- Methods to be override ---- //
@@ -143,4 +148,26 @@ class Entity implements Identifiable {
 	public function onStateChanged() {
 		for (component in this.__components__) component.onStateChanged();
 	}
+
+	public function toStruct(context: SerialiseContext): Dynamic {
+		return this.factory.toStruct(context, this);
+	}
+
+	public function loadStruct(context: SerialiseContext, data: Dynamic) {
+		return this.factory.loadStruct(context, this, data);
+	}
+
+	public function collectEntities(entities: Entities<zf.engine2.Entity>) {
+		entities.add(this);
+		for (component in this.__components__) {
+			if (component is EntityContainer) cast(component, EntityContainer).collectEntities(entities);
+		}
+	}
 }
+
+/**
+	Mon 13:29:50 15 Jul 2024
+	Update this to implements
+	Serialisable, Identifiable, EntityContainer.
+	Moved a lot of variables from template to here
+**/

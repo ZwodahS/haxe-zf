@@ -52,6 +52,10 @@ class EntityFactory implements Identifiable {
 		}
 		return entity;
 	}
+
+	public function loadEmpty(context: SerialiseContext, data: Dynamic): Entity {
+		throw new zf.exceptions.NotImplemented();
+	}
 }
 
 /**

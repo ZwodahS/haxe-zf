@@ -2,6 +2,8 @@ package zf.serialise;
 
 /**
 	@stage:stable
+
+	See SerialiseMacro for automated generation of method
 **/
 interface Serialisable {
 	/**
@@ -16,12 +18,3 @@ interface Serialisable {
 	**/
 	public function loadStruct(context: SerialiseContext, data: Dynamic): Dynamic;
 }
-
-/**
-	Fri 14:56:14 10 Nov 2023
-	Note to self:
-
-	Tried to do something similar to json2object with macro to auto create the toStruct and loadStruct.
-	I will have to try do this later again.
-	There is a branch that do this, maybe revisit later
-**/

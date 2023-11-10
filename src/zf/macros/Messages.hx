@@ -66,7 +66,7 @@ class Messages {
 			for (m in f.meta) {
 				if (m.name == "handleMessage") {
 					if (m.params.length != 2) {
-						haxe.Log.trace("[Warn] handleMessage requires 2 arguments - [messageClass, priority]");
+						Context.info("[Warn] handleMessage requires 2 arguments - [messageClass, priority]", f.pos);
 						continue;
 					}
 
@@ -75,7 +75,7 @@ class Messages {
 						var type = Context.getType(m.params[0].getValue());
 						klass = type.getClass();
 					} catch (e) {
-						haxe.Log.trace('[Warn] handleMessage unable to find class: ${m.params[0].getValue()}');
+						Context.info('[Warn] handleMessage unable to find class: ${m.params[0].getValue()}', f.pos);
 						continue;
 					}
 
