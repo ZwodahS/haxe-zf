@@ -518,6 +518,7 @@ class ObjectExtensions {
 		}
 	}
 
+#if sys
 	public static function toPng(object: h2d.Object, path: String = null): haxe.io.Bytes {
 		final size = object.getSize();
 		final mat = new h3d.mat.Texture(Math.floor(size.width), Math.floor(size.height), [Target]);
@@ -527,4 +528,5 @@ class ObjectExtensions {
 		if (path != null) sys.io.File.saveBytes(path, bytes);
 		return bytes;
 	}
+#end
 }
