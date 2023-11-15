@@ -175,7 +175,7 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	**/
 	public function isAround(p: Point2i): Bool {
 		// isAround check for if the point is a point around this point.
-		if (p.x == this[0] && p.y == this[0]) return false;
+		if (p.x == this[0] && p.y == this[1]) return false;
 		var xDiff = hxd.Math.iabs(this[0] - p.x);
 		var yDiff = hxd.Math.iabs(this[1] - p.y);
 		return xDiff <= 1 && yDiff <= 1;
