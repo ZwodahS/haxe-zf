@@ -152,7 +152,7 @@ abstract Color(Int) from Int to Int {
 		oldHSL[0] += hsl[0];
 		oldHSL[1] += hsl[1];
 		oldHSL[2] += hsl[2];
-		final color = Color.fromHSL(oldHSL[0], oldHSL[1], oldHSL[2]);
+		var color = Color.fromHSL(oldHSL[0], oldHSL[1], oldHSL[2]);
 		color.alpha = cast(this, Color).alpha;
 		return color;
 	}
