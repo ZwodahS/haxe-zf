@@ -81,7 +81,12 @@ class StringTable {
 		final langMap = this.langs[lang];
 		for (key => t in strings) {
 			if (langMap.exists(key) == true) Logger.debug('String replaced: ${key}');
-			langMap.set(key, new haxe.Template(t));
+			try {
+				langMap.set(key, new haxe.Template(t));
+			} catch (e) {
+				Logger.error('Fail to parse string as template, id: ${key}');
+				Logger.exception(e);
+			}
 		}
 		if (this.confs.exists(lang) == false) this.confs.set(lang, []);
 		this.confs[lang].push(data);
