@@ -431,21 +431,6 @@ class HtmlText extends h2d.Text {
 				var newline = cc == '\n'.code;
 				var esize = g.width + g.getKerningOffset(prevChar);
 				var nc = text.charCodeAt(i + 1);
-
-				/**
-					Mon 15:44:15 27 Nov 2023
-					Not sure about this implementation yet, especially for other languages.
-					For now we can safely assume that any element will not try to break up words ??
-				**/
-				if (i == 0 && x != 0 && x + esize + letterSpacing > maxWidth && splitNode.node != null) {
-					// handles the case that the first character already exceed the maxWidth
-					// in particular, handles CJK situation like <font>??</font>[maxWidth limit]???
-					// but we also want to make sure that x is 0, i.e. not already a new line.
-					metrics.push(makeLineInfo(x, info.height, info.baseLine));
-					wordSplit();
-					x = 0;
-				}
-
 				if (font.charset.isBreakChar(cc) && (nc == null || !font.charset.isComplementChar(nc))) {
 					// Case: Very first word in text makes the line too long hence we want to start it off on a new line.
 					if (x > maxWidth && textSplit.length == 0 && splitNode.node != null) {
