@@ -106,6 +106,11 @@ typedef TilesButtonConf = {
 typedef ObjectsButtonConf = {
 	public var objects: Array<h2d.Object>;
 	public var ?font: h2d.Font;
+	// starts with the first font in the list, and resize if it is too big
+	public var ?autoFonts: {
+		public var fonts: Array<h2d.Font>;
+		public var maxWidth: Int;
+	};
 	public var ?textColor: Null<Color>;
 	public var ?text: String;
 }
@@ -207,6 +212,18 @@ class Button extends UIElement {
 			btn.display.addChild(btn.textLabel = new HtmlText(conf.font));
 			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
 			if (conf.text != null) btn.text = conf.text;
+			btn.textLabel.maxWidth = width;
+			btn.textLabel.textAlign = Center;
+		} else if (conf.autoFonts != null) {
+			final fonts = conf.autoFonts.fonts;
+			btn.display.addChild(btn.textLabel = new HtmlText(fonts[0]));
+			if (conf.textColor != null) btn.textLabel.textColor = conf.textColor;
+			if (conf.text != null) btn.text = conf.text;
+			var i = 1;
+			while (i < fonts.length && btn.textLabel.textWidth > conf.autoFonts.maxWidth) {
+				btn.textLabel.font = fonts[i];
+				i += 1;
+			}
 			btn.textLabel.maxWidth = width;
 			btn.textLabel.textAlign = Center;
 		}
