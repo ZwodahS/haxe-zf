@@ -1,7 +1,6 @@
 package zf.ui;
 
 import zf.h2d.ScaleGrid;
-import zf.Assets;
 
 /**
 	@stage:stable

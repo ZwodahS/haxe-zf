@@ -2,7 +2,6 @@ package zf.resources;
 
 using StringTools;
 
-import zf.Assets;
 import zf.exceptions.ResourceLoadException;
 import zf.resources.LanguageResource;
 import zf.resources.ResourceConf;
@@ -27,10 +26,6 @@ import zf.resources.SoundResource;
 	- Sound
 	- String Table
 	- Fonts
-
-	@todo
-	- Add Structloader here
-	Probably need 2 struct loader, one for struct loader and one for non-structloader
 **/
 class ResourceManager {
 	/**
@@ -111,24 +106,36 @@ class ResourceManager {
 		}
 	}
 
-	@:deprecated("Use loadSpritesheet directly")
-	public function addSpritesheet(ss: LoadedSpritesheet) {
-		for (asset in ss.assets) {
-			final resource = new ImageResource(asset.id, asset.tiles);
-			addImageResource(resource);
-		}
-	}
-
 	public function loadSpritesheet(path: String) {
-		final ss = Assets.loadAseSpritesheetConfig(path);
-		if (ss == null) {
-			Logger.warn('Fail to load spritesheet: ${path}');
-			return;
-		}
+		try {
+			final jsonText = hxd.Res.load(path).toText();
+			final parsed: AseSpritesheetConfig = haxe.Json.parse(jsonText);
 
-		for (asset in ss.assets) {
-			final resource = new ImageResource(asset.id, asset.tiles);
-			addImageResource(resource);
+			final directory = haxe.io.Path.directory(path);
+			final image = hxd.Res.load(haxe.io.Path.join([directory, parsed.meta.image])).toTile();
+
+			for (frame in parsed.meta.frameTags) {
+				final tiles: Array<Tile> = [];
+				var scale = 1;
+				if (frame.scale != null) scale = frame.scale;
+				for (i in frame.from...frame.to + 1) {
+					var pf = parsed.frames[i];
+					var f = pf.frame;
+					var offset: Point2i = null;
+					if (pf.center != null) {
+						offset = [pf.center.x, pf.center.y];
+					} else {
+						offset = [0, 0];
+					}
+					var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), scale, offset);
+					tiles.push(t);
+				}
+				final resource = new ImageResource(frame.name, tiles);
+				addImageResource(resource);
+			}
+		} catch (e) {
+			Logger.exception(e);
+			Logger.warn('Fail to load spritesheet: ${path}');
 		}
 	}
 
@@ -353,4 +360,7 @@ class ResourceManager {
 	Mon 12:50:50 06 Nov 2023
 	Start moving more stuffs here.
 	Font loading is upgraded. StringTable is also stored here so we can load strings here.
+
+	Tue 15:22:25 26 Dec 2023
+	Deleted zf.Assets and move the spritesheet loading here.
 **/
