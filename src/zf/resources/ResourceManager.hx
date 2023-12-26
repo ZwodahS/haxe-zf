@@ -5,6 +5,7 @@ using StringTools;
 import zf.exceptions.ResourceLoadException;
 import zf.resources.LanguageResource;
 import zf.resources.ResourceConf;
+import zf.resources.ResourceScript;
 import zf.resources.FontResource;
 import zf.resources.SoundResource;
 
@@ -19,6 +20,7 @@ import zf.resources.SoundResource;
 
 	1. We want to load images or any resources and be able to access them via a name, regardless of where it came from.
 	2. We need to be able to load from both pak and userdata/mods
+	3. I need a standardised way to handle resources of any kind.
 
 	Currently managing
 	- Images
@@ -60,6 +62,9 @@ class ResourceManager {
 	**/
 	public final stringTable: StringTable;
 
+	public final interp: hscript.Interp;
+	public final parser: hscript.Parser;
+
 	public function new() {
 		this.images = [];
 		this.strings = [];
@@ -68,41 +73,86 @@ class ResourceManager {
 		this.sounds = [];
 		this.languages = [];
 		this.stringTable = new StringTable();
+
+		this.parser = new hscript.Parser();
+		this.interp = new hscript.Interp();
+		this.interp.variables.set("Language", zf.Language);
+	}
+
+	// ---- HScript ---- //
+	function executePath(path: String): Dynamic {
+		try {
+			final expr = getStringFromPath(path);
+			final data = executeString(expr);
+			return data;
+		} catch (e) {
+			Logger.exception(e);
+			Logger.warn('Fail to parse: ${path}');
+			return null;
+		}
+	}
+
+	inline function executeString(expr: String) {
+		return this.interp.execute(this.parser.parseString(expr));
 	}
 
 	public function load(p: String) {
-		/**
-			Thu 11:47:20 16 Mar 2023
-			Eventually I want this to be smarter.
+		try {
+			/**
+				Thu 11:47:20 16 Mar 2023
+				Eventually I want this to be smarter.
 
-			For example, to be able to load them from res and also mod directory.
-			Then we will need to be able to smarter and know the relative path.
+				For example, to be able to load them from res and also mod directory.
+				Then we will need to be able to smarter and know the relative path.
 
-			For now we don't have to deal with that.
+				For now we don't have to deal with that.
 
-			Mon 16:40:01 15 May 2023
-			One idea is to always load from hxd.res
-			If the path starts with @workshop:/... then we will load from steamworkshop
-			If the path starts with @mod:/... then we will load from userdata/mod directory
-		**/
+				Mon 16:40:01 15 May 2023
+				One idea is to always load from hxd.res
+				If the path starts with @workshop:/... then we will load from steamworkshop
+				If the path starts with @mod:/... then we will load from userdata/mod directory
+			**/
 
-		final path = new haxe.io.Path(p);
+			final path = new haxe.io.Path(p);
 
-		final config: ResourceConf = getJsonFromPath(p);
-		if (config.spritesheets != null) {
-			for (ssConf in config.spritesheets) loadSpritesheet(ssConf.path);
-		}
+			if (p.endsWith(".json")) {
+				final config: ResourceConf = getJsonFromPath(p);
+				if (config.spritesheets != null) {
+					for (ssConf in config.spritesheets) loadSpritesheet(ssConf.path);
+				}
 
-		if (config.fonts != null) {
-			for (fPath in config.fonts) loadFonts(fPath.path);
-		}
+				if (config.fonts != null) {
+					for (fPath in config.fonts) loadFonts(fPath.path);
+				}
 
-		if (config.sounds != null) {
-			for (c in config.sounds) loadSounds(c.path);
-		}
+				if (config.sounds != null) {
+					for (c in config.sounds) loadSounds(c.path);
+				}
 
-		if (config.languages != null) {
-			for (c in config.languages) loadLanguage(c.path);
+				if (config.languages != null) {
+					for (c in config.languages) loadLanguage(c.path);
+				}
+			} else {
+				final config: ResourceScript = executePath(p);
+				if (config.spritesheets != null) {
+					for (ssConf in config.spritesheets) loadSpritesheet(ssConf.path);
+				}
+
+				if (config.fonts != null) {
+					loadFontGroups(config.fonts);
+				}
+
+				if (config.sounds != null) {
+					loadSoundResource(config.sounds);
+				}
+
+				if (config.languages != null) {
+					for (c in config.languages) loadLanguageResource(c);
+				}
+			}
+		} catch (e) {
+			Logger.error('Fail to load resource: ${p}');
+			Logger.exception(e);
 		}
 	}
 
@@ -198,32 +248,36 @@ class ResourceManager {
 			final conf = getJsonFromPath(path, source, exception);
 			if (conf == null) return;
 
-			final langFile: FontFile = conf;
-			// load all the defined font group in the file
-			for (group in langFile.fonts) {
-				if (this.fontGroups.exists(group.id) == false) this.fontGroups.set(group.id, []);
-				final loaded = this.fontGroups[group.id];
-				for (id => f in (group.fonts: DynamicAccess<Dynamic>)) {
-					final c: FontConf = f;
-					if (c.type == "msdf") {
-						final msdf: MSDFConf = c.conf;
-						if (msdf.file.startsWith("@")) {
-							// not implemented. Need to implement @workshop and @mod ??
-							Logger.debug('Not Implemented file path: "${msdf.file}"', "[Resource]");
-						} else {
-							// read from res
-							final font = hxd.Res.load(msdf.file).to(hxd.res.BitmapFont);
-							final fonts = [];
-							for (v in msdf.size) fonts.push(font.toSdfFont(v, MultiChannel));
-							loaded[id] = {sourceFont: font, fonts: fonts};
-							Logger.debug('Font loaded ${msdf.file} to ${group.id}.${id}', "[Resource]");
-						}
-					}
-				}
-			}
+			final fontFile: FontFile = conf;
+			loadFontGroups(fontFile.fonts);
 		} catch (e) {
 			Logger.exception(e);
 			if (exception) throw new ResourceLoadException(path, e);
+		}
+	}
+
+	inline function loadFontGroups(fonts: Array<FontGroup>) {
+		// load all the defined font group in the file
+		for (group in fonts) {
+			if (this.fontGroups.exists(group.id) == false) this.fontGroups.set(group.id, []);
+			final loaded = this.fontGroups[group.id];
+			for (id => f in (group.fonts: DynamicAccess<Dynamic>)) {
+				final c: FontConf = f;
+				if (c.type == "msdf") {
+					final msdf: MSDFConf = c.conf;
+					if (msdf.file.startsWith("@")) {
+						// not implemented. Need to implement @workshop and @mod ??
+						Logger.debug('Not Implemented file path: "${msdf.file}"', "[Resource]");
+					} else {
+						// read from res
+						final font = hxd.Res.load(msdf.file).to(hxd.res.BitmapFont);
+						final fonts = [];
+						for (v in msdf.size) fonts.push(font.toSdfFont(v, MultiChannel));
+						loaded[id] = {sourceFont: font, fonts: fonts};
+						Logger.debug('Font loaded ${msdf.file} to ${group.id}.${id}', "[Resource]");
+					}
+				}
+			}
 		}
 	}
 
@@ -259,21 +313,25 @@ class ResourceManager {
 			if (conf == null) return;
 			var soundConf: {sound: Array<SoundResourceConf>} = conf;
 			final sounds = soundConf.sound;
-			for (conf in sounds) {
-				final resource = new SoundResource(conf.id);
-				for (s in conf.items) {
-					final sound = new Sound();
-					if (s.name != null) sound.name = s.name;
-					if (s.ogg != null) sound.ogg = loadSound(s.ogg);
-					if (s.pitch != null) sound.pitch = s.pitch;
-					if (s.volume != null) sound.volume = s.volume;
-					resource.items.push(sound);
-				}
-				this.sounds[resource.id] = resource;
-			}
+			loadSoundResource(sounds);
 		} catch (e) {
 			Logger.exception(e);
 			if (exception) throw new ResourceLoadException(path, e);
+		}
+	}
+
+	inline function loadSoundResource(sounds: Array<SoundResourceConf>) {
+		for (conf in sounds) {
+			final resource = new SoundResource(conf.id);
+			for (s in conf.items) {
+				final sound = new Sound();
+				if (s.name != null) sound.name = s.name;
+				if (s.ogg != null) sound.ogg = loadSound(s.ogg);
+				if (s.pitch != null) sound.pitch = s.pitch;
+				if (s.volume != null) sound.volume = s.volume;
+				resource.items.push(sound);
+			}
+			this.sounds[resource.id] = resource;
 		}
 	}
 
@@ -302,6 +360,26 @@ class ResourceManager {
 		} catch (e) {
 			Logger.exception(e);
 			if (exception) throw new ResourceLoadException(path, e);
+		}
+	}
+
+	function loadLanguageResource(conf: LanguageResource, source: ResourceSource = Pak, exception: Bool = true) {
+		for (stringPath in conf.strings) {
+			final languageStrings = getJsonFromPath(stringPath, source, exception);
+			this.stringTable.loadStrings(conf.key, languageStrings);
+		}
+		if (conf.font.name != null) {
+			this.fonts[conf.key] = new Map<String, LoadedFontGroup>();
+			for (key => d in this.fontGroups["default"]) {
+				var fg = d;
+				if (this.fontGroups.exists(conf.font.name) == true
+					&& this.fontGroups[conf.font.name].exists(key) == true) {
+					fg = this.fontGroups[conf.font.name][key];
+				}
+				this.fonts[conf.key].set(key, fg);
+			}
+		} else {
+			this.fonts[conf.key] = this.fontGroups["default"];
 		}
 	}
 
@@ -363,4 +441,5 @@ class ResourceManager {
 
 	Tue 15:22:25 26 Dec 2023
 	Deleted zf.Assets and move the spritesheet loading here.
+	Add ResourceScript to replace ResourceConf
 **/

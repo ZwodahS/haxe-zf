@@ -14,7 +14,7 @@ typedef LanguageResource = {
 	/**
 		The name to display
 	**/
-	public var displayName: String;
+	public var ?displayName: String;
 
 	/**
 		Key to store the language.
