@@ -8,6 +8,7 @@ import zf.resources.ResourceConf;
 import zf.resources.ResourceScript;
 import zf.resources.FontResource;
 import zf.resources.SoundResource;
+import zf.ui.ScaleGridFactory;
 
 /**
 	@stage:stable
@@ -28,6 +29,7 @@ import zf.resources.SoundResource;
 	- Sound
 	- String Table
 	- Fonts
+	- Colors
 **/
 class ResourceManager {
 	/**
@@ -62,8 +64,11 @@ class ResourceManager {
 	**/
 	public final stringTable: StringTable;
 
-	public final interp: hscript.Interp;
-	public final parser: hscript.Parser;
+	final context: ResourceManagerContext;
+
+	public final colors: Map<String, Color>;
+
+	public final gridFactories: Map<String, ScaleGridFactory>;
 
 	public function new() {
 		this.images = [];
@@ -74,30 +79,36 @@ class ResourceManager {
 		this.languages = [];
 		this.stringTable = new StringTable();
 
-		this.parser = new hscript.Parser();
-		this.interp = new hscript.Interp();
-		this.interp.variables.set("Language", zf.Language);
+		this.context = new ResourceManagerContext(this);
+		this.colors = [];
+		this.gridFactories = [];
 	}
 
 	// ---- HScript ---- //
 	function executePath(path: String): Dynamic {
 		try {
 			final expr = getStringFromPath(path);
+
 			final data = executeString(expr);
 			return data;
 		} catch (e) {
 			Logger.exception(e);
-			Logger.warn('Fail to parse: ${path}');
+			Logger.warn('Fail to parse: ${path}', "[Resource]");
 			return null;
 		}
 	}
 
 	inline function executeString(expr: String) {
-		return this.interp.execute(this.parser.parseString(expr));
+		final parser = new hscript.Parser();
+		final interp = new hscript.Interp();
+		interp.variables.set("Language", zf.Language);
+		return interp.execute(parser.parseString(expr));
 	}
 
 	public function load(p: String) {
 		try {
+			Logger.debug('Loading config: ${p}', "[Resource]");
+
 			/**
 				Thu 11:47:20 16 Mar 2023
 				Eventually I want this to be smarter.
@@ -149,13 +160,28 @@ class ResourceManager {
 				if (config.languages != null) {
 					for (c in config.languages) loadLanguageResource(c);
 				}
+
+				if (config.scalegrids != null) {
+					for (c in config.scalegrids) {
+						this.gridFactories[c.id] = new ScaleGridFactory(getTile(c.assetId), c.borderL, c.borderT,
+							c.borderR, c.borderB, c.color);
+					}
+				}
+
+				if (config.colors != null) {
+					loadColors(config.colors);
+				}
+
+				if (config.init != null) config.init(this.context);
 			}
+			Logger.debug('Loaded config: ${p}', "[Resource]");
 		} catch (e) {
-			Logger.error('Fail to load resource: ${p}');
+			Logger.error('Fail to load resource: ${p}', "[Resource]");
 			Logger.exception(e);
 		}
 	}
 
+	// ---- Images ---- //
 	public function loadSpritesheet(path: String) {
 		try {
 			final jsonText = hxd.Res.load(path).toText();
@@ -183,9 +209,10 @@ class ResourceManager {
 				final resource = new ImageResource(frame.name, tiles);
 				addImageResource(resource);
 			}
+			Logger.debug('Spritesheet loaded: ${path}', "[Resource]");
 		} catch (e) {
 			Logger.exception(e);
-			Logger.warn('Fail to load spritesheet: ${path}');
+			Logger.warn('Fail to load spritesheet: ${path}', "[Resource]");
 		}
 	}
 
@@ -197,11 +224,9 @@ class ResourceManager {
 	}
 
 	function addImageResource(resource: ImageResource) {
-		if (this.images[resource.id] != null) Logger.warn('Duplicated image loaded: ${resource.id}');
+		if (this.images[resource.id] != null) Logger.warn('Duplicated image loaded: ${resource.id}', "[Resource]");
 		this.images[resource.id] = resource;
 	}
-
-	// ---- Images ---- //
 
 	@:deprecated("Use getImageResource")
 	inline public function getAsset2D(id: String): ImageResource {
@@ -226,7 +251,7 @@ class ResourceManager {
 		var asset = getImageResource(id);
 		if (fallback != null && asset == null) asset = getImageResource(fallback);
 #if debug
-		if (asset == null) Logger.warn('Bitmap not found :${id}');
+		if (asset == null) Logger.warn('Bitmap not found :${id}', "[Resource]");
 #end
 		return asset == null ? null : asset.getBitmap(index);
 	}
@@ -384,7 +409,6 @@ class ResourceManager {
 	}
 
 	// ---- Static Loader ---- //
-
 	public function getStringFromPath(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
 		try {
 			var text: String = null;
@@ -424,6 +448,22 @@ class ResourceManager {
 			return null;
 		}
 	}
+
+	// ---- Colors ---- //
+	function loadColors(colors: Map<String, Int>) {
+		for (key => c in colors) {
+			this.colors.set(key, cast c);
+		}
+	}
+
+	inline public function getColor(id: String): Color {
+		return this.colors.exists(id) == true ? this.colors.get(id) : 0xffffffff;
+	}
+
+	// ---- ScaleGrid Factory ---- //
+	inline public function makeScaleGrid(id: String, width: Int, height: Int, color: Null<Color> = null) {
+		return this.gridFactories[id].make([width, height], color);
+	}
 }
 
 /**
@@ -442,4 +482,7 @@ class ResourceManager {
 	Tue 15:22:25 26 Dec 2023
 	Deleted zf.Assets and move the spritesheet loading here.
 	Add ResourceScript to replace ResourceConf
+
+	Tue 21:45:53 26 Dec 2023
+	Add Colors
 **/

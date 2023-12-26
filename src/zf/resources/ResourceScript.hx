@@ -3,6 +3,16 @@ package zf.resources;
 import zf.resources.FontResource;
 import zf.resources.SoundResource;
 
+typedef ScaleGridConf = {
+	public var id: String;
+	public var assetId: String;
+	public var borderL: Int;
+	public var borderT: Int;
+	public var ?borderR: Int;
+	public var ?borderB: Int;
+	public var ?color: Int;
+}
+
 typedef PathConf = {
 	public var path: String;
 }
@@ -45,4 +55,19 @@ typedef ResourceScript = {
 		Sounds
 	**/
 	public var ?sounds: Array<SoundResourceConf>;
+
+	/**
+		Colors
+	**/
+	public var ?colors: Map<String, Int>;
+
+	/**
+		Define scale grids
+	**/
+	public var ?scalegrids: Array<ScaleGridConf>;
+
+	/**
+		Init function to run
+	**/
+	public var ?init: (ResourceManagerContext) -> Void;
 }
