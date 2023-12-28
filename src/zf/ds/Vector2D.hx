@@ -6,116 +6,37 @@ import haxe.ds.Vector;
 	@stage:stable
 
 	This provides a 2D Vector by wrapping around a Vector
+	Assumption: the size of the vector2D will not change.
+
+	A 2x3 (width * height)
+	[
+		0, 1
+		2, 3
+		4, 5
+	]
+	will be stored as [0, 1, 2, 3, 4, 5]
+	There shouldn't be a need to know this when using this from outside.
 **/
-@:access(zf.ds.ReadOnlyVector2D)
-class Vector2DIteratorXY<T> {
-	var data: ReadOnlyVector2D<T>;
-	var currX: Int;
-	var currY: Int;
-	var point: Point2i;
-
-	public function new(data: ReadOnlyVector2D<T>) {
-		this.data = data;
-		this.currX = 0;
-		this.currY = 0;
-		this.point = new Point2i();
-	}
-
-	public function hasNext(): Bool {
-		return (this.currX < this.data.size.x && this.currY < this.data.size.y);
-	}
-
-	public function next(): {key: Point2i, value: T} {
-		var returnValue = {
-			key: this.point,
-			value: this.data.data[data.pos(this.currX, this.currY)],
-		}
-		this.point.x = this.currX;
-		this.point.y = this.currY;
-		if (this.currY == this.data.size.y - 1) {
-			this.currY = 0;
-			this.currX += 1;
-		} else {
-			this.currY += 1;
-		}
-		return returnValue;
-	}
-}
-
-@:access(zf.ds.ReadOnlyVector2D)
-class Vector2DIteratorYX<T> {
-	var data: ReadOnlyVector2D<T>;
-	var currX: Int;
-	var currY: Int;
-	var pos: Int = 0;
-
-	var point: Point2i;
-
-	public function new(data: ReadOnlyVector2D<T>) {
-		this.data = data;
-		this.currX = 0;
-		this.currY = 0;
-		this.point = new Point2i();
-	}
-
-	public function hasNext(): Bool {
-		return (this.currX < this.data.size.x && this.currY < this.data.size.y);
-	}
-
-	public function next(): {key: Point2i, value: T} {
-		this.point.x = this.currX;
-		this.point.y = this.currY;
-		var returnValue = {
-			key: this.point,
-			value: this.data.data[pos], // this works because we know how Vector2D stores the data
-		}
-		if (this.currX == this.data.size.x - 1) {
-			this.currX = 0;
-			this.currY += 1;
-		} else {
-			this.currX += 1;
-		}
-		pos += 1;
-		return returnValue;
-	}
-}
-
-@:access(zf.ds.ReadOnlyVector2D)
-class LinearIterator<T> {
-	var data: ReadOnlyVector2D<T>;
-	var curr: Int;
-
-	public function new(data: ReadOnlyVector2D<T>) {
-		this.data = data;
-		this.curr = 0;
-	}
-
-	public function hasNext(): Bool {
-		return this.curr < this.data.data.length;
-	}
-
-	public function next(): T {
-		if (this.curr >= this.data.data.length) return null;
-		return this.data.data[curr++];
-	}
-}
-
 class ReadOnlyVector2D<T> {
 	/**
-		A 2x3 (width * height)
-		[
-			0, 1
-			2, 3
-			4, 5
-		]
-		will be stored as [0, 1, 2, 3, 4, 5]
-		There shouldn't be a need to know this when using this from outside.
+		Size of the Vector2D.
 	**/
 	public var size(default, null): Point2i;
 
+	/**
+		The underlying data
+	**/
 	var data: Vector<T>;
+
+	/**
+		The null value for the vector
+	**/
 	var nullValue: T;
 
+	/**
+		Return a string representation of the Vector2D
+		This should only be used for debugging purpose.
+	**/
 	public function toString(): String {
 		var str = "";
 		for (y in 0...this.size.y) {
@@ -127,6 +48,10 @@ class ReadOnlyVector2D<T> {
 		return str;
 	}
 
+	/**
+		Create a new instance of the Vector2D.
+		The size of the Vector2D is fixed on creation, similar to Vector.
+	**/
 	public function new(s: Point2i, nullValue: T, copy: Vector<T> = null) {
 		this.size = s.copy();
 
@@ -141,7 +66,11 @@ class ReadOnlyVector2D<T> {
 		}
 	}
 
-	inline public function get(x, y): T {
+	/**
+		Get the item at x, y.
+		If x or y is out of bound, then nullValue is returned.
+	**/
+	inline public function get(x: Int, y: Int): T {
 		if (!inBound(x, y)) return nullValue;
 		return this.data[pos(x, y)];
 	}
@@ -150,11 +79,19 @@ class ReadOnlyVector2D<T> {
 		return x + (y * size.x);
 	}
 
-	public function inBound(x: Int, y: Int): Bool {
+	/**
+		Check if a position is in bound.
+	**/
+	inline public function inBound(x: Int, y: Int): Bool {
 		return x >= 0 && x < this.size.x && y >= 0 && y < this.size.y;
 	}
 
-	public function iterator(): LinearIterator<T> {
+	/**
+		Return the linear iterator of the underlying data.
+		No order should be assumed. If xy position needs to be guaranteed,
+		used iterateYX or iterateXY instead.
+	**/
+	inline public function iterator(): LinearIterator<T> {
 		return new LinearIterator<T>(this);
 	}
 
@@ -166,7 +103,7 @@ class ReadOnlyVector2D<T> {
 			}
 		}
 	**/
-	public function iterateXY(): Vector2DIteratorXY<T> {
+	inline public function iterateXY(): Vector2DIteratorXY<T> {
 		return new Vector2DIteratorXY<T>(this);
 	}
 
@@ -178,11 +115,14 @@ class ReadOnlyVector2D<T> {
 			}
 		}
 	**/
-	public function iterateYX(): Vector2DIteratorYX<T> {
+	inline public function iterateYX(): Vector2DIteratorYX<T> {
 		return new Vector2DIteratorYX<T>(this);
 	}
 
-	public function copy(): Vector2D<T> {
+	/**
+		Make a shallow copy of this Vector2D
+	**/
+	inline public function copy(): Vector2D<T> {
 		return new Vector2D<T>(this.size, this.nullValue, this.data);
 	}
 
@@ -196,7 +136,7 @@ class ReadOnlyVector2D<T> {
 		left (x-1, y), right (x+1, y), up (x, y-1), down (x, y+1)
 	**/
 	public function getAdjacent(x: Int, y: Int): Array<T> {
-		var arr: Array<T> = [];
+		final arr: Array<T> = [];
 		inline function _add(x0: Int, y0: Int) {
 			var t = get(x0, y0);
 			if (t != null) arr.push(t);
@@ -216,7 +156,7 @@ class ReadOnlyVector2D<T> {
 		@param includeSelf include the item in the position
 	**/
 	public function getAround(x: Int, y: Int, includeSelf: Bool = false): Array<T> {
-		var arr: Array<T> = [];
+		final arr: Array<T> = [];
 		inline function _add(x0: Int, y0: Int) {
 			var t = get(x0, y0);
 			if (t != null) arr.push(t);
@@ -228,6 +168,68 @@ class ReadOnlyVector2D<T> {
 			}
 		}
 		return arr;
+	}
+
+	public function getRow(x: Int, y: Int, includeSelf: Bool = false): Array<T> {
+		final arr: Array<T> = [];
+		inline function _add(x0: Int, y0: Int) {
+			var t = get(x0, y0);
+			if (t != null) arr.push(t);
+		}
+		for (x0 in 0...this.size.x) {
+			if (includeSelf == true || x0 != x) _add(x0, y);
+		}
+		return arr;
+	}
+
+	public function getColumn(x: Int, y: Int, includeSelf: Bool = false): Array<T> {
+		final arr: Array<T> = [];
+		inline function _add(x0: Int, y0: Int) {
+			var t = get(x0, y0);
+			if (t != null) arr.push(t);
+		}
+		for (y0 in 0...this.size.y) {
+			if (includeSelf == true || y0 != y) _add(x, y0);
+		}
+		return arr;
+	}
+
+	public function getRowColumn(x: Int, y: Int, includeSelf: Bool = false): Array<T> {
+		final arr: Array<T> = [];
+		inline function _add(x0: Int, y0: Int) {
+			var t = get(x0, y0);
+			if (t != null) arr.push(t);
+		}
+		for (x0 in 0...this.size.x) {
+			if (x0 != x) _add(x0, y);
+		}
+		for (y0 in 0...this.size.y) {
+			if (y0 != y) _add(x, y0);
+		}
+		if (includeSelf == true) _add(x, y);
+		return arr;
+	}
+
+	public function getRange(x: Int, y: Int, range: GridRange, includeSelf: Bool = false): Array<T> {
+		switch (range) {
+			case Adjacent:
+				return getAdjacent(x, y);
+			case Around:
+				return getAround(x, y, includeSelf);
+			case Row:
+				return getRow(x, y, includeSelf);
+			case Column:
+				return getColumn(x, y, includeSelf);
+			case RowColumn:
+				return getRowColumn(x, y, includeSelf);
+			case All:
+				final items = [];
+				for (pt => item in this.iterateYX()) {
+					if (includeSelf == true || pt.x != x || pt.y != y) items.push(item);
+				}
+				return items;
+		}
+		return [];
 	}
 }
 
@@ -333,5 +335,98 @@ class Vector2D<T> extends ReadOnlyVector2D<T> {
 			this.data[i] = value;
 		}
 		return true;
+	}
+}
+
+@:access(zf.ds.ReadOnlyVector2D)
+private class Vector2DIteratorXY<T> {
+	var data: ReadOnlyVector2D<T>;
+	var currX: Int;
+	var currY: Int;
+	var point: Point2i;
+
+	public function new(data: ReadOnlyVector2D<T>) {
+		this.data = data;
+		this.currX = 0;
+		this.currY = 0;
+		this.point = new Point2i();
+	}
+
+	public function hasNext(): Bool {
+		return (this.currX < this.data.size.x && this.currY < this.data.size.y);
+	}
+
+	public function next(): {key: Point2i, value: T} {
+		var returnValue = {
+			key: this.point,
+			value: this.data.data[data.pos(this.currX, this.currY)],
+		}
+		this.point.x = this.currX;
+		this.point.y = this.currY;
+		if (this.currY == this.data.size.y - 1) {
+			this.currY = 0;
+			this.currX += 1;
+		} else {
+			this.currY += 1;
+		}
+		return returnValue;
+	}
+}
+
+@:access(zf.ds.ReadOnlyVector2D)
+private class Vector2DIteratorYX<T> {
+	var data: ReadOnlyVector2D<T>;
+	var currX: Int;
+	var currY: Int;
+	var pos: Int = 0;
+
+	var point: Point2i;
+
+	public function new(data: ReadOnlyVector2D<T>) {
+		this.data = data;
+		this.currX = 0;
+		this.currY = 0;
+		this.point = new Point2i();
+	}
+
+	public function hasNext(): Bool {
+		return (this.currX < this.data.size.x && this.currY < this.data.size.y);
+	}
+
+	public function next(): {key: Point2i, value: T} {
+		this.point.x = this.currX;
+		this.point.y = this.currY;
+		var returnValue = {
+			key: this.point,
+			value: this.data.data[pos], // this works because we know how Vector2D stores the data
+		}
+		if (this.currX == this.data.size.x - 1) {
+			this.currX = 0;
+			this.currY += 1;
+		} else {
+			this.currX += 1;
+		}
+		pos += 1;
+		return returnValue;
+	}
+}
+
+@:access(zf.ds.ReadOnlyVector2D)
+private class LinearIterator<T> {
+	var data: ReadOnlyVector2D<T>;
+	var curr: Int;
+
+	public function new(data: ReadOnlyVector2D<T>) {
+		this.data = data;
+		this.curr = 0;
+	}
+
+	public function hasNext(): Bool {
+		return this.curr < this.data.data.length;
+	}
+
+	public function next(): T {
+		if (this.curr >= this.data.data.length) return null;
+		return this.data.data[curr++];
 	}
 }
