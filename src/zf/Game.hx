@@ -57,6 +57,14 @@ class Game extends hxd.App {
 	var display: h2d.Object;
 
 	/**
+		Debug layers
+	**/
+#if debug
+	public var debugLayers: h2d.Layers;
+	public var debugInteractive: zf.debug.DebugDraw;
+#end
+
+	/**
 		Mask things outside of the display area
 	**/
 	var mask: h2d.Mask;
@@ -84,6 +92,9 @@ class Game extends hxd.App {
 		this.s2d.add(this.mask, 100);
 #if debug
 		this.setupFramerate();
+		this.mask.addChild(this.debugLayers = new h2d.Layers());
+		this.debugInteractive = zf.debug.D.makeDebugDraw(this.debugLayers);
+		this.debugLayers.visible = false;
 #end
 		this.screenState = Ready;
 
@@ -172,6 +183,10 @@ class Game extends hxd.App {
 		this.updater.update(dt);
 #if debug
 		if (this.framerate.visible == true) this.framerate.text = '${(1 / dt).round(1)}';
+		if (hxd.Key.isPressed(hxd.Key.QWERTY_TILDE)) {
+			this.debugLayers.visible = !this.debugLayers.visible;
+		}
+		if (this.debugLayers.visible == true) this.debugInteractive.draw(this.s2d);
 #end
 		updateScreens(dt);
 	}
