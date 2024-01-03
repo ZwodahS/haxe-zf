@@ -251,7 +251,8 @@ class ObjectExtensions {
 		@param setMode the mode to set the X value. See calculateXPosition to see how the X position are set.
 		@param padding additional padding to the x value
 	**/
-	public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set, padding: Float = 0): h2d.Object {
+	inline public static function setX(obj: h2d.Object, x: Float, setMode: SetMode = Set,
+			padding: Float = 0): h2d.Object {
 		obj.x = calculateXPosition(obj, x, setMode, padding);
 		return obj;
 	}
@@ -264,7 +265,8 @@ class ObjectExtensions {
 		@param setMode the mode to set the Y value. See calculateYPosition to see how to Y position are set.
 		@param padding additional padding to the y value
 	**/
-	public static function setY(obj: h2d.Object, y: Float, setMode: SetMode = Set, padding: Float = 0): h2d.Object {
+	inline public static function setY(obj: h2d.Object, y: Float, setMode: SetMode = Set,
+			padding: Float = 0): h2d.Object {
 		obj.y = calculateYPosition(obj, y, setMode, padding);
 		return obj;
 	}
