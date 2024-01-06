@@ -34,6 +34,9 @@ class DebugOverlay extends UIElement {
 		console: {
 			inputHeight: 10,
 		},
+		inspector: {
+			inputHeight: 10,
+		},
 	};
 
 	public var fonts: Array<h2d.Font>;
@@ -185,6 +188,7 @@ class DebugOverlay extends UIElement {
 		this.inspector.conf.width = this.displayAreaWidth;
 		this.inspector.conf.height = this.displayAreaHeight;
 		this.inspector.conf.alpha = this.conf.alpha;
+		this.inspector.conf.inputHeight = this.conf.inspector.inputHeight;
 		this.inspector.x = this.conf.padding;
 		this.inspector.y = this.displayAreaStartY;
 		this.inspector.init();

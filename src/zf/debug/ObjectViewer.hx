@@ -11,12 +11,14 @@ private class TreeNode extends UIElement {
 	public var data: Dynamic;
 	public var displayName: String;
 	public var viewer: ObjectViewer;
+	public var fullPath: String;
 
-	public function new(viewer: ObjectViewer, level: Int, name: String, data: Dynamic) {
+	public function new(viewer: ObjectViewer, level: Int, name: String, data: Dynamic, fullPath: String) {
 		super();
 		this.level = level;
 		this.data = data;
 		this.displayName = name;
+		this.fullPath = fullPath;
 		this.text = new HtmlText(viewer.font);
 		this.text.text = formatDisplay();
 		this.text.textColor = viewer.conf.textColor;
@@ -100,6 +102,9 @@ class ObjectViewer extends h2d.Object {
 			cursorColor: this.conf.textColor,
 		});
 		this.scrollArea.interactive.propagateEvents = true;
+		this.scrollArea.interactive.onKeyDown = (e) -> {
+			this.onKeyDown(e);
+		}
 		this.addChild(this.scrollArea);
 	}
 
@@ -119,20 +124,22 @@ class ObjectViewer extends h2d.Object {
 		}
 	}
 
-	function onNodeClick(n: TreeNode) {
+	function onNodeClick(n: TreeNode, keepOpen = false) {
 		final index = this.treeNodes.indexOf(n);
 		if (index == -1) return;
 		// get the next index
 		final nextNode = this.treeNodes[index + 1];
 		final isExpanded = nextNode != null && nextNode.level == n.level + 1;
 		if (isExpanded == true) {
-			// remove the expanded
-			var len = 0;
-			for (i in (index + 1)...this.treeNodes.length) {
-				if (n.level == this.treeNodes[i].level) break;
-				len += 1;
+			if (keepOpen == false) {
+				// remove the expanded
+				var len = 0;
+				for (i in (index + 1)...this.treeNodes.length) {
+					if (n.level == this.treeNodes[i].level) break;
+					len += 1;
+				}
+				this.treeNodes.splice(index + 1, len);
 			}
-			this.treeNodes.splice(index + 1, len);
 		} else {
 			// expand the object
 			var insertIndex = index + 1;
@@ -142,36 +149,55 @@ class ObjectViewer extends h2d.Object {
 		redraw();
 	}
 
+	public function expandPath(path: String) {
+		final nodeNames = path.split(".");
+		var ind = 0;
+		while (ind < nodeNames.length) {
+			final fullPath = nodeNames.slice(0, ind + 1).join(".");
+			final node = findNode(fullPath);
+			if (node == null) break;
+			onNodeClick(node, true);
+			ind += 1;
+		}
+	}
+
+	function findNode(path: String): TreeNode {
+		for (node in this.treeNodes) {
+			if (node.fullPath == path) return node;
+		}
+		return null;
+	}
+
 	function expandNodes(n: TreeNode): Array<TreeNode> {
 		var nodes: Array<TreeNode> = [];
 		switch (Type.typeof(n.data)) {
 			case TClass(Array):
 				final arr: Array<Dynamic> = cast n.data;
 				for (ind => object in arr) {
-					final node = createNode(n.level + 1, '[${ind}]', object);
+					final node = createNode(n.level + 1, '[${ind}]', object, n.fullPath);
 					if (node != null) nodes.push(node);
 				}
 			case TClass(String):
 			case TClass(haxe.ds.StringMap):
 				final map: haxe.ds.StringMap<Dynamic> = cast n.data;
 				for (key => value in map) {
-					final node = createNode(n.level + 1, key, value);
+					final node = createNode(n.level + 1, key, value, n.fullPath);
 					if (node != null) nodes.push(node);
 				}
 			case TClass(haxe.ds.IntMap):
 				final map: haxe.ds.IntMap<Dynamic> = cast n.data;
 				for (key => value in map) {
-					final node = createNode(n.level + 1, '${key}', value);
+					final node = createNode(n.level + 1, '${key}', value, n.fullPath);
 					if (node != null) nodes.push(node);
 				}
 			case TClass(e):
 				for (field in Reflect.fields(n.data)) {
-					final node = createNode(n.level + 1, field, Reflect.field(n.data, field));
+					final node = createNode(n.level + 1, field, Reflect.field(n.data, field), n.fullPath);
 					if (node != null) nodes.push(node);
 				}
 			case TObject:
 				for (field in Reflect.fields(n.data)) {
-					final node = createNode(n.level + 1, field, Reflect.field(n.data, field));
+					final node = createNode(n.level + 1, field, Reflect.field(n.data, field), n.fullPath);
 					if (node != null) nodes.push(node);
 				}
 			default:
@@ -179,7 +205,7 @@ class ObjectViewer extends h2d.Object {
 		return nodes;
 	}
 
-	function createNode(level: Int, name: String, object: Dynamic): TreeNode {
+	function createNode(level: Int, name: String, object: Dynamic, parent: String = null): TreeNode {
 		var expand = true;
 		switch (Type.typeof(object)) {
 			case TNull, TInt, TFloat, TBool, TClass(String):
@@ -188,7 +214,10 @@ class ObjectViewer extends h2d.Object {
 				return null;
 			default:
 		}
-		final node = new TreeNode(this, level, name, object);
+		final path = [];
+		if (parent != null) path.push(parent);
+		path.push(name);
+		final node = new TreeNode(this, level, name, object, path.join("."));
 		if (expand == true) {
 			node.addOnClickListener("ObjectViewer", (_) -> {
 				onNodeClick(node);
@@ -202,4 +231,11 @@ class ObjectViewer extends h2d.Object {
 		for (node in this.treeNodes) this.tree.addChild(node);
 		this.scrollArea.onObjectUpdated();
 	}
+
+	dynamic public function onKeyDown(e: hxd.Event) {}
 }
+/**
+	Sat 14:36:07 06 Jan 2024
+	I might have to rewrite this eventually.
+	The expand Path part is very hackish.
+**/
