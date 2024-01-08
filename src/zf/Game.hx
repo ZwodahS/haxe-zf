@@ -2,6 +2,7 @@ package zf;
 
 import zf.debug.DebugOverlay;
 import zf.h2d.HtmlText;
+import zf.ui.UIElement;
 
 using zf.h2d.ObjectExtensions;
 
@@ -61,7 +62,8 @@ class Game extends hxd.App {
 	**/
 #if debug
 	public var debugLayers: h2d.Layers;
-	public var debugInteractive: zf.debug.DebugDraw;
+	public var debugDraw: zf.debug.DebugDraw;
+	public var debugInteractive: UIElement;
 #end
 
 	/**
@@ -93,8 +95,11 @@ class Game extends hxd.App {
 #if debug
 		this.setupFramerate();
 		this.mask.addChild(this.debugLayers = new h2d.Layers());
-		this.debugInteractive = zf.debug.D.makeDebugDraw(this.debugLayers);
+		this.debugDraw = zf.debug.D.makeDebugDraw(this.debugLayers);
 		this.debugLayers.visible = false;
+		this.debugInteractive = UIElement.makeWithInteractive(this.boundedSize);
+		this.debugInteractive.interactive.propagateEvents = true;
+		this.s2d.add(this.debugInteractive);
 #end
 		this.screenState = Ready;
 
@@ -125,7 +130,7 @@ class Game extends hxd.App {
 	function set_debugOverlay(overlay: DebugOverlay): DebugOverlay {
 		this.debugOverlay = overlay;
 		this.s2d.add(this.debugOverlay, 1000);
-		@:privateAccess this.s2d.window.addEventTarget(debugOnEvent);
+		this.debugInteractive.addOnKeyDownListener("zf.Game", debugOnEvent);
 
 		return this.debugOverlay;
 	}
@@ -186,7 +191,7 @@ class Game extends hxd.App {
 		if (hxd.Key.isPressed(hxd.Key.QWERTY_TILDE)) {
 			this.debugLayers.visible = !this.debugLayers.visible;
 		}
-		if (this.debugLayers.visible == true) this.debugInteractive.draw(this.s2d);
+		if (this.debugLayers.visible == true) this.debugDraw.draw(this.s2d);
 #end
 		updateScreens(dt);
 	}
