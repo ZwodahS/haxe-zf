@@ -10,6 +10,8 @@ import zf.resources.FontResource;
 import zf.resources.SoundResource;
 import zf.ui.ScaleGridFactory;
 
+import hxd.Cursor;
+
 /**
 	@stage:stable
 
@@ -70,6 +72,8 @@ class ResourceManager {
 
 	public final gridFactories: Map<String, ScaleGridFactory>;
 
+	public final cursors: Map<String, Cursor>;
+
 	public function new() {
 		this.images = [];
 		this.strings = [];
@@ -78,6 +82,7 @@ class ResourceManager {
 		this.sounds = [];
 		this.languages = [];
 		this.stringTable = new StringTable();
+		this.cursors = [];
 
 		this.context = new ResourceManagerContext(this);
 		this.colors = [];
