@@ -51,6 +51,14 @@ class Access {
 		return '${raw}';
 	}
 
+	public function getFloat(name: String, defaultValue: Null<Float> = null): Null<Float> {
+		final raw: Dynamic = this.get(name);
+		if (raw == null) return defaultValue;
+		if (Std.isOfType(raw, Float)) return cast(raw, Float);
+		if (Std.isOfType(raw, String)) return Std.parseFloat(cast(raw, String));
+		return defaultValue;
+	}
+
 	/**
 		Returns true if the value is "true", false if the value is "false", null otherwise
 	**/

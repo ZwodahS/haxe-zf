@@ -25,6 +25,8 @@ class ObjectsButton extends Button {
 	var disabledObject: h2d.Object;
 	var selectedObject: h2d.Object;
 
+	public var floatOffset: Point2f = [0, 0];
+
 	public var display: h2d.Object;
 
 	public var textOffset(default, set): Point2f;
@@ -68,12 +70,16 @@ class ObjectsButton extends Button {
 
 		if (this.disabled == true) {
 			this.disabledObject.visible = true;
+			this.display.setX(0).setY(0);
 		} else if (this.toggled == true) {
 			this.selectedObject.visible = true;
+			this.display.setX(0).setY(0);
 		} else if (this.isOver == true) {
 			this.hoverObject.visible = true;
+			this.display.setX(this.floatOffset.x).setY(this.floatOffset.y);
 		} else {
 			this.defaultObject.visible = true;
+			this.display.setX(0).setY(0);
 		}
 		onStateChanged();
 	}
@@ -110,6 +116,10 @@ typedef ObjectsButtonConf = {
 	public var ?autoFonts: {
 		public var fonts: Array<h2d.Font>;
 		public var maxWidth: Int;
+	};
+	public var ?floatOffset: {
+		public var ?x: Float;
+		public var ?y: Float;
 	};
 	public var ?textColor: Null<Color>;
 	public var ?text: String;
@@ -227,10 +237,15 @@ class Button extends UIElement {
 			btn.textLabel.maxWidth = width;
 			btn.textLabel.textAlign = Center;
 		}
+
+		if (conf.floatOffset != null) {
+			if (conf.floatOffset.x != null) btn.floatOffset.x = conf.floatOffset.x;
+			if (conf.floatOffset.y != null) btn.floatOffset.y = conf.floatOffset.y;
+		}
 		btn.updateRendering();
 		btn.alignText();
 
-		btn.display.addChild(btn.interactive = new Interactive(width, height));
+		btn.addChild(btn.interactive = new Interactive(width, height));
 
 		return btn;
 	}

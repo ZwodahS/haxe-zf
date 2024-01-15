@@ -1,5 +1,9 @@
 package zf.ui.builder.components;
 
+/**
+	Mon 14:55:37 15 Jan 2024
+	Probably can extend this and rename it to button later
+**/
 class BitmapButton extends zf.ui.builder.Component {
 	public function new() {
 		super("bitmap-button");
@@ -31,6 +35,12 @@ class BitmapButton extends zf.ui.builder.Component {
 			font = context.getFont(fontName);
 		}
 
+		final floatOffset: Point2f = [0, 0];
+		final floatX = conf.getFloat("float-x");
+		final floatY = conf.getFloat("float-y");
+		if (floatX != null) floatOffset.x = floatX;
+		if (floatY != null) floatOffset.y = floatY;
+
 		final textColorString = conf.getString("textColor");
 		final textColor: Null<Color> = textColorString == null ? null : context.getColor(textColorString);
 
@@ -40,6 +50,7 @@ class BitmapButton extends zf.ui.builder.Component {
 		final component = zf.ui.Button.fromObjects({
 			objects: objects,
 			font: font,
+			floatOffset: floatOffset,
 			textColor: textColor,
 			text: text,
 		});
