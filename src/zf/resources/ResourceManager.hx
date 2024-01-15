@@ -455,9 +455,18 @@ class ResourceManager {
 	}
 
 	// ---- Colors ---- //
-	function loadColors(colors: Map<String, Int>) {
+	function loadColors(colors: Map<String, Dynamic>) {
+		final alias: Map<String, String> = [];
 		for (key => c in colors) {
-			this.colors.set(key, cast c);
+			if (Std.isOfType(c, String)) {
+				alias.set(key, cast c);
+			} else if (Std.isOfType(c, Int)) {
+				this.colors.set(key, cast c);
+			}
+		}
+		for (key => name in alias) {
+			if (this.colors.exists(name) == false) continue;
+			this.colors.set(key, cast this.colors.get(name));
 		}
 	}
 

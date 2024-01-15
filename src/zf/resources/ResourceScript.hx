@@ -59,7 +59,7 @@ typedef ResourceScript = {
 	/**
 		Colors
 	**/
-	public var ?colors: Map<String, Int>;
+	public var ?colors: Map<String, Dynamic>;
 
 	/**
 		Define scale grids
