@@ -225,6 +225,7 @@ class UIElement extends h2d.Object {
 		Ideally, this should return the bounds relative to a common parent of window layer and this element.
 	**/
 	dynamic public function getTooltipBounds(): h2d.col.Bounds {
+		if (this.tooltipHelper != null) return this.getBounds(this.tooltipHelper.referenceLayer);
 		return null;
 	}
 

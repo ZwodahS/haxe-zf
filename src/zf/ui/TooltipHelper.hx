@@ -11,6 +11,14 @@ import zf.h2d.Interactive;
 class TooltipHelper {
 	public var windowRenderSystem: WindowRenderSystem;
 
+	public var referenceLayer(get, never): h2d.Object;
+
+	public var overrideReferenceLayer: h2d.Object = null;
+
+	inline public function get_referenceLayer(): h2d.Object {
+		return this.overrideReferenceLayer != null ? this.overrideReferenceLayer : this.windowRenderSystem.layer;
+	}
+
 	public function new(windowRenderSystem: WindowRenderSystem) {
 		this.windowRenderSystem = windowRenderSystem;
 	}
