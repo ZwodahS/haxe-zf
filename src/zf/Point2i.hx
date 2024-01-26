@@ -115,6 +115,12 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return this;
 	}
 
+	public function updateXY(x: Int, y: Int): Point2i {
+		this[0] = x;
+		this[1] = y;
+		return this;
+	}
+
 	/**
 		Move the point in this direction.
 		Returns itself
