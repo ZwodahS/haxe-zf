@@ -7,7 +7,6 @@ class Constants {
 	public static final MaxInt32: Int = 0x7FFFFFFE;
 	public static final SeedMax: Int = MaxInt32 - 1;
 
-
 	/**
 		Tue 12:59:41 30 Jan 2024
 		Not sure where to put this

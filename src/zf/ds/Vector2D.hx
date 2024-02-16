@@ -212,6 +212,10 @@ class ReadOnlyVector2D<T> {
 
 	public function getRange(x: Int, y: Int, range: GridRange, includeSelf: Bool = false): Array<T> {
 		switch (range) {
+			case On:
+				var on = get(x, y);
+				if (on != null) return [on];
+				return [];
 			case Adjacent:
 				return getAdjacent(x, y);
 			case Around:
