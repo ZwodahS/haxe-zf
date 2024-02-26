@@ -55,6 +55,7 @@ class ObjectsButton extends Button {
 	function updateTextLabel() {
 		if (this.textLabel == null) return;
 		this.textLabel.text = this.text;
+		alignText();
 	}
 
 	function alignText() {
