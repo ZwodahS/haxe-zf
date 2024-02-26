@@ -33,6 +33,8 @@ typedef ShowWindowConf = {
 		If provided, this will override the spacing defined in WindowRenderSystem
 	**/
 	public var ?overrideSpacing: Float;
+
+	public var ?onShow: (h2d.Object) -> Void;
 }
 
 /**
@@ -85,6 +87,7 @@ class WindowRenderSystem {
 		if (adjustWindow == true) {
 			adjustWindowPosition(w, relativeTo, conf);
 		}
+		if (conf != null && conf.onShow != null) conf.onShow(w);
 	}
 
 	public function adjustWindowPosition(w: h2d.Object, relativeTo: h2d.col.Bounds = null,
