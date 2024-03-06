@@ -344,8 +344,11 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		@param columnPerRow number of item in each row
 		@param index the index in the grid
 	**/
-	inline public static function rowColumn(columnPerRow: Int, index: Int): Point2i {
-		return [Std.int(index % columnPerRow), Std.int(index / columnPerRow)];
+	inline public static function rowColumn(columnPerRow: Int, index: Int, pt: Point2i = null): Point2i {
+		if (pt == null) pt = [0, 0];
+		pt.x = Std.int(index % columnPerRow);
+		pt.y = Std.int(index / columnPerRow);
+		return pt;
 	}
 
 	/**
@@ -363,7 +366,10 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		@param rowPerColumn number of item in each column
 		@param index the index in the grid
 	**/
-	inline public static function columnRow(rowPerColumn: Int, index: Int): Point2i {
-		return [Std.int(index / rowPerColumn), Std.int(index % rowPerColumn)];
+	inline public static function columnRow(rowPerColumn: Int, index: Int, pt: Point2i = null): Point2i {
+		if (pt == null) pt = [0, 0];
+		pt.x = Std.int(index / rowPerColumn);
+		pt.y = Std.int(index % rowPerColumn);
+		return pt;
 	}
 }
