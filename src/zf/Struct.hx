@@ -125,4 +125,52 @@ class Struct {
 		}
 		setValueByKeys(data.get(keys[ind]), keys, value, ind + 1);
 	}
+
+	/**
+		Unflatten a struct.
+
+		For example, if a struct has a key "a.b", then a struct 'a' will be created and 'b' will be used as key.
+
+		WARNING: If a struct has a key "a" and another key "a.b", this will create unexpected behavior
+		This uses flatten before unflatten. Hence this also only works on primitives and struct
+
+		This will unflatten the struct in place.
+
+		By default, this uses "." as separator.
+	**/
+	public static function unflatten(data: Dynamic): Dynamic {
+		final uf: DynamicAccess<Dynamic> = {};
+
+		// we flatten first, then we unflatten
+		for (key => value in (flatten(data): DynamicAccess<Dynamic>)) {
+			final keys = key.split(".");
+			setValueByKeys(uf, keys, value);
+		}
+
+		return uf;
+	}
+
+	/**
+		WARNING:
+		this can only work on primitives and struct
+		Putting object here will make things weird
+	**/
+	public static function flatten(data: Dynamic): Dynamic {
+		final fl: DynamicAccess<Dynamic> = {};
+		function _extract(parentKey: String, currentData: Dynamic) {
+			if (Std.isOfType(currentData, Int) == true
+				|| Std.isOfType(currentData, Float) == true
+				|| Std.isOfType(currentData, String) == true) {
+				if (parentKey == null) return;
+				fl.set(parentKey, currentData);
+			} else {
+				for (key => value in (currentData: DynamicAccess<Dynamic>)) {
+					_extract(parentKey != null ? parentKey + '.' + key : key, value);
+				}
+			}
+		}
+		_extract(null, data);
+
+		return fl;
+	}
 }
