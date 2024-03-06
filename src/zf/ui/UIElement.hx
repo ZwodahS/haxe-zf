@@ -637,7 +637,13 @@ class UIElement extends h2d.Object {
 
 		See DynamicLayout for more information
 	**/
-	public var position: DynamicPosition;
+	public var position(default, set): DynamicPosition;
+
+	public function set_position(v: DynamicPosition): DynamicPosition {
+		this.position = v;
+		reposition();
+		return this.position;
+	}
 
 	/**
 		Reposition the UIElement relative to the parent resize.
@@ -677,6 +683,10 @@ class UIElement extends h2d.Object {
 			case AnchorBottomLeft(spacingX, spacingY):
 				final bounds = this.getBounds(this);
 				this.x = spacingX - bounds.xMin;
+				this.y = size.y - bounds.height - bounds.yMin - spacingY;
+			case AnchorBottomCenter(spacingX, spacingY):
+				final bounds = this.getBounds(this);
+				this.x = ((size.x - bounds.width) / 2) + spacingX - bounds.xMin;
 				this.y = size.y - bounds.height - bounds.yMin - spacingY;
 			case AnchorBottomRight(spacingX, spacingY):
 				final bounds = this.getBounds(this);

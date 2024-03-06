@@ -41,6 +41,11 @@ enum DynamicPosition {
 		Anchor to the bottom right of the layout.
 	**/
 	AnchorBottomRight(spacingX: Int, spacingY: Int);
+
+	/**
+		Anchor to the bottom right of the layout.
+	**/
+	AnchorBottomCenter(spacingX: Int, spacingY: Int);
 }
 
 /**

@@ -235,6 +235,9 @@ class ObjectExtensions {
 		return setY(obj, height, AlignCenter, startY);
 	}
 
+	/**
+		Center the object such that the x and y is -width/2 and -height/2 respectively.
+	**/
 	inline public static function center(obj: h2d.Object, centerX: Bool = true, centerY: Bool = true): h2d.Object {
 		final bounds = obj.getBounds();
 		if (centerX == true) obj.x = bounds.xMin - (bounds.width / 2);
