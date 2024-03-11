@@ -1,7 +1,7 @@
 package zf.sm;
 
 /**
-	@stage:unstable
+	@stage:stable
 
 	StateManager and State manages state and handle when state transition happens.
 **/
@@ -43,6 +43,9 @@ class StateManager {
 		return state;
 	}
 
+	/**
+		Check of the current state is a specific state.
+	**/
 	public function is(s: String = null, ss: Array<String> = null): Bool {
 		if (this.current == null) return false;
 		if (s != null && this.current.name == s) return true;
