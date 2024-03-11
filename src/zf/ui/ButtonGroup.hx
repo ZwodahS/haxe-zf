@@ -32,10 +32,17 @@ class ButtonGroup {
 		}
 
 		if (defaultToggle == null) defaultToggle = this.buttons.length != 0 ? this.buttons[0] : null;
-		if (defaultToggle == null) toggleButton(defaultToggle);
+		if (defaultToggle != null) _toggle(defaultToggle);
 	}
 
 	public function toggleButton(btn: Button) {
+		final canToggle = this.canToggle(this.selected, btn);
+		if (canToggle == false) return;
+
+		_toggle(btn);
+	}
+
+	function _toggle(btn: Button) {
 		for (i => b in this.buttons) {
 			b.toggled = btn == b;
 		}
@@ -43,4 +50,8 @@ class ButtonGroup {
 	}
 
 	dynamic public function onToggle(btn: Button) {}
+
+	dynamic public function canToggle(current: Button, btn: Button): Bool {
+		return true;
+	}
 }

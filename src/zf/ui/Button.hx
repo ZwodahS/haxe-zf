@@ -168,7 +168,7 @@ class Button extends UIElement {
 		}
 		btn.alignText();
 
-		btn.display.addChild(btn.interactive = new Interactive(width, height));
+		btn.addChild(btn.interactive = new Interactive(width, height));
 		btn.updateRendering();
 
 		return btn;
@@ -198,7 +198,7 @@ class Button extends UIElement {
 		btn.updateRendering();
 		btn.alignText();
 
-		btn.display.addChild(btn.interactive = new Interactive(width, height));
+		btn.addChild(btn.interactive = new Interactive(width, height));
 
 		return btn;
 	}
@@ -276,7 +276,7 @@ class Button extends UIElement {
 		btn.updateRendering();
 		btn.alignText();
 
-		btn.display.addChild(btn.interactive = new Interactive(width, height));
+		btn.addChild(btn.interactive = new Interactive(width, height));
 
 		return btn;
 	}
