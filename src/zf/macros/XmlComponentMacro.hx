@@ -54,7 +54,7 @@ class XmlComponentMacro {
 					args: [{name: "name", type: TPath({name: "String", pack: []})}],
 					expr: macro {
 						final object = getObjectByName(name);
-						if (object == null) trace('fail to find child "${name}"');
+						if (object == null) haxe.Log.trace('[Warn] fail to find child "${name}"', null);
 						return object;
 					},
 					ret: macro : h2d.Object,
