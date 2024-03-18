@@ -595,6 +595,21 @@ class UIElement extends h2d.Object {
 
 	public function reset() {
 		this.isOver = false;
+		this.tooltipHelper = null;
+		this.tooltipShowConf = null;
+		this.tooltipWindow = null;
+		this.onOutListeners.clear();
+		this.onOverListeners.clear();
+		this.onClickListeners.clear();
+		this.onLeftClickListeners.clear();
+		this.onRightClickListeners.clear();
+		this.onPushListeners.clear();
+		this.onReleaseListeners.clear();
+		this.onWheelListeners.clear();
+		this.onRemoveListeners.clear();
+		this.onKeyDownListeners.clear();
+		this.onKeyUpListeners.clear();
+		this.onMoveListeners.clear();
 		updateRendering();
 	}
 
