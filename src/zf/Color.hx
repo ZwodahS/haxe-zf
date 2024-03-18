@@ -13,7 +13,7 @@ abstract Color(Int) from Int to Int {
 	public var alpha(get, set): Int;
 
 	public function get_alpha(): Int {
-		return (this & 0xff000000) >> (8 * 3);
+		return (this & 0xff000000) >>> (8 * 3);
 	}
 
 	inline public function set_alpha(v: Int): Int {
@@ -25,7 +25,7 @@ abstract Color(Int) from Int to Int {
 	public var red(get, set): Int;
 
 	inline public function get_red(): Int {
-		return (this & 0x00ff0000) >> (8 * 2);
+		return (this & 0x00ff0000) >>> (8 * 2);
 	}
 
 	inline public function set_red(v: Int): Int {
@@ -37,7 +37,7 @@ abstract Color(Int) from Int to Int {
 	public var green(get, set): Int;
 
 	inline public function get_green(): Int {
-		return (this & 0x0000ff00) >> (8 * 1);
+		return (this & 0x0000ff00) >>> (8 * 1);
 	}
 
 	inline public function set_green(v: Int): Int {
