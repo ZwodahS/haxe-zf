@@ -61,7 +61,13 @@ class UIElement extends h2d.Object {
 	/**
 		Flag for whether the mouse is over the element
 	**/
-	public var isOver(default, null): Bool = false;
+	public var isOver(default, set): Bool = false;
+
+	public function set_isOver(v: Bool): Bool {
+		this.isOver = v;
+		updateRendering();
+		return this.isOver;
+	}
 
 	// ---- Bounds Fields ---- //
 	public var width(get, never): Float;
@@ -95,12 +101,10 @@ class UIElement extends h2d.Object {
 		}
 		this.interactive.onOver = function(e: hxd.Event) {
 			this.isOver = true;
-			updateRendering();
 			_onOver(e);
 		}
 		this.interactive.onOut = function(e: hxd.Event) {
 			this.isOver = false;
-			updateRendering();
 			_onOut(e);
 		}
 		this.interactive.onClick = function(e: hxd.Event) {
@@ -187,30 +191,40 @@ class UIElement extends h2d.Object {
 		if (tooltipWindow == null) {
 			this.removeAllListeners("UIElement.tooltip");
 		} else {
-			this.addOnOverListener("UIElement.tooltip", showTooltip);
-			this.addOnOutListener("UIElement.tooltip", hideTooltip);
-			this.addOnMoveListener("UIElement.tooltip", moveTooltip);
+			this.addOnOverListener("UIElement.tooltip", _showTooltip);
+			this.addOnOutListener("UIElement.tooltip", _hideTooltip);
+			this.addOnMoveListener("UIElement.tooltip", _moveTooltip);
 		}
 		return this.tooltipWindow;
 	}
 
-	function showTooltip(e: hxd.Event) {
+	public function showTooltip() {
 		if (this.tooltipWindow == null) return;
 		if (this.tooltipHelper == null) return;
 		this.tooltipHelper.showWindow(this.tooltipWindow, getTooltipBounds(), this.tooltipShowConf);
-		if (this.tooltipShowConf != null && this.tooltipShowConf.relativeToCursor == true) {
-			moveTooltip(e);
-		}
 	}
 
-	function hideTooltip(e: hxd.Event) {
+	public function hideTooltip() {
 		if (this.tooltipWindow == null) return;
 		if (this.tooltipHelper != null && this.tooltipWindow.parent != this.tooltipHelper.windowRenderSystem.layer)
 			return;
 		this.tooltipWindow.remove();
 	}
 
-	function moveTooltip(e: hxd.Event) {
+	function _showTooltip(e: hxd.Event) {
+		if (this.tooltipWindow == null) return;
+		if (this.tooltipHelper == null) return;
+		this.tooltipHelper.showWindow(this.tooltipWindow, getTooltipBounds(), this.tooltipShowConf);
+		if (this.tooltipShowConf != null && this.tooltipShowConf.relativeToCursor == true) {
+			_moveTooltip(e);
+		}
+	}
+
+	function _hideTooltip(e: hxd.Event) {
+		hideTooltip();
+	}
+
+	function _moveTooltip(e: hxd.Event) {
 		if (this.tooltipWindow == null || this.tooltipWindow.parent == null) return;
 		if (this.tooltipShowConf == null || this.tooltipShowConf.relativeToCursor != true) return;
 		final scene = this.getScene();

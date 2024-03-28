@@ -104,6 +104,7 @@ class Game extends hxd.App {
 		this.screenState = Ready;
 
 		updateScaleMode();
+		hxd.Pad.wait(onPadConnected);
 	}
 
 	function updateScaleMode() {
@@ -323,6 +324,20 @@ class Game extends hxd.App {
 
 	override function onResize() {
 		if (this.currentScreen != null) this.currentScreen.resize(this.s2d.width, this.s2d.height);
+	}
+
+	public var connectedPads: Array<hxd.Pad> = [];
+
+	function onPadConnected(pad: hxd.Pad) {
+		Logger.debug('Controller: ${pad.name} Connected');
+		this.connectedPads.push(pad);
+		pad.onDisconnect = onPadDisconnected.bind(pad);
+		if (this.currentScreen != null) this.currentScreen.onPadConnected(pad);
+	}
+
+	function onPadDisconnected(pad: hxd.Pad) {
+		this.connectedPads.remove(pad);
+		if (this.currentScreen != null) this.currentScreen.onPadDisconnected(pad);
 	}
 }
 

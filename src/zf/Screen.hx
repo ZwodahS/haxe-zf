@@ -53,4 +53,8 @@ class Screen extends h2d.Layers {
 	public function doneExiting(): Bool {
 		return true;
 	}
+
+	public function onPadConnected(pad: hxd.Pad) {}
+
+	public function onPadDisconnected(pad: hxd.Pad) {}
 }
