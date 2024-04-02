@@ -6,6 +6,44 @@ import zf.h2d.Interactive;
 
 import hxd.Cursor;
 
+/**
+	@stage:unstable
+**/
+typedef DragHandler = {
+	/**
+		If not provided, default false
+	**/
+	public var ?allowRightClick: Bool;
+
+	/**
+		Called at the start of drag and return an object that is being moved around
+		Returning uie will just drag the object around.
+
+		Use this function to add the object to the dragging layer
+	**/
+	public var onStartDrag: (uie: UIElement, e: hxd.Event) -> h2d.Object;
+
+	/**
+		Called when the drag stop
+	**/
+	public var ?onRelease: (h2d.Object, hxd.Event) -> Void;
+
+	/**
+		Called when the drag stop
+	**/
+	public var ?onReleaseOutside: (o: h2d.Object, hxd.Event) -> Void;
+
+	/**
+		Called when another key is push
+	**/
+	public var ?onPush: (h2d.Object, hxd.Event) -> Void;
+
+	/**
+		Called when the object is moved
+	**/
+	public var ?onMove: (h2d.Object, hxd.Event) -> Void;
+}
+
 typedef TooltipShowConf = {
 	> zf.ui.WindowRenderSystem.ShowWindowConf,
 
@@ -252,6 +290,66 @@ class UIElement extends h2d.Object {
 		The conf used to show the window
 	**/
 	public var tooltipShowConf: TooltipShowConf = null;
+
+	// ---- Handle Dragging ---- //
+
+	/**
+		@stage:unstable
+		Not stable yet, but it works. Might improve in the future.
+	**/
+	public var dragHandler(default, set): DragHandler;
+
+	public function set_dragHandler(v: DragHandler): DragHandler {
+		/**
+			If the dragHandler is not null, then we don't have set up anymore
+		**/
+		final old = this.dragHandler;
+
+		this.dragHandler = v;
+		if (old == null && this.dragHandler != null) {
+			this.addOnPushListener("UIElement.dragHandler", (e) -> {
+				if (e.button != 0 && this.dragHandler.allowRightClick != true) return;
+				final dragObject = this.dragHandler.onStartDrag(this, e);
+				final scene = dragObject.getScene();
+				if (scene == null) return;
+
+				final bounds = dragObject.getBounds();
+				var offsetX = bounds.width / 2;
+				var offsetY = bounds.height / 2;
+
+				scene.startCapture((e) -> {
+					switch (e.kind) {
+						case ERelease:
+							if (this.dragHandler != null && this.dragHandler.onRelease != null) {
+								this.dragHandler.onRelease(dragObject, e);
+							}
+							scene.stopCapture();
+						case EReleaseOutside:
+							if (this.dragHandler != null && this.dragHandler.onReleaseOutside != null) {
+								this.dragHandler.onReleaseOutside(dragObject, e);
+							}
+							scene.stopCapture();
+						case EPush:
+							if (this.dragHandler != null && this.dragHandler.onPush != null) {
+								this.dragHandler.onPush(dragObject, e);
+							}
+						case EMove:
+							final positionX = e.relX;
+							final positionY = e.relY;
+							final pos = dragObject.parent.globalToLocal(new h2d.col.Point(positionX, positionY));
+							dragObject.x = Std.int(pos.x - offsetX);
+							dragObject.y = Std.int(pos.y - offsetY);
+							if (this.dragHandler != null && this.dragHandler.onMove != null) {
+								this.dragHandler.onMove(dragObject, e);
+							}
+						default:
+					}
+					e.propagate = false;
+				});
+			});
+		}
+		return this.dragHandler;
+	}
 
 	// ---- Event handling for the interactive ---- //
 
