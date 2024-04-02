@@ -72,4 +72,12 @@ class RandExtensions {
 	inline public static function randomInt(r: hxd.Rand, max: Int): Int {
 		return max <= 0 ? 0 : r.random(max);
 	}
+
+	/**
+		This is the same as r.random, except that it does checks for max == 0.
+		In JS x%0 is undefined, while in hl x%0 == 0
+	**/
+	inline public static function randomIntMax(r: hxd.Rand): Int {
+		return randomInt(r, zf.Constants.SeedMax);
+	}
 }
