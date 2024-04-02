@@ -17,6 +17,12 @@ enum IntersectType {
 	public var xType: IntersectType;
 	public var yType: IntersectType;
 
+	public var size(get, never): Float;
+
+	inline public function get_size(): Float {
+		return x * y;
+	}
+
 	public function toString(): String {
 		return '${this.xType}(${this.x})|${this.yType}(${this.y})';
 	}
