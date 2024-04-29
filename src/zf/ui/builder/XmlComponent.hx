@@ -27,7 +27,7 @@ class XmlComponent extends UIElement {
 
 	var filepath: String = null;
 
-	var display: h2d.Object;
+	var display: h2d.Object = null;
 
 	/**
 		Do not modify this directly in child class
@@ -38,7 +38,6 @@ class XmlComponent extends UIElement {
 		super();
 		this.filepath = filepath;
 		this.__context__ = {};
-		this.addChild(this.display = new h2d.Object());
 	}
 
 	function initContext() {
