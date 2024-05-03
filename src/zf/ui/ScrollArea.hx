@@ -64,7 +64,7 @@ class ScrollArea extends UIElement {
 		this.scrollbar.y = 5;
 
 		this.addOnWheelListener("CardsView", (e) -> {
-			this.mask.scrollY += this.scrollDirection * 30 * e.wheelDelta;
+			scroll(e.wheelDelta * 30 * this.scrollDirection);
 		});
 	}
 
@@ -84,6 +84,10 @@ class ScrollArea extends UIElement {
 		scrollArea.build();
 
 		return scrollArea;
+	}
+
+	public function scroll(amount: Float) {
+		this.mask.scrollY += amount;
 	}
 
 	/**
