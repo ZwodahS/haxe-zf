@@ -5,15 +5,31 @@ using zf.h2d.ObjectExtensions;
 /**
 	@stage:stable
 **/
+#if !macro
+@:build(zf.macros.ObjectPool.addObjectPool())
+#end
 class WrappedObject implements Alphable implements Scalable implements Positionable implements Rotatable {
 	public var object: h2d.Object;
 
 	var originalObject: h2d.Object;
-	var originalX: Float;
-	var originalY: Float;
+	var originalX: Float = 0;
+	var originalY: Float = 0;
 
-	public function new(o: h2d.Object) {
-		this.object = o;
+	function new() {}
+
+	public function reset() {
+		this.object = null;
+		this.originalObject = null;
+		this.originalX = 0;
+		this.originalY = 0;
+	}
+
+	public static function alloc(obj: h2d.Object): WrappedObject {
+		final o = WrappedObject.__alloc__();
+
+		o.object = obj;
+
+		return o;
 	}
 
 	/**
@@ -122,7 +138,7 @@ class WrappedObject implements Alphable implements Scalable implements Positiona
 	}
 
 	public static function wo(obj: h2d.Object, alignCenter: Bool = false): WrappedObject {
-		final wo = new WrappedObject(obj);
+		final wo = alloc(obj);
 		if (alignCenter == true) wo.alignCenter();
 		return wo;
 	}

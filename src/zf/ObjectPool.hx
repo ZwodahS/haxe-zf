@@ -1,24 +1,11 @@
 package zf;
 
-interface Recyclable {
-	/**
-		Called first when the object is created and will be used.
-	**/
-	public function reset(): Void;
-
-	/**
-		Called when the object is returned back to the pool.
-	**/
-	public function recycle(): Void;
-}
-
-@:deprecated("Use macro based object pooling instead")
-class ObjectPool<T: Recyclable> {
+class ObjectPool<T> {
 	var pool: List<T>;
 
 	public var count(get, never): Int;
 
-	public function get_count(): Int {
+	inline public function get_count(): Int {
 		return this.pool.length;
 	}
 
@@ -47,17 +34,26 @@ class ObjectPool<T: Recyclable> {
 	/**
 		Return an instance of the object to the pool.
 
-		If the pool is already at max capacity, `recycle` will be called and the object will be discarded.
+		If the pool is already at max capacity, the object is not stored.
 	**/
 	public function recycle(o: T) {
-		o.recycle();
 		if (this.count >= this.maxPoolSize) return;
-		o.recycle();
 	}
 
-	public function make(): T {
+	/**
+		Return an instance of the object
+	**/
+	public function alloc(): T {
 		final object = this.pool.length > 0 ? this.pool.pop() : this.makeFunc();
-		object.reset();
+		resetObject(object);
 		return object;
 	}
+
+	dynamic public function resetObject(o: T) {}
 }
+
+/**
+	Sun 13:52:11 05 May 2024
+	The goal of the macro based object pool is to remove the need for this.
+	However, I realised that I needed an object pool for bitmap that is used for animations.
+**/

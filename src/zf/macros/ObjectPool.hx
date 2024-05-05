@@ -160,3 +160,10 @@ class ObjectPool {
 	}
 }
 #end
+
+/**
+	Sun 14:39:14 05 May 2024
+	Added back zf.ObjectPool to handle a more simple way to handle object pool for objects
+	that I can't extend.
+	Another note, this does not have maxPoolSize. At the moment not sure if I need it.
+**/
