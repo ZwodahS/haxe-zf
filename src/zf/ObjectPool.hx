@@ -38,6 +38,7 @@ class ObjectPool<T> {
 	**/
 	public function recycle(o: T) {
 		if (this.count >= this.maxPoolSize) return;
+		this.pool.add(o);
 	}
 
 	/**
@@ -51,7 +52,6 @@ class ObjectPool<T> {
 
 	dynamic public function resetObject(o: T) {}
 }
-
 /**
 	Sun 13:52:11 05 May 2024
 	The goal of the macro based object pool is to remove the need for this.
