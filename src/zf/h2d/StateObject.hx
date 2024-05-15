@@ -36,7 +36,8 @@ class StateObject extends h2d.Object {
 	public function addState(s: String, ?anim: h2d.Anim, ?bitmap: h2d.Bitmap) {
 		// if state already exist, then we don't do anything.
 		if (this.states[s] != null) return;
-		if (anim != null) this.addAnim(s, anim); else if (bitmap != null) addBitmap(s, bitmap);
+		if (anim != null) this.addAnim(s, anim);
+		else if (bitmap != null) addBitmap(s, bitmap);
 	}
 
 	function addBitmap(s: String, bitmap: h2d.Bitmap) {

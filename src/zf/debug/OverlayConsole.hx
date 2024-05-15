@@ -448,7 +448,7 @@ class OverlayConsole extends h2d.Object {
 					case AInt, AFloat:
 						astr += ":" + a.t.getName().substr(1);
 					case AString:
-					// nothing
+						// nothing
 					case AEnum(values):
 						astr += "=" + values.join("|");
 					case ABool:

@@ -95,6 +95,7 @@ class DebugOverlay extends UIElement {
 		this.addOnKeyDownListener("DebugOverlay", (e) -> {
 			if (this.visible == false) return;
 			if (e.keyCode == Key.ESCAPE) hide();
+			e.propagate = false;
 		});
 		this.interactive.propagateEvents = false;
 		initButtons();

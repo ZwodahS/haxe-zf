@@ -121,7 +121,6 @@ class Game extends hxd.App {
 	}
 
 	// ---- DebugOverlay ---- //
-
 	/**
 		This replace console and provide more functionality
 	**/

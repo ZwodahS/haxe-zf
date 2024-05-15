@@ -47,7 +47,8 @@ class ListExtensions {
 						q = q.next;
 						qsize--;
 					}
-					if (tail != null) tail.next = e; else
+					if (tail != null) tail.next = e;
+					else
 						list = e;
 					tail = e;
 				}
