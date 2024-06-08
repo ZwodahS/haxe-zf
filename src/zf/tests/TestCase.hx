@@ -18,6 +18,11 @@ private typedef TestStep = {
 **/
 class TestCase {
 	/**
+		Number of times to run this test
+	**/
+	public var runCount: Int = 1;
+
+	/**
 		A reference to the current runner.
 	**/
 	public var runner: TestRunner;

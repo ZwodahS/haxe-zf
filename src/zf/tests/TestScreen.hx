@@ -512,13 +512,23 @@ class TestScreen extends zf.Screen {
 			if (tc == null) continue;
 
 			final test = tc('${this.game.r.randomInt(zf.Constants.SeedMax)}');
-
 			final rtc = new RenderedTestCase(this, test);
 			bindTest(rtc);
 			this.testsDisplayArea.addChild(rtc);
 
 			this.tests.push(rtc);
 			this.incomplete.push(rtc);
+			if (test.runCount > 1) {
+				for (i in 1...test.runCount) {
+					final test = tc('${this.game.r.randomInt(zf.Constants.SeedMax)}');
+					final rtc = new RenderedTestCase(this, test);
+					bindTest(rtc);
+					this.testsDisplayArea.addChild(rtc);
+
+					this.tests.push(rtc);
+					this.incomplete.push(rtc);
+				}
+			}
 		}
 		onTestListUpdated();
 	}
