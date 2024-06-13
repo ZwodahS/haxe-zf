@@ -35,7 +35,7 @@ class BitmapButton extends zf.ui.builder.Component {
 			font = context.getFont(fontName);
 		}
 
-		final floatOffset: Point2f = [0, 0];
+		final floatOffset = {x: .0, y: .0};
 		final floatX = conf.getFloat("float-x");
 		final floatY = conf.getFloat("float-y");
 		if (floatX != null) floatOffset.x = floatX;

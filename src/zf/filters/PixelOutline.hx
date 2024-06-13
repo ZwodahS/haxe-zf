@@ -71,7 +71,7 @@ class PixelOutline extends h2d.filter.Shader<InternalShader> {
 
 	inline function set_color(v: Int) {
 		color = v;
-		shader.outlineColor = hxsl.Types.Vec.fromColor(color);
+		shader.outlineColor = hxsl.Types.Vec4.fromColor(color);
 		shader.outlineColor.a = alpha;
 		return v;
 	}

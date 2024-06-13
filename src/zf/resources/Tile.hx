@@ -8,11 +8,11 @@ class Tile {
 
 	var innerTile: h2d.Tile;
 
-	public var color: h3d.Vector;
+	public var color: h3d.Vector4;
 	public var scale: Float;
 	public var offset: Point2i;
 
-	public function new(t: h2d.Tile, color: h3d.Vector, scale: Float, offset: Point2i) {
+	public function new(t: h2d.Tile, color: h3d.Vector4, scale: Float, offset: Point2i) {
 		this.innerTile = t;
 		this.color = color;
 		this.scale = scale;

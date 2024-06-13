@@ -867,7 +867,7 @@ class HtmlText extends h2d.Text {
 		if (forSize) {
 			for (i in elements) {
 				// we need to remove these from the bounds calculation so that they don't go out of bound.
-				if (hxd.impl.Api.isOfType(i, h2d.Bitmap) || hxd.impl.Api.isOfType(i, Interactive)) {
+				if (i is h2d.Bitmap || i is h2d.Interactive) {
 					i.visible = false;
 				}
 			}

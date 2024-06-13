@@ -208,7 +208,7 @@ class ResourceManager {
 					} else {
 						offset = [0, 0];
 					}
-					var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector(1, 1, 1, 1), scale, offset);
+					var t = new Tile(image.sub(f.x, f.y, f.w, f.h), new h3d.Vector4(1, 1, 1, 1), scale, offset);
 					tiles.push(t);
 				}
 				final resource = new ImageResource(frame.name, tiles);
@@ -223,7 +223,7 @@ class ResourceManager {
 
 	public function registerBitmap(id: String, path: String) {
 		final tile = hxd.Res.load(path).toTile();
-		final t = new Tile(tile, new h3d.Vector(1, 1, 1, 1), 1.0, [0, 0]);
+		final t = new Tile(tile, new h3d.Vector4(1, 1, 1, 1), 1.0, [0, 0]);
 		final resource = new ImageResource(id, [t]);
 		addImageResource(resource);
 	}

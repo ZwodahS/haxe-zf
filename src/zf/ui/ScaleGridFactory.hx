@@ -35,9 +35,9 @@ class ScaleGridFactory {
 		obj.height = boxSize.y;
 		obj.tiling = this.tiling;
 		if (color != null) {
-			obj.color = h3d.Vector.fromColor(color);
+			obj.color = h3d.Vector4.fromColor(color);
 		} else if (this.color != null) {
-			obj.color = h3d.Vector.fromColor(this.color);
+			obj.color = h3d.Vector4.fromColor(this.color);
 		}
 		return obj;
 	}
