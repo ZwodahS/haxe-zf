@@ -28,7 +28,11 @@ class StateManager {
 
 	function switchState(nextState: State) {
 		final previous = this.current;
-		if (this.current != null) this.current.onStateExit();
+		if (this.current != null) {
+			this.current.onStateExit();
+			this.current.dispose();
+			this.current = null;
+		}
 		this.current = nextState;
 		this.current.onStateEnter();
 		final next = nextState;

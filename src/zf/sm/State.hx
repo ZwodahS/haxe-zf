@@ -40,6 +40,8 @@ class State {
 		return new State(this.name);
 	}
 
+	public function dispose() {}
+
 	/**
 		Check if this state is of a name
 	**/
