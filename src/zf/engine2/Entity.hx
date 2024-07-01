@@ -5,6 +5,9 @@ import zf.engine2.messages.MOnComponentDetached;
 
 /**
 	@stage:unstable
+
+	Mon 16:02:53 01 Jul 2024
+	Modify the class to handle object pool.
 **/
 class Entity implements Identifiable {
 	// ---- Engine level fields ---- //
@@ -19,11 +22,10 @@ class Entity implements Identifiable {
 
 		For Composite entity, get___world__ can be overriden to get it from parent entity.
 	**/
-	public var __world__(default, set): World;
+	public var __world__(default, set): World = null;
 
 	function set___world__(w: World): World {
 		this.__world__ = w;
-		this.onWorldSet();
 		return this.__world__;
 	}
 
@@ -68,12 +70,12 @@ class Entity implements Identifiable {
 		A string represeting what type of entity this is.
 		This should be same as the id of the entity factory
 	**/
-	public var typeId(default, null): String;
+	public var typeId(default, null): String = null;
 
 	/**
 		Constructor
 	**/
-	public function new(id: Int = -1) {
+	function new(id: Int = -1) {
 		this.id = id;
 		this.__components__ = [];
 	}
@@ -118,9 +120,17 @@ class Entity implements Identifiable {
 	/**
 		For cleanup. Removing entity from world does not dispose the entity.
 		Only dispose entity when it confirmed that it will not be used.
+
+		Disposing will remove all components and no events will be fired.
 	**/
 	public function dispose() {
+		// dispose all components
 		for (component in this.__components__) component.dispose();
+
+		// reset the entity back to default state
+		this.__components__.clear();
+		this.id = -1;
+		this.__world__ = null;
 	}
 
 	// ---- Methods to be override ---- //
@@ -137,12 +147,6 @@ class Entity implements Identifiable {
 	}
 
 	// ---- Event handling ---- //
-
-	/**
-		Handle when world is set to the entity.
-		To be override by the child entity in each game.
-	**/
-	function onWorldSet() {}
 
 	public function onStateChanged() {
 		for (component in this.__components__) component.onStateChanged();

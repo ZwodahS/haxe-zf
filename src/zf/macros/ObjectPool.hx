@@ -15,7 +15,7 @@ using haxe.macro.Tools;
 	- __next__ will be created and used to make this object a linked list
 	- dispose
 	dispose method will be added to return the object back to the pool.
-	This method should not defined by the class.
+	if this method is defined by class, __dispose__ will be created instead
 	- reset
 	reset method, called when dispose() is called to free up resource in the object.
 	if not provided, an empty reset method will be created.
@@ -59,6 +59,7 @@ class ObjectPool {
 
 		var resetFunc = null;
 		var allocFunc = null;
+		var disposeFunc = null;
 
 		/**
 			Check for existing function
@@ -67,8 +68,7 @@ class ObjectPool {
 			if (f.name == "reset") {
 				resetFunc = f;
 			} else if (f.name == "dispose") {
-				trace('dispose function found for class "${className}". Unable to create object pool.');
-				return fields;
+				disposeFunc = f;
 			} else if (f.name == "__pool__") {
 				trace('__pool__ variable found for class "${className}". Unable to create object pool.');
 				return fields;
@@ -115,7 +115,7 @@ class ObjectPool {
 
 		// add dispose method to return it back to pool
 		fields.push({
-			name: "dispose",
+			name: disposeFunc == null ? "dispose" : "__dispose__",
 			doc: null,
 			meta: [],
 			pos: Context.currentPos(),

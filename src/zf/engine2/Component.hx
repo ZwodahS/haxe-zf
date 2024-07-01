@@ -19,7 +19,9 @@ class Component {
 		return this.__entity__;
 	}
 
-	public function dispose() {}
+	public function dispose() {
+		this.__entity__ = null;
+	}
 
 	public function toString(): String {
 		return '{Component:${this.typeId}}';
