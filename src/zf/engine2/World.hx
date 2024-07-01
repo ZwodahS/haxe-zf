@@ -98,7 +98,6 @@ class World {
 		update is the main function that should be called on every update loop
 	**/
 	public function update(dt: Float) {
-		for (entity in this.__entities__) entity.update(dt);
 		for (sys in this.__systems__) sys.update(dt);
 		this.updater.update(dt);
 	}

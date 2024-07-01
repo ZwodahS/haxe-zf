@@ -135,13 +135,6 @@ class Entity implements Identifiable {
 
 	// ---- Methods to be override ---- //
 
-	/**
-		The main update method of entity.
-	**/
-	public function update(dt: Float) {
-		for (component in this.__components__) component.update(dt);
-	}
-
 	public function toString(): String {
 		return '[Entity/${this.typeId}:${this.id}]';
 	}
