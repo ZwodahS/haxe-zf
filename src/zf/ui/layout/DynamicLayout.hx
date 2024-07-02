@@ -65,6 +65,8 @@ class DynamicLayout extends UIElement {
 	**/
 	var size: Point2i;
 
+	var _repositions: Array<UIElement>;
+
 	override public function get_width() {
 		return size.x;
 	}
@@ -76,6 +78,7 @@ class DynamicLayout extends UIElement {
 	public function new(size: Point2i) {
 		super();
 		this.size = size;
+		this._repositions = [];
 	}
 
 	public function resize(newSize: Point2i) {
@@ -89,10 +92,23 @@ class DynamicLayout extends UIElement {
 	override public function addChild(object: h2d.Object) {
 		super.addChild(object);
 		if (Std.isOfType(object, UIElement) == true) cast(object, UIElement).reposition();
+		object.setParentContainer(this);
+	}
+
+	override public function contentChanged(object: h2d.Object) {
+		super.contentChanged(object);
+		if (object is UIElement) {
+			if (object.parent == this) _repositions.push(cast object);
+		} else if (object.parent != null && object.parent is UIElement) {
+			if (object.parent.parent == this) _repositions.push(cast object.parent);
+		}
+	}
+
+	override function sync(ctx: h2d.RenderContext) {
+		if (this._repositions.length > 0) {
+			for (o in this._repositions) o.reposition();
+			this._repositions.clear();
+		}
+		super.sync(ctx);
 	}
 }
-
-/**
-	Wed 11:44:41 18 Oct 2023
-	Change from h2d.Object -> UIElement
-**/

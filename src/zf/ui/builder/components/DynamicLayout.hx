@@ -37,6 +37,7 @@ class DynamicLayout extends Component {
 			if (Std.isOfType(c, UIElement) == false) {
 				uie = new UIElement();
 				uie.addChild(c);
+				@:privateAccess c.setParentContainer(uie);
 			} else {
 				uie = cast c;
 			}
