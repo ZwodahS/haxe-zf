@@ -29,11 +29,18 @@ class ScaleGrid extends Component {
 		final width = conf.getInt("width", 1);
 		final height = conf.getInt("height", 1);
 
-		final obj = factory.make([width, height]);
+		var color: Null<Color> = null;
+		final colorString = conf.getString("color", null);
+		if (colorString != null) {
+			color = context.getColor(colorString);
+		}
+
+		final obj = factory.make([width, height], color);
 		if (conf.get("name") != null) {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			obj.name = conf.get("name");
 		}
+
 		return obj;
 	}
 }
