@@ -4,7 +4,7 @@ import zf.engine2.messages.MOnComponentAttached;
 import zf.engine2.messages.MOnComponentDetached;
 
 /**
-	@stage:unstable
+	@stage:stable
 
 	Mon 16:02:53 01 Jul 2024
 	Modify the class to handle object pool.
@@ -24,7 +24,7 @@ class Entity implements Identifiable {
 	**/
 	public var __world__(default, set): World = null;
 
-	function set___world__(w: World): World {
+	inline function set___world__(w: World): World {
 		this.__world__ = w;
 		return this.__world__;
 	}
@@ -37,7 +37,7 @@ class Entity implements Identifiable {
 	**/
 	public var dispatcher(get, never): zf.MessageDispatcher;
 
-	function get_dispatcher(): zf.MessageDispatcher {
+	inline function get_dispatcher(): zf.MessageDispatcher {
 		return this.__world__ == null ? null : this.__world__.dispatcher;
 	}
 
@@ -62,7 +62,7 @@ class Entity implements Identifiable {
 		return this.id = id;
 	}
 
-	public function identifier(): String {
+	inline public function identifier(): String {
 		return 'entity:${id}';
 	}
 
@@ -140,7 +140,6 @@ class Entity implements Identifiable {
 	}
 
 	// ---- Event handling ---- //
-
 	public function onStateChanged() {
 		for (component in this.__components__) component.onStateChanged();
 	}
