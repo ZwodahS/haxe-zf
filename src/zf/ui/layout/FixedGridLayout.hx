@@ -21,7 +21,7 @@ class FixedGridLayout extends h2d.Object {
 	**/
 	var gridSize: Point2i;
 
-	var items: Array<h2d.Object>;
+	public var items: Array<h2d.Object>;
 
 	public var alignCenter(default, set): Bool = false;
 
