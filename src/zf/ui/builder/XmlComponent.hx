@@ -50,6 +50,14 @@ class XmlComponent extends UIElement {
 	function initComponent() {
 		if (XmlComponent.Builder == null) throw new haxe.Exception("UIBuilder not set");
 		this.addChild(this.display = cast XmlComponent.Builder.fromFile(filepath, getBuildContext()));
+		/**
+			Fri 14:38:04 19 Jul 2024
+			This is weird to be placed here, but I have no idea where else this can be done.
+			Might be considered as a hack ?
+		**/
+		if (this.display is UIElement && cast(this.display, UIElement).interactive != null) {
+			this.interactive = cast(this.display, UIElement).interactive;
+		}
 		_buildVariables();
 	}
 

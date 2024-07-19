@@ -9,6 +9,29 @@ typedef DynamicLayoutConf = {
 
 /**
 	@stage:stable
+
+	# Usage
+	Create zf.ui.layout.DynamicLayout using xml
+
+	<layout-dynamic>
+
+	## Attributes
+	- width|height: defined the width and height of the layout. Also set the width|height of the interactive.
+	- interactive="true": create a interactive and set it to the layout.
+
+	## Child Position/Attributes
+	- position: define the position type, default "fixed"
+		"anchorTopLeft"
+		"anchorTopCenter"
+		"anchorTopRight"
+		"anchorCenter"
+		"anchorBottomLeft"
+		"anchorBottomRight"
+		"fixed"
+	- position-x|position-y: for "fixed" layout, set the position
+	- position-spacingX|position-spacingY: for other layout, define the spacing.
+
+	Note: All child object that is not UIElement will be wrapped around with a UIElement
 **/
 class DynamicLayout extends Component {
 	public function new() {
@@ -28,6 +51,13 @@ class DynamicLayout extends Component {
 		final width = parseInt(element.get("width"), 0);
 		final height = parseInt(element.get("height"), 0);
 		final layout = new zf.ui.layout.DynamicLayout([width, height]);
+
+		if (element.get("interactive") == "true") {
+			final interactive = new zf.h2d.Interactive(width, height);
+			layout.addChild(interactive);
+			layout.interactive = interactive;
+		}
+
 		for (child in element.elements()) {
 			var c = context.makeObjectFromXMLElement(child);
 			if (c == null) continue;
@@ -68,8 +98,7 @@ class DynamicLayout extends Component {
 					var spacingX = parseInt(child.get("position-spacingX"), 0);
 					var spacingY = parseInt(child.get("position-spacingY"), 0);
 					position = AnchorBottomRight(spacingX, spacingY);
-				default:
-					"fixed";
+				default: // "fixed"
 					var x = parseInt(child.get("position-x"), 0);
 					var y = parseInt(child.get("position-y"), 0);
 					position = Fixed(x, y);
@@ -77,6 +106,7 @@ class DynamicLayout extends Component {
 			uie.position = position;
 			layout.addChild(uie);
 		}
+
 		return layout;
 	}
 
