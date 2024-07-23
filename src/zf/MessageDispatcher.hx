@@ -10,6 +10,7 @@ typedef MessageDispatcherListener = {
 	public var messageType: String;
 	public var callback: Message->Void;
 	public var priority: Int;
+	public var disabled: Bool;
 }
 
 /**
@@ -39,7 +40,7 @@ enum DispatchMode {
 /**
 	A message dispatcher that dispatch messages to listeners
 **/
-class MessageDispatcher {
+class MessageDispatcher implements MessageDispatcherI {
 	// Store all listener by id
 	var listeners: Map<Int, MessageDispatcherListener>;
 	// Store listener by message type
@@ -175,6 +176,7 @@ class MessageDispatcher {
 #end
 
 		for (listener in this.allMessageDispatcherListeners) {
+			if (listener.disabled == true) continue;
 			// dispatch the messages to all message dispatchers first.
 			// this really shouldn't be used except for debugging purpose.
 
@@ -201,6 +203,7 @@ class MessageDispatcher {
 		// dispatch the messages to the listeners of this message
 		if (listeners != null) {
 			for (listener in listeners) {
+				if (listener.disabled == true) continue;
 				try {
 #if debug
 					var callbackTime = .0;
@@ -267,12 +270,13 @@ class MessageDispatcher {
 		@:param callback the function to handle the message
 		@:param priority the priority for this handler, lower priority will be handled first.
 	**/
-	public function listen(messageType: String = "", callback: Message->Void, priority: Int = 0): Int {
+	public function listen(messageType: String, callback: Message->Void, priority: Int = 0): Int {
 		final listener = {
 			id: idCounter++,
 			messageType: messageType,
 			callback: callback,
 			priority: priority,
+			disabled: false,
 		}
 
 		// create the listener list if not already created.
@@ -296,6 +300,10 @@ class MessageDispatcher {
 		this.listeners[listener.id] = listener;
 
 		return listener.id;
+	}
+
+	inline public function get(id: Int): MessageDispatcherListener {
+		return this.listeners.get(id);
 	}
 
 	/**
@@ -326,11 +334,12 @@ class MessageDispatcher {
 		@:return the listener id
 	**/
 	public function listenAll(callback: Message->Void): Int {
-		var listener = {
+		final listener: MessageDispatcherListener = {
 			id: idCounter++,
 			messageType: null,
 			callback: callback,
 			priority: 0,
+			disabled: false,
 		}
 		this.allMessageDispatcherListeners[listener.id] = listener;
 		this.listeners[listener.id] = listener;

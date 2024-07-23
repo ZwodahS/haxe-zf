@@ -102,7 +102,7 @@ class Messages {
 				name: "setupMessages",
 				pos: Context.currentPos(),
 				kind: FFun({
-					args: [{name: "dispatcher", type: TPath({name: "MessageDispatcher", pack: ["zf"]})}],
+					args: [{name: "dispatcher", type: TPath({name: "MessageDispatcherI", pack: ["zf"]})}],
 					expr: macro $a{exprs},
 					ret: macro : Void,
 				}),
