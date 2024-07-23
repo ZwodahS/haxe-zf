@@ -4,26 +4,17 @@ using zf.ds.ListExtensions;
 
 /**
 	@stage:stable
-
-	Usage:
-		MessageDispatcher.get().listen(Message.TYPE, function(m: Message) {
-			trace("I received a message");
-		});
-		MessageDispatcher.get().dispatch(new Message());
-
-
-	Non-Singleton also works
-
-		var mailbox = new MessageDispatcher();
-		mailbox.dispatch(new Message());
 **/
 typedef MessageDispatcherListener = {
-	var id: Int;
-	var messageType: String;
-	var callback: Message->Void;
-	var priority: Int;
+	public var id: Int;
+	public var messageType: String;
+	public var callback: Message->Void;
+	public var priority: Int;
 }
 
+/**
+	The mode for dispatching the message
+**/
 enum DispatchMode {
 	/**
 		The message will be dispatched immediately.
@@ -45,42 +36,10 @@ enum DispatchMode {
 	EndOfQueue;
 }
 
+/**
+	A message dispatcher that dispatch messages to listeners
+**/
 class MessageDispatcher {
-	/**
-		Singleton Global Dispatchers
-	**/
-	static var Dispatchers: Map<String, MessageDispatcher> = new Map<String, MessageDispatcher>();
-
-	/**
-		Get a dispatcher by id
-
-		@param id the id of the dispatcher
-		@param create if true a new dispatcher will be created if not yet exist.
-		@return the message dispatcher, or none if not found and create is `false`
-	**/
-	public static function get(id: String = "", create: Bool = true): MessageDispatcher {
-		var d = Dispatchers.get(id);
-		if (d == null && create) {
-			d = new MessageDispatcher();
-			Dispatchers[id] = d;
-		}
-		return d;
-	}
-
-	/**
-		Delete a dispatcher by id
-
-		@param id the id of the dispatcher
-		@return true if found, false otherwise
-	**/
-	public static function delete(id: String): Bool {
-		var d = Dispatchers.get(id);
-		if (d == null) return false;
-		Dispatchers.remove(id);
-		d.clear();
-		return true;
-	}
-
 	// Store all listener by id
 	var listeners: Map<Int, MessageDispatcherListener>;
 	// Store listener by message type
@@ -92,7 +51,14 @@ class MessageDispatcher {
 	var queuedMessage: List<Message>;
 	var dispatchStack: List<Message>;
 
-	var clearing: Bool;
+	/**
+		Store a flag to ensure that we will not be clearing the queue while we are clearing the queue
+	**/
+	var isClearing: Bool = false;
+
+	/**
+		Id counter to generate id for all listeners.
+	**/
 	var idCounter: Int = 0;
 
 	public function new() {
@@ -103,6 +69,9 @@ class MessageDispatcher {
 		this.allMessageDispatcherListeners = new Map<Int, MessageDispatcherListener>();
 	}
 
+	/**
+		Clear all listener from this dispatcher
+	**/
 	function clear() {
 		this.listeners.clear();
 		this.listenersMap.clear();
@@ -111,15 +80,19 @@ class MessageDispatcher {
 		this.dispatchStack.clear();
 	}
 
+	/**
+		Clear all messages from both dispatch stack and queue.
+
+		WARN: This should never be used normally since messages will not be handled properly.
+	**/
 	public function clearMessages() {
 		this.queuedMessage.clear();
 		this.dispatchStack.clear();
 	}
 
 	/**
-		dispatch a message to the mailbox.
+		Dispatch a message to all the listeners.
 
-		if delayed is true, then the message will be queued and dispatched when the dispatchStack is empty.
 		@param message the message to send
 		@param dispatchMode when to dispatch the message.
 	**/
@@ -154,53 +127,78 @@ class MessageDispatcher {
 			// we will just add it to the end of the queue
 			this.queuedMessage.add(message);
 		} else { // Immediately
+			// we will dispatch the messages immediately.
+			// while this is dispatching, the dispatch stack will add the message to the start/top of dispatch stack.
+			// when this exits, the first/top item on the dispatch stack should not be this message
 			_dispatchMessage(message);
+			Assert.assert(this.dispatchStack.length == 0 || this.dispatchStack.first() != message);
 
-			// if this message was the last message in the current dispatch stack, dispatched the queued message.
-			if (this.dispatchStack.length == 0 && this.queuedMessage.length > 0 && !this.clearing) {
-				this.clearing = true;
+			// if this message is the last message on the current stack, dispatch all the queued messages.
+			if (this.dispatchStack.length == 0 && this.queuedMessage.length > 0 && !this.isClearing) {
+				// isClearing flag is set so that we will only have 1 `dispatch` method clearing the queued messages.
+				this.isClearing = true;
 				while (this.queuedMessage.length > 0) {
-					var m = this.queuedMessage.pop();
+					final m = this.queuedMessage.pop();
+					/**
+						Note that while dispatching messages, new messages may either be added to the queue
+						or is dispatched immediately.
+
+						This is handled, since if it is immediate, it will be added to the dispatch stack.
+						If it is not immediate, then it will be added to the queue, and it will be handed by
+						this loop that is clearing the messages.
+					**/
 					this._dispatchMessage(m);
 				}
-				this.clearing = false;
+				this.isClearing = false;
 			}
 		}
 		return message;
 	}
 
 	/**
-		private function for dispatching the message
+		Actual dispatch logic
+
+		This should not be called directly.
+
+		When dispatching the message, the message will be added to the dispatch stack.
+		After this dispatching is completed, it will be removed from the stack.
 	**/
 	function _dispatchMessage(message: Message) {
 		this.dispatchStack.push(message);
-		var listeners = this.listenersMap.get(message.type);
+		final listeners = this.listenersMap.get(message.type);
 
 		onBeforeMessage(message);
 
 #if (debug && sys)
-		var t0 = Sys.time();
-		message.addDebugMessage('(Initial) ${message}');
+		final t0 = Sys.time();
+		message.debug('(Initial) ${message}');
 #end
 
 		for (listener in this.allMessageDispatcherListeners) {
+			// dispatch the messages to all message dispatchers first.
+			// this really shouldn't be used except for debugging purpose.
+
 #if debug
 			var callbackTime = .0;
 #end
 #if (debug && sys)
-			var tt0 = Sys.time();
+			final tt0 = Sys.time();
 #end
+
+			// this is the only actual logic, the block above and below is just debugging and logging
 			listener.callback(message);
+
 #if (debug && sys)
 			final delta = Sys.time() - tt0;
 			callbackTime = delta;
 #end
 #if debug
-			var callbackTimeString = callbackTime == 0 ? '' : ', Took ${callbackTime * 100}ms';
-			message.addDebugMessage('(After [AllListener: ${listener.id}|(${listener.priority})]) ${message}${callbackTimeString}');
+			final callbackTimeString = callbackTime == 0 ? '' : ', Took ${callbackTime * 100}ms';
+			message.debug('(After [AllListener: ${listener.id}|(${listener.priority})]) ${message}${callbackTimeString}');
 #end
 		}
 
+		// dispatch the messages to the listeners of this message
 		if (listeners != null) {
 			for (listener in listeners) {
 				try {
@@ -208,16 +206,19 @@ class MessageDispatcher {
 					var callbackTime = .0;
 #end
 #if (debug && sys)
-					var tt0 = Sys.time();
+					final tt0 = Sys.time();
 #end
+
+					// this is the only actual logic, the block above and below is just debugging and logging
 					listener.callback(message);
+
 #if (debug && sys)
 					final delta = Sys.time() - tt0;
 					callbackTime = delta;
 #end
 #if debug
-					var callbackTimeString = callbackTime == 0 ? '' : ', Took ${callbackTime * 100}ms';
-					message.addDebugMessage('(After [Listener: ${listener.id}|(${listener.priority})]) ${message}${callbackTimeString}');
+					final callbackTimeString = callbackTime == 0 ? '' : ', Took ${callbackTime * 100}ms';
+					message.debug('(After [Listener: ${listener.id}|(${listener.priority})]) ${message}${callbackTimeString}');
 #end
 				} catch (e) {
 					Logger.exception(e);
@@ -227,13 +228,13 @@ class MessageDispatcher {
 		}
 
 #if debug
-		message.addDebugMessage('(OnFinish) ${message}');
+		message.debug('(OnFinish) ${message}');
 #end
 
 #if (debug && sys)
 		final delta = Sys.time() - t0;
 		message.delta = delta;
-		message.addDebugMessage('(Time Taken) ${delta * 100}ms');
+		message.debug('(Time Taken) ${delta * 100}ms');
 #end
 
 		onAfterMessage(message);
@@ -267,47 +268,63 @@ class MessageDispatcher {
 		@:param priority the priority for this handler, lower priority will be handled first.
 	**/
 	public function listen(messageType: String = "", callback: Message->Void, priority: Int = 0): Int {
-		var listener = {
+		final listener = {
 			id: idCounter++,
 			messageType: messageType,
 			callback: callback,
 			priority: priority,
 		}
-		var functionList = this.listenersMap.get(messageType);
-		if (functionList == null) {
-			functionList = [];
-			this.listenersMap[messageType] = functionList;
+
+		// create the listener list if not already created.
+		var listeners = this.listenersMap.get(messageType);
+		if (listeners == null) {
+			listeners = [];
+			this.listenersMap[messageType] = listeners;
 		}
-		var insertIndex = functionList.length;
-		for (ind => l in functionList) {
+
+		// find where to insert the listener.
+		var insertIndex = listeners.length;
+		for (ind => l in listeners) {
 			if (l.priority > priority) {
 				insertIndex = ind;
 				break;
 			}
 		}
-		functionList.insert(insertIndex, listener);
+
+		// add the listener
+		listeners.insert(insertIndex, listener);
 		this.listeners[listener.id] = listener;
+
 		return listener.id;
 	}
 
 	/**
-		remove a listener from the dispatcher
+		remove a listener from the dispatcher by id
+
+		@:param id the listener id provided when listen is called.
 	**/
 	public function remove(id: Int) {
-		var listener = this.listeners.get(id);
-		if (listener == null) {
-			return;
-		}
+		final listener = this.listeners.get(id);
+		if (listener == null) return;
 
 		if (listener.messageType == null) {
+			// if message is the all listener, then we remove it from the all message listener
 			this.allMessageDispatcherListeners.remove(listener.id);
 		} else {
-			var functionList = this.listenersMap.get(listener.messageType);
-			functionList.remove(listener);
+			// remove it from the specific message listeners.
+			final listeners = this.listenersMap.get(listener.messageType);
+			Assert.assert(listeners != null);
+			listeners.remove(listener);
 		}
 		this.listeners.remove(id);
 	}
 
+	/**
+		Listen to all messages.
+
+		@:param callback the callback function.
+		@:return the listener id
+	**/
 	public function listenAll(callback: Message->Void): Int {
 		var listener = {
 			id: idCounter++,
@@ -320,3 +337,9 @@ class MessageDispatcher {
 		return listener.id;
 	}
 }
+
+/**
+	Tue 12:56:43 23 Jul 2024
+	Removing the global method to get a dispatcher.
+	This has never been used, and I highly doubt I will use it ever.
+**/

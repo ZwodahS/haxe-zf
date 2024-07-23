@@ -4,7 +4,9 @@ package zf;
 	@stage:stable
 **/
 class Message {
+#if debug
 	public var debugMessages: Array<String>;
+#end
 
 	public var type(get, null): String;
 	public var log(get, null): String;
@@ -36,7 +38,7 @@ class Message {
 	}
 
 #if debug
-	inline public function addDebugMessage(message: String) {
+	inline public function debug(message: String) {
 		this.debugMessages.push(message);
 	}
 #end
