@@ -1,24 +1,22 @@
 package tests;
 
-import zf.deprecated.tests.TestCase;
-import zf.deprecated.tests.TestRunner;
-
 import tests.zf.ds.*;
 import tests.zf.*;
 
-/**
-	class Test extends TestRunner {
+class Test extends TestRunner {
 	public function new() {
 		super();
-		add(new RectiTestCase());
-		add(new Vector2DRegionTestCase());
-		add(new ListExtensionsTestCase());
-		add(new DirectionTestCase());
+
+		// we will still load all the test cases
+		CompileTime.importPackage("tests");
+		final classes = CompileTime.getAllClasses('tests', true, TestCase);
+		for (c in classes) {
+			add(Type.createInstance(c, []));
+		}
 	}
 
 	public static function main() {
 		hxd.Res.initLocal();
 		new Test().run();
 	}
-	}
-**/
+}

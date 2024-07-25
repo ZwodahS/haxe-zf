@@ -3,28 +3,29 @@ package tests.zf;
 import zf.Assert;
 import zf.Point2i;
 import zf.Direction;
-import zf.deprecated.tests.TestCase;
 
 class DirectionTestCase extends TestCase {
-	function test_equality() {
-		/**
-			Wed 16:13:01 18 Aug 2021
-			this might seems stupid to test, since they are the same string value
-		**/
-		assertEqual(North, Up);
+	public static final Name = "DirectionTestCase";
 
-		assertEqual(NorthEast, UpRight);
-		assertEqual(East, Right);
-		assertEqual(SouthEast, DownRight);
-		assertEqual(South, Down);
-		assertEqual(SouthWest, DownLeft);
-		assertEqual(West, Left);
-		assertEqual(NorthWest, UpLeft);
+	override public function get_name(): String {
+		return Name;
+	}
+
+	function test_equality() {
+		Assert.assertEqual(North, Up);
+
+		Assert.assertEqual(NorthEast, UpRight);
+		Assert.assertEqual(East, Right);
+		Assert.assertEqual(SouthEast, DownRight);
+		Assert.assertEqual(South, Down);
+		Assert.assertEqual(SouthWest, DownLeft);
+		Assert.assertEqual(West, Left);
+		Assert.assertEqual(NorthWest, UpLeft);
 	}
 
 	function test_rotate() {
 		var d: Direction = East;
-		assertEqual(d.rotateCW(2), South);
+		Assert.assertEqual(d.rotateCW(2), South);
 	}
 
 	function test_point_and_direction() {
@@ -39,5 +40,11 @@ class DirectionTestCase extends TestCase {
 		final p2 = p + d;
 		Assert.assertEqual(p2.x, 1);
 		Assert.assertEqual(p2.y, 0);
+	}
+
+	override public function run() {
+		test_equality();
+		test_rotate();
+		test_point_and_direction();
 	}
 }
