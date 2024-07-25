@@ -44,6 +44,57 @@ class Util {
 		return false;
 	}
 
+	public static function isArray(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TInst(_.get() => t, p):
+				switch (t.name) {
+					case "Array":
+						return true;
+					default:
+				}
+			default:
+		}
+		return false;
+	}
+
+	public static function getArrayType(type: haxe.macro.Type): haxe.macro.Type {
+		switch (type) {
+			case TInst(_.get() => t, p):
+				switch (t.name) {
+					case "Array":
+						if (p.length == 0) return null;
+						return p[0];
+					default:
+				}
+			default:
+		}
+		return null;
+	}
+
+	/**
+		Check if a type is an enum
+	**/
+	public static function isEnum(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TEnum(_, _):
+				return true;
+			default:
+		}
+		return false;
+	}
+
+	/**
+		Check if a var type is function
+	**/
+	public static function isFunction(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TFun(_, _):
+				return true;
+			default:
+		}
+		return false;
+	}
+
 	public static function hasInterface(type: haxe.macro.Type.ClassType, inf: String) {
 		for (i in type.interfaces) {
 			if (i.t.get().name == inf) return true;

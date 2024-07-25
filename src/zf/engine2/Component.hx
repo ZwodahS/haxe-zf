@@ -5,7 +5,7 @@ package zf.engine2;
 
 	Generic Component object
 **/
-class Component {
+class Component implements Disposable {
 	public var typeId(get, never): String;
 
 	public function get_typeId()
