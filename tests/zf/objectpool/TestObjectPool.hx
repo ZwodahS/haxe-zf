@@ -126,8 +126,16 @@ class TestObjectPool extends TestCase {
 		var obj1Arr2_0 = o.obj1Arr2[0];
 		var obj1Arr2_1 = o.obj1Arr2[1];
 
-		obj1Arr2_0.xInt = 100;
-		obj1Arr2_1.xInt = 200;
+		o.obj1Arr3 = [];
+		o.obj1Arr3.push(Object1.alloc());
+		o.obj1Arr3.push(Object1.alloc());
+
+		var obj1Arr3 = o.obj1Arr3;
+		var obj1Arr3_0 = o.obj1Arr3[0];
+		var obj1Arr3_1 = o.obj1Arr3[1];
+
+		obj1Arr3_0.xInt = 100;
+		obj1Arr3_1.xInt = 200;
 
 		final o1 = o.object1;
 
@@ -160,5 +168,11 @@ class TestObjectPool extends TestCase {
 		Assert.assert(obj1Arr2_1.xInt == 0);
 		Assert.assert(obj1Arr2.length == 0);
 		Assert.assert(o.obj1Arr2 == null);
+
+		// Assert that setting will not clear the array
+		Assert.assert(obj1Arr3_0.xInt == 100);
+		Assert.assert(obj1Arr3_1.xInt == 200);
+		Assert.assert(obj1Arr3.length == 2);
+		Assert.assert(o.obj1Arr3 == null);
 	}
 }
