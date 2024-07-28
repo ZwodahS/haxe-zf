@@ -223,7 +223,8 @@ class ObjectPool {
 
 	function setupObjectPool() {
 		final fields = Context.getBuildFields();
-		final className = Context.getLocalClass();
+		final localClass = Context.getLocalClass();
+		final className = '${localClass}';
 		final type = Context.getLocalType();
 		final localClass = type.getClass();
 		final typePath = {name: localClass.name, pack: localClass.pack};
@@ -385,6 +386,9 @@ class ObjectPool {
 					args: [],
 					expr: macro {
 						if (__pool__ == null) {
+#if debug
+							Debug.increaseStats('ObjectPool:' + $v{className}, 1);
+#end
 							return new $typePath();
 						}
 						var obj = __pool__;

@@ -8,8 +8,24 @@ import haxe.macro.Context;
 	@stage:stable
 
 	Provide various commands and utility for debugging
+
+	Provide a general place to store debug stats of any kind.
+	Namespacing debug stats via ":"
 **/
 class Debug {
+	/**
+		Store any stats if necessary.
+		This is only available in -D debug
+	**/
+#if debug
+	public static final stats: Map<String, Float> = [];
+
+	inline public static function increaseStats(key: String, v: Float) {
+		if (Debug.stats.exists(key) == false) stats.set(key, 0);
+		stats.set(key, stats.get(key) + v);
+	}
+#end
+
 	macro public static function debug(e: Expr) {
 #if debug
 		return macro {$e;};
