@@ -1,6 +1,9 @@
 package zf.macros;
 
 #if macro
+import haxe.macro.Context;
+import haxe.macro.Expr;
+
 /**
 	Provide utility functions for handling macro.
 **/
@@ -42,6 +45,29 @@ class Util {
 				return false;
 		}
 		return false;
+	}
+
+	public static function isObject(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TInst(_.get() => t, p):
+				switch (t.name) {
+					case "String":
+						return false;
+					default:
+						return true;
+				}
+			default:
+				return false;
+		}
+	}
+
+	public static function isDynamic(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TDynamic(_):
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	public static function isArray(type: haxe.macro.Type): Bool {
@@ -107,16 +133,32 @@ class Util {
 
 	public static function isChildOf(type: haxe.macro.Type.ClassType, parent: haxe.macro.Type.ClassType) {
 		var current = type;
-		while (current.superClass != null) {
-			current = current.superClass.t.get();
-			if (current == parent) return true;
+		while (current != null) {
+			if (current?.module == parent.module) return true;
+			current = current.superClass?.t.get();
 		}
 		return false;
 	}
 
 	public static function getMeta(meta: haxe.macro.Expr.Metadata, name: String): haxe.macro.Expr.MetadataEntry {
+		if (meta == null) return null;
 		for (m in meta) {
 			if (m.name == name) return m;
+		}
+		return null;
+	}
+
+	public static function getTypeOfField(type: haxe.macro.Type, fieldName: String): haxe.macro.Type {
+		switch (type) {
+			case TType(t, _):
+				return getTypeOfField(t.get().type, fieldName);
+			case TAnonymous(t):
+				final aType = t.get();
+				for (f in aType.fields) {
+					if (f.name == fieldName) return f.type;
+				}
+				return null;
+			default:
 		}
 		return null;
 	}

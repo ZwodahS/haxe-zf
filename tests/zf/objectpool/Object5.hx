@@ -22,6 +22,12 @@ class Object5 implements Disposable {
 	@dispose public var obj1Arr1: Array<Object1>;
 	@dispose public var obj1Arr2: Array<Object1> = null;
 	@dispose("set") public var obj1Arr3: Array<Object1> = null;
+	@dispose public var xProp(default, set): Int = 0;
+
+	public function set_xProp(v: Int): Int {
+		this.xProp = v;
+		return this.xProp;
+	}
 
 	function new() {
 		this.xArr = [];

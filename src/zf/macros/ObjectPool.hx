@@ -157,6 +157,7 @@ class ObjectPool {
 					} else if (Util.isPrimitive(type) == true
 						|| Util.isEnum(type) == true
 						|| Util.isFunction(type) == true
+						|| Util.isObject(type) == false
 						|| Util.hasInterface(type.getClass(), "Disposable") == false) {
 						generateSet(f, e);
 					} else { // dispose function exists
@@ -188,7 +189,7 @@ class ObjectPool {
 		function handleSetDispose(f: haxe.macro.Field, value: Expr) {
 			if (value == null) {
 				switch (f.kind) {
-					case FVar(_.toType() => type, e):
+					case FVar(_.toType() => type, e), FProp(_, _, _.toType() => type, e):
 						if (e == null) Context.fatalError('${f.name} requires a default value or a set value.', f.pos);
 						generateSet(f, e);
 					default:
@@ -387,7 +388,7 @@ class ObjectPool {
 					expr: macro {
 						if (__pool__ == null) {
 #if debug
-							Debug.increaseStats('ObjectPool:' + $v{className}, 1);
+							zf.Debug.increaseStats('ObjectPool:' + $v{className}, 1);
 #end
 							return new $typePath();
 						}
