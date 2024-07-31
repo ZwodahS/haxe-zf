@@ -25,8 +25,9 @@ using haxe.macro.TypeTools;
 	Call the macro
 	#if !macro @:build(zf.macros.ClassBuilder.build()) #end
 
-	## Delegate
+	## Field forwarding
 
+	@forward public var field;
 	@forward(["x"]) public var field;
 
 	will generate a inline getter, i.e
@@ -36,6 +37,11 @@ using haxe.macro.TypeTools;
 	inline public function get_x(): <Type> {
 		return this.field?.x;
 	}
+
+	In the first case, all field will be forwarded, unless the field already exists
+	In the second case, only the field that is specified is forward.
+
+	If 2 field forward the same getter/setting, then it will error
 **/
 class ClassBuilder {
 	public function new() {}
@@ -43,38 +49,61 @@ class ClassBuilder {
 	function _build() {
 		final fields: Array<haxe.macro.Field> = Context.getBuildFields();
 
-		inline function buildDelegate(field: haxe.macro.Field, meta: haxe.macro.Expr.MetadataEntry) {
+		final fieldsMap: Map<String, haxe.macro.Field> = [];
+
+		for (f in fields) {
+			fieldsMap.set(f.name, f);
+		}
+
+		final created: Map<String, Bool> = [];
+
+		inline function buildField(field: haxe.macro.Field, fieldType: haxe.macro.Type, innerFieldName: String) {
+			final fieldType = Context.toComplexType(fieldType);
+			final fieldName = field.name;
+			fields.push(({
+				name: innerFieldName,
+				pos: Context.currentPos(),
+				kind: FProp("get", "never", fieldType, null),
+				access: [APublic],
+			}: haxe.macro.Field));
+
+			// TODO: add doc from the child field ?
+
+			fields.push(({
+				name: 'get_${innerFieldName}',
+				pos: Context.currentPos(),
+				kind: FFun({
+					args: [],
+					expr: macro {
+						return this.$fieldName?.$innerFieldName;
+					},
+					ret: fieldType,
+				}),
+				access: [APublic, AInline],
+			}: haxe.macro.Field));
+			created.set(innerFieldName, true);
+		}
+
+		function buildDelegate(field: haxe.macro.Field, meta: haxe.macro.Expr.MetadataEntry) {
 			switch (field.kind) {
 				case FVar(_.toType() => t, e), FProp(_, _, _.toType() => t, e):
-					for (f in cast(meta.params[0].getValue(), Array<Dynamic>)) {
-						final ft = Util.getTypeOfField(t, '${f}');
-						if (ft == null) {
-							Context.fatalError('unable to forward ${field.name}.${f}', field.pos);
+					if (meta.params.length == 0) {
+						// if no field is specified, we try to forward everything
+						for (f in Util.getAllFields(t)) {
+							if (fieldsMap.exists(f.name) == true) continue;
+							if (created.exists(f.name) == true)
+								Context.fatalError('Duplicated forwarding for ${f.name}.', field.pos);
+
+							buildField(field, f.type, '${f.name}');
 						}
-						final fieldType = Context.toComplexType(ft);
-						final fieldName = field.name;
-						final innerFieldName = '${f}';
-						fields.push(({
-							name: '${f}',
-							pos: Context.currentPos(),
-							kind: FProp("get", "never", fieldType, null),
-							access: [APublic],
-						}: haxe.macro.Field));
-
-						// TODO: add doc from the child field ?
-
-						fields.push(({
-							name: 'get_${f}',
-							pos: Context.currentPos(),
-							kind: FFun({
-								args: [],
-								expr: macro {
-									return this.$fieldName?.$innerFieldName;
-								},
-								ret: fieldType,
-							}),
-							access: [APublic, AInline],
-						}: haxe.macro.Field));
+					} else {
+						for (f in cast(meta.params[0].getValue(), Array<Dynamic>)) {
+							final ft = Util.getTypeOfField(t, '${f}');
+							if (ft == null) {
+								Context.fatalError('unable to forward ${field.name}.${f}', field.pos);
+							}
+							buildField(field, ft, '${f}');
+						}
 					}
 				default:
 			}

@@ -163,6 +163,20 @@ class Util {
 		return null;
 	}
 
+	public static function getAllFields(type: haxe.macro.Type): Array<haxe.macro.Type.ClassField> {
+		switch (type) {
+			case TType(t, _):
+				return getAllFields(t.get().type);
+			case TAnonymous(t):
+				return [for (f in t.get().fields) f];
+			case TInst(_.get() => t, _):
+				return [for (f in t.fields.get()) f];
+			default:
+				trace(type);
+		}
+		return null;
+	}
+
 	public static function getType(name: String): haxe.macro.Type {
 		try {
 			return haxe.macro.Context.getType(name);
