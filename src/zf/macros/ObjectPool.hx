@@ -126,6 +126,7 @@ class ObjectPool {
 			final fieldName = f.name;
 			switch (f.kind) {
 				case FVar(_.toType() => type, e), FProp(_, _, _.toType() => type, e):
+					if (type == null) Context.fatalError('@dispose requires explicit type', f.pos);
 					if (Util.isArray(type) == true) {
 						final arrType = Util.getArrayType(type);
 						if (arrType == null) {
