@@ -878,6 +878,10 @@ class HtmlText extends h2d.Text {
 		}
 	}
 
+	public function reset() {
+		this.text = '';
+	}
+
 	dynamic public function onInteractiveCreated(interactive: Interactive, name: String) {}
 }
 
