@@ -19,9 +19,9 @@ class ImageResource {
 		this.tiles = tiles;
 	}
 
-	public function getBitmap(pos: Int = 0): h2d.Bitmap {
+	public function getBitmap(pos: Int = 0, bound: Recti = null): h2d.Bitmap {
 		if (pos < 0 || pos >= this.tiles.length) pos = 0;
-		return this.tiles[pos].getBitmap();
+		return this.tiles[pos].getBitmap(bound);
 	}
 
 	public function getBitmaps(start: Int = 0, end: Int = -1): Array<h2d.Bitmap> {

@@ -252,13 +252,13 @@ class ResourceManager {
 		return asset == null ? null : asset.getTiles(start, end);
 	}
 
-	public function getBitmap(id: String, index: Int = 0, fallback: String = null): h2d.Bitmap {
+	public function getBitmap(id: String, index: Int = 0, fallback: String = null, bound: Recti = null): h2d.Bitmap {
 		var asset = getImageResource(id);
 		if (fallback != null && asset == null) asset = getImageResource(fallback);
 #if debug
 		if (asset == null) Logger.warn('Bitmap not found :${id}', "[Resource]");
 #end
-		return asset == null ? null : asset.getBitmap(index);
+		return asset == null ? null : asset.getBitmap(index, bound);
 	}
 
 	public function getBitmaps(id: String, start: Int = 0, end: Int = -1, fallback: String = null): Array<h2d.Bitmap> {

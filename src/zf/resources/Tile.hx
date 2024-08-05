@@ -25,8 +25,12 @@ class Tile {
 		}
 	}
 
-	public function getBitmap(): h2d.Bitmap {
-		var bm: h2d.Bitmap = new h2d.Bitmap(this.tile.clone());
+	public function getBitmap(bound: Recti = null): h2d.Bitmap {
+		var tile = this.tile;
+		if (bound != null) {
+			tile = tile.sub(bound.xMin, bound.yMin, bound.width, bound.height);
+		}
+		var bm: h2d.Bitmap = new h2d.Bitmap(tile);
 		bm.color = this.color.clone();
 		return bm;
 	}
