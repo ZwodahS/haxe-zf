@@ -291,10 +291,6 @@ class Serialise {
 
 		// Handle Array of Serialisable
 		inline function handleArraySerialisable(classType: ClassType) {
-			if (TypeTools.findField(classType, "empty", true) == null) {
-				Context.fatalError('${classType.name} does not have a static empty method.', f.pos);
-			}
-
 			this.toStructExprs.push(macro {
 				if (this.$fieldName != null) {
 					struct.$storeAs = [];
@@ -356,11 +352,16 @@ class Serialise {
 											Context.fatalError('${f.name} is not Identifiable', f.pos);
 										}
 										handleArrayIdentifiable();
-									} else if (Util.hasInterface(p[0].getClass(), "Serialisable") == true) {
+									} else if (Util.hasInterface(p[0].getClass(), "Serialisable") == true
+										&& TypeTools.findField(p[0].getClass(), "empty", true) != null) {
 										// handle array of serialisable
 										handleArraySerialisable(p[0].getClass());
 									} else if (Util.hasInterface(p[0].getClass(), "Identifiable") == true) {
 										// handle array of identifiable
+										if (Util.hasInterface(p[0].getClass(), "Serialisable") == true) {
+											Context.info("[Warn] Serialisable without empty() + Identifiable. Intended ?",
+												f.pos);
+										}
 										handleArrayIdentifiable();
 									} else {
 										// can't handle it yet
@@ -373,10 +374,15 @@ class Serialise {
 											Context.fatalError('${f.name} is not Identifiable', f.pos);
 										}
 										handleIdentifiable();
-									} else if (Util.hasInterface(t, "Serialisable") == true) {
+									} else if (Util.hasInterface(t, "Serialisable") == true
+										&& TypeTools.findField(t, "empty", true) != null) {
 										// handle serialisable
 										handleSerialisable(t);
 									} else if (Util.hasInterface(t, "Identifiable") == true) {
+										if (Util.hasInterface(t, "Serialisable") == true) {
+											Context.info("[Warn] Serialisable without empty() + Identifiable. Intended ?",
+												f.pos);
+										}
 										// handle identifiable
 										handleIdentifiable();
 									} else {
@@ -415,6 +421,10 @@ class Serialise {
 							}
 						case TDynamic(_):
 							Context.fatalError('${f.name} - Dynamic cannot be serialised at the moment.', f.pos);
+						case TEnum(_, _):
+							// Might have to handle this eventually since there are times that certain field are handled
+							// via enum with composite params. Perhaps in those cases we should then use Object ?
+							Context.fatalError('${f.name} - Enum cannot be serialised. Use enum abstract.', f.pos);
 						default:
 							Context.fatalError('${f.name} of type ${type} - cannot be serialise.', f.pos);
 					}
