@@ -47,6 +47,19 @@ class Util {
 		return false;
 	}
 
+	public static function isString(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TInst(_.get() => t, p):
+				switch (t.name) {
+					case "String":
+						return true;
+					default:
+				}
+			default:
+		}
+		return false;
+	}
+
 	public static function isObject(type: haxe.macro.Type): Bool {
 		switch (type) {
 			case TInst(_.get() => t, p):

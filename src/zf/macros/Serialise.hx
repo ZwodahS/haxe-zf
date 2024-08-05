@@ -239,7 +239,7 @@ class Serialise {
 			this.toStructExprs.push(macro {
 				struct.$storeAs = this.$fieldName == null ? null : this.$fieldName.toStruct(context);
 			});
-			if (TypeTools.findField(classType, "empty") != null) {
+			if (TypeTools.findField(classType, "empty", true) != null) {
 				this.loadStructExprs.push(macro {
 					if (struct.$storeAs != null) {
 						if (this.$fieldName == null) {
@@ -291,7 +291,7 @@ class Serialise {
 
 		// Handle Array of Serialisable
 		inline function handleArraySerialisable(classType: ClassType) {
-			if (TypeTools.findField(classType, "empty") == null) {
+			if (TypeTools.findField(classType, "empty", true) == null) {
 				Context.fatalError('${classType.name} does not have a static empty method.', f.pos);
 			}
 
@@ -310,6 +310,26 @@ class Serialise {
 						final object = $i{classType.name}.empty();
 						object.loadStruct(context, s);
 						this.$fieldName.push(object);
+					}
+				}
+			});
+		}
+
+		inline function handleMapPrimitive() {
+			this.toStructExprs.push(macro {
+				if (this.$fieldName != null) {
+					final s: haxe.DynamicAccess<Dynamic> = {};
+					struct.$storeAs = s;
+					for (key => value in this.$fieldName) {
+						s.set(key, value);
+					}
+				}
+			});
+			this.loadStructExprs.push(macro {
+				if (struct.$storeAs != null) {
+					this.$fieldName = [];
+					for (key => value in (struct.$storeAs: haxe.DynamicAccess<Dynamic>)) {
+						this.$fieldName.set(cast key, cast value);
 					}
 				}
 			});
@@ -363,9 +383,40 @@ class Serialise {
 										Context.fatalError('${f.name} is not Serialisable or Identifable.', f.pos);
 									}
 							}
+						case TType(_.get() => t, p):
+							switch (t.name) {
+								case "Map":
+									if (p.length != 2) {
+										Context.fatalError('${f.name} Map - cannot be serialise.', f.pos);
+									}
+									if (Util.isString(p[0]) == false) {
+										// handle only string type key for now.
+										Context.fatalError('[NotImplemented] ${f.name} Map - cannot be serialise. Key must be String',
+											f.pos);
+									}
+									if (Util.isPrimitive(p[1]) == true) {
+										handleMapPrimitive();
+									} else if (fromContext == true) {
+										Context.fatalError('[NotImplemented] ${f.name} @fromContext cannot be used on Map.',
+											f.pos);
+									} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
+										// handle array of serialisable
+										Context.fatalError('[NotImplemented] ${f.name} Serialisable cannot be used on Map.',
+											f.pos);
+									} else if (Util.hasInterface(p[1].getClass(), "Identifiable") == true) {
+										Context.fatalError('[NotImplemented] ${f.name} Identifable cannot be used on Map.',
+											f.pos);
+									} else {
+										// can't handle it yet
+										Context.fatalError('${f.name} Map cannot be serialised.', f.pos);
+									}
+								default:
+									Context.fatalError('${f.name} of type ${t.name} - cannot be serialise.', f.pos);
+							}
 						case TDynamic(_):
 							Context.fatalError('${f.name} - Dynamic cannot be serialised at the moment.', f.pos);
 						default:
+							Context.fatalError('${f.name} of type ${type} - cannot be serialise.', f.pos);
 					}
 				}
 			default:
