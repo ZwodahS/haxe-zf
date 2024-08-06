@@ -320,6 +320,14 @@ class ObjectPool {
 					kind: FFun({
 						args: [],
 						expr: macro {
+							if (this.__isDisposed__ == true) {
+#if debug
+								haxe.Log.trace("[Warn] Double disposing of object - " + $v{className} + ".");
+#end
+								return;
+							}
+							this.__isDisposed__ = true;
+
 							$b{resetExprs};
 							this.__next__ = __pool__;
 							__pool__ = this;
@@ -337,6 +345,14 @@ class ObjectPool {
 					kind: FFun({
 						args: [],
 						expr: macro {
+							if (this.__isDisposed__ == true) {
+#if debug
+								haxe.Log.trace("[Warn] Double disposing of object - " + $v{className} + ".");
+#end
+								return;
+							}
+							this.__isDisposed__ = true;
+
 							$b{resetExprs};
 							this.__next__ = __pool__;
 							__pool__ = this;
@@ -369,6 +385,14 @@ class ObjectPool {
 					kind: FFun({
 						args: [],
 						expr: macro {
+							if (this.__isDisposed__ == true) {
+#if debug
+								haxe.Log.trace("[Warn] Double disposing of object - " + $v{className} + ".");
+#end
+								return;
+							}
+							this.__isDisposed__ = true;
+
 							$b{resetExprs};
 							this.__next__ = __pool__;
 							__pool__ = this;
@@ -396,12 +420,21 @@ class ObjectPool {
 						var obj = __pool__;
 						__pool__ = obj.__next__;
 						obj.__next__ = null;
+						obj.__isDisposed__ = false;
 
 						return obj;
 					},
 					ret: Context.getLocalType().toComplexType(),
 				}),
 				access: [APublic, AStatic, AInline],
+			});
+		}
+
+		{ // this field is here to prevent double dispose
+			fields.push({
+				name: "__isDisposed__",
+				pos: Context.currentPos(),
+				kind: FVar(macro : Bool, macro false),
 			});
 		}
 
