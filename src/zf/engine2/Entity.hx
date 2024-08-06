@@ -54,11 +54,13 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		We will allow id to be set if the id is -1. This can be useful from converting a temp entity
 		to a permanent entity.
 	**/
+	var _forceSetId: Bool = false;
+
 	public var id(default, set): Int = -1;
 
 	inline public function set_id(id: Int): Int {
 		// we will only allow id to be set if the id is -1
-		if (this.id != -1) return this.id;
+		if (this._forceSetId != true && this.id != -1) return this.id;
 		return this.id = id;
 	}
 
@@ -133,7 +135,11 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 
 		// reset the entity back to default state
 		this.__components__.clear();
+
+		this._forceSetId = true;
 		this.id = -1;
+		this._forceSetId = false;
+
 		this.__world__ = null;
 		this.factory = null;
 	}
