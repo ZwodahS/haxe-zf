@@ -275,7 +275,7 @@ class Serialise {
 		inline function handleArrayIdentifiable() {
 			this.toStructExprs.push(macro {
 				if (this.$fieldName != null) {
-					struct.$storeAs = [for (i in this.$fieldName) i.identifier()];
+					struct.$storeAs = [for (i in this.$fieldName) i?.identifier()];
 					for (i in this.$fieldName) context.add(i);
 				}
 			});
@@ -283,7 +283,11 @@ class Serialise {
 				if (struct.$storeAs != null) {
 					this.$fieldName = [];
 					for (id in (struct.$storeAs: Array<String>)) {
-						this.$fieldName.push(cast context.get(id));
+						if (id == null) {
+							this.$fieldName.push(null);
+						} else {
+							this.$fieldName.push(cast context.get(id));
+						}
 					}
 				}
 			});
@@ -386,7 +390,8 @@ class Serialise {
 										// handle identifiable
 										handleIdentifiable();
 									} else {
-										Context.fatalError('${f.name} is not Serialisable or Identifable.', f.pos);
+										Context.fatalError('${f.name} is not Serialisable (or missing empty function) or Identifable.',
+											f.pos);
 									}
 							}
 						case TType(_.get() => t, p):

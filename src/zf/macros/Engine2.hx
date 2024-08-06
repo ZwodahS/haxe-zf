@@ -71,14 +71,8 @@ class Engine2 {
 										exprs.push(macro {
 											if (this.$fieldName != null) {
 												for (obj in this.$fieldName) {
-													obj.collectEntities(entities);
+													if (obj != null) obj.collectEntities(entities);
 												}
-											}
-										});
-									} else if (Util.isChildOf(p[0].getClass(), engine2Entity)) {
-										exprs.push(macro {
-											if (this.$fieldName != null) {
-												for (obj in this.$fieldName) entities.add(obj);
 											}
 										});
 									} else {
