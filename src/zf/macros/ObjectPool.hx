@@ -180,7 +180,7 @@ class ObjectPool {
 					}
 					final fieldName = f.name;
 					resetExprs.push(macro {
-						this.$fieldName.$funcName();
+						if (this.$fieldName != null) this.$fieldName.$funcName();
 					});
 				default:
 					Context.fatalError('${f.name} cannot be disposed.', f.pos);
