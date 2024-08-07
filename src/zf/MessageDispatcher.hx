@@ -266,6 +266,17 @@ class MessageDispatcher implements MessageDispatcherI {
 		If we use generic, then we will have to handle inheritance in this listen.
 		Not that it can't be done, but it is a lot of work to handle it right now.
 
+		Wed 15:42:04 07 Aug 2024
+		Adding to this note.
+
+		I have added a lot of macro recently and I was wondering if I can do better
+		for messages. I could add MessageType to all child of message via macro,
+		and I could also extend this to accept Message object.
+
+		However, all these doesn't do much to make things better than what I already
+		have, i.e. Snippet to create Message. So .. Future Me, don't try, or rather
+		there is no gain here. Unless you discover a reason to.
+
 		@:param messageType the type value of the message
 		@:param callback the function to handle the message
 		@:param priority the priority for this handler, lower priority will be handled first.
