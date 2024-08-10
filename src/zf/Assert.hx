@@ -193,4 +193,26 @@ class Assert {
 		}
 #end
 	}
+
+	/**
+		Throw not implemented exception.
+		If no assertion, nothing happen.
+	**/
+	macro public static function notImplemented(terminate: Bool = true) {
+#if no_assertion
+		return macro {};
+#else
+		final location = PositionTools.toLocation(Context.currentPos());
+		final locationString = location.file + ":" + location.range.start.line;
+		if (terminate) {
+			return macro {
+				throw new zf.exceptions.NotImplemented();
+			};
+		} else {
+			return macro {
+				haxe.Log.trace('[' + $v{locationString} + '] [WARN]: Not Implementation.');
+			};
+		}
+#end
+	}
 }
