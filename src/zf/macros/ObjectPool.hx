@@ -14,6 +14,8 @@ using haxe.macro.TypeTools;
 	The following fields should not exists in the class.
 	- __pool__ will be created and used to store the pool
 	- __next__ will be created and used to make this object a linked list
+	- __poolCount__ will be created to store the number of object in pool.
+	- __poolCreated__ will be created to store the number of object created
 
 	- dispose or __dispose__
 	dispose method will be added to return the object back to the pool.
@@ -240,18 +242,17 @@ class ObjectPool {
 			Check for existing function
 		**/
 		for (f in fields) {
-			if (f.name == "reset") {
-				resetFunc = f;
-			} else if (f.name == "dispose") {
-				disposeFunc = f;
-			} else if (f.name == "__pool__") {
-				Context.fatalError('__pool__ variable found for class "${className}". Unable to create object pool.',
-					localClass.pos);
-			} else if (f.name == "__next__") {
-				Context.fatalError('__next__ variable found for class "${className}". Unable to create object pool.',
-					localClass.pos);
-			} else if (f.name == "alloc") {
-				allocFunc = f;
+			switch (f.name) {
+				case "reset":
+					resetFunc = f;
+				case "dispose":
+					disposeFunc = f;
+				case "alloc":
+					allocFunc = f;
+				case "__pool__", "__next__", "__poolCount__", "__poolCreated__":
+					Context.fatalError('${f.name} variable found for class "${className}". Unable to create object pool.',
+						localClass.pos);
+				default:
 			}
 		}
 
@@ -271,6 +272,20 @@ class ObjectPool {
 			pos: Context.currentPos(),
 			kind: FVar(Context.getLocalType().toComplexType(), null),
 			access: [],
+		});
+
+		fields.push({
+			name: "__poolCount__",
+			pos: Context.currentPos(),
+			kind: FVar(macro : Int, macro 0),
+			access: [AStatic, APublic],
+		});
+
+		fields.push({
+			name: "__poolCreated__",
+			pos: Context.currentPos(),
+			kind: FVar(macro : Int, macro 0),
+			access: [AStatic, APublic],
 		});
 
 		var hasReset = false;
@@ -331,6 +346,7 @@ class ObjectPool {
 							$b{resetExprs};
 							this.__next__ = __pool__;
 							__pool__ = this;
+							__poolCount__ += 1;
 						},
 						ret: macro : Void
 					}),
@@ -356,6 +372,7 @@ class ObjectPool {
 							$b{resetExprs};
 							this.__next__ = __pool__;
 							__pool__ = this;
+							__poolCount__ += 1;
 						},
 						ret: macro : Void
 					}),
@@ -396,6 +413,7 @@ class ObjectPool {
 							$b{resetExprs};
 							this.__next__ = __pool__;
 							__pool__ = this;
+							__poolCount__ += 1;
 						},
 						ret: macro : Void
 					}),
@@ -412,11 +430,10 @@ class ObjectPool {
 					args: [],
 					expr: macro {
 						if (__pool__ == null) {
-#if debug
-							zf.Debug.increaseStats('ObjectPool:' + $v{className}, 1);
-#end
+							__poolCreated__ += 1;
 							return new $typePath();
 						}
+						__poolCount__ -= 1;
 						var obj = __pool__;
 						__pool__ = obj.__next__;
 						obj.__next__ = null;
