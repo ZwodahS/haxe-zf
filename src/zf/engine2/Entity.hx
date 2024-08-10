@@ -87,7 +87,7 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	}
 
 	// ---- Components ---- //
-	var __components__: Array<Component>;
+	var __components__: Map<String, Component>;
 
 	/**
 		No default components at the moment.
@@ -109,16 +109,20 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	public function onComponentChanged(prev: Component, next: Component) {
 		if (prev != null) {
 			prev.__entity__ = null;
-			this.__components__.remove(prev);
+			this.__components__.remove(prev.typeId);
 		}
 		if (next != null) {
 			next.__entity__ = this;
-			this.__components__.push(next);
+			this.__components__.set(next.typeId, next);
 		}
 		if (this.dispatcher != null) {
 			if (prev != null) this.dispatcher.dispatch(new MOnComponentDetached(this, prev));
 			if (next != null) this.dispatcher.dispatch(new MOnComponentAttached(this, next));
 		}
+	}
+
+	inline public function getComponent(typeId: String): Component {
+		return this.__components__.get(typeId);
 	}
 
 	// ---- Dispose method ---- //
