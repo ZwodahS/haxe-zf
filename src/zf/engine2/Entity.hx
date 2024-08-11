@@ -19,8 +19,6 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		It is not necessary to add all entities to the world, especially if the entity is part of a composite entity.
 
 		Child class of Entity should provide a world field, which cast __world__ to actual World object
-
-		For Composite entity, get___world__ can be overriden to get it from parent entity.
 	**/
 	public var __world__(default, set): World = null;
 
@@ -38,10 +36,17 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	public var dispatcher(get, never): zf.MessageDispatcher;
 
 	inline function get_dispatcher(): zf.MessageDispatcher {
-		return this.__world__ == null ? null : this.__world__.dispatcher;
+		return this.__world__?.dispatcher;
 	}
 
 	// ---- Entity fields ---- //
+
+
+	/**
+		Allow id to be set. This field is never used outside of resetting the id
+		in reset() method.
+	**/
+	var _forceSetId: Bool = false;
 
 	/**
 		The id of the entity. Ideally this should not be set outside of
@@ -54,13 +59,14 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		We will allow id to be set if the id is -1. This can be useful from converting a temp entity
 		to a permanent entity.
 	**/
-	var _forceSetId: Bool = false;
-
 	public var id(default, set): Int = -1;
 
 	inline public function set_id(id: Int): Int {
 		// we will only allow id to be set if the id is -1
-		if (this._forceSetId != true && this.id != -1) return this.id;
+		if (this._forceSetId != true && this.id != -1) {
+			zf.Logger.warn("Setting id of enttiy when it is not -1.");
+			return this.id;
+		}
 		return this.id = id;
 	}
 
@@ -114,10 +120,6 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		if (next != null) {
 			next.__entity__ = this;
 			this.__components__.set(next.typeId, next);
-		}
-		if (this.dispatcher != null) {
-			if (prev != null) this.dispatcher.dispatch(new MOnComponentDetached(this, prev));
-			if (next != null) this.dispatcher.dispatch(new MOnComponentAttached(this, next));
 		}
 	}
 
@@ -180,4 +182,12 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	Update this to implements
 	Serialisable, Identifiable, EntityContainer.
 	Moved a lot of variables from template to here
+
+	Sun 17:13:09 11 Aug 2024
+	Remove onComponentAttached/onComponentDetached message. I really don't think this is necessary anymore.
+	I never like handling logic via if an entity gained/lost component.
+	That should always be a separate logic
+
+	I am wondering if entity needs to know about world that it is contained in.
+	For now we will keep it in, since I may need to dispatch messages to render the entity.
 **/
