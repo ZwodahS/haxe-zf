@@ -33,7 +33,7 @@ using haxe.macro.Tools;
 	Writing this is tedious, and prone to bugs sometimes. It also makes the init function really long and hard to read.
 	This macro is to streamline that to
 
-	@handle("XMessage", 0)
+	@handleMessage("XMessage", 0)
 	function handleMessage(m: XMessage) {
 		// ...
 	}
@@ -43,6 +43,15 @@ using haxe.macro.Tools;
 	function init(world) {
 		setupMessages(world.dispatcher);
 	}
+
+	Sometimes we also perform the same logic for multiple different messages
+	For example, Recompute cache with something happen, often after different type of messages
+
+	In this case, most of the time we don't need the message object
+
+	To handle this we have
+
+	@handleMessages(["XMessage", "YMessage"], 0)
 **/
 class Messages {
 	public function new() {}
@@ -66,7 +75,7 @@ class Messages {
 			for (m in f.meta) {
 				if (m.name == "handleMessage") {
 					if (m.params.length != 2) {
-						Context.info("[Warn] handleMessage requires 2 arguments - [messageClass, priority]", f.pos);
+						Context.info("[Warn] handleMessage requires 2 arguments - [messageClassName, priority]", f.pos);
 						continue;
 					}
 
@@ -80,6 +89,25 @@ class Messages {
 					}
 
 					handlers.push({field: f, message: m.params[0].getValue(), priority: m.params[1].getValue()});
+				} else if (m.name == "handleMessages") {
+					if (m.params.length != 2) {
+						Context.info("[Warn] handleMessages requires 2 arguments - [<messageClassName>, priority]",
+							f.pos);
+						continue;
+					}
+
+					for (className in (m.params[0].getValue(): Array<String>)) {
+						var klass = null;
+						try {
+							var type = Context.getType(className);
+							klass = type.getClass();
+						} catch (e) {
+							Context.info('[Warn] handleMessage unable to find class: ${className}', f.pos);
+							continue;
+						}
+
+						handlers.push({field: f, message: className, priority: m.params[1].getValue()});
+					}
 				}
 			}
 		}
@@ -89,13 +117,24 @@ class Messages {
 
 			for (handler in handlers) {
 				final field = handler.field.name;
+				final args = Util.getFunctionArguments(handler.field.kind);
 				final messageName = handler.message;
 				final priority = handler.priority;
-				exprs.push(macro {
-					dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
-						this.$field(cast message);
-					}, $v{priority});
-				});
+				if (args.length == 1) {
+					exprs.push(macro {
+						dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
+							this.$field(cast message);
+						}, $v{priority});
+					});
+				} else if (args.length == 0) {
+					exprs.push(macro {
+						dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
+							this.$field();
+						}, $v{priority});
+					});
+				} else {
+					Context.fatalError("Message handlers must have 0 or 1 argument", handler.field.pos);
+				}
 			}
 
 			fields.push({

@@ -3,6 +3,8 @@ package zf.macros;
 #if macro
 import haxe.macro.Context;
 import haxe.macro.Expr;
+import haxe.macro.Expr.FieldType;
+import haxe.macro.Expr.FunctionArg;
 
 /**
 	Provide utility functions for handling macro.
@@ -195,6 +197,15 @@ class Util {
 			return haxe.macro.Context.getType(name);
 		} catch (e) {
 			return null;
+		}
+	}
+
+	public static function getFunctionArguments(field: FieldType): Array<FunctionArg> {
+		switch (field) {
+			case FFun(func):
+				return func.args;
+			default:
+				return [];
 		}
 	}
 }

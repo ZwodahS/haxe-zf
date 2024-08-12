@@ -41,7 +41,6 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 
 	// ---- Entity fields ---- //
 
-
 	/**
 		Allow id to be set. This field is never used outside of resetting the id
 		in reset() method.
