@@ -28,4 +28,13 @@ class Compare {
 		if (str1 > str2) return direction;
 		return -(direction);
 	}
+
+	public static function int(direction: Int, int1: Int, int2: Int): Int {
+		if (direction == 0) return 0;
+		if (direction >= 1) {
+			return int1 - int2;
+		} else {
+			return int2 - int1;
+		}
+	}
 }
