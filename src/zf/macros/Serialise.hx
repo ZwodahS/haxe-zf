@@ -345,8 +345,10 @@ class Serialise {
 							switch (t.name) {
 								case "Array":
 									if (p.length == 0) {
-										Context.fatalError('${f.name} Array cannot be serialised.', f.pos);
+										Context.fatalError('${f.name} Array cannot be serialised - type required.',
+											f.pos);
 									}
+									final innerClass = p[0].getClass();
 									if (Util.isPrimitive(p[0]) == true) {
 										// if primitive, takes priority
 										handleArrayPrimitive();
@@ -368,8 +370,14 @@ class Serialise {
 										}
 										handleArrayIdentifiable();
 									} else {
-										// can't handle it yet
-										Context.fatalError('${f.name} Array cannot be serialised.', f.pos);
+										if (Util.hasInterface(p[0].getClass(), "Serialisable") == true
+											&& TypeTools.findField(p[0].getClass(), "empty", true) == null) {
+											Context.fatalError('${f.name} Array cannot be serialised - ${innerClass.name} has no empty function.',
+												f.pos);
+										} else {
+											Context.fatalError('${f.name} Array cannot be serialised - unable to handle type.',
+												f.pos);
+										}
 									}
 								default:
 									if (fromContext == true) {

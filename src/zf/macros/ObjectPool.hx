@@ -452,6 +452,7 @@ class ObjectPool {
 				name: "__isDisposed__",
 				pos: Context.currentPos(),
 				kind: FVar(macro : Bool, macro false),
+				access: [APublic],
 			});
 		}
 
