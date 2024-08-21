@@ -6,7 +6,7 @@ interface O1 {}
 class Object1 implements Disposable implements O1 {
 	public var xInt: Int = 0;
 
-	@dispose public var object5: Object5;
+	@:dispose public var object5: Object5;
 
 	function new() {}
 

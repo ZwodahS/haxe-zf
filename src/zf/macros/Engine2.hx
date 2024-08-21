@@ -56,7 +56,7 @@ class Engine2 {
 				target = "__collectEntities__";
 				continue;
 			}
-			final m = Util.getMeta(field.meta, "collectEntity");
+			final m = Util.getMeta(field.meta, ":collectEntity");
 			if (m == null) continue;
 
 			switch (field.kind) {
@@ -140,4 +140,7 @@ class Engine2 {
 /**
 	Sun 16:38:56 14 Jul 2024
 	Start of macro
+
+	Wed 14:34:17 21 Aug 2024
+	Rename @collectEntity -> @:collectEntity
 **/

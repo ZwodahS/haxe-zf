@@ -27,8 +27,8 @@ using haxe.macro.TypeTools;
 
 	## Field forwarding
 
-	@forward public var field;
-	@forward(["x"]) public var field;
+	@:forward public var field;
+	@:forward(["x"]) public var field;
 
 	will generate a inline getter, i.e
 
@@ -112,7 +112,7 @@ class ClassBuilder {
 		final toBuild: Array<{field: haxe.macro.Field, meta: MetadataEntry}> = [];
 
 		for (field in fields) {
-			final m = Util.getMeta(field.meta, "forward");
+			final m = Util.getMeta(field.meta, ":forward");
 			if (m == null) continue;
 			toBuild.push({field: field, meta: m});
 		}
@@ -129,3 +129,8 @@ class ClassBuilder {
 	}
 }
 #end
+
+/**
+	Wed 14:33:56 21 Aug 2024
+	Rename @forward -> @:forward
+**/

@@ -37,10 +37,10 @@ using haxe.macro.TypeTools;
 
 	## Field metadata
 
-	### 1. @dispose
-	@dispose generates the code used to dispose the field.
+	### 1. @:dispose
+	@:dispose generates the code used to dispose the field.
 
-	@dispose(type, ...)
+	@:dispose(type, ...)
 
 	type - "all" (default) (T0) (TOe)
 	This disposes the field "smartly" based on the rules belows
@@ -50,18 +50,18 @@ using haxe.macro.TypeTools;
 
 	type - "func" (T1)
 	Call a function on the object.
-	For example @dispose("func", "clear") will call the clear function of the object
+	For example @:dispose("func", "clear") will call the clear function of the object
 	This will not set the value of the field
 
 	type - "set" (T2)
 	Set the value of field to the default value provided.
-	If an additional value is provided in the second params of @dispose
-	then it will be set to the second params of @dispose
+	If an additional value is provided in the second params of @:dispose
+	then it will be set to the second params of @:dispose
 
-	@dispose("set") public var x: Int = 0;
+	@:dispose("set") public var x: Int = 0;
 	will dispose it to 0.
 
-	@dispose("set", 0) public var x: Int;
+	@:dispose("set", 0) public var x: Int;
 	will also dispose it to 0
 
 	Dealing with array.
@@ -73,28 +73,28 @@ using haxe.macro.TypeTools;
 	4. Call "dispose" on all items in array, then set array to null
 
 	Case 1 is handled via (AO1)
-	@dispose("func", "clear") public var arr: Array<Object>;
+	@:dispose("func", "clear") public var arr: Array<Object>;
 	Case 2 is handled via (AO2)
-	@dispose("set") public var arr: Array<Object> = null;
+	@:dispose("set") public var arr: Array<Object> = null;
 	Case 3 is handled via (AO3)
-	@dispose public var arr: Array<Object>;
+	@:dispose public var arr: Array<Object>;
 	Case 4 is handled via (AO4)
-	@dispose public var arr: Array<Object> = null;
+	@:dispose public var arr: Array<Object> = null;
 
 	In both AO3 and AO4, the array will be cleared, since the objects are disposed
 
 	Because Array can also contains primitive or object that cannot be disposed
-	case 1 can be handled by @dispose for primitive case via (AP1)
-	@dispose public var arr: Array<Int>;
+	case 1 can be handled by @:dispose for primitive case via (AP1)
+	@:dispose public var arr: Array<Int>;
 
-	case 2 can be handled by @dispose for primitive case via (AP2)
-	@dispose public var arr: Array<Int> = null;
+	case 2 can be handled by @:dispose for primitive case via (AP2)
+	@:dispose public var arr: Array<Int> = null;
 
 	# Additional notes:
 	1. constructor of the object need to be empty.
 	2. object can still be created using new, and can still be dispose, not sure why we will do that.
 	3. ObjectPool object should not be extended.
-	4. Using @dispose on object with dispose function but is not Disposable will not work.
+	4. Using @:dispose on object with dispose function but is not Disposable will not work.
 
 **/
 class ObjectPool {
@@ -128,7 +128,7 @@ class ObjectPool {
 			final fieldName = f.name;
 			switch (f.kind) {
 				case FVar(_.toType() => type, e), FProp(_, _, _.toType() => type, e):
-					if (type == null) Context.fatalError('@dispose requires explicit type', f.pos);
+					if (type == null) Context.fatalError('@:dispose requires explicit type', f.pos);
 					if (Util.isArray(type) == true) {
 						final arrType = Util.getArrayType(type);
 						if (arrType == null) {
@@ -205,7 +205,7 @@ class ObjectPool {
 
 		// find all the field that needs to be disposed
 		for (f in fields) {
-			final meta = Util.getMeta(f.meta, "dispose");
+			final meta = Util.getMeta(f.meta, ":dispose");
 			if (meta == null) continue;
 
 			if (meta.params.length == 0) { // T0
@@ -213,7 +213,7 @@ class ObjectPool {
 			} else if (meta.params[0].getValue() == "all") { // T0e
 				handleFullDispose(f, true);
 			} else if (meta.params[0].getValue() == "func") { // T1
-				if (meta.params.length < 2) Context.fatalError('@dispose("func") requires a function name', f.pos);
+				if (meta.params.length < 2) Context.fatalError('@:dispose("func") requires a function name', f.pos);
 				handleFuncDispose(f, meta.params[1].getValue());
 			} else if (meta.params[0].getValue() == "set") { // T2
 				handleSetDispose(f, meta.params.length < 2 ? null : meta.params[1]);
@@ -496,4 +496,7 @@ class ObjectPool {
 	Fri 14:34:19 26 Jul 2024
 	Should I also consider creating an ObjectPool interface that has autobuild ?
 	This way we can enforce it to implements Disposable in some form
+
+	Wed 14:31:13 21 Aug 2024
+	Rename @dispose -> @:dispose
 **/

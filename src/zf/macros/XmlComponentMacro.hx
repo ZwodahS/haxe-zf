@@ -21,15 +21,23 @@ class XmlComponentMacro {
 		for (f in fields) {
 			if (f.meta.length == 0) continue;
 			for (m in f.meta) {
-				if (m.name == "findChild") {
+				if (m.name == "findChild" || m.name == ":findChild") {
 					var path = f.name;
 					if (m.params.length > 0) path = m.params[0].getValue();
 					findChildVar.push({field: f, path: path});
+
+					if (m.name == "findChild") {
+						Context.info("[Deprecated] @findChild is deprecated, use @:findChild instead.", f.pos);
+					}
 				}
-				if (m.name == "exposeContext") {
+				if (m.name == "exposeContext" || m.name == ":exposeContext") {
 					var name = f.name;
 					if (m.params.length > 0) name = m.params[0].getValue();
 					exposeContext.push({field: f, name: name});
+
+					if (m.name == "exposeContext") {
+						Context.info("[Deprecated] @exposeContext is deprecated, use @:exposeContext instead.", f.pos);
+					}
 				}
 			}
 		}
@@ -109,3 +117,9 @@ class XmlComponentMacro {
 	}
 }
 #end
+
+/**
+	Wed 14:36:04 21 Aug 2024
+	Deprecate @findChild / @exposeContext
+	Add @:findChild / @:exposeContext
+**/

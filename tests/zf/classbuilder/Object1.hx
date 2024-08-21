@@ -12,12 +12,12 @@ typedef Object1ConfConf = {
 #if !macro @:build(zf.macros.ClassBuilder.build()) #end
 class Object1 {
 
-	@forward(["x"])
+	@:forward(["x"])
 	public var conf: Object1Conf;
 
-	@forward public var confconf: Object1ConfConf;
+	@:forward public var confconf: Object1ConfConf;
 
-	@forward public var object2: Object2;
+	@:forward public var object2: Object2;
 
 	public function new(conf: Object1Conf, confconf: Object1ConfConf) {
 		this.conf = conf;

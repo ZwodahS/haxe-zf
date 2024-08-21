@@ -27,10 +27,10 @@ using haxe.macro.Tools;
 	multiple levels of inheritance.
 
 	Available metadata
-	- @serialise (key: [null], fromContext: [false])
+	- @:serialise (key: [null], fromContext: [false])
 		key - the store key. if null will use the field name
 		fromContext - if true will get the object from context instead of serialising it.
-	- @fromContext (key: string)
+	- @:fromContext (key: string)
 		this object is never saved, and it is always taken from context via key when loading.
 		this key is never saved.
 
@@ -38,7 +38,7 @@ using haxe.macro.Tools;
 	and load the struct via loadStruct or __loadStruct__(context, data) if loadStruct is defined
 
 	# Limitation
-	1. When a class is mark with this macro, all fields that are marked with @serialise needs to be either
+	1. When a class is mark with this macro, all fields that are marked with @:serialise needs to be either
 			A.	A primitive (Int/Float/Bool/String),
 			B. 	A Serialisable with a empty() function
 			C. 	A Identifiable
@@ -105,15 +105,15 @@ class Serialise {
 			var hasSerialise = false;
 			var hasFromContext = false;
 			for (m in f.meta) {
-				if (m.name == "serialise") {
+				if (m.name == ":serialise") {
 					handleSerialise(f, m);
 					hasSerialise = true;
-				} else if (m.name == "fromContext") {
+				} else if (m.name == ":fromContext") {
 					handleFromContext(f, m);
 					hasFromContext = true;
 				}
 				if (hasSerialise == true && hasFromContext == true) {
-					Context.fatalError('${f.name} cannot be @serialise and @fromConext at the same time.', f.pos);
+					Context.fatalError('${f.name} cannot be @:serialise and @fromConext at the same time.', f.pos);
 				}
 			}
 		}
@@ -348,7 +348,6 @@ class Serialise {
 										Context.fatalError('${f.name} Array cannot be serialised - type required.',
 											f.pos);
 									}
-									final innerClass = p[0].getClass();
 									if (Util.isPrimitive(p[0]) == true) {
 										// if primitive, takes priority
 										handleArrayPrimitive();
@@ -370,6 +369,7 @@ class Serialise {
 										}
 										handleArrayIdentifiable();
 									} else {
+										final innerClass = p[0].getClass();
 										if (Util.hasInterface(p[0].getClass(), "Serialisable") == true
 											&& TypeTools.findField(p[0].getClass(), "empty", true) == null) {
 											Context.fatalError('${f.name} Array cannot be serialised - ${innerClass.name} has no empty function.',
@@ -416,7 +416,7 @@ class Serialise {
 									if (Util.isPrimitive(p[1]) == true) {
 										handleMapPrimitive();
 									} else if (fromContext == true) {
-										Context.fatalError('[NotImplemented] ${f.name} @fromContext cannot be used on Map.',
+										Context.fatalError('[NotImplemented] ${f.name} @:fromContext cannot be used on Map.',
 											f.pos);
 									} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
 										// handle array of serialisable
@@ -448,11 +448,11 @@ class Serialise {
 	}
 
 	function handleFromContext(f: haxe.macro.Field, m: haxe.macro.MetadataEntry) {
-		if (m.params.length < 1) Context.fatalError('@fromContext requires a key.', f.pos);
+		if (m.params.length < 1) Context.fatalError('@:fromContext requires a key.', f.pos);
 		final key: String = m.params[0].getValue();
 		final fieldName = f.name;
 
-		// for @fromContext, we will only add the method for loading from context
+		// for @:fromContext, we will only add the method for loading from context
 		this.loadStructExprs.push(macro {
 			this.$fieldName = cast context.get($v{key});
 		});
@@ -501,4 +501,7 @@ class Serialise {
 
 	Sun 13:04:15 14 Jul 2024
 	I think adding autobuild is not necessary because we might have cases that we don't want it to be auto.
+
+	Wed 14:33:22 21 Aug 2024
+	Rename @serialise -> @:serialise, @fromContext -> @:fromContext
 **/

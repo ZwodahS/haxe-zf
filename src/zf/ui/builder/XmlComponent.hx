@@ -13,11 +13,11 @@ import zf.ui.UIElement;
 
 	This component allow me to auto build a lot of variable via metadata
 
-	@findChild var componentName or @findChild(path)
+	@:findChild var componentName or @:findChild(path)
 	This will assign the variable to a object via h2d.Object.getObjectByName
 	if path is not provided, will use the variable name
 
-	@exposeContext function funcName or @exposeContext(name)
+	@:exposeContext function funcName or @:exposeContext(name)
 	will expose the function to the builder context as name.
 	if name is not provided, will expose as funcName
 **/

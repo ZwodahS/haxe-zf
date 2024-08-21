@@ -33,7 +33,7 @@ using haxe.macro.Tools;
 	Writing this is tedious, and prone to bugs sometimes. It also makes the init function really long and hard to read.
 	This macro is to streamline that to
 
-	@handleMessage("XMessage", 0)
+	@:handleMessage("XMessage", 0)
 	function handleMessage(m: XMessage) {
 		// ...
 	}
@@ -51,7 +51,7 @@ using haxe.macro.Tools;
 
 	To handle this we have
 
-	@handleMessages(["XMessage", "YMessage"], 0)
+	@:handleMessages(["XMessage", "YMessage"], 0)
 **/
 class Messages {
 	public function new() {}
@@ -67,15 +67,16 @@ class Messages {
 			pack: localClass.pack
 		}
 
-		// collect all the handlers via @handleMessage
+		// collect all the handlers via @:handleMessage
 		var handlers: Array<{field: haxe.macro.Field, message: String, priority: Int}> = [];
 
 		for (f in fields) {
 			if (f.meta.length == 0) continue;
 			for (m in f.meta) {
-				if (m.name == "handleMessage") {
+				if (m.name == ":handleMessage") {
 					if (m.params.length != 2) {
-						Context.info("[Warn] handleMessage requires 2 arguments - [messageClassName, priority]", f.pos);
+						Context.info("[Warn] @:handleMessage requires 2 arguments - [messageClassName, priority]",
+							f.pos);
 						continue;
 					}
 
@@ -84,14 +85,14 @@ class Messages {
 						var type = Context.getType(m.params[0].getValue());
 						klass = type.getClass();
 					} catch (e) {
-						Context.info('[Warn] handleMessage unable to find class: ${m.params[0].getValue()}', f.pos);
+						Context.info('[Warn] @:handleMessage unable to find class: ${m.params[0].getValue()}', f.pos);
 						continue;
 					}
 
 					handlers.push({field: f, message: m.params[0].getValue(), priority: m.params[1].getValue()});
-				} else if (m.name == "handleMessages") {
+				} else if (m.name == ":handleMessages") {
 					if (m.params.length != 2) {
-						Context.info("[Warn] handleMessages requires 2 arguments - [<messageClassName>, priority]",
+						Context.info("[Warn] @:handleMessages requires 2 arguments - [<messageClassName>, priority]",
 							f.pos);
 						continue;
 					}
@@ -102,7 +103,7 @@ class Messages {
 							var type = Context.getType(className);
 							klass = type.getClass();
 						} catch (e) {
-							Context.info('[Warn] handleMessage unable to find class: ${className}', f.pos);
+							Context.info('[Warn] @:handleMessage unable to find class: ${className}', f.pos);
 							continue;
 						}
 
@@ -159,3 +160,8 @@ class Messages {
 	}
 }
 #end
+
+/**
+	Wed 14:34:40 21 Aug 2024
+	rename @handleMessage -> @:handleMessage, @handleMessages -> @:handleMessages
+**/
