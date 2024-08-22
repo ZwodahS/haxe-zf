@@ -337,11 +337,15 @@ class ObjectPool {
 						expr: macro {
 							if (this.__isDisposed__ == true) {
 #if debug
-								haxe.Log.trace("[Warn] Double disposing of object - " + $v{className} + ".");
+								haxe.Log.trace("[ObjectPool] [Warn] Double disposing of object - "
+									+ $v{className} + ".", null);
 #end
 								return;
 							}
 							this.__isDisposed__ = true;
+#if debug
+							haxe.Log.trace("[ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
+#end
 
 							$b{resetExprs};
 							this.__next__ = __pool__;
@@ -363,11 +367,15 @@ class ObjectPool {
 						expr: macro {
 							if (this.__isDisposed__ == true) {
 #if debug
-								haxe.Log.trace("[Warn] Double disposing of object - " + $v{className} + ".");
+								haxe.Log.trace("[ObjectPool] [Warn] Double disposing of object - "
+									+ $v{className} + ".", null);
 #end
 								return;
 							}
 							this.__isDisposed__ = true;
+#if debug
+							haxe.Log.trace("[ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
+#end
 
 							$b{resetExprs};
 							this.__next__ = __pool__;
@@ -404,11 +412,15 @@ class ObjectPool {
 						expr: macro {
 							if (this.__isDisposed__ == true) {
 #if debug
-								haxe.Log.trace("[Warn] Double disposing of object - " + $v{className} + ".");
+								haxe.Log.trace("[ObjectPool] [Warn] Double disposing of object - "
+									+ $v{className} + ".", null);
 #end
 								return;
 							}
 							this.__isDisposed__ = true;
+#if debug
+							haxe.Log.trace("[ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
+#end
 
 							$b{resetExprs};
 							this.__next__ = __pool__;
