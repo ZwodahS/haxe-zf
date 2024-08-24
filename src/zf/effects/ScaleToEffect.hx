@@ -53,7 +53,7 @@ class ScaleToEffect extends Effect {
 		return this.duration <= 0;
 	}
 
-	override public function copy(): ScaleToEffect {
+	override public function clone(): ScaleToEffect {
 		return new ScaleToEffect(this.conf);
 	}
 

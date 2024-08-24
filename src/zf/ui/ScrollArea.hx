@@ -70,7 +70,7 @@ class ScrollArea extends UIElement {
 
 	public static function make(conf: ScrollAreaConf): ScrollArea {
 		final scrollArea = new ScrollArea(conf.object);
-		scrollArea.size = conf.size.copy();
+		scrollArea.size = conf.size.clone();
 
 		var cursorColor = 0xffffffff;
 		if (conf.cursorColor != null) cursorColor = conf.cursorColor;

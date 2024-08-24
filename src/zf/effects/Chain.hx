@@ -48,10 +48,10 @@ class Chain extends Effect {
 		this.currentIndex = 0;
 	}
 
-	override public function copy(): Chain {
+	override public function clone(): Chain {
 		var effects: Array<Effect> = [];
 		for (e in this.effects) {
-			effects.push(e.copy());
+			effects.push(e.clone());
 		}
 		var chain = new Chain(effects, Reflect.copy(this.conf));
 		return chain;

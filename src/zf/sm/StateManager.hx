@@ -59,14 +59,14 @@ class StateManager {
 
 	public function get(name: String): State {
 		if (this.states[name] == null) return null;
-		final state = this.states[name].copy();
+		final state = this.states[name].clone();
 		state.manager = this;
 		return state;
 	}
 
 	public function set(name: String): State {
 		if (this.states[name] == null) return null;
-		final state = this.states[name].copy();
+		final state = this.states[name].clone();
 		state.manager = this;
 		switchState(state);
 		return state;

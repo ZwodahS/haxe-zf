@@ -236,7 +236,7 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 	/**
 		Make a copy of this probability table
 	**/
-	public function copy(): ProbabilityTable<T> {
+	public function clone(): ProbabilityTable<T> {
 		return new zf.ProbabilityTable<T>(this.toList());
 	}
 
@@ -247,7 +247,7 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 	public function toList(): Array<Chance<T>> {
 		final chances: Array<Chance<T>> = [];
 		for (c in this.chances) {
-			chances.push(c.copy());
+			chances.push(c.clone());
 		}
 		return chances;
 	}

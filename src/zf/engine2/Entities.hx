@@ -164,7 +164,7 @@ class Entities<E: Entity> extends ReadOnlyEntities<E> implements Identifiable {
 	/**
 		Make a shallow copy of this entity map.
 	**/
-	public function copy(): Entities<E> {
+	public function clone(): Entities<E> {
 		var m = new Entities<E>();
 		for (k => e in this.map) m.add(e);
 		return m;

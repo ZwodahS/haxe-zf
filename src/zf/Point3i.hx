@@ -54,7 +54,7 @@ abstract Point3i(Array<Int>) from Array<Int> to Array<Int> {
 		return this;
 	}
 
-	inline public function copy(): Point3i {
+	inline public function clone(): Point3i {
 		return [this[0], this[1], this[2]];
 	}
 

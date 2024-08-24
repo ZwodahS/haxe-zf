@@ -102,7 +102,7 @@ class PhysicsMoveEffect extends Effect {
 		return false;
 	}
 
-	override public function copy(): PhysicsMoveEffect {
+	override public function clone(): PhysicsMoveEffect {
 		return new PhysicsMoveEffect(this.conf);
 	}
 

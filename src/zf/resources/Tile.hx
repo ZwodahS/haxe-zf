@@ -35,7 +35,7 @@ class Tile {
 		return bm;
 	}
 
-	public function copy(): Tile {
+	public function clone(): Tile {
 		var t = new Tile(this.innerTile.clone(), this.color, this.scale, this.offset);
 		return t;
 	}

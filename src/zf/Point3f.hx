@@ -67,7 +67,7 @@ abstract Point3f(Array<Float>) from Array<Float> to Array<Float> {
 		return this;
 	}
 
-	inline public function copy(): Point3f {
+	inline public function clone(): Point3f {
 		return [this[0], this[1], this[2]];
 	}
 

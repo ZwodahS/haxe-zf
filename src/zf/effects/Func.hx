@@ -40,7 +40,7 @@ class Func extends Effect {
 		this.completed = false;
 	}
 
-	override public function copy(): Func {
+	override public function clone(): Func {
 		return new Func(this.conf);
 	}
 

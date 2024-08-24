@@ -40,7 +40,7 @@ class BlinkEffect extends Effect {
 		super.reset();
 	}
 
-	override public function copy(): BlinkEffect {
+	override public function clone(): BlinkEffect {
 		return new BlinkEffect(this.conf);
 	}
 

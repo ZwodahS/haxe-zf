@@ -48,7 +48,7 @@ class AlphaEffect extends Effect {
 		this.changed = 0;
 	}
 
-	override public function copy(): AlphaEffect {
+	override public function clone(): AlphaEffect {
 		return new AlphaEffect(this.conf);
 	}
 

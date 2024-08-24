@@ -92,7 +92,7 @@ class MoveEffect extends Effect {
 		}
 	}
 
-	override public function copy(): MoveEffect {
+	override public function clone(): MoveEffect {
 		return new MoveEffect(this.conf);
 	}
 

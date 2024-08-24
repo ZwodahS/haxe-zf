@@ -36,7 +36,7 @@ class State {
 		Return a copy of this state.
 		Child class should override this.
 	**/
-	public function copy(): State {
+	public function clone(): State {
 		return new State(this.name);
 	}
 

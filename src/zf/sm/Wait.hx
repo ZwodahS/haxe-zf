@@ -22,7 +22,7 @@ class Wait extends State {
 		return (this.waitFor != null && this.waitFor() == true) ? this.nextState : null;
 	}
 
-	override public function copy(): Wait {
+	override public function clone(): Wait {
 		return new Wait(this.name, this.nextState, this.waitFor);
 	}
 }

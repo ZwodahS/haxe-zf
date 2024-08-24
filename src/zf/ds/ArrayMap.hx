@@ -98,7 +98,7 @@ class ReadOnlyArrayMap<E: Identifiable> {
 	/**
 		Make a shadow copy of arraymap
 	**/
-	public function copy(): ArrayMap<E> {
+	public function clone(): ArrayMap<E> {
 		final arr = new ArrayMap<E>();
 		for (item in this.itemsByIndex) {
 			arr.push(item);

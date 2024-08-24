@@ -134,13 +134,6 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	/**
 		Make a copy of this point
 	**/
-	inline public function copy(): Point2i {
-		return [this[0], this[1]];
-	}
-
-	/**
-		Make a copy of this point
-	**/
 	inline public function clone(): Point2i {
 		return [this[0], this[1]];
 	}

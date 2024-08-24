@@ -222,7 +222,7 @@ class Effect {
 	/**
 		Make a copy of the effect. Do not call parent when overriding
 	**/
-	public function copy(): Effect {
+	public function clone(): Effect {
 		throw new zf.exceptions.NotImplemented();
 	}
 
@@ -246,7 +246,7 @@ class Effect {
 	public function applyTo(object: h2d.Object, copy: Bool = false): Effect {
 		// if copy, make a copy and apply
 		if (copy == true) {
-			final effect = this.copy();
+			final effect = this.clone();
 			effect.parent = this;
 			effect.applyTo(object, false);
 			return effect;

@@ -104,7 +104,7 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 		return this;
 	}
 
-	inline public function copy(): Point2f {
+	inline public function clone(): Point2f {
 		return [this[0], this[1]];
 	}
 

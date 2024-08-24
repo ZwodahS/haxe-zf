@@ -25,7 +25,7 @@ using zf.RandExtensions;
 	/**
 		Make a copy of shallow copy of chance
 	**/
-	public function copy(): Chance<T> {
+	public function clone(): Chance<T> {
 		return new Chance<T>(this.chance, this.item);
 	}
 }

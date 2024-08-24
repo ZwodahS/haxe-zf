@@ -175,7 +175,7 @@ class ListExtensions {
 	/**
 		Make a shallow copy of a list
 	**/
-	public static function copy<T>(thisList: List<T>): List<T> {
+	public static function clone<T>(thisList: List<T>): List<T> {
 		// shallow copy
 		var l = new List<T>();
 		for (i in thisList) {

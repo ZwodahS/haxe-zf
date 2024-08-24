@@ -52,11 +52,10 @@ class Batch extends Effect {
 		this.runningEffects.pushArray(this.effects);
 	}
 
-	override public function copy(): Batch {
-		trace('batch copy');
+	override public function clone(): Batch {
 		var effects: Array<Effect> = [];
 		for (e in this.effects) {
-			effects.push(e.copy());
+			effects.push(e.clone());
 		}
 		var batch = new Batch(effects, Reflect.copy(this.conf));
 		return batch;

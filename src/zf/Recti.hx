@@ -189,10 +189,6 @@ abstract Recti(Array<Int>) from Array<Int> to Array<Int> {
 		return [this[0], this[1], this[2], this[3]];
 	}
 
-	public function copy(): Recti {
-		return [this[0], this[1], this[2], this[3]];
-	}
-
 	/**
 		Force Place the input rect within this rect.
 		if input rect is outside of this rect then a size 1,1 rect is returned

@@ -29,7 +29,7 @@ class Wait extends Effect {
 		this.elapsed = 0;
 	}
 
-	override public function copy(): Wait {
+	override public function clone(): Wait {
 		return new Wait(this.conf);
 	}
 

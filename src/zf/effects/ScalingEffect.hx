@@ -73,7 +73,7 @@ class ScalingEffect extends Effect {
 		if (this.conf.numCycle != null) this.numCycleLeft = this.conf.numCycle;
 	}
 
-	override public function copy(): ScalingEffect {
+	override public function clone(): ScalingEffect {
 		return new ScalingEffect(this.conf);
 	}
 

@@ -91,7 +91,7 @@ class Line2f {
 		return null;
 	}
 
-	public function copy(): Line2f {
+	public function clone(): Line2f {
 		return new Line2f(this._start, this._end);
 	}
 
