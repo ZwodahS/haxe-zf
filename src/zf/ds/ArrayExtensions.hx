@@ -31,6 +31,16 @@ class ArrayExtensions {
 		}
 	}
 
+	public static function shuffleIn<T>(array: Array<T>, item: T, r: hxd.Rand = null) {
+		if (array.length == 0) {
+			array.push(item);
+			return;
+		}
+
+		final index = r != null ? r.random(array.length + 1) : Random.int(0, array.length);
+		array.insert(index, item);
+	}
+
 	public static function hasIntersection<T>(arr1: Array<T>, arr2: Array<T>, minCount = 1): Bool {
 		var count = 0;
 		for (item1 in arr1) {
