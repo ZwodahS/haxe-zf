@@ -123,8 +123,8 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		}
 	}
 
-	inline public function getComponent(typeId: String): Component {
-		return this.__components__.get(typeId);
+	inline public function getComponent<T: Component>(typeId: String): T {
+		return cast this.__components__.get(typeId);
 	}
 
 	// ---- Dispose method ---- //
