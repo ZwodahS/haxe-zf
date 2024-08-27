@@ -8,6 +8,7 @@ import zf.serialise.SerialiseContext;
 /**
 	@stage:stable
 **/
+@:autoBuild(zf.macros.Entity.build())
 class Entity implements Identifiable implements Serialisable implements EntityContainer {
 	// ---- Engine level fields ---- //
 	public var factory(default, null): EntityFactory;
