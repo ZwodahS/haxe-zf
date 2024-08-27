@@ -194,6 +194,12 @@ class ObjectPool {
 				switch (f.kind) {
 					case FVar(_.toType() => type, e), FProp(_, _, _.toType() => type, e):
 						if (e == null) Context.fatalError('${f.name} requires a default value or a set value.', f.pos);
+						if (Util.isArray(type) == false && (Util.isPrimitive(type) == true
+							|| Util.isEnum(type) == true
+							|| Util.isFunction(type) == true
+							|| Util.hasInterface(type.getClass(), "Disposable") == false)) {
+							Context.info('[Hint] "set" here is not necessary', f.pos);
+						}
 						generateSet(f, e);
 					default:
 						Context.fatalError('${f.name} cannot be disposed.', f.pos);
