@@ -28,4 +28,22 @@ class StringUtils {
 		}
 		return closest;
 	}
+
+	public static function formatInt(v: Int, split: Int = 3, separator: String = ","): String {
+		final str = '${v}';
+		var i = str.length - 1;
+		var c = 0;
+		var out = [];
+		while (i != -1) {
+			out.push(str.charAt(i));
+			c += 1;
+			if (c == split && i != 0) {
+				out.push(separator);
+				c = 0;
+			}
+			i -= 1;
+		}
+		out.reverse();
+		return out.join("");
+	}
 }
