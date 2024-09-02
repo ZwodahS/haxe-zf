@@ -7,7 +7,7 @@ enum EValue {
 	V2;
 }
 
-#if !macro @:build(zf.macros.ObjectPool.addObjectPool()) #end
+#if !macro @:build(zf.macros.ObjectPool.build()) #end
 class Object5 implements Disposable {
 	@:dispose("set", null) public var object1: Object1;
 	@:dispose("set") public var xInt: Int = 0;

@@ -117,6 +117,8 @@ class ClassBuilder {
 			toBuild.push({field: field, meta: m});
 		}
 
+		if (toBuild.length == 0) return null;
+
 		for (f in toBuild) {
 			buildDelegate(f.field, f.meta);
 		}

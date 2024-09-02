@@ -6,7 +6,7 @@ using zf.h2d.ObjectExtensions;
 	@stage:stable
 **/
 #if !macro
-@:build(zf.macros.ObjectPool.addObjectPool())
+@:build(zf.macros.ObjectPool.build())
 #end
 class WrappedObject implements Alphable implements Scalable implements Positionable implements Rotatable {
 	public var object: h2d.Object;

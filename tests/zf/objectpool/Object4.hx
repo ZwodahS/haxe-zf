@@ -8,7 +8,7 @@ class ParentObject {
 	public function dispose() {}
 }
 
-#if !macro @:build(zf.macros.ObjectPool.addObjectPool()) #end
+#if !macro @:build(zf.macros.ObjectPool.build()) #end
 class Object4 extends ParentObject implements Disposable {
 	@:dispose public var object1: Object1;
 	@:dispose("set", 0) public var xInt: Int = 0;

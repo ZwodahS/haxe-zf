@@ -2,7 +2,7 @@ package tests.zf.objectpool;
 
 using zf.ds.ArrayExtensions;
 
-#if !macro @:build(zf.macros.ObjectPool.addObjectPool()) #end
+#if !macro @:build(zf.macros.ObjectPool.build()) #end
 class Object3 implements Disposable {
 	@:dispose public var object1: Object1;
 	@:dispose("set", 0) public var xInt: Int = 0;

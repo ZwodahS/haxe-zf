@@ -32,7 +32,7 @@ using haxe.macro.TypeTools;
 	Call __alloc__ in the custom alloc method to get the object.
 
 	# Usage
-	#if !macro @:build(zf.macros.ObjectPool.addObjectPool()) #end
+	#if !macro @:build(zf.macros.ObjectPool.build()) #end
 	class XXX {}
 
 	## Field metadata
@@ -194,10 +194,11 @@ class ObjectPool {
 				switch (f.kind) {
 					case FVar(_.toType() => type, e), FProp(_, _, _.toType() => type, e):
 						if (e == null) Context.fatalError('${f.name} requires a default value or a set value.', f.pos);
-						if (Util.isArray(type) == false && (Util.isPrimitive(type) == true
-							|| Util.isEnum(type) == true
-							|| Util.isFunction(type) == true
-							|| Util.hasInterface(type.getClass(), "Disposable") == false)) {
+						if (Util.isArray(type) == false
+							&& (Util.isPrimitive(type) == true
+								|| Util.isEnum(type) == true
+								|| Util.isFunction(type) == true
+								|| Util.hasInterface(type.getClass(), "Disposable") == false)) {
 							Context.info('[Hint] "set" here is not necessary', f.pos);
 						}
 						generateSet(f, e);
@@ -477,10 +478,6 @@ class ObjectPool {
 		return fields;
 	}
 
-	public static function addObjectPool() {
-		return new ObjectPool().setupObjectPool();
-	}
-
 	public static function build() {
 		return new ObjectPool().setupObjectPool();
 	}
@@ -517,4 +514,13 @@ class ObjectPool {
 
 	Wed 14:31:13 21 Aug 2024
 	Rename @dispose -> @:dispose
+
+	Mon 13:16:18 02 Sep 2024
+	Considered allow this to be used to build @:dispose without building the object pool stuffs.
+	This can be used by parent objects that need to dispose but cannot be alloc-ed.
+	However, it is not sure if we want to generate a __reset__ or a __dispose__.
+
+	On top of that, it might become tricky since generating reset means that the parent need to be
+	generated first before the child. Too many things to considered at the moment, so parent class
+	should really just handle this themselves at the moment.
 **/
