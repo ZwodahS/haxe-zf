@@ -206,7 +206,7 @@ class Serialise {
 
 	function handleSerialise(f: haxe.macro.Field, m: haxe.macro.MetadataEntry) {
 		final storeAs: String = (m.params.length < 1 || m.params[0].getValue() == null) ? f.name : m.params[0].getValue();
-		final fromContext: Bool = (m.params.length < 2) ? false : m.params[1].getValue();
+		final fromContext: Null<Bool> = (m.params.length < 2) ? null : m.params[1].getValue();
 		final localType = Context.getLocalType();
 		final localClass = localType.getClass();
 		final fieldName = f.name;
@@ -357,27 +357,21 @@ class Serialise {
 											Context.fatalError('${f.name} is not Identifiable', f.pos);
 										}
 										handleArrayIdentifiable();
-									} else if (Util.hasInterface(p[0].getClass(), "Serialisable") == true
-										&& TypeTools.findField(p[0].getClass(), "empty", true) != null) {
+									} else if (Util.hasInterface(p[0].getClass(), "Serialisable") == true) {
+										// if serialisable + identifiable, warn if fromContext is not set
+										if (fromContext == null
+											&& Util.hasInterface(p[0].getClass(), "Identifable") == true) {
+											Context.info("[Warn] Serialisable + Identifiable. Intended (fromContext: false) ?",
+												f.pos);
+										}
 										// handle array of serialisable
 										handleArraySerialisable(p[0].getClass());
 									} else if (Util.hasInterface(p[0].getClass(), "Identifiable") == true) {
-										// handle array of identifiable
-										if (Util.hasInterface(p[0].getClass(), "Serialisable") == true) {
-											Context.info("[Warn] Serialisable without empty() + Identifiable. Intended ?",
-												f.pos);
-										}
+										// handle array of identifiable that is not serialisable
 										handleArrayIdentifiable();
 									} else {
-										final innerClass = p[0].getClass();
-										if (Util.hasInterface(p[0].getClass(), "Serialisable") == true
-											&& TypeTools.findField(p[0].getClass(), "empty", true) == null) {
-											Context.fatalError('${f.name} Array cannot be serialised - ${innerClass.name} has no empty function.',
-												f.pos);
-										} else {
-											Context.fatalError('${f.name} Array cannot be serialised - unable to handle type.',
-												f.pos);
-										}
+										Context.fatalError('${f.name} Array cannot be serialised - unable to handle type.',
+											f.pos);
 									}
 								default:
 									if (fromContext == true) {
@@ -386,19 +380,18 @@ class Serialise {
 											Context.fatalError('${f.name} is not Identifiable', f.pos);
 										}
 										handleIdentifiable();
-									} else if (Util.hasInterface(t, "Serialisable") == true
-										&& TypeTools.findField(t, "empty", true) != null) {
+									} else if (Util.hasInterface(t, "Serialisable") == true) {
+										if (fromContext == null && (Util.hasInterface(t, "Identifiable") == true)) {
+											Context.info("[Warn] Serialisable + Identifiable. Intended (fromContext: false) ?",
+												f.pos);
+										}
 										// handle serialisable
 										handleSerialisable(t);
 									} else if (Util.hasInterface(t, "Identifiable") == true) {
-										if (Util.hasInterface(t, "Serialisable") == true) {
-											Context.info("[Warn] Serialisable without empty() + Identifiable. Intended ?",
-												f.pos);
-										}
-										// handle identifiable
+										// handle identifiable that is not serialisable
 										handleIdentifiable();
 									} else {
-										Context.fatalError('${f.name} is not Serialisable (or missing empty function) or Identifable.',
+										Context.fatalError('${f.name} is not Primitive, Serialisable or Identifable.',
 											f.pos);
 									}
 							}
@@ -504,4 +497,7 @@ class Serialise {
 
 	Wed 14:33:22 21 Aug 2024
 	Rename @serialise -> @:serialise, @fromContext -> @:fromContext
+
+	Wed 20:05:35 04 Sep 2024
+	I can't use TypeTools to findField to ensure the existence of empty.
 **/

@@ -59,5 +59,9 @@ class TestSerialise extends TestCase {
 		Assert.assert(obj1.arrInt.isEqual(obj2.arrInt));
 
 
+		// these 2 ensure that circular dependencies works
+		final o4 = new Object4("object4.1");
+		final o5 = new Object5("object5.1");
+
 	}
 }
