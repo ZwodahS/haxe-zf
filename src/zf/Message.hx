@@ -43,3 +43,14 @@ class Message {
 	}
 #end
 }
+
+/**
+	A result message that is used by getResult to return results.
+**/
+class ResultMessage<T> extends Message implements Disposable {
+	public var result: Null<T>;
+
+	public function dispose() {
+		this.result = null;
+	}
+}

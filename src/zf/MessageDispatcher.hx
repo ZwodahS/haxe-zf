@@ -92,6 +92,22 @@ class MessageDispatcher implements MessageDispatcherI {
 	}
 
 	/**
+		Dispatch a message immediately and get the result and dispose the message immediately.
+
+		@param message a message that extends ResultMessage instead of Message
+		@return message.result.
+
+		Note that this is always dispatch immediately.
+		Note that this will also dispose the message immediately.
+	**/
+	public function getResult<T: zf.Message.ResultMessage<U>, U>(message: T): U {
+		this.dispatch(message);
+		final value = message.result;
+		message.dispose();
+		return value;
+	}
+
+	/**
 		Dispatch a message to all the listeners.
 
 		@param message the message to send
@@ -362,4 +378,7 @@ class MessageDispatcher implements MessageDispatcherI {
 	Tue 12:56:43 23 Jul 2024
 	Removing the global method to get a dispatcher.
 	This has never been used, and I highly doubt I will use it ever.
+
+	Mon 14:43:39 09 Sep 2024
+	Added getResult and zf.Message.ResultMessage
 **/
