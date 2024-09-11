@@ -33,8 +33,8 @@ class Entity {
 		/**
 			Build component change
 		**/
-		final newFields = [];
-		final toRemove = [];
+		final newFields: Array<haxe.macro.Field> = [];
+		final toRemove: Array<haxe.macro.Field> = [];
 		for (field in fields) {
 			switch (field.kind) {
 				case FVar(t, expr):
@@ -45,8 +45,9 @@ class Entity {
 							toRemove.push(field);
 							newFields.push({
 								name: field.name,
+								meta: field.meta,
 								pos: Context.currentPos(),
-								kind: FProp("default", "set", t, null),
+								kind: FProp("default", "set", t, expr),
 								access: field.access,
 							});
 
