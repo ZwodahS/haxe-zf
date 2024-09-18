@@ -23,6 +23,15 @@ class TestSerialise extends TestCase {
 		obj1.arrO2 = [new Object2("o2_2"), new Object2("o2_3")];
 		obj1.arrO3 = [new Object3("o3_2"), new Object3("o3_3")];
 
+		obj1.a = {
+			aInt: 3,
+			aArrInt: [1,1,2,5],
+			aString: "sup",
+			aArrString: ["hello", "world"],
+			aFloat: 3.5,
+			aArrFloat: [1.34, 4.25, 9.126],
+		}
+
 		final ctx = new SerialiseContext();
 		var data = obj1.toStruct(ctx);
 
@@ -36,6 +45,19 @@ class TestSerialise extends TestCase {
 		Assert.assert(data.arrO2[1] == "o2_3");
 		Assert.assert(data.arrO3[0] != "o3_2");
 		Assert.assert(data.arrO3[1] != "o3_3");
+
+		Assert.assert(data.a.aInt == 3);
+		Assert.assert(data.a.aArrInt[0] == 1);
+		Assert.assert(data.a.aArrInt[1] == 1);
+		Assert.assert(data.a.aArrInt[2] == 2);
+		Assert.assert(data.a.aArrInt[3] == 5);
+		Assert.assert(data.a.aString == "sup");
+		Assert.assert(data.a.aArrString[0] == "hello");
+		Assert.assert(data.a.aArrString[1] == "world");
+		Assert.assert(data.a.aFloat == 3.5);
+		Assert.assert(data.a.aArrFloat[0] == 1.34);
+		Assert.assert(data.a.aArrFloat[1] == 4.25);
+		Assert.assert(data.a.aArrFloat[2] == 9.126);
 
 		obj1.arrInt = [3, 4];
 

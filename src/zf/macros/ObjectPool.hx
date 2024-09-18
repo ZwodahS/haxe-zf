@@ -350,7 +350,7 @@ class ObjectPool {
 								return;
 							}
 							this.__isDisposed__ = true;
-#if debug
+#if (debug && !nodisposeMessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
 #end
 
@@ -380,7 +380,7 @@ class ObjectPool {
 								return;
 							}
 							this.__isDisposed__ = true;
-#if debug
+#if (debug && !nodisposeMessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
 #end
 
@@ -425,7 +425,7 @@ class ObjectPool {
 								return;
 							}
 							this.__isDisposed__ = true;
-#if debug
+#if (debug && !nodisposeMessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
 #end
 

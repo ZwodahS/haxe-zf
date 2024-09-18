@@ -16,7 +16,7 @@ buildinfo:
 	@echo ""
 
 tests: buildinfo
-	haxe -L heaps -L compiletime -L hxrandom -L hlsdl -p src -p tests -D test -D debug -D loggingLevel=30 --hl test.hl --main tests.Test
+	haxe -L heaps -L compiletime -L hxrandom -L hlsdl -p src -p tests -D test -D debug -D nodisposeMessage -D loggingLevel=30 --hl test.hl --main tests.Test
 
 docs: xml pages
 

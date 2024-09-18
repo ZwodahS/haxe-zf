@@ -396,34 +396,60 @@ class Serialise {
 									}
 							}
 						case TType(_.get() => t, p):
-							switch (t.name) {
-								case "Map":
-									if (p.length != 2) {
-										Context.fatalError('${f.name} Map - cannot be serialise.', f.pos);
+							switch (t.type) {
+								case TAnonymous(_.get() => it):
+									// ensure that all fields are primitive or array of primitive
+									for (field in it.fields) {
+										if (Util.isPrimitive(field.type) == false
+											&& Util.isArrayOfPrimitive(field.type) == false) {
+											// @formatter:off
+											Context.fatalError(
+												'${f.name} - cannot be serialise. Struct requires all type to be primitive or array of primitives.',
+												f.pos
+											);
+										}
 									}
-									if (Util.isString(p[0]) == false) {
-										// handle only string type key for now.
-										Context.fatalError('[NotImplemented] ${f.name} Map - cannot be serialise. Key must be String',
-											f.pos);
-									}
-									if (Util.isPrimitive(p[1]) == true) {
-										handleMapPrimitive();
-									} else if (fromContext == true) {
-										Context.fatalError('[NotImplemented] ${f.name} @:fromContext cannot be used on Map.',
-											f.pos);
-									} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
-										// handle array of serialisable
-										Context.fatalError('[NotImplemented] ${f.name} Serialisable cannot be used on Map.',
-											f.pos);
-									} else if (Util.hasInterface(p[1].getClass(), "Identifiable") == true) {
-										Context.fatalError('[NotImplemented] ${f.name} Identifable cannot be used on Map.',
-											f.pos);
-									} else {
-										// can't handle it yet
-										Context.fatalError('${f.name} Map cannot be serialised.', f.pos);
+									// for structs like these, we will just handle it like primitive
+									/**
+										Wed 15:16:27 18 Sep 2024
+										Not sure if this is the best way to do it but it should work.
+										In the future, might consider the option of individually handle serialisable and identifiable.
+										However, at that point, we might not want to use struct and just create a class instead.
+									**/
+									handlePrimitive();
+								case TAbstract(_.get() => it, _):
+									// for Abstract type, we will just handle Map for now.
+									switch (t.name) {
+										case "Map":
+											if (p.length != 2) {
+												Context.fatalError('${f.name} Map - cannot be serialise.', f.pos);
+											}
+											if (Util.isString(p[0]) == false) {
+												// handle only string type key for now.
+												Context.fatalError('[NotImplemented] ${f.name} Map - cannot be serialise. Key must be String',
+													f.pos);
+											}
+											if (Util.isPrimitive(p[1]) == true) {
+												handleMapPrimitive();
+											} else if (fromContext == true) {
+												Context.fatalError('[NotImplemented] ${f.name} @:fromContext cannot be used on Map.',
+													f.pos);
+											} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
+												// handle array of serialisable
+												Context.fatalError('[NotImplemented] ${f.name} Serialisable cannot be used on Map.',
+													f.pos);
+											} else if (Util.hasInterface(p[1].getClass(), "Identifiable") == true) {
+												Context.fatalError('[NotImplemented] ${f.name} Identifable cannot be used on Map.',
+													f.pos);
+											} else {
+												// can't handle it yet
+												Context.fatalError('${f.name} Map cannot be serialised.', f.pos);
+											}
+										default:
+											Context.fatalError('[NotImplemented] ${f.name} of type ${t.name} - cannot be serialise.',
+												f.pos);
 									}
 								default:
-									Context.fatalError('${f.name} of type ${t.name} - cannot be serialise.', f.pos);
 							}
 						case TDynamic(_):
 							Context.fatalError('${f.name} - Dynamic cannot be serialised at the moment.', f.pos);
@@ -431,6 +457,19 @@ class Serialise {
 							// Might have to handle this eventually since there are times that certain field are handled
 							// via enum with composite params. Perhaps in those cases we should then use Object ?
 							Context.fatalError('${f.name} - Enum cannot be serialised. Use enum abstract.', f.pos);
+						case TAnonymous(_.get() => it):
+							// ensure that all fields are primitive or array of primitive
+							for (field in it.fields) {
+								if (Util.isPrimitive(field.type) == false
+									&& Util.isArrayOfPrimitive(field.type) == false) {
+									// @formatter:off
+									Context.fatalError(
+										'${f.name} - cannot be serialise. Struct requires all type to be primitive or array of primitives.',
+										f.pos
+									);
+								}
+							}
+							handlePrimitive();
 						default:
 							Context.fatalError('${f.name} of type ${type} - cannot be serialise.', f.pos);
 					}

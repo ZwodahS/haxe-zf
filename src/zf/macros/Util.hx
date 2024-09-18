@@ -87,10 +87,29 @@ class Util {
 
 	public static function isArray(type: haxe.macro.Type): Bool {
 		switch (type) {
+			case TAbstract(_.get() => t, p):
+				// handle TAbstract of Array, i.e. Array<Int>
+				if (p.length > 0) return isArray(p[0]);
 			case TInst(_.get() => t, p):
 				switch (t.name) {
 					case "Array":
 						return true;
+					default:
+				}
+			default:
+		}
+		return false;
+	}
+
+	public static function isArrayOfPrimitive(type: haxe.macro.Type): Bool {
+		switch (type) {
+			case TAbstract(_.get() => t, p):
+				// handle TAbstract of Array, i.e. Array<Int>
+				if (p.length > 0) return isArrayOfPrimitive(p[0]);
+			case TInst(_.get() => t, p):
+				switch (t.name) {
+					case "Array":
+						return p.length != 1 ? false : isPrimitive(p[0]);
 					default:
 				}
 			default:
