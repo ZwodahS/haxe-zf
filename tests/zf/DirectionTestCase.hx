@@ -37,7 +37,8 @@ class DirectionTestCase extends TestCase {
 		d2.x = 0;
 		Assert.assertEqual(d, East);
 
-		final p2 = p + d;
+		final p2 = p.clone();
+		p2.move(d);
 		Assert.assertEqual(p2.x, 1);
 		Assert.assertEqual(p2.y, 0);
 	}

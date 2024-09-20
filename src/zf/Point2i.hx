@@ -1,66 +1,53 @@
 package zf;
 
-/**
-	@stage:stable
-**/
-abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
+import zf.serialise.Serialisable;
+
+@:forward abstract ArrPoint2i(Array<Point2iImpl>) from Array<Point2iImpl> to Array<Point2iImpl> {
+	public function dispose() {
+		for (pt in this) {
+			pt.dispose();
+		}
+	}
+}
+
+#if !macro @:build(zf.macros.ObjectPool.build()) #end
+#if !macro @:build(zf.macros.Serialise.build()) #end
+class Point2iImpl implements Serialisable implements Disposable {
+	@:serialise @:dispose public var x: Int = 0;
+	@:serialise @:dispose public var y: Int = 0;
+
+	function new() {}
+
+	public function setX(x: Int): Point2iImpl {
+		this.x = x;
+		return this;
+	}
+
+	public function setY(y: Int): Point2iImpl {
+		this.y = y;
+		return this;
+	}
+
+	public function set(x: Int, y: Int): Point2iImpl {
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+
+	public function setPoint(pt: Point2i): Point2iImpl {
+		this.x = pt.x;
+		this.y = pt.y;
+		return this;
+	}
+
 	/**
-		x component of the point
+		Move the point in this direction.
+		Returns itself
 	**/
-	public var x(get, set): Int;
-
-	inline public function get_x(): Int {
-		return this[0];
-	}
-
-	inline public function set_x(v: Int): Int {
-		return this[0] = v;
-	}
-
-	/**
-		y component of the point
-	**/
-	public var y(get, set): Int;
-
-	inline public function get_y(): Int {
-		return this[1];
-	}
-
-	inline public function set_y(v: Int): Int {
-		return this[1] = v;
-	}
-
-	inline public function new(x: Int = 0, y: Int = 0) {
-		this = [x, y];
-	}
-
-	/**
-		proxy this as min / max
-	**/
-	public var min(get, set): Int;
-
-	inline public function get_min(): Int {
-		return this[0];
-	}
-
-	inline public function set_min(v: Int): Int {
-		return this[0] = v;
-	}
-
-	public var max(get, set): Int;
-
-	inline public function get_max(): Int {
-		return this[1];
-	}
-
-	inline public function set_max(v: Int): Int {
-		return this[1] = v;
-	}
-
-	public var diff(get, never): Int;
-
-	inline public function get_diff(): Int {
-		return this[1] - this[0];
+	public function move(direction: Direction): Point2iImpl {
+		this.x += direction.x;
+		this.y += direction.y;
+		return this;
 	}
 
 	/**
@@ -70,87 +57,18 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		return '{$x,$y}';
 	}
 
-	@:op(A += B)
-	public function add(rhs: Point2i): Point2i {
-		this[0] += rhs[0];
-		this[1] += rhs[1];
-		return this;
-	}
-
-	@:op(A + B)
-	public function _add(rhs: Point2i): Point2i {
-		return new Point2i(this[0] + rhs[0], this[1] + rhs[1]);
-	}
-
-	@:op(A -= B)
-	public function sub(rhs: Point2i): Point2i {
-		this[0] -= rhs[0];
-		this[1] -= rhs[1];
-		return this;
-	}
-
-	@:op(A - B)
-	public function _sub(rhs: Point2i): Point2i {
-		return new Point2i(this[0] - rhs[0], this[1] - rhs[1]);
-	}
-
-	@:op(A == B)
-	public function _equal(rhs: Point2i): Bool {
-		return this[0] == rhs.x && this[1] == rhs.y;
-	}
-
-	@:op(A != B)
-	public function _notequal(rhs: Point2i): Bool {
-		return !(this[0] == rhs.x && this[1] == rhs.y);
-	}
-
-	@:op(A * B)
-	public function _scale(rhs: Int): Point2i {
-		return new Point2i(this[0] * rhs, this[1] * rhs);
-	}
-
-	public function update(rhs: Point2i): Point2i {
-		this[0] = rhs[0];
-		this[1] = rhs[1];
-		return this;
-	}
-
-	public function updateXY(x: Int, y: Int): Point2i {
-		this[0] = x;
-		this[1] = y;
-		return this;
-	}
-
 	/**
-		Move the point in this direction.
-		Returns itself
+		Make a clone of this point
 	**/
-	public function move(direction: Direction): Point2i {
-		this[0] += direction.x;
-		this[1] += direction.y;
-		return this;
+	inline public function clone(): Point2iImpl {
+		return Point2iImpl.alloc(this.x, this.y);
 	}
 
-	/**
-		Make a copy of this point
-	**/
-	inline public function clone(): Point2i {
-		return [this[0], this[1]];
-	}
-
-	@:to
-	public function toPoint2f(): Point2f {
-		return new Point2f(this[0], this[1]);
-	}
-
-	@:to
-	public function toPoint3i(): Point3i {
-		return new Point3i(this[0], this[1], 0);
-	}
-
-	@:to
-	public function toPoint3f(): Point3f {
-		return new Point3f(this[0], this[1], 0);
+	public static function alloc(x: Int, y: Int): Point2iImpl {
+		final pt = Point2iImpl.__alloc__();
+		pt.x = x;
+		pt.y = y;
+		return pt;
 	}
 
 	/**
@@ -158,7 +76,7 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		Diagonal points have a distance of 2.
 	**/
 	public function distance(p: Point2i): Int {
-		return hxd.Math.iabs(this[0] - p.x) + hxd.Math.iabs(this[1] - p.y);
+		return hxd.Math.iabs(this.x - p.x) + hxd.Math.iabs(this.y - p.y);
 	}
 
 	/**
@@ -166,7 +84,7 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		this is the alternative to distance, where diagonal will be a distance of 1
 	**/
 	public function maxDiff(p: Point2i): Int {
-		return hxd.Math.imax(hxd.Math.iabs(this[0] - p.x), hxd.Math.iabs(this[1] - p.y));
+		return hxd.Math.imax(hxd.Math.iabs(this.x - p.x), hxd.Math.iabs(this.y - p.y));
 	}
 
 	/**
@@ -174,9 +92,9 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	**/
 	public function isAround(p: Point2i): Bool {
 		// isAround check for if the point is a point around this point.
-		if (p.x == this[0] && p.y == this[1]) return false;
-		var xDiff = hxd.Math.iabs(this[0] - p.x);
-		var yDiff = hxd.Math.iabs(this[1] - p.y);
+		if (p.x == this.x && p.y == this.y) return false;
+		var xDiff = hxd.Math.iabs(this.x - p.x);
+		var yDiff = hxd.Math.iabs(this.y - p.y);
 		return xDiff <= 1 && yDiff <= 1;
 	}
 
@@ -185,8 +103,8 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 	**/
 	public function isAdjacent(p: Point2i): Bool {
 		// isAdjacent check for if the point is directly adjacent to this, excluding diagonal
-		var xDiff = hxd.Math.iabs(this[0] - p.x);
-		var yDiff = hxd.Math.iabs(this[1] - p.y);
+		var xDiff = hxd.Math.iabs(this.x - p.x);
+		var yDiff = hxd.Math.iabs(this.y - p.y);
 		return xDiff + yDiff == 1;
 	}
 
@@ -196,12 +114,12 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		XOX
 		.X.
 	**/
-	public function getAdjacent(): Array<Point2i> {
+	public function getAdjacent(): ArrPoint2i {
 		var pts: Array<Point2i> = [];
-		pts.push(new Point2i(this[0], this[1] - 1));
-		pts.push(new Point2i(this[0], this[1] + 1));
-		pts.push(new Point2i(this[0] - 1, this[1]));
-		pts.push(new Point2i(this[0] + 1, this[1]));
+		pts.push(Point2iImpl.alloc(this.x, this.y - 1));
+		pts.push(Point2iImpl.alloc(this.x, this.y + 1));
+		pts.push(Point2iImpl.alloc(this.x - 1, this.y));
+		pts.push(Point2iImpl.alloc(this.x + 1, this.y));
 		return pts;
 	}
 
@@ -211,12 +129,12 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		.O.
 		X.X
 	**/
-	public function getDiagonal(): Array<Point2i> {
+	public function getDiagonal(): ArrPoint2i {
 		var pts: Array<Point2i> = [];
-		pts.push(new Point2i(this[0] - 1, this[1] - 1));
-		pts.push(new Point2i(this[0] + 1, this[1] - 1));
-		pts.push(new Point2i(this[0] - 1, this[1] + 1));
-		pts.push(new Point2i(this[0] + 1, this[1] + 1));
+		pts.push(Point2iImpl.alloc(this.x - 1, this.y - 1));
+		pts.push(Point2iImpl.alloc(this.x + 1, this.y - 1));
+		pts.push(Point2iImpl.alloc(this.x - 1, this.y + 1));
+		pts.push(Point2iImpl.alloc(this.x + 1, this.y + 1));
 		return pts;
 	}
 
@@ -226,16 +144,16 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		XOX
 		XXX
 	**/
-	public function getAround(): Array<Point2i> {
+	public function getAround(): ArrPoint2i {
 		var pts: Array<Point2i> = [];
-		pts.push(new Point2i(this[0] - 1, this[1] - 1));
-		pts.push(new Point2i(this[0], this[1] - 1));
-		pts.push(new Point2i(this[0] + 1, this[1] - 1));
-		pts.push(new Point2i(this[0] - 1, this[1]));
-		pts.push(new Point2i(this[0] + 1, this[1]));
-		pts.push(new Point2i(this[0] - 1, this[1] + 1));
-		pts.push(new Point2i(this[0], this[1] + 1));
-		pts.push(new Point2i(this[0] + 1, this[1] + 1));
+		pts.push(Point2iImpl.alloc(this.x - 1, this.y - 1));
+		pts.push(Point2iImpl.alloc(this.x, this.y - 1));
+		pts.push(Point2iImpl.alloc(this.x + 1, this.y - 1));
+		pts.push(Point2iImpl.alloc(this.x - 1, this.y));
+		pts.push(Point2iImpl.alloc(this.x + 1, this.y));
+		pts.push(Point2iImpl.alloc(this.x - 1, this.y + 1));
+		pts.push(Point2iImpl.alloc(this.x, this.y + 1));
+		pts.push(Point2iImpl.alloc(this.x + 1, this.y + 1));
 		return pts;
 	}
 
@@ -264,31 +182,31 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 
 		currently only support up to 5. Implement whenever necessary
 	**/
-	public function getArea(range: Int): Array<Point2i> {
+	public function getArea(range: Int): ArrPoint2i {
 		if (range == 0) return [];
-		if (range == 1) return [this.copy()];
+		if (range == 1) return [this.clone()];
 		if (range == 2) {
 			var pts = getAdjacent();
-			pts.push(this.copy());
+			pts.push(this.clone());
 			return pts;
 		}
 		if (range == 3) {
 			var pts = getAround();
-			pts.push(this.copy());
+			pts.push(this.clone());
 			return pts;
 		}
 		if (range == 4) {
 			var pts: Array<Point2i> = getAround();
-			pts.push([this[0], this[1] - 2]);
-			pts.push([this[0], this[1] + 2]);
-			pts.push([this[0] - 2, this[1]]);
-			pts.push([this[0] + 2, this[1]]);
+			pts.push([this.x, this.y - 2]);
+			pts.push([this.x, this.y + 2]);
+			pts.push([this.x - 2, this.y]);
+			pts.push([this.x + 2, this.y]);
 			return pts;
 		} else {
 			var pts: Array<Point2i> = [];
 			for (y in -2...3) {
 				for (x in -2...3) {
-					pts.push([this[0] + x, this[1] + y]);
+					pts.push([this.x + x, this.y + y]);
 				}
 			}
 			return pts;
@@ -304,24 +222,89 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		If pt value is > this.value, it will be set to this.value - 1.
 
 		if update is true, then the original pt will be updated.
-		if update is false(default), then a copy of the pt will be updated.
+		if update is false(default), then a clone of the pt will be updated.
 	**/
 	public function boundPoint(pt: Point2i, update: Bool = false): Point2i {
 		var newPt = update ? pt : pt.clone();
 
 		if (newPt.x < 0) {
 			newPt.x = 0;
-		} else if (newPt.x >= this[0]) {
-			newPt.x = this[0] - 1;
+		} else if (newPt.x >= this.x) {
+			newPt.x = this.x - 1;
 		}
 
 		if (newPt.y < 0) {
 			newPt.y = 0;
-		} else if (newPt.y >= this[1]) {
-			newPt.y = this[1] - 1;
+		} else if (newPt.y >= this.y) {
+			newPt.y = this.y - 1;
 		}
 
 		return newPt;
+	}
+}
+
+@:forward abstract Point2i(Point2iImpl) from Point2iImpl to Point2iImpl {
+	public function new(x: Int = 0, y: Int = 0) {
+		this = Point2iImpl.alloc(x, y);
+	}
+
+	/**
+		proxy this as min / max
+	**/
+	public var min(get, set): Int;
+
+	inline public function get_min(): Int {
+		return this.x;
+	}
+
+	inline public function set_min(v: Int): Int {
+		return this.x = v;
+	}
+
+	public var max(get, set): Int;
+
+	inline public function get_max(): Int {
+		return this.y;
+	}
+
+	inline public function set_max(v: Int): Int {
+		return this.y = v;
+	}
+
+	public var diff(get, never): Int;
+
+	inline public function get_diff(): Int {
+		return this.y - this.x;
+	}
+
+	@:op(A == B)
+	public function _equal(rhs: Point2i): Bool {
+		return this.x == rhs.x && this.y == rhs.y;
+	}
+
+	@:op(A != B)
+	public function _notequal(rhs: Point2i): Bool {
+		return !(this.x == rhs.x && this.y == rhs.y);
+	}
+
+	@:to
+	public function toPoint2f(): Point2f {
+		return new Point2f(this.x, this.y);
+	}
+
+	@:to
+	public function toPoint3i(): Point3i {
+		return new Point3i(this.x, this.y, 0);
+	}
+
+	@:to
+	public function toPoint3f(): Point3f {
+		return new Point3f(this.x, this.y, 0);
+	}
+
+	@:from
+	public static function fromArrayInt(arr: Array<Int>): Point2i {
+		return Point2iImpl.alloc(arr.length > 0 ? arr[0] : 0, arr.length > 1 ? arr[1] : 0);
 	}
 
 	/**
@@ -365,4 +348,13 @@ abstract Point2i(Array<Int>) from Array<Int> to Array<Int> {
 		pt.y = Std.int(index % rowPerColumn);
 		return pt;
 	}
+
+	public static function alloc(x: Int = 0, y: Int = 0): Point2i {
+		return Point2iImpl.alloc(x, y);
+	}
 }
+/**
+	Fri 12:44:15 20 Sep 2024
+	Convert this from abstract(Array<Int>) to object pooled object.
+	Removed methods that are seldom used and don't make sense for an object pool version of Point2i
+**/

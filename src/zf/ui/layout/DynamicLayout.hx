@@ -81,8 +81,8 @@ class DynamicLayout extends UIElement {
 		this._repositions = [];
 	}
 
-	public function resize(newSize: Point2i) {
-		this.size.update(newSize);
+	public function resize(x: Int, y: Int) {
+		this.size.set(x, y);
 		for (child in this.children) {
 			if (Std.isOfType(child, UIElement) == false) continue;
 			cast(child, UIElement).reposition();
