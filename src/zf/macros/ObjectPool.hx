@@ -161,7 +161,7 @@ class ObjectPool {
 						|| Util.isEnum(type) == true
 						|| Util.isFunction(type) == true
 						|| Util.isObject(type) == false
-						|| Util.hasInterface(type.getClass(), "Disposable") == false) {
+						|| Util.hasInterface(Util.getClass(type), "Disposable") == false) {
 						generateSet(f, e);
 					} else { // dispose function exists
 						if (e != null && explicit == false) {

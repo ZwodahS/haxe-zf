@@ -334,146 +334,151 @@ class Serialise {
 				}
 			});
 		}
+		function process(type: haxe.macro.Type, e: haxe.macro.Expr) {
+			if (Util.isPrimitive(type) == true) {
+				handlePrimitive();
+			} else {
+				switch (type) {
+					case TInst(_.get() => t, p):
+						switch (t.name) {
+							case "Array":
+								if (p.length == 0) {
+									Context.fatalError('${f.name} Array cannot be serialised - type required.', f.pos);
+								}
+								if (Util.isPrimitive(p[0]) == true) {
+									// if primitive, takes priority
+									handleArrayPrimitive();
+								} else if (fromContext == true) {
+									// if from context is true, force identifiable
+									if ((Util.hasInterface(p[0].getClass(), "Identifiable")) == false) {
+										Context.fatalError('${f.name} is not Identifiable', f.pos);
+									}
+									handleArrayIdentifiable();
+								} else if (Util.hasInterface(p[0].getClass(), "Serialisable") == true) {
+									// if serialisable + identifiable, warn if fromContext is not set
+									if (fromContext == null
+										&& Util.hasInterface(p[0].getClass(), "Identifable") == true) {
+										Context.info("[Warn] Serialisable + Identifiable. Intended (fromContext: false) ?",
+											f.pos);
+									}
+									// handle array of serialisable
+									handleArraySerialisable(p[0].getClass());
+								} else if (Util.hasInterface(p[0].getClass(), "Identifiable") == true) {
+									// handle array of identifiable that is not serialisable
+									handleArrayIdentifiable();
+								} else {
+									Context.fatalError('${f.name} Array cannot be serialised - unable to handle type.',
+										f.pos);
+								}
+							default:
+								if (fromContext == true) {
+									// force identifiable
+									if ((Util.hasInterface(t, "Identifiable")) == false) {
+										Context.fatalError('${f.name} is not Identifiable', f.pos);
+									}
+									handleIdentifiable();
+								} else if (Util.hasInterface(t, "Serialisable") == true) {
+									if (fromContext == null && (Util.hasInterface(t, "Identifiable") == true)) {
+										Context.info("[Warn] Serialisable + Identifiable. Intended (fromContext: false) ?",
+											f.pos);
+									}
+									// handle serialisable
+									handleSerialisable(t);
+								} else if (Util.hasInterface(t, "Identifiable") == true) {
+									// handle identifiable that is not serialisable
+									handleIdentifiable();
+								} else {
+									Context.fatalError('${f.name} is not Primitive, Serialisable or Identifable.',
+										f.pos);
+								}
+						}
+					case TType(_.get() => t, p):
+						switch (t.type) {
+							case TAnonymous(_.get() => it):
+								// ensure that all fields are primitive or array of primitive
+								for (field in it.fields) {
+									if (Util.isPrimitive(field.type) == false
+										&& Util.isArrayOfPrimitive(field.type) == false) {
+										// @formatter:off
+										Context.fatalError(
+											'${f.name} - cannot be serialise. Struct requires all type to be primitive or array of primitives.',
+											f.pos
+										);
+									}
+								}
+								// for structs like these, we will just handle it like primitive
+								/**
+									Wed 15:16:27 18 Sep 2024
+									Not sure if this is the best way to do it but it should work.
+									In the future, might consider the option of individually handle serialisable and identifiable.
+									However, at that point, we might not want to use struct and just create a class instead.
+								**/
+								handlePrimitive();
+							case TAbstract(_.get() => it, _):
+								// for Abstract type, we will just handle Map for now.
+								switch (t.name) {
+									case "Map":
+										if (p.length != 2) {
+											Context.fatalError('${f.name} Map - cannot be serialise.', f.pos);
+										}
+										if (Util.isString(p[0]) == false) {
+											// handle only string type key for now.
+											Context.fatalError('[NotImplemented] ${f.name} Map - cannot be serialise. Key must be String',
+												f.pos);
+										}
+										if (Util.isPrimitive(p[1]) == true) {
+											handleMapPrimitive();
+										} else if (fromContext == true) {
+											Context.fatalError('[NotImplemented] ${f.name} @:fromContext cannot be used on Map.',
+												f.pos);
+										} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
+											// handle array of serialisable
+											Context.fatalError('[NotImplemented] ${f.name} Serialisable cannot be used on Map.',
+												f.pos);
+										} else if (Util.hasInterface(p[1].getClass(), "Identifiable") == true) {
+											Context.fatalError('[NotImplemented] ${f.name} Identifable cannot be used on Map.',
+												f.pos);
+										} else {
+											// can't handle it yet
+											Context.fatalError('${f.name} Map cannot be serialised.', f.pos);
+										}
+									default:
+										Context.fatalError('[NotImplemented] ${f.name} of type ${t.name} - cannot be serialise.',
+											f.pos);
+								}
+							default:
+						}
+					case TDynamic(_):
+						Context.fatalError('${f.name} - Dynamic cannot be serialised at the moment.', f.pos);
+					case TEnum(_, _):
+						// Might have to handle this eventually since there are times that certain field are handled
+						// via enum with composite params. Perhaps in those cases we should then use Object ?
+						Context.fatalError('${f.name} - Enum cannot be serialised. Use enum abstract.', f.pos);
+					case TAnonymous(_.get() => it):
+						// ensure that all fields are primitive or array of primitive
+						for (field in it.fields) {
+							if (Util.isPrimitive(field.type) == false
+								&& Util.isArrayOfPrimitive(field.type) == false) {
+								// @formatter:off
+								Context.fatalError(
+									'${f.name} - cannot be serialise. Struct requires all type to be primitive or array of primitives.',
+									f.pos
+								);
+							}
+						}
+						handlePrimitive();
+					case TAbstract(_.get() => it, _):
+						// process as the underlying type
+						process(it.type, e);
+					default:
+						Context.fatalError('${f.name} of type ${type} - cannot be serialise.', f.pos);
+				}
+			}
+		}
 
 		switch (f.kind) {
 			case FVar(_.toType() => type, e):
-				if (Util.isPrimitive(type) == true) {
-					handlePrimitive();
-				} else {
-					switch (type) {
-						case TInst(_.get() => t, p):
-							switch (t.name) {
-								case "Array":
-									if (p.length == 0) {
-										Context.fatalError('${f.name} Array cannot be serialised - type required.',
-											f.pos);
-									}
-									if (Util.isPrimitive(p[0]) == true) {
-										// if primitive, takes priority
-										handleArrayPrimitive();
-									} else if (fromContext == true) {
-										// if from context is true, force identifiable
-										if ((Util.hasInterface(p[0].getClass(), "Identifiable")) == false) {
-											Context.fatalError('${f.name} is not Identifiable', f.pos);
-										}
-										handleArrayIdentifiable();
-									} else if (Util.hasInterface(p[0].getClass(), "Serialisable") == true) {
-										// if serialisable + identifiable, warn if fromContext is not set
-										if (fromContext == null
-											&& Util.hasInterface(p[0].getClass(), "Identifable") == true) {
-											Context.info("[Warn] Serialisable + Identifiable. Intended (fromContext: false) ?",
-												f.pos);
-										}
-										// handle array of serialisable
-										handleArraySerialisable(p[0].getClass());
-									} else if (Util.hasInterface(p[0].getClass(), "Identifiable") == true) {
-										// handle array of identifiable that is not serialisable
-										handleArrayIdentifiable();
-									} else {
-										Context.fatalError('${f.name} Array cannot be serialised - unable to handle type.',
-											f.pos);
-									}
-								default:
-									if (fromContext == true) {
-										// force identifiable
-										if ((Util.hasInterface(t, "Identifiable")) == false) {
-											Context.fatalError('${f.name} is not Identifiable', f.pos);
-										}
-										handleIdentifiable();
-									} else if (Util.hasInterface(t, "Serialisable") == true) {
-										if (fromContext == null && (Util.hasInterface(t, "Identifiable") == true)) {
-											Context.info("[Warn] Serialisable + Identifiable. Intended (fromContext: false) ?",
-												f.pos);
-										}
-										// handle serialisable
-										handleSerialisable(t);
-									} else if (Util.hasInterface(t, "Identifiable") == true) {
-										// handle identifiable that is not serialisable
-										handleIdentifiable();
-									} else {
-										Context.fatalError('${f.name} is not Primitive, Serialisable or Identifable.',
-											f.pos);
-									}
-							}
-						case TType(_.get() => t, p):
-							switch (t.type) {
-								case TAnonymous(_.get() => it):
-									// ensure that all fields are primitive or array of primitive
-									for (field in it.fields) {
-										if (Util.isPrimitive(field.type) == false
-											&& Util.isArrayOfPrimitive(field.type) == false) {
-											// @formatter:off
-											Context.fatalError(
-												'${f.name} - cannot be serialise. Struct requires all type to be primitive or array of primitives.',
-												f.pos
-											);
-										}
-									}
-									// for structs like these, we will just handle it like primitive
-									/**
-										Wed 15:16:27 18 Sep 2024
-										Not sure if this is the best way to do it but it should work.
-										In the future, might consider the option of individually handle serialisable and identifiable.
-										However, at that point, we might not want to use struct and just create a class instead.
-									**/
-									handlePrimitive();
-								case TAbstract(_.get() => it, _):
-									// for Abstract type, we will just handle Map for now.
-									switch (t.name) {
-										case "Map":
-											if (p.length != 2) {
-												Context.fatalError('${f.name} Map - cannot be serialise.', f.pos);
-											}
-											if (Util.isString(p[0]) == false) {
-												// handle only string type key for now.
-												Context.fatalError('[NotImplemented] ${f.name} Map - cannot be serialise. Key must be String',
-													f.pos);
-											}
-											if (Util.isPrimitive(p[1]) == true) {
-												handleMapPrimitive();
-											} else if (fromContext == true) {
-												Context.fatalError('[NotImplemented] ${f.name} @:fromContext cannot be used on Map.',
-													f.pos);
-											} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
-												// handle array of serialisable
-												Context.fatalError('[NotImplemented] ${f.name} Serialisable cannot be used on Map.',
-													f.pos);
-											} else if (Util.hasInterface(p[1].getClass(), "Identifiable") == true) {
-												Context.fatalError('[NotImplemented] ${f.name} Identifable cannot be used on Map.',
-													f.pos);
-											} else {
-												// can't handle it yet
-												Context.fatalError('${f.name} Map cannot be serialised.', f.pos);
-											}
-										default:
-											Context.fatalError('[NotImplemented] ${f.name} of type ${t.name} - cannot be serialise.',
-												f.pos);
-									}
-								default:
-							}
-						case TDynamic(_):
-							Context.fatalError('${f.name} - Dynamic cannot be serialised at the moment.', f.pos);
-						case TEnum(_, _):
-							// Might have to handle this eventually since there are times that certain field are handled
-							// via enum with composite params. Perhaps in those cases we should then use Object ?
-							Context.fatalError('${f.name} - Enum cannot be serialised. Use enum abstract.', f.pos);
-						case TAnonymous(_.get() => it):
-							// ensure that all fields are primitive or array of primitive
-							for (field in it.fields) {
-								if (Util.isPrimitive(field.type) == false
-									&& Util.isArrayOfPrimitive(field.type) == false) {
-									// @formatter:off
-									Context.fatalError(
-										'${f.name} - cannot be serialise. Struct requires all type to be primitive or array of primitives.',
-										f.pos
-									);
-								}
-							}
-							handlePrimitive();
-						default:
-							Context.fatalError('${f.name} of type ${type} - cannot be serialise.', f.pos);
-					}
-				}
+				process(type, e);
 			default:
 				Context.fatalError('${f.name} is a function and cannot be serialise.', f.pos);
 		}

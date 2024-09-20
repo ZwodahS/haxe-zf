@@ -1,9 +1,20 @@
 package tests.zf.ds;
 
 import zf.Point2i;
+import zf.serialise.*;
+import zf.Identifiable;
 import zf.Assert;
 
 import zf.Point2i.Point2iImpl;
+
+#if !macro @:build(zf.macros.Serialise.build()) #end
+class A implements Serialisable {
+
+	@:serialise public var pt: Point2i;
+
+	public function new() {
+	}
+}
 
 class Point2iTestCase extends TestCase {
 	public static final Name = "Point2iTestCase";
@@ -14,6 +25,7 @@ class Point2iTestCase extends TestCase {
 
 	override public function run() {
 		testObjectPool();
+		testSerialise();
 	}
 
 	function testObjectPool() {
@@ -38,5 +50,15 @@ class Point2iTestCase extends TestCase {
 		Assert.assert(poolObj.x == 1);
 		Assert.assert(poolObj.y == 2);
 		s.dispose();
+	}
+
+	function testSerialise() {
+		final a = new A();
+		a.pt = Point2i.alloc(3, 3);
+
+		final ctx = new SerialiseContext();
+		final data = a.toStruct(ctx);
+		Assert.assert(data.pt.x == 3);
+		Assert.assert(data.pt.y == 3);
 	}
 }

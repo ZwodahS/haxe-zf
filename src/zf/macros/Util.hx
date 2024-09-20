@@ -2,9 +2,13 @@ package zf.macros;
 
 #if macro
 import haxe.macro.Context;
+import haxe.macro.Type.ClassType;
 import haxe.macro.Expr;
 import haxe.macro.Expr.FieldType;
 import haxe.macro.Expr.FunctionArg;
+
+using haxe.macro.Tools;
+using haxe.macro.TypeTools;
 
 /**
 	Provide utility functions for handling macro.
@@ -71,6 +75,8 @@ class Util {
 					default:
 						return true;
 				}
+			case TAbstract(_.get() => t, _):
+				return isObject(t.type);
 			default:
 				return false;
 		}
@@ -153,6 +159,15 @@ class Util {
 			default:
 		}
 		return false;
+	}
+
+	public static function getClass(type: haxe.macro.Type): ClassType {
+		switch (type) {
+			case TAbstract(_.get() => t, _):
+				return getClass(t.type);
+			default:
+				return type.getClass();
+		}
 	}
 
 	public static function hasInterface(type: haxe.macro.Type.ClassType, inf: String) {
