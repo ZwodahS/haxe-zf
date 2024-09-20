@@ -52,8 +52,8 @@ class ReadOnlyVector2D<T> {
 		Create a new instance of the Vector2D.
 		The size of the Vector2D is fixed on creation, similar to Vector.
 	**/
-	public function new(s: Point2i, nullValue: T, copy: Vector<T> = null) {
-		this.size = s.clone();
+	public function new(col: Int, row: Int, nullValue: T, copy: Vector<T> = null) {
+		this.size = Point2i.alloc(col, row);
 
 		this.data = new Vector<T>(this.size.x * this.size.y);
 		for (i in 0...data.length) {
@@ -123,7 +123,7 @@ class ReadOnlyVector2D<T> {
 		Make a shallow copy of this Vector2D
 	**/
 	inline public function clone(): Vector2D<T> {
-		return new Vector2D<T>(this.size, this.nullValue, this.data);
+		return new Vector2D<T>(this.size.x, this.size.y, this.nullValue, this.data);
 	}
 
 	/**
