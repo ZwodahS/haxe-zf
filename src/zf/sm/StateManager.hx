@@ -64,11 +64,13 @@ class StateManager {
 		return state;
 	}
 
-	public function set(name: String): State {
-		if (this.states[name] == null) return null;
-		final state = this.states[name].clone();
-		state.manager = this;
-		switchState(state);
+	public function set(name: String = null, state: State = null): State {
+		if (state == null) {
+			if (this.states[name] == null) return null;
+			state = this.states[name].clone();
+			state.manager = this;
+		}
+		if (state != null) switchState(state);
 		return state;
 	}
 }
