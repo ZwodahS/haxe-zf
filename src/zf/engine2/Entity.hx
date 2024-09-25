@@ -139,6 +139,9 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		// dispose all components
 		for (component in this.__components__) component.dispose();
 
+		// unregister the entity from the world
+		if (this.__world__ != null) this.__world__.unregisterEntity(this);
+
 		// reset the entity back to default state
 		this.__components__.clear();
 
@@ -146,7 +149,6 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		this.id = -1;
 		this._forceSetId = false;
 
-		this.__world__ = null;
 		this.factory = null;
 	}
 
