@@ -357,4 +357,12 @@ class Point2iImpl implements Serialisable implements Disposable {
 	Fri 12:44:15 20 Sep 2024
 	Convert this from abstract(Array<Int>) to object pooled object.
 	Removed methods that are seldom used and don't make sense for an object pool version of Point2i
+
+	Fri 13:41:03 04 Oct 2024
+	Another possible improvement is to wrap h2d.col.IPoint in Point2i, and just forward the fields.
+	This way, in places where we need IPoint, we could just return the inner pt and the x/y can be modified
+	and we don't have to update Point2i.
+
+	This will also apply to Point2f, Point3i, Point3f.
+
 **/

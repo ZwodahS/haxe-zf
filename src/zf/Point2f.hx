@@ -222,4 +222,9 @@ abstract Point2f(Array<Float>) from Array<Float> to Array<Float> {
 
 		return start;
 	}
+
+	/**
+		TODO: Prepare for object pooling
+	**/
+	public function dispose() {}
 }
