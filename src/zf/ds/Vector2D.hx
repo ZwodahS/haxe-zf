@@ -170,6 +170,24 @@ class ReadOnlyVector2D<T> {
 		return arr;
 	}
 
+	/**
+		Get the corners of thie positions
+	**/
+	public function getCorners(): Array<T> {
+		final arr: Array<T> = [];
+		inline function _add(x0: Int, y0: Int) {
+			var t = get(x0, y0);
+			if (t != null) arr.push(t);
+		}
+
+		_add(0, 0);
+		_add(0, this.size.y - 1);
+		_add(this.size.x - 1, 0);
+		_add(this.size.x - 1, this.size.y - 1);
+
+		return arr;
+	}
+
 	public function getRow(x: Int, y: Int, includeSelf: Bool = false): Array<T> {
 		final arr: Array<T> = [];
 		inline function _add(x0: Int, y0: Int) {
