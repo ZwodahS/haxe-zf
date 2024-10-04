@@ -57,11 +57,11 @@ class StateManager {
 		return false;
 	}
 
-	public function get(name: String): State {
+	public function get<T>(name: String): T {
 		if (this.states[name] == null) return null;
 		final state = this.states[name].clone();
 		state.manager = this;
-		return state;
+		return cast state;
 	}
 
 	public function set(name: String = null, state: State = null): State {
