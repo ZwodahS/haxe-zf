@@ -66,4 +66,8 @@ class Effect {
 	inline public static function scaleTo(duration: Float, scaleToX: Null<Float>, scaleToY: Null<Float>): zf.ef.Effect {
 		return zf.ef.ScaleTo.scaleTo(duration, scaleToX, scaleToY);
 	}
+
+	inline public static function particles(tile: h2d.Tile): zf.ef.Particles {
+		return zf.ef.Particles.alloc(tile);
+	}
 }
