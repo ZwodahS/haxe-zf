@@ -722,6 +722,7 @@ class UIElement extends h2d.Object {
 		this.onKeyDownListeners.clear();
 		this.onKeyUpListeners.clear();
 		this.onMoveListeners.clear();
+		if (this.uiEffects != null) this.uiEffects.clear();
 		updateRendering();
 	}
 
@@ -741,8 +742,12 @@ class UIElement extends h2d.Object {
 	/**
 		Store all the effects added to the element.
 		Do not add directly to this.
+
+		Mon 11:40:12 28 Oct 2024
+		This is currently Dynamic so that we can just store different type of effects.
+		This field does nothing except being used to keep a list of effects on the object
 	**/
-	public var uiEffects: Array<zf.effects.Effect>;
+	public var uiEffects: Array<Dynamic>;
 
 	// ---- Other ---- //
 
