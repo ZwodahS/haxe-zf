@@ -350,7 +350,7 @@ class ObjectPool {
 								return;
 							}
 							this.__isDisposed__ = true;
-#if (debug && !nodisposeMessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
 #end
 
@@ -380,7 +380,7 @@ class ObjectPool {
 								return;
 							}
 							this.__isDisposed__ = true;
-#if (debug && !nodisposeMessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
 #end
 
@@ -425,7 +425,7 @@ class ObjectPool {
 								return;
 							}
 							this.__isDisposed__ = true;
-#if (debug && !nodisposeMessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
 #end
 
@@ -449,6 +449,9 @@ class ObjectPool {
 					args: [],
 					expr: macro {
 						if (__pool__ == null) {
+#if (debug && objectpoolmessage)
+							haxe.Log.trace("   [ObjectPool] [Debug] New object created - " + $v{className} + ".", null);
+#end
 							__poolCreated__ += 1;
 							return new $typePath();
 						}
