@@ -19,6 +19,20 @@ class Component implements Disposable {
 		return this.__entity__;
 	}
 
+	/**
+		A permanent id for this component.
+		This is never saved, just a id for each instance of component created during runtime.
+		Disposing does not reset this id.
+
+	**/
+	public final id: Int = -1;
+
+	public static var nextId: zf.IntCounter.SimpleIntCounter = new zf.IntCounter.SimpleIntCounter();
+
+	public function new() {
+		this.id = Component.nextId.getNextInt();
+	}
+
 	public function dispose() {
 		this.__entity__ = null;
 	}
