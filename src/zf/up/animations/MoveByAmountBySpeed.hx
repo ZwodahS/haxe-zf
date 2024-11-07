@@ -12,8 +12,8 @@ class MoveByAmountBySpeed extends Update {
 	public function new(object: Positionable, moveAmount: Point2f, speeds: Point2f = null, speed: Float = 1) {
 		super();
 		this.object = object;
-		this.amount = moveAmount.copy();
-		this.amountLeft = moveAmount.copy();
+		this.amount = moveAmount.clone();
+		this.amountLeft = moveAmount.clone();
 		this.speed = speeds != null ? speeds : [speed, speed];
 	}
 

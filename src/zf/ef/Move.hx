@@ -29,7 +29,7 @@ class Move extends Effect {
 
 	// ---- State ---- //
 	@:dispose var delta: Float = 0;
-	@:dispose var movedAmount: Point2f = null;
+	@:dispose var movedAmount: Point2f;
 
 	function new() {
 		super();
@@ -80,7 +80,7 @@ class Move extends Effect {
 	static function alloc(): Move {
 		final object = Move.__alloc__();
 
-		object.movedAmount = new Point2f();
+		object.movedAmount = Point2f.alloc();
 
 		return object;
 	}

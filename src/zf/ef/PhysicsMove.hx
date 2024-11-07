@@ -5,7 +5,7 @@ class PhysicsMove extends Effect {
 	@:dispose var delta: Float = 0;
 	@:dispose var velocityX: Float = 0;
 	@:dispose var velocityY: Float = 0;
-	@:dispose var movedAmount: Point2f = null;
+	@:dispose var movedAmount: Point2f;
 
 	// ---- Configuration ---- //
 
@@ -171,7 +171,7 @@ class PhysicsMove extends Effect {
 			initialVelocityY: Null<Float> = null): PhysicsMove {
 		final effect = PhysicsMove.__alloc__();
 
-		effect.movedAmount = [];
+		effect.movedAmount = Point2f.alloc(0, 0);
 		effect.duration = duration;
 		effect.initialVelocityX = initialVelocityX;
 		effect.initialVelocityY = initialVelocityY;

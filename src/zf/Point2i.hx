@@ -307,6 +307,26 @@ class Point2iImpl implements Serialisable implements Disposable {
 		return Point2iImpl.alloc(arr.length > 0 ? arr[0] : 0, arr.length > 1 ? arr[1] : 0);
 	}
 
+	@:to
+	public function toArrayInt(): Array<Int> {
+		return [this.x, this.y];
+	}
+
+	@:op(A * B)
+	public function _scale(rhs: Int): Point2i {
+		return Point2iImpl.alloc(this.x * rhs, this.y * rhs);
+	}
+
+	@:op(A + B)
+	public function _add(rhs: Point2i): Point2i {
+		return Point2iImpl.alloc(this.x + rhs.x, this.y + rhs.y);
+	}
+
+	@:op(A - B)
+	public function _sub(rhs: Point2i): Point2i {
+		return Point2iImpl.alloc(this.x - rhs.x, this.y - rhs.y);
+	}
+
 	/**
 		Return a point2i representing row and column based on index
 

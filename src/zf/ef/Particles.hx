@@ -22,12 +22,12 @@ class Particles extends Effect {
 	/**
 		define how long the particle stays on screen. Default to [1.0, 1.0]
 	**/
-	@:dispose var lifespan: Point2f = [1.0, 1.0];
+	@:dispose var lifespan: Point2f;
 
 	/**
 		define how fast the particle fade in and out. Default to [1.0, 1.0]
 	**/
-	@:dispose var fadeSpeed: Point2f = [1.0, 1.0];
+	@:dispose var fadeSpeed: Point2f;
 
 	/**
 		define how often the particle is spawn. Default 1.0
@@ -37,7 +37,7 @@ class Particles extends Effect {
 	/**
 		Define the starting alpha. Default 1.0
 	**/
-	@:dispose var initialAlpha: Point2f = [1.0, 1.0];
+	@:dispose var initialAlpha: Point2f;
 
 	/**
 		Additional way to init the particle.
@@ -48,12 +48,12 @@ class Particles extends Effect {
 	/**
 		The angle of emition. [min, max].
 	**/
-	@:dispose var emitAngle: Point2f = [0, Math.PI * 2];
+	@:dispose var emitAngle: Point2f;
 
 	/**
 		Movespeed. Combine with angle of emition to create the particles
 	**/
-	@:dispose var moveSpeed: Point2f = [1, 1];
+	@:dispose var moveSpeed: Point2f;
 
 	/**
 		Maximum number of particles at once. Default 100
@@ -123,6 +123,11 @@ class Particles extends Effect {
 
 		effect.tile = tile;
 		effect.particles = new zf.h2d.Particles(tile);
+		effect.lifespan = Point2f.alloc(1.0, 1.0);
+		effect.fadeSpeed = Point2f.alloc(1.0, 1.0);
+		effect.initialAlpha = Point2f.alloc(1.0, 1.0);
+		effect.emitAngle = Point2f.alloc(0, Math.PI * 2);
+		effect.moveSpeed = Point2f.alloc(1, 1);
 
 		return effect;
 	}
@@ -144,13 +149,14 @@ class Particles extends Effect {
 		if (this.emitAngle != null) {
 			final diff = this.emitAngle.max - this.emitAngle.min;
 			final rad = this.emitAngle.min + (diff == 0 ? 0 : rand() * diff);
-			final pt = Utils.point2f;
+			final pt = Point2f.alloc(1, 0);
 			pt.rad = rad;
 			pt.normalize();
 			final diff = this.moveSpeed.diff;
 			final moveSpeed = this.moveSpeed.min + (diff == 0 ? 0 : rand() * diff);
 			particle.velocityX = pt.x * moveSpeed;
 			particle.velocityY = pt.y * moveSpeed;
+			pt.dispose();
 		}
 
 		{
