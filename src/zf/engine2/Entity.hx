@@ -85,6 +85,18 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	}
 
 	/**
+		Define the kind of entity.
+
+		Should only be used to cast entity in some cases.
+		Honestly, should rarely be used.
+	**/
+	public var kind(get, never): String;
+
+	public function get_kind(): String {
+		return "Unknown";
+	}
+
+	/**
 		Constructor
 	**/
 	function new(id: Int = -1) {
