@@ -38,7 +38,7 @@ class Batch extends Effect {
 
 	override public function applyTo(object: h2d.Object, copy: Bool = false, updater: zf.up.Updater = null,
 			whenDone: Void->Void = null): Effect {
-		final e = super.applyTo(object, copy, updater);
+		final e = super.applyTo(object, copy, updater, whenDone);
 		if (copy == true) return e;
 
 		for (effect in this.effects) {
@@ -58,5 +58,14 @@ class Batch extends Effect {
 		batch.runningEffects = [];
 
 		return batch;
+	}
+
+	@:inheritDoc override public function with(effect: Effect): Batch {
+		/**
+			Override then in zf.ef.Effect to not create unnecessary object
+		**/
+		this.effects.push(effect);
+		effect.ownerEffect = this;
+		return this;
 	}
 }

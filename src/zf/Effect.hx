@@ -36,13 +36,38 @@ class Effect {
 	}
 
 	// ---- Expose zf.ef.Alpha ---- //
+
+	/**
+		Create a effect that change the alpha
+
+		@param alphaChange the amount of alpha to change
+		@param duration the time it takes to change the alpha
+
+		@return the effect
+	**/
 	inline public static function alphaChange(alphaChange: Float = 0, duration: Float = 0): zf.ef.Effect {
 		return zf.ef.Alpha.change(alphaChange, duration);
+	}
+
+	/**
+		Create a effect that change the alpha of an object over a duration
+
+		@param targetAlpha the target alpha to reach
+		@param duration the time it takes to reach the alpha
+
+		@return the effect
+	**/
+	inline public static function alphaTo(targetAlpha: Float = 0, duration: Float = 0): zf.ef.Effect {
+		return zf.ef.Alpha.alphaTo(targetAlpha, duration);
 	}
 
 	// ---- Expose zf.ef.Blink ---- //
 	inline public static function blink(blinkCount: Null<Int> = -1, blinkSpeed: Float = -1): zf.ef.Effect {
 		return zf.ef.Blink.blink(blinkCount, blinkSpeed);
+	}
+
+	inline public static function pop(scale: Float = .1, duration: Float = 1): zf.ef.Effect {
+		return zf.ef.Pop.pop(scale, duration);
 	}
 
 	// ---- Expose zf.ef.Move ---- //
@@ -54,6 +79,22 @@ class Effect {
 	inline public static function moveByFunc(mFunc: (Float, Point2f) -> Point2f, duration: Float,
 			terminate: Bool = true, resetOnRemove: Bool = false): zf.ef.Effect {
 		return zf.ef.Move.moveByFunc(mFunc, duration, terminate, resetOnRemove);
+	}
+
+	/**
+		Create a effect that move the object to a location and terminate
+
+		@param x the target x position
+		@param y the target y position
+		@param duration the duration to move over
+		@param terminate terminate the effect once it reaches the location
+		@param resetOnRemove reset the object back to the original location when effect is removed.
+
+		@return the effect
+	**/
+	inline public static function moveTo(x: Float, y: Float, duration: Float, terminate: Bool = true,
+			resetOnRemove: Bool = false): zf.ef.Effect {
+		return zf.ef.Move.moveTo(x, y, duration, terminate, resetOnRemove);
 	}
 
 	// ---- Expose zf.ef.PhysicsMove ---- //

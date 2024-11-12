@@ -56,4 +56,13 @@ class Chain extends Effect {
 
 		return chain;
 	}
+
+	@:inheritDoc override public function then(effect: Effect): Chain {
+		/**
+			Override then in zf.ef.Effect to not create unnecessary object
+		**/
+		this.effects.push(effect);
+		effect.ownerEffect = this;
+		return this;
+	}
 }

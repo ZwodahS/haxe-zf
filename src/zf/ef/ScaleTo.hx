@@ -30,6 +30,7 @@ class ScaleTo extends Effect {
 			this.object.scaleY -= this.scaleY;
 		}
 
+		this.init = false;
 		this.delta = 0;
 		this.scaleX = 0;
 		this.scaleY = 0;

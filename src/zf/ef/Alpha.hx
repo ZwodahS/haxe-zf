@@ -7,8 +7,18 @@ class Alpha extends Effect {
 
 	@:dispose public var alphaChange: Float = 0;
 	@:dispose public var duration: Float = 0;
+	@:dispose public var targetAlpha: Null<Float> = null;
+
+	@:dispose public var init: Bool = false;
 
 	override public function update(dt: Float): Bool {
+		if (this.init == false) {
+			this.init = true;
+			if (this.targetAlpha != null) {
+				this.alphaChange = this.targetAlpha - this.object.alpha;
+			}
+		}
+
 		if (this._delta >= this.duration) return true;
 		this._delta += dt;
 		if (this._delta >= this.duration) this._delta = this.duration;
@@ -21,6 +31,7 @@ class Alpha extends Effect {
 	}
 
 	override public function restart() {
+		this.init = false;
 		this._delta = 0;
 		this._changed = 0;
 	}
@@ -38,6 +49,15 @@ class Alpha extends Effect {
 		final alpha = Alpha.alloc();
 
 		alpha.alphaChange = alphaChange;
+		alpha.duration = duration;
+
+		return alpha;
+	}
+
+	public static function alphaTo(targetAlpha: Float = 0, duration: Float = 0): Alpha {
+		final alpha = Alpha.alloc();
+
+		alpha.targetAlpha = targetAlpha;
 		alpha.duration = duration;
 
 		return alpha;

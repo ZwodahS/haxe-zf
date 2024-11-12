@@ -27,9 +27,15 @@ class Move extends Effect {
 	**/
 	@:dispose var resetOnRemove: Bool = true;
 
+	/**
+		The target to move to.
+	**/
+	@:dispose var moveTarget: Point2f;
+
 	// ---- State ---- //
 	@:dispose var delta: Float = 0;
 	@:dispose var movedAmount: Point2f;
+	@:dispose var init: Bool = false;
 
 	function new() {
 		super();
@@ -42,6 +48,7 @@ class Move extends Effect {
 		object.moveFunction = this.moveFunction;
 		object.terminate = this.terminate;
 		object.resetOnRemove = this.resetOnRemove;
+		if (this.moveTarget != null) object.moveTarget = this.moveTarget.clone();
 
 		return object;
 	}
@@ -55,9 +62,26 @@ class Move extends Effect {
 		this.movedAmount.x = 0;
 		this.movedAmount.y = 0;
 		this.duration = 0;
+		this.init = false;
 	}
 
 	override public function update(dt: Float) {
+		if (this.init == false) {
+			this.init = true;
+			if (this.moveFunction == null) {
+				if (this.moveTarget == null) this.moveTarget = [0, 0];
+				// create the closure for the function
+				var moveAmountX = this.moveTarget.x - this.object.x;
+				var moveAmountY = this.moveTarget.y - this.object.y;
+				var duration = this.duration;
+				this.moveFunction = (delta: Float, pt: Point2f) -> {
+					pt.x = delta / duration * moveAmountX;
+					pt.y = delta / duration * moveAmountY;
+					return pt;
+				}
+			}
+		}
+
 		if (this.duration != -1 && this.delta >= this.duration) return this.terminate;
 		this.delta += dt;
 		if (this.duration != -1 && this.delta >= this.duration) this.delta = this.duration;
@@ -97,14 +121,27 @@ class Move extends Effect {
 
 	public static function moveByFunc(mFunc: (Float, Point2f) -> Point2f, duration: Float, terminate: Bool = true,
 			resetOnRemove: Bool = false): Move {
-		final object = alloc();
+		final effect = Move.alloc();
 
-		object.moveFunction = mFunc;
-		object.duration = duration;
-		object.terminate = terminate;
-		object.resetOnRemove = resetOnRemove;
+		effect.moveFunction = mFunc;
+		effect.duration = duration;
+		effect.terminate = terminate;
+		effect.resetOnRemove = resetOnRemove;
 
-		return object;
+		return effect;
+	}
+
+	public static function moveTo(x: Float, y: Float, duration: Float, terminate: Bool = true,
+			resetOnRemove: Bool = false): Move {
+		final effect = Move.alloc();
+
+		effect.moveFunction = null;
+		effect.duration = duration;
+		effect.moveTarget = [x, y];
+		effect.terminate = terminate;
+		effect.resetOnRemove = resetOnRemove;
+
+		return effect;
 	}
 
 	override public function onEffectRemoved() {

@@ -59,6 +59,16 @@ import zf.ui.UIElement;
 
 	# Differences between zf.effects and zf.ef
 	- zf.effects uses conf to store the configuration of effect. In zf.ef, we will not use conf
+
+	# Differences between zf.ef and zf.up
+	The main difference between ef and up is that ef always requires an h2d.Object that it is applied to.
+	It should be primarily be used as the animations.
+
+	This also deprecates zf.up.animations, since both ef and up.animations does the same thing.
+	However, we sometimes want blocking animations, and those should be run in zf.up.Updater
+	rather than in h2d.Object.
+
+	For this purpose, zf.ef provides a argument in applyTo to change the owner to the Updater.
 **/
 @:allow(zf.ef.Effect)
 #if !macro @:build(zf.macros.ObjectPool.build()) #end
@@ -69,6 +79,7 @@ class EffectWrap extends h2d.Object {
 
 	public function new() {
 		super();
+		this.visible = false;
 	}
 
 	override function onRemove() {
@@ -352,5 +363,34 @@ class Effect implements Disposable {
 	**/
 	public function onEffectCompleted() {
 		if (this.whenDoneCallback != null) whenDoneCallback();
+	}
+
+	/**
+		Useful methods for chaining construction of animations
+	**/
+	/**
+		Run another effect after this effect.
+
+		@param effect the effect to run after
+		@return the final effect containing all the effects
+	**/
+	public function then(effect: Effect): Effect {
+		final effects = [this, effect];
+		return zf.ef.Chain.chain(effects);
+	}
+
+	/**
+		Run another effect with this effect.
+
+		@param effect the effect to run with
+		@return the final effect containing all the effects
+	**/
+	public function with(effect: Effect): Effect {
+		final effects = [this, effect];
+		return zf.ef.Batch.batch(effects);
+	}
+
+	public function wait(wait: Float): Effect {
+		return then(zf.ef.Wait.alloc(wait));
 	}
 }

@@ -39,7 +39,6 @@ typedef Explode2Conf = {
 
 	By default, the spritebatch will be added to the parent of the bitmap.
 **/
-@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class Explode2 extends Update {
 	public var particlesEngine: Particles;
 
@@ -136,3 +135,11 @@ class Explode2 extends Update {
 		this.particlesEngine.update(dt);
 	}
 }
+
+/**
+	Tue 17:27:13 12 Nov 2024
+
+	Explode2 is not deprecated yet.
+	The tricky thing is explosion is not tied to any parent object unlike other effects
+	I still want to think about how to move this to zf.ef, so for now we will keep it here.
+**/

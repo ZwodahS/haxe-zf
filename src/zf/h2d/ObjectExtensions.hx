@@ -18,11 +18,24 @@ class ObjectExtensions {
 		Wrap a object around a object and center it
 	**/
 	public static function centerWrapped(obj: h2d.Object): h2d.Object {
+		final parent = obj.parent;
+		final x = obj.x;
+		final y = obj.y;
+
 		final newObject = new h2d.Object();
+
+		if (parent != null) parent.addChildAt(newObject, parent.getChildIndex(obj));
 		newObject.addChild(obj);
+
 		final bounds = obj.getBounds();
 		obj.x = -bounds.width / 2;
 		obj.y = -bounds.height / 2;
+
+		if (parent != null) {
+			newObject.x = x + (bounds.width / 2);
+			newObject.y = y + (bounds.height / 2);
+		}
+
 		return newObject;
 	}
 
