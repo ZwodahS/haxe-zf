@@ -64,7 +64,7 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	inline public function set_id(id: Int): Int {
 		// we will only allow id to be set if the id is -1
 		if (this._forceSetId != true && this.id != -1) {
-			zf.Logger.warn("Setting id of enttiy when it is not -1.");
+			zf.Logger.warn("Setting id of entity when it is not -1.");
 			return this.id;
 		}
 		return this.id = id;
@@ -108,23 +108,15 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	var __components__: Map<String, Component>;
 
 	/**
-		No default components at the moment.
+		Components should be defined in child entity
+		Any field that is component will be automatically handled.
 
-		All components should look something like this
-
-		public var renderComponent(default, set): RenderComponent;
-		public function set_renderComponent(rc: RenderComponent): RenderComponent {
-			final prev = this.renderComponent;
-			this.renderComponent = rc;
-			this.renderComponent.entity = this;
-			onComponentChanged(prev, this.renderComponent);
-			return this.renderComponent;
-		}
+		@:dispose("set") public var component: Component = null;
 	**/
 	/**
 		Trigger onComponentChanged when component are add or removed
 	**/
-	public function onComponentChanged(prev: Component, next: Component) {
+	function onComponentChanged(prev: Component, next: Component) {
 		if (prev != null) {
 			prev.__entity__ = null;
 			this.__components__.remove(prev.typeId);
@@ -133,6 +125,12 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 			next.__entity__ = this;
 			this.__components__.set(next.typeId, next);
 		}
+	}
+
+	inline public function addComponent<T: Component>(component: T): T {
+		final prev = getComponent(component.typeId);
+		onComponentChanged(prev, component);
+		return cast prev;
 	}
 
 	inline public function getComponent<T: Component>(typeId: String): T {
@@ -148,13 +146,13 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		Disposing will remove all components and no events will be fired.
 	**/
 	public function dispose() {
-		// dispose all components
-		for (component in this.__components__) component.dispose();
-
 		// unregister the entity from the world
 		if (this.__world__ != null) this.__world__.unregisterEntity(this);
 
-		// reset the entity back to default state
+		// dispose all components
+		for (component in this.__components__) component.dispose();
+
+		// clear all the components
 		this.__components__.clear();
 
 		this._forceSetId = true;
@@ -204,4 +202,8 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 
 	I am wondering if entity needs to know about world that it is contained in.
 	For now we will keep it in, since I may need to dispatch messages to render the entity.
+
+	Fri 12:49:05 08 Nov 2024
+	Move entity kind from template to engine2.
+	EntityKind is now a String
 **/
