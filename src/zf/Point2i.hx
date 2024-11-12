@@ -2,7 +2,7 @@ package zf;
 
 import zf.serialise.Serialisable;
 
-@:forward abstract ArrPoint2i(Array<Point2iImpl>) from Array<Point2iImpl> to Array<Point2iImpl> {
+@:forward abstract ArrPoint2i(Array<Point2i>) from Array<Point2i> to Array<Point2i> {
 	public function dispose() {
 		for (pt in this) {
 			pt.dispose();
@@ -60,11 +60,11 @@ class Point2iImpl implements Serialisable implements Disposable {
 	/**
 		Make a clone of this point
 	**/
-	inline public function clone(): Point2iImpl {
+	inline public function clone(): Point2i {
 		return Point2iImpl.alloc(this.x, this.y);
 	}
 
-	public static function alloc(x: Int, y: Int): Point2iImpl {
+	public static function alloc(x: Int, y: Int): Point2i {
 		final pt = Point2iImpl.__alloc__();
 		pt.x = x;
 		pt.y = y;
@@ -275,6 +275,19 @@ class Point2iImpl implements Serialisable implements Disposable {
 
 	inline public function get_diff(): Int {
 		return this.y - this.x;
+	}
+
+	@:op(A + B)
+	public function _addDirection(rhs: Direction): Point2i {
+		final pt = Point2i.alloc(this.x, this.y);
+		pt.move(rhs);
+		return pt;
+	}
+
+	@:op(A += B)
+	public function _move(rhs: Direction): Point2i {
+		this.move(rhs);
+		return this;
 	}
 
 	@:op(A == B)
