@@ -8,6 +8,7 @@ using zf.h2d.ObjectExtensions;
 #if !macro
 @:build(zf.macros.ObjectPool.build())
 #end
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class WrappedObject implements Alphable implements Scalable implements Positionable implements Rotatable {
 	public var object: h2d.Object;
 

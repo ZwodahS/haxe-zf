@@ -5,7 +5,7 @@ import zf.h2d.WrappedBatchElement;
 /**
 	@stage:deprecated
 **/
-@:deprecated("Use Explode2 instead")
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class Explode extends Update {
 	// takes in an bitmap, split into certain number of square and move them into different direction
 	var original: h2d.Bitmap;

@@ -10,6 +10,7 @@ package zf.up.animations;
 	by t/2, it will reaches the center point and will begin the descent.
 	both axis are handled separately, hence if both are non-0, the animations might look weird.
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class SineMoveByDuration extends Update {
 	var totalDuration: Float;
 	var elapsed: Float = 0;

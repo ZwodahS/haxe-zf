@@ -3,6 +3,7 @@ package zf.up.animations;
 /**
 	@stage:stable
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class Rotate extends Update {
 	var object: Rotatable;
 	var rotateSpeed: Float; // in radians

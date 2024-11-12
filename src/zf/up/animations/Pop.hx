@@ -5,6 +5,7 @@ package zf.up.animations;
 
 	Pop (aka scale) the object, and return it back to the original size.
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class Pop extends Update {
 	var duration: Float;
 	var elapsed: Float = 0;

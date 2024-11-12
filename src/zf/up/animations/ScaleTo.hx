@@ -3,6 +3,7 @@ package zf.up.animations;
 /**
 	@stage:stable
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class ScaleTo extends Update {
 	var object: Scalable;
 	var scaleTo: Point2f;

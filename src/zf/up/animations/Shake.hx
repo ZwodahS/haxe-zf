@@ -5,6 +5,7 @@ import zf.Point2f;
 /**
 	@stage:stable
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class Shake extends Update {
 	var object: Positionable;
 	var duration: Float;

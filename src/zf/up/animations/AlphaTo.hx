@@ -3,6 +3,7 @@ package zf.up.animations;
 /**
 	@stage:stable
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class AlphaTo extends Update {
 	var object: Alphable;
 	var alphaTo: Float;

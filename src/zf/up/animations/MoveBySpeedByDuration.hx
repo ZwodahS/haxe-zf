@@ -3,6 +3,7 @@ package zf.up.animations;
 /**
 	@stage:stable
 **/
+@:deprecated("zf.up.animations is deprecated. Use zf.ef instead.")
 class MoveBySpeedByDuration extends Update {
 	var object: Positionable;
 	var moveSpeed: Point2f;
