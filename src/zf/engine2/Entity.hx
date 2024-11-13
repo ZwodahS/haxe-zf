@@ -125,6 +125,11 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 			next.__entity__ = this;
 			this.__components__.set(next.typeId, next);
 		}
+
+		if (this.dispatcher != null) {
+			if (prev != null) this.dispatcher.dispatch(MOnComponentDetached.alloc(this, prev)).dispose();
+			if (next != null) this.dispatcher.dispatch(MOnComponentAttached.alloc(this, next)).dispose();
+		}
 	}
 
 	inline public function addComponent<T: Component>(component: T): T {
