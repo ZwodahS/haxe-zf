@@ -5,6 +5,7 @@ package zf.engine2;
 
 	Generic Component object
 **/
+@:autoBuild(zf.macros.Component.build())
 class Component implements Disposable {
 	public var typeId(get, never): String;
 
