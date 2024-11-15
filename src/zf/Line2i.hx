@@ -4,11 +4,12 @@ package zf;
 	@stage:stable
 **/
 class Line2i {
-	public static function getLineXYSymmetry(start: Point2i, end: Point2i, reversed: Bool = false): List<Point2i> {
+	public static function getLineXYSymmetry(startX: Int, startY: Int, endX: Int, endY: Int,
+			reversed: Bool = false): List<Point2i> {
 		// http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
 		// modified from python version
-		var x1 = start.x, y1 = start.y;
-		var x2 = end.x, y2 = end.y;
+		var x1 = startX, y1 = startY;
+		var x2 = endX, y2 = endY;
 		var isSteep = hxd.Math.iabs(y2 - y1) > hxd.Math.iabs(x2 - x1);
 
 		var tmp: Int = 0;
@@ -36,9 +37,9 @@ class Line2i {
 			while (x < x2 + 1) {
 				var point: Point2i = null;
 				if (isSteep) {
-					point = new Point2i(y, x);
+					point = Point2i.alloc(y, x);
 				} else {
-					point = new Point2i(x, y);
+					point = Point2i.alloc(x, y);
 				}
 				insertFunc(point);
 				errorValue -= hxd.Math.iabs(dy);
@@ -63,9 +64,9 @@ class Line2i {
 			while (x > x2 - 1) {
 				var point: Point2i = null;
 				if (isSteep) {
-					point = new Point2i(y, x);
+					point = Point2i.alloc(y, x);
 				} else {
-					point = new Point2i(x, y);
+					point = Point2i.alloc(x, y);
 				}
 				insertFunc(point);
 				errorValue -= hxd.Math.iabs(dy);
@@ -79,11 +80,11 @@ class Line2i {
 		return points;
 	}
 
-	public static function getLineDirectionSymmetry(start: Point2i, end: Point2i): List<Point2i> {
+	public static function getLineDirectionSymmetry(startX: Int, startY: Int, endX: Int, endY: Int): List<Point2i> {
 		// http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
 		// modified from python version
-		var x1 = start.x, y1 = start.y;
-		var x2 = end.x, y2 = end.y;
+		var x1 = startY, y1 = startY;
+		var x2 = endX, y2 = endY;
 		var isSteep = hxd.Math.iabs(y2 - y1) > hxd.Math.iabs(x2 - x1);
 
 		var tmp: Int = 0;
@@ -122,9 +123,9 @@ class Line2i {
 		while (x < x2 + 1) {
 			var point: Point2i = null;
 			if (isSteep) {
-				point = new Point2i(y, x);
+				point = Point2i.alloc(y, x);
 			} else {
-				point = new Point2i(x, y);
+				point = Point2i.alloc(x, y);
 			}
 			insertFunc(point);
 			errorValue -= hxd.Math.iabs(dy);
@@ -138,12 +139,16 @@ class Line2i {
 		return points;
 	}
 
-	public static function getLine(start: Point2i, end: Point2i, xySymmetry: Bool = false): List<Point2i> {
-		if (xySymmetry) return getLineXYSymmetry(start, end);
-		return getLineDirectionSymmetry(start, end);
+	public static function getLine(startX: Int, startY: Int, endX: Int, endY: Int,
+			xySymmetry: Bool = false): List<Point2i> {
+		if (xySymmetry) return getLineXYSymmetry(startX, startY, endX, endY);
+		return getLineDirectionSymmetry(startX, startY, endX, endY);
 	}
 
-	public static function getLinesBothDirection(start: Point2i, end: Point2i): Array<List<Point2i>> {
-		return [getLineXYSymmetry(start, end), getLineXYSymmetry(end, start, true),];
+	public static function getLinesBothDirection(startX: Int, startY: Int, endX: Int, endY: Int): Array<List<Point2i>> {
+		return [
+			getLineXYSymmetry(startX, startY, endX, endY),
+			getLineXYSymmetry(endX, endY, startX, startY, true),
+		];
 	}
 }

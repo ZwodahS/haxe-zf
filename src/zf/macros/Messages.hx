@@ -66,6 +66,10 @@ class Messages {
 			name: localClass.name,
 			pack: localClass.pack
 		}
+		final superClass = localClass.superClass == null ? null : localClass.superClass.t.get();
+
+		var parentHasSetup = false;
+		final parentHasSetup = (superClass != null && TypeTools.findField(superClass, "setupMessages") != null);
 
 		// collect all the handlers via @:handleMessage
 		var handlers: Array<{field: haxe.macro.Field, message: String, priority: Int}> = [];
@@ -115,6 +119,10 @@ class Messages {
 
 		{ // set up all the listen
 			final exprs: Array<Expr> = [];
+			final access = [];
+			if (parentHasSetup == true) {
+				access.push(AOverride);
+			}
 
 			for (handler in handlers) {
 				final field = handler.field.name;
@@ -138,15 +146,25 @@ class Messages {
 				}
 			}
 
+			var expr = null;
+			if (parentHasSetup == true) {
+				expr = macro {
+					super.setupMessages(dispatcher);
+					$a{exprs}
+				}
+			} else {
+				expr = macro $a{exprs};
+			}
+
 			fields.push({
 				name: "setupMessages",
 				pos: Context.currentPos(),
 				kind: FFun({
 					args: [{name: "dispatcher", type: TPath({name: "MessageDispatcherI", pack: ["zf"]})}],
-					expr: macro $a{exprs},
+					expr: expr,
 					ret: macro : Void,
 				}),
-				access: [],
+				access: access,
 				doc: null,
 				meta: [],
 			});

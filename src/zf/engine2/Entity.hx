@@ -93,13 +93,13 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 	public var kind(get, never): String;
 
 	public function get_kind(): String {
-		return "Unknown";
+		return "Entity";
 	}
 
 	/**
 		Constructor
 	**/
-	function new(id: Int = -1) {
+	public function new(id: Int = -1) {
 		this.id = id;
 		this.__components__ = [];
 	}

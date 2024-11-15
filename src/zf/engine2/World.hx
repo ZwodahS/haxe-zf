@@ -25,11 +25,20 @@ class World {
 
 	/**
 		The default updater.
+
+		Fri 13:19:00 15 Nov 2024
+		We are moving most of the non-blocking animations and updating to use zf.ef.
+		This means for the most part, non-blocking animations should not use this updater.
+		We will only use this for blocking updating.
 	**/
 	public final updater: zf.up.Updater;
 
 	/**
 		A default rand
+
+		Note
+		If a stable number gen is needed and wants to be store, create a new separately.
+		This should ideally only be used for animations.
 	**/
 	public var r: hxd.Rand;
 
@@ -64,12 +73,14 @@ class World {
 
 	// ---- Entities ---- //
 	public function registerEntity(e: Entity) {
+		if (this.__entities__.exists(e)) return;
 		this.__entities__.add(e);
 		e.__world__ = this;
 		for (s in this.__systems__) s.onEntityAdded(e);
 	}
 
 	public function unregisterEntity(e: Entity) {
+		if (this.__entities__.exists(e) == false) return;
 		this.__entities__.remove(e);
 		for (s in this.__systems__) s.onEntityRemoved(e);
 		e.__world__ = null;
