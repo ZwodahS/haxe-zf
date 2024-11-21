@@ -132,13 +132,13 @@ class Entity implements Identifiable implements Serialisable implements EntityCo
 		}
 	}
 
-	inline public function addComponent<T: Component>(component: T): T {
+	public function addComponent<T: Component>(component: T): T {
 		final prev = getComponent(component.typeId);
 		onComponentChanged(prev, component);
 		return cast prev;
 	}
 
-	inline public function getComponent<T: Component>(typeId: String): T {
+	public function getComponent<T: Component>(typeId: String): T {
 		return cast this.__components__.get(typeId);
 	}
 
