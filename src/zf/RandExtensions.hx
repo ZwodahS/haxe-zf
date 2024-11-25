@@ -23,7 +23,7 @@ class RandExtensions {
 		return out;
 	}
 
-	@:deprecated
+	@:deprecated("Use randomPopItem instead")
 	public static function randomPop<T>(r: hxd.Rand, a: Array<T>): Null<T> {
 		return randomPopItem(r, a);
 	}
