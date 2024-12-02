@@ -7,7 +7,7 @@ import zf.deprecated.tests.TestCase;
 
 class Vector2DRegionTestCase extends TestCase {
 	function test_basic_region_iteration() {
-		var grid = new Vector2D<String>([10, 10], "#");
+		var grid = new Vector2D<String>(10, 10, "#");
 		var r = new Vector2DRegion<String>(grid);
 
 		// set up the coord system
@@ -22,7 +22,7 @@ class Vector2DRegionTestCase extends TestCase {
 	}
 
 	function test_out_of_bound_region() {
-		var grid = new Vector2D<String>([10, 10], "#");
+		var grid = new Vector2D<String>(10, 10, "#");
 		var r = new Vector2DRegion<String>(grid);
 
 		// set up the coord system
@@ -42,7 +42,7 @@ class Vector2DRegionTestCase extends TestCase {
 	}
 
 	function test_subregion_of_subregion() {
-		var grid = new Vector2D<String>([10, 10], "#");
+		var grid = new Vector2D<String>(10, 10, "#");
 		var r = new Vector2DRegion<String>(grid);
 
 		// set up the coord system
@@ -71,7 +71,7 @@ class Vector2DRegionTestCase extends TestCase {
 	}
 
 	function test_rowiterator() {
-		var grid = new Vector2D<String>([10, 10], "#");
+		var grid = new Vector2D<String>(10, 10, "#");
 		var r = new Vector2DRegion<String>(grid);
 		// set up the coord system
 		for (pt => value in r.iterate()) {
@@ -121,7 +121,7 @@ class Vector2DRegionTestCase extends TestCase {
 	}
 
 	function test_columniterator() {
-		var grid = new Vector2D<String>([10, 10], "#");
+		var grid = new Vector2D<String>(10, 10, "#");
 		var r = new Vector2DRegion<String>(grid);
 		// set up the coord system
 		for (pt => value in r.iterate()) {
