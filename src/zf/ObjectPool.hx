@@ -1,5 +1,7 @@
 package zf;
 
+import zf.ds.List;
+
 class ObjectPool<T> {
 	var pool: List<T>;
 
