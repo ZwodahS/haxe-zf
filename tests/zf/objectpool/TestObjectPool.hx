@@ -18,6 +18,7 @@ class TestObjectPool extends TestCase {
 		testPool4();
 		testPool5();
 		testInterfaceDispose();
+		testUsingDisposeObject();
 	}
 
 	function testPool1() {
@@ -191,5 +192,11 @@ class TestObjectPool extends TestCase {
 		// ensure that o1 is not disposed
 		Assert.assert(o5.o1 == null);
 		Assert.assert(o1.xInt == 100);
+	}
+
+	function testUsingDisposeObject() {
+		final o5 = Object5.alloc();
+		o5.dispose();
+		trace(o5.hello());
 	}
 }

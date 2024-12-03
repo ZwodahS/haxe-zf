@@ -260,6 +260,22 @@ class ObjectPool {
 					Context.fatalError('${f.name} variable found for class "${className}". Unable to create object pool.',
 						localClass.pos);
 				default:
+#if debug
+					if (f.access.contains(AStatic) == false) {
+						final fName = f.name;
+						switch (f.kind) {
+							case FFun(f):
+								f.expr = macro {
+									if (this.__isDisposed__ == true) {
+										trace("   [ObjectPool] [Warn] Using function "
+											+ $v{fName} + " of disposed object " + $v{className} + ".");
+									}
+									${f.expr};
+								}
+							default:
+						}
+					}
+#end
 			}
 		}
 
@@ -272,7 +288,6 @@ class ObjectPool {
 			kind: FVar(Context.getLocalType().toComplexType(), null),
 			access: [AStatic],
 		});
-
 		// add the __next__ variable to the class
 		fields.push({
 			name: "__next__",
@@ -280,22 +295,20 @@ class ObjectPool {
 			kind: FVar(Context.getLocalType().toComplexType(), null),
 			access: [],
 		});
-
 		fields.push({
 			name: "__poolCount__",
 			pos: Context.currentPos(),
 			kind: FVar(macro : Int, macro 0),
 			access: [AStatic, APublic],
 		});
-
 		fields.push({
 			name: "__poolCreated__",
 			pos: Context.currentPos(),
 			kind: FVar(macro : Int, macro 0),
 			access: [AStatic, APublic],
 		});
-
 		var hasReset = false;
+
 		{ // Build Reset Function
 			if (resetFunc == null) {
 				if (superClass != null && TypeTools.findField(superClass, "reset") != null) {
@@ -308,22 +321,22 @@ class ObjectPool {
 				hasReset = true;
 			}
 		}
-
 		{ // Build Dispose Function
+
 			/**
-				There are 3 possibilities here
-
-				1. dispose function exists in this class
-				2. dispose function exists in parent(and ancestors) class but not in this class
-				3. dispose function does not exists anywhere
-
-				for 1. we will add a __dispose__ and be done with it
-				for 2. we will add a __dispose__ and also a dispose function that call super.dispose and __dispose__
-				for 3. we will add the function as dispose
-
-				Tue 13:58:32 09 Jul 2024
-				There is a better way to write this without duplicating code.
-				However, it also makes it harder to read, so don't change it
+							There are 3 possibilities here
+	
+							1. dispose function exists in this class
+							2. dispose function exists in parent(and ancestors) class but not in this class
+							3. dispose function does not exists anywhere
+	
+							for 1. we will add a __dispose__ and be done with it
+							for 2. we will add a __dispose__ and also a dispose function that call super.dispose and __dispose__
+							for 3. we will add the function as dispose
+	
+							Tue 13:58:32 09 Jul 2024
+							There is a better way to write this without duplicating code.
+							However, it also makes it harder to read, so don't change it
 			**/
 			final hasParentDispose = (superClass != null && TypeTools.findField(superClass, "dispose") != null);
 
@@ -332,7 +345,6 @@ class ObjectPool {
 					this.reset();
 				});
 			}
-
 			if (disposeFunc != null) { // case 1
 				fields.push({
 					name: "__dispose__",
@@ -343,18 +355,17 @@ class ObjectPool {
 						args: [],
 						expr: macro {
 							if (this.__isDisposed__ == true) {
-#if debug
+	#if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
 									+ $v{className} + ".", null);
-#end
+	#end
 								return;
 							}
-							this.__isDisposed__ = true;
-#if (debug && objectpoolmessage)
+	#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-#end
-
+	#end
 							$b{resetExprs};
+							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
 							__pool__ = this;
 							__poolCount__ += 1;
@@ -373,18 +384,17 @@ class ObjectPool {
 						args: [],
 						expr: macro {
 							if (this.__isDisposed__ == true) {
-#if debug
+	#if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
 									+ $v{className} + ".", null);
-#end
+	#end
 								return;
 							}
-							this.__isDisposed__ = true;
-#if (debug && objectpoolmessage)
+	#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-#end
-
+	#end
 							$b{resetExprs};
+							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
 							__pool__ = this;
 							__poolCount__ += 1;
@@ -418,18 +428,17 @@ class ObjectPool {
 						args: [],
 						expr: macro {
 							if (this.__isDisposed__ == true) {
-#if debug
+	#if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
 									+ $v{className} + ".", null);
-#end
+	#end
 								return;
 							}
-							this.__isDisposed__ = true;
-#if (debug && objectpoolmessage)
+	#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-#end
-
+	#end
 							$b{resetExprs};
+							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
 							__pool__ = this;
 							__poolCount__ += 1;
@@ -440,7 +449,6 @@ class ObjectPool {
 				});
 			}
 		}
-
 		{ // Build alloc Function
 			fields.push({
 				name: allocFunc == null ? "alloc" : "__alloc__",
@@ -449,9 +457,9 @@ class ObjectPool {
 					args: [],
 					expr: macro {
 						if (__pool__ == null) {
-#if (debug && objectpoolmessage)
+	#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] New object created - " + $v{className} + ".", null);
-#end
+	#end
 							__poolCreated__ += 1;
 							return new $typePath();
 						}
@@ -460,7 +468,6 @@ class ObjectPool {
 						__pool__ = obj.__next__;
 						obj.__next__ = null;
 						obj.__isDisposed__ = false;
-
 						return obj;
 					},
 					ret: Context.getLocalType().toComplexType(),
@@ -468,7 +475,6 @@ class ObjectPool {
 				access: [APublic, AStatic, AInline],
 			});
 		}
-
 		{ // this field is here to prevent double dispose
 			fields.push({
 				name: "__isDisposed__",
@@ -477,16 +483,14 @@ class ObjectPool {
 				access: [APublic],
 			});
 		}
-
 		return fields;
 	}
 
 	public static function build() {
 		return new ObjectPool().setupObjectPool();
 	}
-}
+	}
 #end
-
 /**
 	Sun 14:39:14 05 May 2024
 	Added back zf.ObjectPool to handle a more simple way to handle object pool for objects

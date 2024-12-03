@@ -36,7 +36,7 @@ class Object5 implements Disposable {
 	}
 
 	// ---- Object pooling Methods ----
-public function dispose() {
+	public function dispose() {
 		__dispose__();
 	}
 
@@ -44,5 +44,9 @@ public function dispose() {
 		final object = Object5.__alloc__();
 
 		return object;
+	}
+
+	public function hello(): Int {
+		return 3;
 	}
 }

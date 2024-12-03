@@ -7,6 +7,9 @@ class Test extends TestRunner {
 	public function new() {
 		super();
 
+		zf.Logger.init();
+		zf.Logger.addConsoleLogger();
+
 		// we will still load all the test cases
 		CompileTime.importPackage("tests");
 		final classes = CompileTime.getAllClasses('tests', true, TestCase);
