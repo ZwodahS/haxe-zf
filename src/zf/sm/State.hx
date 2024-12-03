@@ -20,6 +20,10 @@ class State {
 
 	public function update(dt: Float) {}
 
+	public function handleEvent(e: hxd.Event): Bool {
+		return false;
+	}
+
 	/**
 		Return the next state.
 		If this returns a non-null, the state will be changed.
@@ -39,8 +43,6 @@ class State {
 	public function clone(): State {
 		return new State(this.name);
 	}
-
-	public function dispose() {}
 
 	/**
 		Check if this state is of a name

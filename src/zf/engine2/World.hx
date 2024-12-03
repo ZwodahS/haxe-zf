@@ -117,9 +117,10 @@ class World {
 	}
 
 	// ---- Event handling ---- //
-	public function onEvent(event: hxd.Event) {
+	public function onEvent(event: hxd.Event): Bool {
 		for (sys in this.__systems__) {
-			if (sys.onEvent(event)) break;
+			if (sys.onEvent(event)) return true;
 		}
+		return false;
 	}
 }
