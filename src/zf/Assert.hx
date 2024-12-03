@@ -18,7 +18,8 @@ class Assert {
 	/**
 		Assert expression is true
 	**/
-	macro public static function assert(expression: ExprOf<Bool>, terminate: Bool = true) {
+	macro public static function assert(expression: ExprOf<Bool>, terminate: Bool = true,
+			additionalData: Dynamic = null) {
 #if no_assertion
 		return macro {};
 #else
@@ -28,6 +29,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if (!($e{expression})) {
+					haxe.Log.trace($e{additionalData});
 					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
