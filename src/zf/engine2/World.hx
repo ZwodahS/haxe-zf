@@ -6,6 +6,8 @@ import zf.MessageDispatcher;
 	@stage:stable
 **/
 class World {
+
+	public var isDisposing: Bool = false;
 	/**
 		List of systems.
 
@@ -67,6 +69,7 @@ class World {
 		Destroy world
 	**/
 	public function dispose() {
+		this.isDisposing = true;
 		for (e in this.__entities__) e.dispose();
 		for (s in this.__systems__) s.dispose();
 	}
