@@ -41,4 +41,8 @@ class ActionResult implements Disposable {
 		final v = this.values.get(key);
 		return (v != null && v is Bool) ? cast v : null;
 	}
+
+	public function toString() {
+		return '${this.values}';
+	}
 }

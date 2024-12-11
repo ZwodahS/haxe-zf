@@ -186,8 +186,8 @@ class Tile {
 	public function getTilesAround(grid: Vector2D<Tile> = null, range: Int = 1): Vector2D<Tile> {
 		if (grid == null) grid = new Vector2D<Tile>(range * 2 + 1, range * 2 + 1, null);
 		if (this.level == null) return grid;
-		for (y in -range...range+1) {
-			for (x in -range...range+1) {
+		for (y in -range...range + 1) {
+			for (x in -range...range + 1) {
 				grid.set(x + range, y + range, this.level.getTile(this.x + x, this.y + y));
 			}
 		}
