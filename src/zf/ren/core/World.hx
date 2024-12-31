@@ -118,7 +118,7 @@ class World extends zf.engine2.World {
 		@param x the position to move to
 		@param y the position to move to
 	**/
-	public function moveEntity(entity: Entity, x: Int, y: Int): Bool {
+	public function moveEntity(entity: Entity, x: Int, y: Int, dispatch: Bool = true): Bool {
 		final lc = LocationComponent.get(entity);
 		if (lc == null || lc.level == null) return false;
 
@@ -127,7 +127,9 @@ class World extends zf.engine2.World {
 
 		if (!lc.level.moveEntity(entity, x, y)) return false;
 
-		this.dispatcher.dispatch(MOnEntityMoved.alloc(entity, lc.level, prevX, prevY, lc.level, x, y)).dispose();
+		if (dispatch == true) {
+			this.dispatcher.dispatch(MOnEntityMoved.alloc(entity, lc.level, prevX, prevY, lc.level, x, y)).dispose();
+		}
 
 		return true;
 	}

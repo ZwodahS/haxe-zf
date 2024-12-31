@@ -12,6 +12,7 @@ class TryMove extends Action {
 	var world: World = null;
 	var x: Null<Int> = null;
 	var y: Null<Int> = null;
+	public var canBump: Bool = true;
 
 	override public function perform(onFinish: ActionResult->Void): Bool {
 		Assert.assert(this.world != null && this.entity != null);
@@ -35,12 +36,14 @@ class TryMove extends Action {
 
 		if (toTile == null) return false;
 
-		// find an entity that can be 'bumped'
-		final bumpable = toTile.entities.findEntity(this.isEntityBumpable);
+		if (canBump == true) {
+			// find an entity that can be 'bumped'
+			final bumpable = toTile.entities.findEntity(this.isEntityBumpable);
 
-		// if the bumpable is handled, then we are done, else we continue to try to move to the tile.
-		if (bumpable != null) {
-			if (onEntityBump(toTile, bumpable, onFinish) == true) return true;
+			// if the bumpable is handled, then we are done, else we continue to try to move to the tile.
+			if (bumpable != null) {
+				if (onEntityBump(toTile, bumpable, onFinish) == true) return true;
+			}
 		}
 
 		final fromTile = lc.tile;
@@ -66,6 +69,7 @@ class TryMove extends Action {
 		this.world = null;
 		this.x = null;
 		this.y = null;
+		this.canBump = true;
 	}
 
 	function animateMove(entity: Entity, x: Int, y: Int, onFinish: Void->Void) {
