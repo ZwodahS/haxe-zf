@@ -50,6 +50,11 @@ class World {
 		this.updater = new zf.up.Updater();
 		this.dispatcher = new MessageDispatcher();
 		this.r = new hxd.Rand(Random.int(0, zf.Constants.SeedMax));
+#if dispatchMessages
+		this.dispatcher.onAfterMessage = (m) -> {
+			Logger.debug('${m} ${m.delta} (${zf.StringUtils.formatFloat(m.delta / 0.016, 2)} frame)', "[Messages]");
+		}
+#end
 	}
 
 	/**
