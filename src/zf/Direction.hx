@@ -171,7 +171,7 @@ enum abstract Direction(String) from String to String {
 		@return the converted direction
 	**/
 	public static function fromPointPerspective(coord1: Point2i, coord2: Point2i): Direction {
-		return fromPoint2i([coord2.x - coord1.x, coord2.y - coord1.y]);
+		return fromXY(coord2.x - coord1.x, coord2.y - coord1.y);
 	}
 
 	/**
