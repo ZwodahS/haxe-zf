@@ -115,7 +115,7 @@ class ReadOnlyEntities<E: Entity> {
 		@param e Entity to check
 	**/
 	public function exists(e: E): Bool {
-		return this.map[e.id] != null;
+		return e != null && this.map[e.id] != null;
 	}
 
 	/**
