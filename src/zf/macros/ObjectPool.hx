@@ -267,6 +267,9 @@ class ObjectPool {
 							case FFun(f):
 								f.expr = macro {
 									if (this.__isDisposed__ == true) {
+										for (stackItem in haxe.CallStack.callStack()) {
+											trace(Debug.stackItemToString(stackItem));
+										}
 										trace("   [ObjectPool] [Warn] Using function "
 											+ $v{fName} + " of disposed object " + $v{className} + ".");
 									}
@@ -324,19 +327,19 @@ class ObjectPool {
 		{ // Build Dispose Function
 
 			/**
-							There are 3 possibilities here
-	
-							1. dispose function exists in this class
-							2. dispose function exists in parent(and ancestors) class but not in this class
-							3. dispose function does not exists anywhere
-	
-							for 1. we will add a __dispose__ and be done with it
-							for 2. we will add a __dispose__ and also a dispose function that call super.dispose and __dispose__
-							for 3. we will add the function as dispose
-	
-							Tue 13:58:32 09 Jul 2024
-							There is a better way to write this without duplicating code.
-							However, it also makes it harder to read, so don't change it
+				There are 3 possibilities here
+
+				1. dispose function exists in this class
+				2. dispose function exists in parent(and ancestors) class but not in this class
+				3. dispose function does not exists anywhere
+
+				for 1. we will add a __dispose__ and be done with it
+				for 2. we will add a __dispose__ and also a dispose function that call super.dispose and __dispose__
+				for 3. we will add the function as dispose
+
+				Tue 13:58:32 09 Jul 2024
+				There is a better way to write this without duplicating code.
+				However, it also makes it harder to read, so don't change it
 			**/
 			final hasParentDispose = (superClass != null && TypeTools.findField(superClass, "dispose") != null);
 
@@ -355,15 +358,15 @@ class ObjectPool {
 						args: [],
 						expr: macro {
 							if (this.__isDisposed__ == true) {
-	#if debug
+#if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
 									+ $v{className} + ".", null);
-	#end
+#end
 								return;
 							}
-	#if (debug && objectpoolmessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-	#end
+#end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
@@ -384,15 +387,15 @@ class ObjectPool {
 						args: [],
 						expr: macro {
 							if (this.__isDisposed__ == true) {
-	#if debug
+#if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
 									+ $v{className} + ".", null);
-	#end
+#end
 								return;
 							}
-	#if (debug && objectpoolmessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-	#end
+#end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
@@ -428,15 +431,15 @@ class ObjectPool {
 						args: [],
 						expr: macro {
 							if (this.__isDisposed__ == true) {
-	#if debug
+#if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
 									+ $v{className} + ".", null);
-	#end
+#end
 								return;
 							}
-	#if (debug && objectpoolmessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-	#end
+#end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
@@ -457,9 +460,9 @@ class ObjectPool {
 					args: [],
 					expr: macro {
 						if (__pool__ == null) {
-	#if (debug && objectpoolmessage)
+#if (debug && objectpoolmessage)
 							haxe.Log.trace("   [ObjectPool] [Debug] New object created - " + $v{className} + ".", null);
-	#end
+#end
 							__poolCreated__ += 1;
 							return new $typePath();
 						}
@@ -489,8 +492,9 @@ class ObjectPool {
 	public static function build() {
 		return new ObjectPool().setupObjectPool();
 	}
-	}
+}
 #end
+
 /**
 	Sun 14:39:14 05 May 2024
 	Added back zf.ObjectPool to handle a more simple way to handle object pool for objects
