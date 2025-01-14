@@ -1,7 +1,6 @@
 package zf.input;
 
 @:unstable class KeyboardInputMapping {
-
 	var onDownMappings: Map<Int, Void->Void>;
 	var onHoldMappings: Map<Int, Float->Void>;
 	var onReleasedMappings: Map<Int, Void->Void>;

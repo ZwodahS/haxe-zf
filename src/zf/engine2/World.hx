@@ -6,8 +6,8 @@ import zf.MessageDispatcher;
 	@stage:stable
 **/
 class World {
-
 	public var isDisposing: Bool = false;
+
 	/**
 		List of systems.
 
