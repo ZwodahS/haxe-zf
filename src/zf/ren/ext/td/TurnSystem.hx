@@ -1,6 +1,6 @@
-package zf.ren.ext.tu;
+package zf.ren.ext.td;
 
-import zf.ds.CircularLinkedList;
+import zf.ds.List;
 import zf.ren.core.messages.MOnActionCompleted;
 import zf.ren.ext.messages.MOnEntityActiveTurn;
 import zf.ren.ext.messages.MOnEntityTurnStart;
@@ -23,24 +23,68 @@ class TurnSystemEntity {
 	}
 }
 
-class TurnQueue extends CircularLinkedList<TurnSystemEntity> {
-	var map: Map<Int, CircularLinkedNode<TurnSystemEntity>>;
+/**
+	Mon 17:55:10 27 Jan 2025
+	Unlike tu.TurnSystem, I (can't/don't have to) use a circular linked list here.
+	The list need to be re-ordered when entity's timeunit changes.
+
+	Instead, we will use a List instead.
+	The list will also be kept ordered, and when timeunit is changed, the order need to be updated.
+**/
+class TurnQueue {
+	var list: List<TurnSystemEntity>;
+	var map: Map<Int, ListNode<TurnSystemEntity>>;
 
 	public var activeEntity(get, never): Entity;
 
 	public function get_activeEntity(): Entity {
-		return this.current == null ? null : this.current.item.e;
+		return this.current == null ? null : this.current.e;
+	}
+
+	public var current(get, never): TurnSystemEntity;
+
+	inline public function get_current(): TurnSystemEntity {
+		return this.list.first();
 	}
 
 	public function new() {
-		super();
-		this.map = new Map<Int, CircularLinkedNode<TurnSystemEntity>>();
+		this.list = new List<TurnSystemEntity>();
+		this.map = new Map<Int, ListNode<TurnSystemEntity>>();
 	}
 
 	public function registerEntity(e: Entity, tc: TurnComponent) {
 		if (map.exists(e.id)) return;
-		final node = super.insertBefore(TurnSystemEntity.alloc(e, tc));
+		final node = insert(TurnSystemEntity.alloc(e, tc));
 		this.map[e.id] = node;
+	}
+
+	public function insert(e: TurnSystemEntity): ListNode<TurnSystemEntity> {
+		if (this.list.length == 0) {
+			return this.list.add(e);
+		}
+
+		// find the node to insert into.
+		// we will always insert after the last node that have the same timeunit
+		var f = null;
+		for (n in this.list.iterateNode()) {
+			if (n.item.tc.timeunit > e.tc.timeunit) {
+				f = n;
+				break;
+			}
+		}
+
+		var node: ListNode<TurnSystemEntity> = null;
+		if (f == null) {
+			if (this.list.length != 0) {
+				node = this.list.add(e);
+			} else {
+				node = this.list.push(e);
+			}
+		} else {
+			node = f.insertBefore(e);
+		}
+
+		return node;
 	}
 
 	public function unregisterEntity(e: Entity) {
@@ -51,28 +95,54 @@ class TurnQueue extends CircularLinkedList<TurnSystemEntity> {
 		node.item.dispose();
 		node.remove();
 	}
+
+	public function advance() {
+		final amount = this.current.tc.timeunit;
+		for (n in this.list) {
+			n.tc.timeunit -= amount;
+		}
+	}
+
+	public function shiftCurrent() {
+		if (this.list.length == 0) return;
+
+		shiftNode(this.list.head);
+	}
+
+	// on entity updated, call this
+	public function shiftEntity(e: Entity) {
+		if (map.exists(e.id) == false) return;
+
+		final node = map[e.id];
+		shiftNode(node);
+	}
+
+	function shiftNode(n: ListNode<TurnSystemEntity>) {
+		final te = n.item;
+		n.remove();
+		final n = this.insert(te);
+		this.map[te.e.id] = n;
+	}
 }
 
 /**
-	Time Unit Turn System
+	Time Delay Turn System
 
-	Each entity is given a fixed number of time unit each turn.
-	Once they finish those time unit, they are moved back to the end of the queue.
+	Entities are given a time delay, i.e. how many more time need to pass before it can perform
+	actions.
 
-	By default, tuPerTurn is set to 1, meaning all entity take 1 action per turn.
+	Each entity will have their own TurnComponent, which also define how much delay after each action..
 
-	TurnSystem uses ActionResult.
-	If TurnSystem is used in the engine, all action should set 2 keys in ActionResult
+	This uses ActionResult.
 
-	"cost" - Int (if not present default to 0)
-	"endTurn" - Bool (if not present default to fasle)
+	The follow keys will be use in ActionResult.
+	"delay" - This adds on additional delay to current delay
+	"overrideDelay" - This overrides the delay of the default delay of the entity.
 
-	@see td/TurnSystem for alternative
+	@see tu/TurnSystem for alternative
 **/
 #if !macro @:build(zf.macros.Messages.build()) #end
 class TurnSystem extends zf.engine2.System {
-	public var tuPerTurn(default, null): Int = 1;
-
 	var queue: TurnQueue;
 
 	public var activeEntity(get, never): Entity;
@@ -94,9 +164,8 @@ class TurnSystem extends zf.engine2.System {
 	**/
 	public var blockedByAnimator: Bool = true;
 
-	public function new(timeUnitPerTurn: Int = 1, blockedByAnimator: Bool = true) {
+	public function new(blockedByAnimator: Bool = true) {
 		super();
-		this.tuPerTurn = timeUnitPerTurn;
 		this.queue = new TurnQueue();
 		this.blockedByAnimator = blockedByAnimator;
 	}
@@ -117,32 +186,13 @@ class TurnSystem extends zf.engine2.System {
 		final tc = TurnComponent.get(entity);
 		tc.tookAction = true;
 
-		final endTurn = result.getBool("endTurn") ?? false;
-		final cost = result.getInt("cost") ?? 0;
-
-		if (endTurn == true) {
-			tc.endTurn = true;
-		} else {
-			tc.timeunit -= cost;
-			if (tc.timeunit <= 0) tc.endTurn = true;
-		}
+		tc.endTurn = true;
 	}
 
 	override public function reset() {
 		this.actualActiveEntity = null;
 		this.entitiesTakenTurn.clear();
 		this.pause = false;
-	}
-
-	public function forceEntityTurn(e: Entity) {
-		final node = this.queue.findOneNode(function(n) {
-			return n.e == e;
-		});
-
-		if (node != null) {
-			while (this.queue.current.item.e != e)
-				this.queue.next();
-		}
 	}
 
 	override public function onEntityAdded(e: zf.engine2.Entity) {
@@ -156,13 +206,25 @@ class TurnSystem extends zf.engine2.System {
 	}
 
 	function registerEntity(entity: Entity, tc: TurnComponent) {
+		tc.timeunit = tc.delay;
 		this.queue.registerEntity(entity, tc);
-		tc.timeunit = tuPerTurn;
 		tc.endTurn = false;
 	}
 
 	function unregisterEntity(entity: Entity) {
 		this.queue.unregisterEntity(entity);
+	}
+
+	public function delayEntity(e: Entity, amt: Int) {
+		final tc = TurnComponent.get(e);
+		if (tc == null) return;
+		tc.timeunit += amt;
+		// HACK: Need to rethink this ?
+		/**
+			Tue 13:26:59 28 Jan 2025
+			If the entity is the current entity, we don't want to update the queue or shit will break
+		**/
+		if (e != this.activeEntity) this.queue.shiftEntity(e);
 	}
 
 	var actualActiveEntity: Entity = null;
@@ -205,12 +267,12 @@ class TurnSystem extends zf.engine2.System {
 		inline function endCurrentEntityTurn() {
 			// reset the state of the current entity
 			final current = this.queue.current;
-			current.item.tc.endTurn = false;
-			current.item.tc.timeunit = tuPerTurn;
-			current.item.tc.tookAction = false;
-			final entity = current.item.e;
+			current.tc.endTurn = false;
+			current.tc.timeunit += current.tc.delay;
+			current.tc.tookAction = false;
+			final entity = current.e;
 			// move the queue
-			this.queue.next();
+			this.queue.shiftCurrent();
 			// set actualActiveEntity to null
 			this.actualActiveEntity = null;
 			// dispatch the end turn event
@@ -228,9 +290,12 @@ class TurnSystem extends zf.engine2.System {
 			if (this.blockedByAnimator && this.world.isAnimating) return;
 			// when there is 0 item and nothing is current active, we just exit the loop
 			if (this.actualActiveEntity == null && this.queue.current == null) return;
+			// if the current entity is null, and the first entity timeunit is not 0, we will subtract
+			// every entity's timeunit by the first entity timeunit.
+			if (this.actualActiveEntity == null && this.queue.current.tc.timeunit != 0) this.queue.advance();
 			// if the current entity is null, we treat the queue current as the new current and fire the event.
 			if (this.actualActiveEntity == null) {
-				this.actualActiveEntity = this.queue.current.item.e;
+				this.actualActiveEntity = this.queue.current.e;
 
 				final disrupted = this.dispatcher.getResult(MOnEntityTurnStart.alloc(this.actualActiveEntity));
 				// if the turn is disrupted, we will immediately end the entity turn
@@ -245,7 +310,7 @@ class TurnSystem extends zf.engine2.System {
 			// this case handles when the active entity is removed from the turnqueue as part of performing Action
 			// this also handles the case where entityactive finishes and there is nothing in the queue,
 			// i.e. the last entity died as part of the action;
-			if (this.queue.current == null || this.actualActiveEntity != this.queue.current.item.e) {
+			if (this.queue.current == null || this.actualActiveEntity != this.queue.current.e) {
 				// we should fire the entity turn end here as well
 				this.dispatcher.dispatch(MOnEntityTurnEnd.alloc(this.actualActiveEntity)).dispose();
 				// we also need to set the actualActiveEntity to null and restart the loop
@@ -254,11 +319,11 @@ class TurnSystem extends zf.engine2.System {
 			}
 			// this is the normal flow. Current actualActiveEntity == this.queue.current
 			final current = this.queue.current;
-			if (!current.item.tc.endTurn) {
+			if (!current.tc.endTurn) {
 				// if entity took action but did not end turn, we send a ActiveTurn again.
-				if (current.item.tc.tookAction) {
-					current.item.tc.tookAction = false;
-					this.dispatcher.dispatch(MOnEntityActiveTurn.alloc(current.item.e)).dispose();
+				if (current.tc.tookAction) {
+					current.tc.tookAction = false;
+					this.dispatcher.dispatch(MOnEntityActiveTurn.alloc(current.e)).dispose();
 				}
 				// we will return here as the turn is not ended yet
 				return;
@@ -273,9 +338,9 @@ class TurnSystem extends zf.engine2.System {
 				where there is no animations, it will be stucked forever.
 			**/
 			if (current == null) break;
-			if (entitiesTakenTurn[current.item.e.id] != null) break;
+			if (entitiesTakenTurn[current.e.id] != null) break;
 			// cache the entity that have taken turn
-			this.entitiesTakenTurn[current.item.e.id] = current.item.e;
+			this.entitiesTakenTurn[current.e.id] = current.e;
 		}
 	}
 }
