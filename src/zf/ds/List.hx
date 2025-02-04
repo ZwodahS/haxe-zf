@@ -18,6 +18,26 @@ class ListNode<T> {
 		this.next = n;
 		n.prev = this;
 	}
+
+	// alias this to allow us to insert before node
+	public function insertBefore(t: T) {
+		Assert.assert(this.list != null);
+		@:privateAccess final n = this.list.makeNode(t);
+		@:privateAccess this.list._addBeforeNode(n, this);
+		return n;
+	}
+
+	// alias this to allow us to insert after node
+	public function insertAfter(t: T) {
+		Assert.assert(this.list != null);
+		@:privateAccess final n = this.list.makeNode(t);
+		@:privateAccess this.list._addAfterNode(n, this);
+		return n;
+	}
+
+	public function remove() {
+		@:privateAccess this.list._removeNode(this);
+	}
 }
 
 /**
@@ -26,6 +46,7 @@ class ListNode<T> {
 
 	Can be dropped in to replace haxe.ds.List.
 **/
+@:allow(zf.ds.List.ListNode)
 class List<T> {
 	public var head: ListNode<T>;
 	public var tail: ListNode<T>;
@@ -54,7 +75,7 @@ class List<T> {
 	/**
 		Add item to the end of the list
 	**/
-	public function add(item: T) {
+	public function add(item: T): ListNode<T> {
 		final node = makeNode(item);
 		if (this.tail != null) {
 			this._addAfterNode(node, tail);
@@ -62,12 +83,13 @@ class List<T> {
 			this.head = this.tail = node;
 			this.length += 1;
 		}
+		return node;
 	}
 
 	/**
 		Add item to the start of the list
 	**/
-	public function push(item: T) {
+	public function push(item: T): ListNode<T> {
 		final node = makeNode(item);
 		if (this.head != null) {
 			this._addBeforeNode(node, head);
@@ -75,6 +97,7 @@ class List<T> {
 			this.head = this.tail = node;
 			this.length += 1;
 		}
+		return node;
 	}
 
 	function _addAfterNode(node: ListNode<T>, afterNode: ListNode<T>) {
@@ -198,6 +221,10 @@ class List<T> {
 		return new ReverseListIterator<T>(this.tail);
 	}
 
+	public function iterateNode(): ListNodeIterator<T> {
+		return new ListNodeIterator<T>(this.head);
+	}
+
 	/**
 		Returns a string representation of this List, with separator separating each element.
 	**/
@@ -287,6 +314,24 @@ private class ListIterator<T> {
 		final item = this.head.item;
 		this.head = this.head.next;
 		return item;
+	}
+}
+
+private class ListNodeIterator<T> {
+	var head: ListNode<T>;
+
+	public inline function new(head: ListNode<T>) {
+		this.head = head;
+	}
+
+	public inline function hasNext(): Bool {
+		return this.head != null;
+	}
+
+	public inline function next(): ListNode<T> {
+		final node = this.head;
+		this.head = this.head.next;
+		return node;
 	}
 }
 
