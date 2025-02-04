@@ -53,4 +53,8 @@ class ResultMessage<T> extends Message implements Disposable {
 	public function dispose() {
 		this.result = null;
 	}
+
+	public function getResult(): T {
+		return result;
+	}
 }

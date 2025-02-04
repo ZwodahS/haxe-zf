@@ -102,7 +102,7 @@ class MessageDispatcher implements MessageDispatcherI {
 	**/
 	public function getResult<T: zf.Message.ResultMessage<U>, U>(message: T): U {
 		this.dispatch(message);
-		final value = message.result;
+		final value = message.getResult();
 		message.dispose();
 		return value;
 	}
