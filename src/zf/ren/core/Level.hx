@@ -123,10 +123,30 @@ class Level implements EntityContainer {
 		final fromTile = lc.tile;
 
 		toTile.addEntity(entity);
+#if debug
+		/**
+			There is a weird bug that keep failing the assertions
+		**/
+		if (fromTile.hasEntity(entity) == true) {
+			Logger.debug('assertion fail: fromTile.hasEntity == true');
+			Logger.debug('moving from tile: ${fromTile.x}, ${fromTile.y}');
+			Logger.debug(' entities on tile');
+			for (e in fromTile.entities) {
+				trace("-", e.typeId);
+			}
+			if (toTile != null) {
+				Logger.debug('moving to tile: ${toTile.x}, ${toTile.y}');
+				Logger.debug(' entities on tile');
+				for (e in toTile.entities) {
+					trace("-", e.typeId);
+				}
+			}
+		}
+#end
+		Assert.assert(!fromTile.hasEntity(entity), { id: entity?.typeId });
+		Assert.assert(toTile.hasEntity(entity), { id: entity?.typeId });
 		onEntityMoved(entity, fromTile, toTile);
 
-		Assert.assert(!fromTile.hasEntity(entity));
-		Assert.assert(toTile.hasEntity(entity));
 
 		return true;
 	}
