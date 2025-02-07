@@ -61,7 +61,18 @@ class Entity {
 									expr: macro {
 										final prev = this.$fieldName;
 										this.$fieldName = component;
-										onComponentChanged(prev, this.$fieldName);
+										// HACK:
+										/**
+											Fri 13:10:51 07 Feb 2025
+											I am not sure how to handle this.
+											This might be called when the entity is disposing.
+											So if prev is not null, but components is empty, this means that we are disposing.
+
+											Need to figure out a clearer way to handle this
+										**/
+										if (prev == null || this.__components__.count() != 0) {
+											onComponentChanged(prev, this.$fieldName);
+										}
 										return this.$fieldName;
 									}
 								}),
