@@ -148,6 +148,7 @@ class RenderSystem extends zf.engine2.System {
 
 		for (e in tile.entities) {
 			final rc = RenderComponent.get(e);
+			if (rc == null || rc.ro == null) continue;
 			rc.ro.visible = true;
 			alignEntity(e);
 		}
