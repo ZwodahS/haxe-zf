@@ -258,7 +258,7 @@ class TurnSystem extends zf.engine2.System {
 				// if entity took action but did not end turn, we send a ActiveTurn again.
 				if (current.item.tc.tookAction) {
 					current.item.tc.tookAction = false;
-					this.dispatcher.dispatch(MOnEntityActiveTurn.alloc(current.item.e)).dispose();
+					this.dispatcher.dispatch(MOnEntityActiveTurn.alloc(current.item.e, true)).dispose();
 				}
 				// we will return here as the turn is not ended yet
 				return;

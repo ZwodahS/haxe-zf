@@ -5,15 +5,17 @@ class MOnEntityActiveTurn extends zf.Message {
 	public static final MessageType = "MOnEntityActiveTurn";
 
 	@:dispose public var entity: Entity = null;
+	@:dispose public var repeat: Bool = false;
 
 	function new() {
 		super(MessageType);
 	}
 
-	public static function alloc(entity: Entity): MOnEntityActiveTurn {
+	public static function alloc(entity: Entity, repeat: Bool = false): MOnEntityActiveTurn {
 		final m = __alloc__();
 
 		m.entity = entity;
+		m.repeat = repeat;
 
 		return m;
 	}

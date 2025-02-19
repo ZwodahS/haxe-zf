@@ -186,7 +186,7 @@ class TurnSystem extends zf.engine2.System {
 		final tc = TurnComponent.get(entity);
 		tc.tookAction = true;
 
-		tc.endTurn = true;
+		tc.endTurn = result.getValue("endTurn") ?? true;
 	}
 
 	override public function reset() {
@@ -323,7 +323,7 @@ class TurnSystem extends zf.engine2.System {
 				// if entity took action but did not end turn, we send a ActiveTurn again.
 				if (current.tc.tookAction) {
 					current.tc.tookAction = false;
-					this.dispatcher.dispatch(MOnEntityActiveTurn.alloc(current.e)).dispose();
+					this.dispatcher.dispatch(MOnEntityActiveTurn.alloc(current.e, true)).dispose();
 				}
 				// we will return here as the turn is not ended yet
 				return;
