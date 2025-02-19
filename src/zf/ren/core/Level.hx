@@ -143,10 +143,9 @@ class Level implements EntityContainer {
 			}
 		}
 #end
-		Assert.assert(!fromTile.hasEntity(entity), { id: entity?.typeId });
-		Assert.assert(toTile.hasEntity(entity), { id: entity?.typeId });
+		Assert.assert(!fromTile.hasEntity(entity), {id: entity?.typeId});
+		Assert.assert(toTile.hasEntity(entity), {id: entity?.typeId});
 		onEntityMoved(entity, fromTile, toTile);
-
 
 		return true;
 	}
