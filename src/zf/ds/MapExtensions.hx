@@ -45,7 +45,7 @@ class MapExtensions {
 	}
 
 	public static function randomKey<K, V>(map: Map<K, V>, r: hxd.Rand): K {
-		var keys = [for (k in map.keys()) k];
+		final keys = [for (k in map.keys()) k];
 		return ArrayExtensions.randomItem(keys, r);
 	}
 

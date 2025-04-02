@@ -134,6 +134,10 @@ class ReadOnlyEntities<E: Entity> {
 	public function keyValueIterator(): KeyValueIterator<E> {
 		return new KeyValueIterator(this, [for (k in this.map.keys()) k]);
 	}
+
+	public function randomEntity(r: hxd.Rand) {
+		return this.map.get(this.map.randomKey(r));
+	}
 }
 
 @:access(zf.engine2.Iterator)
