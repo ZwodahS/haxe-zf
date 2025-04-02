@@ -217,7 +217,7 @@ class TurnSystem extends zf.engine2.System {
 
 	public function delayEntity(e: Entity, amt: Int) {
 		final tc = TurnComponent.get(e);
-		if (tc == null) return;
+		if (tc == null) return false;
 		tc.timeunit += amt;
 		// HACK: Need to rethink this ?
 		/**
@@ -225,6 +225,7 @@ class TurnSystem extends zf.engine2.System {
 			If the entity is the current entity, we don't want to update the queue or shit will break
 		**/
 		if (e != this.activeEntity) this.queue.shiftEntity(e);
+		return true;
 	}
 
 	var actualActiveEntity: Entity = null;
