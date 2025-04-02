@@ -101,6 +101,20 @@ class ReadOnlyProbabilityTable<T> {
 		return 0;
 	}
 
+	@:generic
+	static function _randomFromInt<T>(chances: Array<Chance<T>>, chance: Int, ?totalChance: Null<Int>): Int {
+		if (totalChance == null) totalChance = chances.fold(function(i, v) {
+			return i.chance + v;
+		}, 0);
+
+		chance = 1 + (chance % totalChance);
+		for (ind => c in chances) {
+			if (chance <= c.chance) return ind;
+			chance -= c.chance;
+		}
+		return 0;
+	}
+
 	public function getChance(item: T): Int {
 		for (c in this.chances) {
 			if (c.item == item) return c.chance;
@@ -116,15 +130,26 @@ class ReadOnlyProbabilityTable<T> {
 		return randomItem(r);
 	}
 
+	public function randomItemFromInt(i: Int, remove: Bool = false): Null<T> {
+		if (this.totalChance == 0) return null;
+		var ind = _randomFromInt(this.chances, i, this.totalChance);
+		var c = this.chances[ind];
+		if (remove == true) {
+			this.chances.splice(ind, 1);
+			this.totalChance -= c.chance;
+		}
+		return c.item;
+	}
+
 	/**
 		Returns a random item in the table
 	**/
 	public function randomItem(?r: Rand, remove: Bool = false): Null<T> {
-		if (totalChance == 0) return null;
+		if (this.totalChance == 0) return null;
 		r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
 		var ind = _random(this.chances, r, this.totalChance);
 		var c = this.chances[ind];
-		if (remove) {
+		if (remove == true) {
 			this.chances.splice(ind, 1);
 			this.totalChance -= c.chance;
 		}
@@ -186,8 +211,14 @@ class ReadOnlyProbabilityTable<T> {
 **/
 class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 	public function add(chance: Int, item: T) {
-		this.chances.push({chance: chance, item: item});
 		this.totalChance += chance;
+		for (c in this.chances) {
+			if (c.item == item) {
+				c.chance += chance;
+				return;
+			}
+		}
+		this.chances.push({chance: chance, item: item});
 	}
 
 	public function reduce(item: T, amount: Int) {
