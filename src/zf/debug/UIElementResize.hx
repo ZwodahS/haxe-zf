@@ -67,7 +67,9 @@ class UIElementResize extends h2d.Object {
 	function onClick(e: hxd.Event) {
 		if (e.button == 1) {
 			final size = getObjectSize();
-			this.text.text = ['Object size: ${size.x}, ${size.y}',].join("\n");
+			this.text.text = [
+				'Position: ${this.object.x}, ${this.object.y}, Object size: ${size.x}, ${size.y}',
+			].join("\n");
 			trace(this.text.text);
 			this.text.textColor = 0xffffffff;
 			final scene = this.getScene();
