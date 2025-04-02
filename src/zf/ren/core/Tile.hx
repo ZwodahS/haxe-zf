@@ -179,6 +179,11 @@ class Tile {
 		return tile;
 	}
 
+	public function getDirectionOfTile(tile: Tile, adjacentOnly: Bool = true): zf.Direction {
+		if (adjacentOnly && isAdjacentTo(tile) == false) return null;
+		return zf.Direction.fromXY(tile.x - this.x, tile.y - this.y);
+	}
+
 	public function getAdjacentTiles(): Array<Tile> {
 		return this.level.tiles.getAdjacent(this.x, this.y);
 	}
