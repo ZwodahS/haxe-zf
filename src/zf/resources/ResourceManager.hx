@@ -475,6 +475,10 @@ class ResourceManager {
 	}
 
 	// ---- ScaleGrid Factory ---- //
+	inline public function getScaleGridFactory(id: String): ScaleGridFactory {
+		return this.gridFactories[id];
+	}
+
 	inline public function makeScaleGrid(id: String, width: Int, height: Int, color: Null<Color> = null) {
 		return this.gridFactories[id].make([width, height], color);
 	}
