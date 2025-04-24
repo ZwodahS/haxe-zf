@@ -306,13 +306,13 @@ class RenderSystem extends zf.engine2.System {
 
 	public function animateProjectile(projectile: h2d.Object, sourceX: Int, sourceY: Int, destinationX: Int,
 			destinationY: Int, ?onFinish: Void->Void, animationDuration: Float = 1.0, drawLayer: Int = 15,
-			blocking: Bool = true) {
-		projectile.x = (sourceX * this.gridSizeX) + (this.gridSizeX / 2);
-		projectile.y = (sourceY * this.gridSizeY) + (this.gridSizeY / 2);
+			blocking: Bool = true, offsetX: Int = 0, offsetY: Int = 0) {
+		projectile.x = (sourceX * this.gridSizeX) + (this.gridSizeX / 2) + offsetX;
+		projectile.y = (sourceY * this.gridSizeY) + (this.gridSizeY / 2) + offsetY;
 		this.level.get("entity").add(projectile, drawLayer);
 
-		final endX = (destinationX * this.gridSizeX) + (this.gridSizeX / 2);
-		final endY = (destinationY * this.gridSizeY) + (this.gridSizeY / 2);
+		final endX = (destinationX * this.gridSizeX) + (this.gridSizeX / 2) + offsetX;
+		final endY = (destinationY * this.gridSizeY) + (this.gridSizeY / 2) + offsetY;
 		final animator = blocking ? this.__world__.updater : null;
 
 		E.moveTo(endX, endY, animationDuration).applyTo(projectile, animator, () -> {
