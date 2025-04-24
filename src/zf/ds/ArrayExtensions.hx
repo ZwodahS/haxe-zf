@@ -53,6 +53,12 @@ class ArrayExtensions {
 		return false;
 	}
 
+	inline public static function applyFunc<T>(array: Array<T>, func: T->Void) {
+		for (item in array) {
+			func(item);
+		}
+	}
+
 	/**
 		Add the elements in an array to another array, modifying it.
 	**/
