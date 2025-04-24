@@ -8,6 +8,14 @@ function round(cls: Class<Math>, number: Float, ?precision = 2): Float {
 	return Math.round(number) / Math.pow(10, precision);
 }
 
+inline function sq(cls: Class<Math>, x: Float): Float {
+	return x * x;
+}
+
+inline function cube(cls: Class<Math>, x: Float): Float {
+	return x * x * x;
+}
+
 function random(cls: Class<Math>, min: Int, max: Int): Int {
 	// min inclusive, max inclusive
 	return Math.floor(Math.random() * (max - min + 1)) + min;
