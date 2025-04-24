@@ -112,6 +112,14 @@ class PixelOutline extends h2d.filter.Shader<InternalShader> {
 		return v;
 	}
 
+	public function setBorder(top: Bool, bottom: Bool, left: Bool, right: Bool): PixelOutline {
+		this.top = top;
+		this.bottom = bottom;
+		this.left = left;
+		this.right = right;
+		return this;
+	}
+
 	public function setPartialKnockout(alphaMul: Float) {
 		alphaMul = Math.clampF(alphaMul, 0, 1);
 		knockOut = alphaMul < 1;
