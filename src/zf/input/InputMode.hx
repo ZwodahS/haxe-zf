@@ -1,7 +1,7 @@
 package zf.input;
 
-enum InputMode {
-	KBM;
-	Controller;
+enum abstract InputMode(String) from String to String {
+	public final KBM: String = "KBM";
+	public final Controller: String = "Controller";
 	// TODO: Add KBO (KB only) and MO (Mouse only)
 }
