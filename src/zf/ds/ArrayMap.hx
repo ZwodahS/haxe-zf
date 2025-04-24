@@ -50,10 +50,12 @@ class KeyValueIterator<E: Identifiable> {
 
 	  # Motivation
 	More often than not, we will need to store objects in both a list and access them by id.
-	To do that, we usually create both an array and also an array.
+	To do that, we usually create both an array and also a map
 	Managing them become a hassle, so might as well create a data structure for it.
 
 	To handle this, the object must be identifiable
+
+	This should ideally be a drop in replacement for both Map and Array except for [] access
 **/
 class ReadOnlyArrayMap<E: Identifiable> {
 	var itemsByIndex: Array<E>;
