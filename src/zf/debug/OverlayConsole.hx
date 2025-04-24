@@ -151,6 +151,32 @@ class OverlayConsole extends h2d.Object {
 
 	function handleKey(e: hxd.Event) {
 		if (this.visible == false) return;
+
+		inline function previousCommand() {
+			if (this.previousCommands.length == 0 || this.commandIndex == 0) return;
+			if (this.commandIndex == -1) {
+				this.cacheCommand = this.input.text;
+				this.commandIndex = this.previousCommands.length - 1;
+			} else {
+				this.commandIndex -= 1;
+			}
+			this.input.text = this.previousCommands[this.commandIndex];
+			this.input.cursorIndex = this.input.text.length;
+		}
+
+		inline function nextCommand() {
+			if (this.commandIndex == -1) return;
+			if (this.commandIndex == this.previousCommands.length - 1) {
+				this.input.text = this.cacheCommand == null ? "" : this.cacheCommand;
+				this.input.cursorIndex = this.input.text.length;
+				this.commandIndex = -1;
+				return;
+			}
+			this.commandIndex += 1;
+			this.input.text = this.previousCommands[this.commandIndex];
+			this.input.cursorIndex = this.input.text.length;
+		}
+
 		switch (e.keyCode) {
 			case Key.ENTER, Key.NUMPAD_ENTER:
 				final cmd = this.input.text;
@@ -166,33 +192,17 @@ class OverlayConsole extends h2d.Object {
 					this.input.cursorIndex = this.input.text.length;
 				}
 			case Key.UP:
-				if (this.previousCommands.length == 0 || this.commandIndex == 0) return;
-				if (this.commandIndex == -1) {
-					this.cacheCommand = this.input.text;
-					this.commandIndex = this.previousCommands.length - 1;
-				} else {
-					this.commandIndex -= 1;
-				}
-				this.input.text = this.previousCommands[this.commandIndex];
-				this.input.cursorIndex = this.input.text.length;
+				previousCommand();
+			case Key.P:
+				if (Key.isDown(Key.CTRL) == true) previousCommand();
 			case Key.DOWN:
-				if (this.commandIndex == -1) return;
-				if (this.commandIndex == this.previousCommands.length - 1) {
-					this.input.text = this.cacheCommand == null ? "" : this.cacheCommand;
-					this.input.cursorIndex = this.input.text.length;
-					this.commandIndex = -1;
-					return;
-				}
-				this.commandIndex += 1;
-				this.input.text = this.previousCommands[this.commandIndex];
-				this.input.cursorIndex = this.input.text.length;
-
+				nextCommand();
+			case Key.N:
+				if (Key.isDown(Key.CTRL) == true) nextCommand();
 			case Key.C:
 				if (Key.isDown(Key.CTRL) == true) clearCommand();
-
 			case Key.W:
 				if (Key.isDown(Key.CTRL) == true) removeWord();
-
 			case Key.ESCAPE:
 				hide();
 		}
