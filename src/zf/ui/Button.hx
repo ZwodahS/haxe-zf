@@ -184,7 +184,7 @@ class ScaleGridButton extends Button {
 		this.disabledObject.height = height;
 		this.selectedObject.width = width;
 		this.selectedObject.height = height;
-		this.textLabel.setX(width, AlignCenter).setY(height, AlignCenter);
+		this.textLabel.setX(paddingLeft).setY(paddingUp);
 	}
 
 	override function updateRendering() {
