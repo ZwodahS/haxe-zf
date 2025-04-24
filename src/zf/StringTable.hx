@@ -41,6 +41,12 @@ class StringTable {
 		return "";
 	}
 
+	public function exists(id: String, lang: String): Bool {
+		final table = langs[lang];
+		if (table == null) return false;
+		return table.exists(id);
+	}
+
 	@:deprecated("Use Resource Manager instead")
 	public function load(lang: String, path: String) {
 		try {
