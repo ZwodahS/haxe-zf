@@ -551,7 +551,7 @@ class Console extends h2d.Object {
 		@param text The text to show in the log message.
 		@param color Optional custom text color.
 	**/
-	public function log(text: String, ?color) {
+	public function log(text: String, ?color: Color) {
 		if (color == null) color = tf.textColor;
 		var oldH = logTxt.textHeight;
 		logTxt.text = logTxt.text
