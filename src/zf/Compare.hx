@@ -13,6 +13,9 @@ package zf;
 	arr1.sort(Compare.string.bind(true, 1));
 **/
 class Compare {
+	public static final Ascending: Int = 1;
+	public static final Descending: Int = -1;
+
 	/**
 		Sort string
 	**/
