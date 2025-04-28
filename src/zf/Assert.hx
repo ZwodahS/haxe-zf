@@ -29,7 +29,7 @@ class Assert {
 		if (terminate) {
 			return macro {
 				if (!($e{expression})) {
-					haxe.Log.trace($e{additionalData});
+					if ($e{additionalData} != null) haxe.Log.trace($e{additionalData});
 					throw new zf.exceptions.AssertionFail('[' + $v{locationString} + '] Assertion failed: ' + $v{msg});
 				}
 			};
