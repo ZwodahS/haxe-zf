@@ -59,6 +59,10 @@ class ArrayExtensions {
 		}
 	}
 
+	inline public static function iterateWith<T1, T2>(arr1: Array<T1>, arr2: Array<T2>): ArrayPairIterator<T1, T2> {
+		return new ArrayPairIterator(arr1, arr2);
+	}
+
 	/**
 		Add the elements in an array to another array, modifying it.
 	**/
@@ -179,5 +183,12 @@ class ArrayExtensions {
 			if (arr1[ind] != arr2[ind]) return false;
 		}
 		return true;
+	}
+
+	public static function intersect<T>(arr1: Array<T>, arr2: Array<T>): Bool {
+		for (t in arr1) {
+			if (arr2.contains(t) == true) return true;
+		}
+		return false;
 	}
 }
