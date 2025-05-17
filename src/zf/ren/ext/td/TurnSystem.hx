@@ -206,7 +206,6 @@ class TurnSystem extends zf.engine2.System {
 	}
 
 	function registerEntity(entity: Entity, tc: TurnComponent) {
-		tc.timeunit = tc.delay;
 		this.queue.registerEntity(entity, tc);
 		tc.endTurn = false;
 	}
