@@ -23,6 +23,16 @@ class ReadOnlyVector2D<T> {
 	**/
 	public var size(default, null): Point2i;
 
+	public var width(get, never): Int;
+	inline public function get_width(): Int {
+		return this.size.x;
+	}
+
+	public var height(get, never): Int;
+	inline public function get_height(): Int {
+		return this.size.y;
+	}
+
 	/**
 		The underlying data
 	**/
