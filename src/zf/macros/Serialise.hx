@@ -34,6 +34,10 @@ using haxe.macro.Tools;
 		this object is never saved, and it is always taken from context via key when loading.
 		this key is never saved.
 
+	@:serialise(null, true) vs @:fromContext("key")
+	In the case of @:fromContext, it is never serialise and the key is always taken from context.
+	@:serialise(null, true) will serialise the object into a key via .identifier().
+
 	then we can output a struct via toStruct or __toStruct__(context) if toStruct is defined
 	and load the struct via loadStruct or __loadStruct__(context, data) if loadStruct is defined
 
@@ -67,9 +71,6 @@ private typedef StoredField = {
 	public var iterableType: String;
 }
 
-/**
-	@:unstable
-**/
 class Serialise {
 	var fields: Array<haxe.macro.Field>;
 
@@ -132,8 +133,19 @@ class Serialise {
 		}
 		var target = "loadStruct";
 		var access = [APublic];
+
 		if (this.fieldsMap.exists("loadStruct") == true) {
 			target = "__loadStruct__";
+			if (superClass != null && TypeTools.findField(superClass, "__loadStruct__") != null) {
+				access.push(AOverride);
+				expr = macro {
+					super.__loadStruct__(context, struct);
+					{
+						$a{this.loadStructExprs}
+					};
+					return this;
+				}
+			}
 		} else if (superClass != null && TypeTools.findField(superClass, "loadStruct") != null) {
 			expr = macro {
 				super.loadStruct(context, struct);
@@ -174,11 +186,22 @@ class Serialise {
 			return struct;
 		};
 		var target = "toStruct";
-		var access = [APublic];
+		final access = [APublic];
 		final args = [{name: "context", type: macro : zf.serialise.SerialiseContext},];
+
 		if (this.fieldsMap.exists("toStruct") == true) {
 			args.push({name: "data", type: macro : Dynamic});
 			target = "__toStruct__";
+			if (superClass != null && TypeTools.findField(superClass, "__toStruct__") != null) {
+				access.push(AOverride);
+				expr = macro {
+					final struct: Dynamic = super.__toStruct__(context, data);
+					{
+						$a{toStructExprs}
+					};
+					return struct;
+				}
+			}
 		} else if (superClass != null && TypeTools.findField(superClass, "toStruct") != null) {
 			access.push(AOverride);
 			expr = macro {
@@ -334,6 +357,49 @@ class Serialise {
 				}
 			});
 		}
+
+		inline function handleMapSerialisable(classType: ClassType) {
+			this.toStructExprs.push(macro {
+				if (this.$fieldName != null) {
+					final s: haxe.DynamicAccess<Dynamic> = {};
+					struct.$storeAs = s;
+					for (key => value in this.$fieldName) {
+						s.set(key, value.toStruct(context));
+					}
+				}
+			});
+			this.loadStructExprs.push(macro {
+				if (struct.$storeAs != null) {
+					this.$fieldName = [];
+					for (key => value in (struct.$storeAs: haxe.DynamicAccess<Dynamic>)) {
+						final object = $i{classType.name}.empty();
+						object.loadStruct(context, value);
+						this.$fieldName.set(cast key, object);
+					}
+				}
+			});
+		}
+
+		inline function handleMapIdentifiable() {
+			this.toStructExprs.push(macro {
+				if (this.$fieldName != null) {
+					final s: haxe.DynamicAccess<Dynamic> = {};
+					struct.$storeAs = s;
+					for (key => value in this.$fieldName) {
+						s.set(key, value.identifer());
+					}
+				}
+			});
+			this.loadStructExprs.push(macro {
+				if (struct.$storeAs != null) {
+					this.$fieldName = [];
+					for (key => value in (struct.$storeAs: haxe.DynamicAccess<Dynamic>)) {
+						this.$fieldName.set(cast key, context.get(value));
+					}
+				}
+			});
+		}
+
 		function process(type: haxe.macro.Type, e: haxe.macro.Expr) {
 			if (Util.isPrimitive(type) == true) {
 				handlePrimitive();
@@ -433,11 +499,9 @@ class Serialise {
 												f.pos);
 										} else if (Util.hasInterface(p[1].getClass(), "Serialisable") == true) {
 											// handle array of serialisable
-											Context.fatalError('[NotImplemented] ${f.name} Serialisable cannot be used on Map.',
-												f.pos);
+											handleMapSerialisable(p[1].getClass());
 										} else if (Util.hasInterface(p[1].getClass(), "Identifiable") == true) {
-											Context.fatalError('[NotImplemented] ${f.name} Identifable cannot be used on Map.',
-												f.pos);
+											handleMapIdentifiable();
 										} else {
 											// can't handle it yet
 											Context.fatalError('${f.name} Map cannot be serialised.', f.pos);
@@ -478,6 +542,8 @@ class Serialise {
 
 		switch (f.kind) {
 			case FVar(_.toType() => type, e):
+				process(type, e);
+			case FProp(_, _, _.toType() => type, e):
 				process(type, e);
 			default:
 				Context.fatalError('${f.name} is a function and cannot be serialise.', f.pos);
