@@ -3,8 +3,6 @@ package zf.engine2;
 import zf.MessageDispatcher;
 
 /**
-	@stage:stable
-
 	Abstract parent class of all System.
 **/
 class System {
@@ -58,4 +56,17 @@ class System {
 	public function onEntityAdded(e: Entity) {}
 
 	public function onEntityRemoved(e: Entity) {}
+
+	/**
+		This function is called before the world prepare to save the worldState.
+
+		Systems can use this to save internal state if necessary
+	**/
+	public function preSave() {}
+
+	/**
+		This function is called after onLoad is called on World.
+		This is usually after worldState is loaded.
+	**/
+	public function onLoad() {}
 }

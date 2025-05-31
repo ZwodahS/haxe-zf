@@ -2,9 +2,6 @@ package zf.engine2;
 
 import zf.MessageDispatcher;
 
-/**
-	@stage:stable
-**/
 class World {
 	public var isDisposing: Bool = false;
 
@@ -55,6 +52,20 @@ class World {
 			Logger.debug('${m} ${m.delta} (${zf.StringUtils.formatFloat(m.delta / 0.016, 2)} frame)', "[Messages]");
 		}
 #end
+	}
+
+	/**
+		Called before saving to allow for systems to update their internal state if any.
+	**/
+	public function preSave() {
+		for (system in this.__systems__) system.preSave();
+	}
+
+	/**
+		Called after the WorldState has been loaded.
+	**/
+	public function onLoad() {
+		for (system in this.__systems__) system.onLoad();
 	}
 
 	/**
