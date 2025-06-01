@@ -292,3 +292,10 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 		return tb;
 	}
 }
+
+/**
+	Sun 21:33:14 01 Jun 2025
+	Tried to make ProbabilityTable Serialisable.
+	It is not that easy.
+	There are too many cases to handle, specifically for generic classes.
+**/
