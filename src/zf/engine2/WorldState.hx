@@ -46,6 +46,7 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 
 	public function toStruct(context: SerialiseContext): Dynamic {
 		final entities: Entities<zf.engine2.Entity> = this.entities;
+		entities.sortedIterator = true;
 		context.add(entities);
 
 		collectEntities(entities);

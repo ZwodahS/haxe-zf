@@ -50,6 +50,11 @@ class KeyValueIterator<E: Entity> {
 @:access(zf.engine2.Iterator)
 @:access(zf.engine2.KeyValueIterator)
 class ReadOnlyEntities<E: Entity> {
+	/**
+		If this set to true, when iterating, the keys will be sorted
+	**/
+	public var sortedIterator: Bool = false;
+
 	var map: Map<Int, E>;
 
 	/**
@@ -128,7 +133,11 @@ class ReadOnlyEntities<E: Entity> {
 	}
 
 	public function iterator(): Iterator<E> {
-		return new Iterator(this, [for (k in this.map.keys()) k]);
+		final keys = [for (k in this.map.keys()) k];
+		if (this.sortedIterator == true) {
+			keys.sort(zf.Compare.int.bind(zf.Compare.Ascending));
+		}
+		return new Iterator(this, keys);
 	}
 
 	public function keyValueIterator(): KeyValueIterator<E> {
