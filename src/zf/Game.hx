@@ -328,7 +328,7 @@ class Game extends hxd.App {
 	public var connectedPads: Array<hxd.Pad> = [];
 
 	function onPadConnected(pad: hxd.Pad) {
-		Logger.debug('Controller: ${pad.name} Connected');
+		Logger.debug('Controller: ${pad.name} Connected', "[Game]");
 		this.connectedPads.push(pad);
 		pad.onDisconnect = onPadDisconnected.bind(pad);
 		if (this.currentScreen != null) this.currentScreen.onPadConnected(pad);

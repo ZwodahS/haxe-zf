@@ -78,6 +78,7 @@ class UIDebugElement extends UIElement {
 			final bottomY = parentBound.yMax - bound.yMax;
 			this.text.text = [
 				'Object position      : [${object.x}, ${object.y}]',
+				'Object size          : [${global.width}, ${global.height}]',
 				'Object Bound (parent): [${bound.xMin}, ${bound.yMin}, ${bound.xMax}, ${bound.yMax}]',
 				'Object Bound (global): [${global.xMin}, ${global.yMin}, ${global.xMax}, ${global.yMax}]',
 				'Object Bottom Anchor : [${bottomX}, ${bottomY}]',
