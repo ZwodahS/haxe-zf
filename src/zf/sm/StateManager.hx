@@ -1,8 +1,6 @@
 package zf.sm;
 
 /**
-	@stage:stable
-
 	StateManager and State manages state and handle when state transition happens.
 **/
 class StateManager {
@@ -35,6 +33,7 @@ class StateManager {
 		final previous = this.current;
 		if (this.current != null) {
 			this.current.onStateExit();
+			if (this.current is Disposable) cast(this.current, Disposable).dispose();
 			this.current = null;
 		}
 		this.current = nextState;
