@@ -7,9 +7,6 @@ import zf.ui.ScaleGridFactory;
 
 using zf.h2d.ObjectExtensions;
 
-/**
-	@stage:stable
-**/
 @:allow(zf.ui.Button)
 class ObjectsButton extends Button {
 	/**
@@ -390,10 +387,10 @@ class Button extends UIElement {
 		}
 
 		final size: Point2i = [27, 12];
-		btn.display.addChild(btn.defaultObject = conf.defaultObject.make(size));
-		btn.display.addChild(btn.hoverObject = (conf.hoverObject ?? conf.defaultObject).make(size));
-		btn.display.addChild(btn.disabledObject = (conf.disabledObject ?? conf.defaultObject).make(size));
-		btn.display.addChild(btn.selectedObject = (conf.selectedObject ?? conf.defaultObject).make(size));
+		btn.display.addChild(btn.defaultObject = conf.defaultObject.make(size.x, size.y));
+		btn.display.addChild(btn.hoverObject = (conf.hoverObject ?? conf.defaultObject).make(size.x, size.y));
+		btn.display.addChild(btn.disabledObject = (conf.disabledObject ?? conf.defaultObject).make(size.x, size.y));
+		btn.display.addChild(btn.selectedObject = (conf.selectedObject ?? conf.defaultObject).make(size.x, size.y));
 		size.dispose();
 
 		btn.display.addChild(btn.textLabel = new HtmlText(conf.font));

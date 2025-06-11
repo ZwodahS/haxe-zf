@@ -46,9 +46,16 @@ typedef TextInputConf = {
 private typedef DropShadowConf = {dx: Float, dy: Float, color: Int, alpha: Float};
 
 /**
-	@stage:stable
-
 	Create HTML Text component
+
+	# Attributes
+	- font=h2d.Font
+	- fontName=String -> context.builder.getFont
+	- textColorKey=String -> context.get(textColorKey)
+	- textColor=String
+	- maxWidth -> h2d.HtmlText.maxWidth
+	- textAlign=["center"|"left"|"right"]
+	- stringId=String -> context.get(stringId) ?? context.builder.getStringTemplate(stringId)
 **/
 class TextInput extends Component {
 	public var defaultDropShadow: DropShadowConf = null;

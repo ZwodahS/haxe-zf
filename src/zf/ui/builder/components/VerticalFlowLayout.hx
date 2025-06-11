@@ -6,7 +6,7 @@ private typedef LayoutConf = {
 
 typedef VerticalFlowLayoutConf = {
 	/**
-		All item in this horizontal
+		All item in this flow layout
 	**/
 	public var ?items: Array<ComponentConf>;
 
@@ -27,11 +27,26 @@ typedef VerticalFlowLayoutConf = {
 }
 
 /**
-	@stage:stable
+	Create a h2d.Flow with layout = vertical
 
-	# Attributes
-	spacing: Int - the spacing between each item
-	align: String - "left"(default), "middle", "right"
+	# Attributes (Flow)
+	These are mapped to various attributes in h2d.Flow
+
+	- align=["left"(default),"middle","right"] -> flow.horizontalAlign
+	- spacing=Int -> flow.verticalSpacing
+	- maxWidth=Int -> flow.maxWidth
+
+	These are non-mapped keys
+	- itemsKey=String
+		If this is provided, then the items will be taken from BuilderContext.
+		Each item should be a h2d.Object
+	- loopData=String
+		if provided, each children will be looped against each item in loopData,
+		i.e. the number of actual children in flow will be children.length X loopData.length
+		loopData is a String and the actual data is taken from Context.
+
+	# Attributes (Children)
+	- flowAlign=["center","left","right"] - override flow.Properties.horizontalAlign
 **/
 class VerticalFlowLayout extends Component {
 	public function new() {
@@ -44,13 +59,24 @@ class VerticalFlowLayout extends Component {
 
 		inline function addElement(e: Xml, newContext: BuilderContext) {
 			final c = newContext.makeObjectFromXMLElement(e);
-			if (c == null) return;
+			if (c == null) return null;
 
 			flow.addChild(c);
 			// modify the position of the child
 			final conf = zf.Access.xml(e);
-			// Sun 11:06:45 11 Jun 2023 deprecate this.
-			if (conf.getInt("paddingTop") != null) Logger.warn("paddingTop is deprecated and removed. Do not use");
+
+			final overrideAlign = e.get("flowAlign");
+			if (overrideAlign != null) {
+				final prop = flow.getProperties(c);
+				prop.horizontalAlign = switch (overrideAlign) {
+					case "center": Middle;
+					case "left": Left;
+					case "right": Right;
+					default: null;
+				}
+			}
+
+			return c;
 		}
 
 		final loopKey: String = conf.getString("loopData");
@@ -122,3 +148,8 @@ class VerticalFlowLayout extends Component {
 		return flow;
 	}
 }
+
+/**
+	Fri 14:19:44 13 Jun 2025
+	Features are implemented on a need basis
+**/

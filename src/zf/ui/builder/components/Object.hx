@@ -5,7 +5,10 @@ typedef ObjectConf = {
 }
 
 /**
-	@stage:stable
+	Display a object from the context
+
+	# Attributes
+	- object=String
 **/
 class Object extends Component {
 	public function new() {

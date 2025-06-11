@@ -1,7 +1,12 @@
 package zf.ui.builder.components;
 
 /**
-	@stage:stable
+	Display a bitmap
+
+	# Attributes
+	- scale=Int -> set bm.scaleX/bm.scaleY
+	- path=String -> context.getBitmap()
+	- index=Int -> context.getBitmap()
 **/
 class Bitmap extends Component {
 	public function new() {

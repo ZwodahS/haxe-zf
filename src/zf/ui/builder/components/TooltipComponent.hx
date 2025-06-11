@@ -4,7 +4,9 @@ import zf.ui.TooltipHelper;
 import zf.ui.UIElement.TooltipShowConf;
 
 /**
-	Usage:
+	Create a Tooltip for the item
+
+	# Usage
 	<tooltip>
 		<element>
 	</tooltip>
@@ -16,21 +18,16 @@ import zf.ui.UIElement.TooltipShowConf;
 
 	An additional interactive will be added to the element with propagateEvents true
 
-	xml attribute:
-	- width (float) : optional
-	- height (float) : optional
-	if width and height is not provided, it will be taken from the child if exists.
-		if child is UIElement, will use .width and .height
-		else we will use getSize() from h2d.Object
-
-	- tooltipId
-	- tooltipContextKey (the string context will be taken from context)
-	- titleId
-	- titleContextKey (the string context will be taken from context)
-
-	Wed 13:55:59 18 Oct 2023
-	Currently there is a limitation of tooltip on flow.
-	It will not be resized properly if the flow size changed, or the size of the child class changed
+	# Attributes
+	- width=Float
+	- height=Float
+		if width and height is not provided, it will be taken from the child if exists.
+			if child is UIElement, will use .width and .height
+			else we will use getSize() from h2d.Object
+	- tooltipId=String
+	- tooltipContextKey=String
+	- titleId=String
+	- titleContextKey=String
 **/
 class TooltipComponent extends zf.ui.builder.Component {
 	public function new() {
@@ -140,3 +137,9 @@ class TooltipComponent extends zf.ui.builder.Component {
 		return null;
 	}
 }
+
+/**
+	Wed 13:55:59 18 Oct 2023
+	Currently there is a limitation of tooltip on flow.
+	It will not be resized properly if the flow size changed, or the size of the child class changed
+**/

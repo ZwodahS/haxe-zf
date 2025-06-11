@@ -13,11 +13,22 @@ class UIElementLayer extends zf.ui.builder.Component {
 	}
 
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		return make(zf.Access.xml(element), context);
+		final obj = make(zf.Access.xml(element), context);
+
+		inline function addElement(e: Xml, newContext: BuilderContext) {
+			final c = newContext.makeObjectFromXMLElement(e);
+			if (c == null) return null;
+
+			obj.addChild(c);
+			return null;
+		}
+
+		for (e in element.elements()) addElement(e, context);
+
+		return obj;
 	}
 
 	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
-		final component = new UIElement();
-		return component;
+		return new UIElement();
 	}
 }

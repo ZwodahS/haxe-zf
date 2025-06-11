@@ -57,6 +57,10 @@ class BuilderContext {
 		return this.builder.getBitmap(conf);
 	}
 
+	public function getAnim(conf: zf.Access): h2d.Anim {
+		return this.builder.getAnim(conf);
+	}
+
 	public function getFont(fontName: String): h2d.Font {
 		return this.builder.getFont(fontName);
 	}

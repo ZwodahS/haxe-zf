@@ -3,14 +3,9 @@ package zf.ui.builder;
 import zf.resources.ResourceManager;
 
 /**
-	@stage:stable
+	UI Builder
 
-	Wed 15:55:50 03 May 2023
-	Dev Note:
-	UI Builder. This is very similar to domkit.
-	I started this as a static UI builder, but slowly it becomes more like domkit.
-	Honestly, at this point I should just switch to domkit, but I haven't really find this lacking.
-	Any time I need new feature, I could just add in.
+	Components can be build using structs or xml
 **/
 class Builder {
 	/**
@@ -18,16 +13,10 @@ class Builder {
 	**/
 	public var components: Map<String, Component>;
 
-	/**
-		Registered colors
-	**/
-	var colors: Map<String, Color>;
-
 	public var res: ResourceManager = null;
 
 	public function new(registerDefaultComponents = true) {
 		this.components = new Map<String, Component>();
-		this.colors = new Map<String, Color>();
 
 		CompileTime.importPackage("zf.ui.builder.components");
 		if (registerDefaultComponents) {
@@ -52,10 +41,6 @@ class Builder {
 		Logger.debug('Builder Component: ${component} registered as "${component.type}"', "[UIBuilder]");
 #end
 		this.components[component.type] = component;
-	}
-
-	inline public function registerColor(name: String, color: Color) {
-		this.colors[name] = color;
 	}
 
 	// ---- Various building method  ---- //
@@ -136,6 +121,18 @@ class Builder {
 		}
 	}
 
+	public function fromString(string: String, context: Dynamic): h2d.Object {
+		try {
+			final builderContext = context is BuilderContext ? cast context : new BuilderContext(context);
+			final object = make(string, builderContext);
+			return object;
+		} catch (e) {
+			zf.Logger.error(string);
+			zf.Logger.exception(e);
+			return null;
+		}
+	}
+
 	// ---- Methods for getting predefined configurations, i.e fonts,colors etc ---- //
 
 	/**
@@ -177,6 +174,8 @@ class Builder {
 	}
 
 	/**
+		Get a bitmap for the builder.
+		Requires "path" and "index" (default 0)
 	**/
 	dynamic public function getBitmap(conf: zf.Access): h2d.Object {
 		if (this.res == null) return null;
@@ -184,4 +183,33 @@ class Builder {
 		final index = conf.getInt("index", 0);
 		return this.res.getBitmap(path, index);
 	}
+
+	dynamic public function getAnim(conf: zf.Access): h2d.Anim {
+		if (this.res == null) return null;
+		final path = conf.getString("path");
+		return this.res.getAnim(path);
+	}
+
+	/**
+		Get a ScaleGridFactory factory
+	**/
+	dynamic public function getScaleGridFactory(id: String): ScaleGridFactory {
+		if (this.res == null) return null;
+		return this.res.getScaleGridFactory(id);
+	}
+
+	dynamic public function fromColor(color: Color, width: Float, height: Float): h2d.Bitmap {
+		final t = h2d.Tile.fromColor(color, 1, 1);
+		final bitmap = new h2d.Bitmap(t);
+		bitmap.width = width;
+		bitmap.height = height;
+		return bitmap;
+	}
 }
+
+/**
+	Fri 14:17:26 13 Jun 2025
+	It is more likely than not, moving forward we will be using XML over struct.
+	So many of the features that are available in the components will only be implemented in XML
+	if it needs to be handled separately.
+**/

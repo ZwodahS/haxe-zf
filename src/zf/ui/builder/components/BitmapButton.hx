@@ -1,8 +1,18 @@
 package zf.ui.builder.components;
 
 /**
-	Mon 14:55:37 15 Jan 2024
-	Probably can extend this and rename it to button later
+	Create a Bitmap Button
+
+	# Attributes
+	- bitmapId=String
+		index 0 to 3 will be used as [default, hover, disabled, selected]
+	- fontName=String
+	- textColor=String
+	- textId=String
+	- float-x=Float -> button.floatOffset
+	- float-y=Float -> button.floatOffset
+	- onClick=(hxd.Event)->Void -> button.addOnLeftClickListener
+
 **/
 class BitmapButton extends zf.ui.builder.Component {
 	public function new() {
@@ -65,3 +75,8 @@ class BitmapButton extends zf.ui.builder.Component {
 		return component;
 	}
 }
+
+/**
+	Mon 14:55:37 15 Jan 2024
+	Probably can extend this and rename it to button later
+**/

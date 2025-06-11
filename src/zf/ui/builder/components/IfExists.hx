@@ -3,10 +3,8 @@ package zf.ui.builder.components;
 /**
 	Show the underlying object if a key in the context has item
 
-	Tue 13:20:57 30 May 2023
-	Struct is not implemented.
-	Honestly, there might not be any need to implement it for struct, since we can already do it via code
-	if we are using struct.
+	# Attributes
+	- existsKey=String
 **/
 class IfExists extends zf.ui.builder.Component {
 	public function new() {
@@ -33,3 +31,10 @@ class IfExists extends zf.ui.builder.Component {
 		}
 	}
 }
+
+/**
+	Tue 13:20:57 30 May 2023
+	Struct is not implemented.
+	Honestly, there might not be any need to implement it for struct, since we can already do it via code
+	if we are using struct.
+**/

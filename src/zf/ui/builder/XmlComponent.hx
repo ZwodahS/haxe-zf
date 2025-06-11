@@ -2,12 +2,12 @@ package zf.ui.builder;
 
 import zf.ui.UIElement;
 
+enum ConfMode {
+	File; // treat confString as a filepath
+	XML; // treat confString as string
+}
+
 /**
-	Thu 19:51:22 19 Oct 2023
-	First draft of a xml component, similar to that of a domkit.
-
-	I expect there to be a V2 later.
-
 	# Motivation
 	A lot of the time, UI are defined in Xml files. The standard way is to load it from file.
 
@@ -20,12 +20,16 @@ import zf.ui.UIElement;
 	@:exposeContext function funcName or @:exposeContext(name)
 	will expose the function to the builder context as name.
 	if name is not provided, will expose as funcName
+
+	@see XmlComponentMacro for more information
 **/
 @:autoBuild(zf.macros.XmlComponentMacro.build())
 class XmlComponent extends UIElement {
 	public static var Builder: zf.ui.builder.Builder;
 
-	var filepath: String = null;
+	final confString: String = null;
+
+	final mode: ConfMode = File;
 
 	var display: h2d.Object = null;
 
@@ -34,9 +38,11 @@ class XmlComponent extends UIElement {
 	**/
 	var __context__: Dynamic;
 
-	public function new(filepath: String) {
+	public function new(confString: String, mode: ConfMode = File) {
 		super();
-		this.filepath = filepath;
+		this.confString = confString;
+
+		this.mode = mode;
 		this.__context__ = {};
 	}
 
@@ -49,7 +55,13 @@ class XmlComponent extends UIElement {
 	**/
 	function initComponent() {
 		if (XmlComponent.Builder == null) throw new haxe.Exception("UIBuilder not set");
-		this.addChild(this.display = cast XmlComponent.Builder.fromFile(filepath, getBuildContext()));
+		switch (mode) {
+			case File:
+				this.addChild(this.display = XmlComponent.Builder.fromFile(this.confString, getBuildContext()));
+			case XML:
+				this.addChild(this.display = XmlComponent.Builder.fromString(this.confString, getBuildContext()));
+		}
+
 		/**
 			Fri 14:38:04 19 Jul 2024
 			This is weird to be placed here, but I have no idea where else this can be done.
@@ -78,3 +90,15 @@ class XmlComponent extends UIElement {
 	**/
 	function _buildVariables() {}
 }
+
+/**
+	Thu 19:51:22 19 Oct 2023
+	First draft of a xml component, similar to that of a domkit.
+
+	I expect there to be a V2 later.
+
+	Wed 16:57:07 11 Jun 2025
+	More and more I realised that I don't really want to define it in a file.
+	This is funny, because part of the reason why I didn't use domkit is because
+	I want it in a file instead of SRC.
+**/

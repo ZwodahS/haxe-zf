@@ -1,12 +1,21 @@
 package zf.ui.builder.components;
 
+import zf.ui.WindowElement;
+
 /**
-	@stage:stable
+	Wrap around an object with WindowElement
+	WindowElement resize the background when the inner object is resized.
 
-	A simple Window Component.
-
-	Upon creation, set the default bgFactory and various configuration to use.
-
+	# Attributes
+	- minWidth=Int
+	- maxWidth=Int
+	- padding=Int
+	- paddingTop=Int
+	- paddingBottom=Int
+	- paddingLeft=Int
+	- paddingRight=Int
+	- background=String -> bgFactories.get(background) ?? context.builder.getScaleGridFactory(background)
+	- backgroundColor=String -> context.getColor
 **/
 class Window extends zf.ui.builder.Component {
 	public var defaultBg: ScaleGridFactory;
@@ -28,8 +37,9 @@ class Window extends zf.ui.builder.Component {
 		final item = element.firstElement();
 		if (item == null) return null;
 
-		final minWidth = access.getInt("minWidth", 450);
+		final minWidth = access.getInt("minWidth", null);
 		final maxWidth = access.getInt("maxWidth", null);
+		final minHeight = access.getInt("minHeight", null);
 
 		// handle padding parsing
 		var paddings: Recti = this.defaultPadding.clone();
@@ -54,14 +64,18 @@ class Window extends zf.ui.builder.Component {
 		}
 
 		final bgId = access.getString("background");
-		var bgFactory = this.defaultBg;
-		if (bgId != null && this.bgFactories.exists(bgId)) {
-			bgFactory = this.bgFactories[bgId];
-		}
+		var bgFactory = this.bgFactories.get(bgId) ?? context.builder.getScaleGridFactory(bgId) ?? this.defaultBg;
 
 		final object = context.makeObjectFromXMLElement(item);
 
-		return wrap(object, bgFactory, paddings, minWidth, maxWidth, null);
+		final window: WindowElement = cast wrap(object, bgFactory, paddings, minWidth, maxWidth, minHeight);
+
+		final colorId = access.getString("backgroundColor");
+		if (colorId != null) {
+			final color = context.getColor(colorId);
+			window.background.color = h3d.Vector4.fromColor(color);
+		}
+		return window;
 	}
 
 	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
@@ -73,35 +87,33 @@ class Window extends zf.ui.builder.Component {
 		final item = context.makeObjectFromStruct(access.get("item"));
 		if (item == null) return null;
 
-		final minWidth = access.getInt("minWidth", 450);
+		final minWidth = access.getInt("minWidth", null);
 		final maxWidth = access.getInt("maxWidth", null);
+		final minHeight = access.getInt("minHeight", null);
 		final paddings = access.getArray("paddings", defaultPadding);
 
-		return wrap(item, bgFactory, paddings, minWidth, maxWidth, null);
+		return wrap(item, bgFactory, paddings, minWidth, maxWidth, minHeight);
 	}
 
 	// @formatter:off
 	public static function wrap(object: h2d.Object,
 			bgFactory: ScaleGridFactory, padding: Recti = null,
 			minWidth: Null<Int> = null, maxWidth: Null<Int> = null, minHeight: Null<Int> = null): h2d.Object {
-		if (padding == null) padding = [0, 0, 0, 0];
-		final bounds = object.getBounds();
-		final windowSize = getWindowSize(bounds, padding, minWidth, maxWidth, minHeight);
-		final obj = new UIElement();
-		obj.addChild(bgFactory.make(windowSize));
-		obj.addChild(object);
-		object.x = padding.xMin;
-		object.y = padding.yMin;
-		return obj;
+		final window = new WindowElement(bgFactory.make(10, 10), object);
+		window.minWidth = minWidth;
+		window.maxWidth = maxWidth;
+		window.minHeight = minHeight;
+		window.paddingLeft = padding.left;
+		window.paddingRight = padding.right;
+		window.paddingTop = padding.top;
+		window.paddingBottom = padding.bottom;
+		@:privateAccess window.render();
+		return window;
 	}
 
-	static function getWindowSize(bounds: h2d.col.Bounds, padding: Recti, minWidth: Null<Int> = null,
-			maxWidth: Null<Int> = null, minHeight: Null<Int> = null): Point2i {
-		final windowSize: Point2i = [Std.int(bounds.width), Std.int(bounds.height)];
-		windowSize.x += padding.xMin + padding.xMax;
-		windowSize.y += padding.yMin + padding.yMax;
-		windowSize.x = Math.clampI(windowSize.x, minWidth, maxWidth);
-		windowSize.y = Math.clampI(windowSize.y, minHeight, null);
-		return windowSize;
-	}
 }
+
+/**
+	Thu 16:36:41 12 Jun 2025
+	Allow getting of background scalegrid from builder
+**/

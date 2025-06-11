@@ -1,7 +1,13 @@
 package zf.ui.builder.components;
 
 /**
-	@stage:stable
+	Create a Scalegrid
+
+	# Attributes
+	- factoryId=String -> context.builder.getScaleGridFactory(factoryId)
+	- width=Int
+	- height=Int
+	- color=String -> context.getColor(color)
 **/
 class ScaleGrid extends Component {
 	public var factories: Map<String, ScaleGridFactory>;
@@ -24,8 +30,9 @@ class ScaleGrid extends Component {
 	}
 
 	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
-		final factoryId = conf.getString("factoryId");
-		final factory = (factoryId == null || factories.exists(factoryId) == false) ? this.defaultFactory : factories.get(factoryId);
+		final id = conf.getString("factoryId");
+		final factory = this.factories.get(id) ?? context.builder.getScaleGridFactory(id) ?? this.defaultFactory;
+
 		final width = conf.getInt("width", 1);
 		final height = conf.getInt("height", 1);
 
@@ -35,7 +42,7 @@ class ScaleGrid extends Component {
 			color = context.getColor(colorString);
 		}
 
-		final obj = factory.make([width, height], color);
+		final obj = factory.make(width, height, color);
 		if (conf.get("name") != null) {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			obj.name = conf.get("name");
@@ -44,3 +51,10 @@ class ScaleGrid extends Component {
 		return obj;
 	}
 }
+
+/**
+	Thu 16:34:14 12 Jun 2025
+	Added getScaleGridFactory to builder.
+	Still keeping factories around because that is required for CR.
+	Might need to fix that for CR first.
+**/

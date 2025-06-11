@@ -18,12 +18,16 @@ typedef HorizontalFlowLayoutConf = {
 }
 
 /**
-	@stage:stable
+	Create a h2d.Flow with layout = horizontal
 
-	attributes:
+	# Attributes (Flow)
+	These are mapped to various attribute in h2d.Flow
 
-	spacing: Int - the spacing between each item
-	align: String - "top", "middle"(default), "bottom"
+	- align=["top"|"bottom"|"middle"] -> flow.verticalAlign
+	- spacing=Int -> flow.horizontalSpacing
+	- maxWidth=Int -> flow.maxWidth, will also set flow.multiline to true
+		- spacingY -> if maxWidth is set, spacingY is available to set flow.verticalSpacing
+			if not provided, spacing will be used.
 **/
 class HorizontalFlowLayout extends Component {
 	public function new() {
@@ -41,11 +45,18 @@ class HorizontalFlowLayout extends Component {
 		}
 
 		final loopKey: String = conf.getString("loopData");
+		final childrenKey: String = conf.getString("children");
 		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
+		final children: Array<Dynamic> = if (childrenKey == null) null else context.data.get(childrenKey);
 		if (loopData != null) {
 			for (data in loopData) {
 				final ctx = context.expandTemplateContext(data);
 				for (e in element.elements()) addElement(e, ctx);
+			}
+		} else if (children != null) {
+			// if children key is not null, we will assume that each element inside is a h2d.Object
+			for (c in children) {
+				if (c is h2d.Object) flow.addChild(cast(c, h2d.Object));
 			}
 		} else {
 			for (e in element.elements()) addElement(e, context);
@@ -99,7 +110,7 @@ class HorizontalFlowLayout extends Component {
 			final spacingY = conf.getInt("spacingY");
 			if (spacingY != null) {
 				flow.verticalSpacing = spacingY;
-			} else {
+			} else if (spacing != null) {
 				flow.verticalSpacing = spacing;
 			}
 		}
@@ -111,3 +122,8 @@ class HorizontalFlowLayout extends Component {
 		return flow;
 	}
 }
+
+/**
+	Sun 11:38:21 15 Jun 2025
+	Features are implemented on a need basis
+**/

@@ -48,9 +48,16 @@ typedef TextConf = {
 private typedef DropShadowConf = {dx: Float, dy: Float, color: Int, alpha: Float};
 
 /**
-	@stage:stable
-
 	Create HTML Text component
+
+	# Attributes
+	- font=h2d.Font
+	- fontName=String -> context.builder.getFont
+	- textColorKey=String -> context.get(textColorKey)
+	- textColor=String
+	- maxWidth -> h2d.HtmlText.maxWidth
+	- textAlign=["center"|"left"|"right"]
+	- stringId=String -> context.get(stringId) ?? context.builder.getStringTemplate(stringId)
 **/
 class Text extends Component {
 	public var defaultDropShadow: DropShadowConf = null;
@@ -104,8 +111,7 @@ class Text extends Component {
 		if (conf.get("font") != null) font = cast(conf.get("font"));
 		final fontName = conf.getString("fontName");
 		if (font == null && fontName != null) {
-			font = context.data.get(fontName);
-			if (font == null) font = context.builder.getFont(conf.getString("fontName"));
+			font = context.data.get(fontName) ?? context.builder.getFont(fontName);
 		}
 
 		var textColor: Color = 0xFFFFFF;

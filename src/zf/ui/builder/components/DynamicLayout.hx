@@ -8,12 +8,7 @@ typedef DynamicLayoutConf = {
 }
 
 /**
-	@stage:stable
-
-	# Usage
 	Create zf.ui.layout.DynamicLayout using xml
-
-	<layout-dynamic>
 
 	## Attributes
 	- width|height: defined the width and height of the layout. Also set the width|height of the interactive.
@@ -52,8 +47,10 @@ class DynamicLayout extends Component {
 		final height = parseInt(element.get("height"), 0);
 		final layout = new zf.ui.layout.DynamicLayout([width, height]);
 
-		if (element.get("interactive") == "true") {
-			final interactive = new zf.h2d.Interactive(width, height);
+		final interactiveConf = element.get("interactive");
+		var interactive: zf.h2d.Interactive = null;
+		if (interactiveConf == "true" || interactiveConf == "resize") {
+			interactive = new zf.h2d.Interactive(width, height);
 			layout.addChild(interactive);
 			layout.interactive = interactive;
 		}
@@ -105,6 +102,12 @@ class DynamicLayout extends Component {
 			}
 			uie.position = position;
 			layout.addChild(uie);
+		}
+
+		if (interactiveConf == "resize") {
+			final size = layout.getSize();
+			interactive.width = size.width;
+			interactive.height = size.height;
 		}
 
 		return layout;

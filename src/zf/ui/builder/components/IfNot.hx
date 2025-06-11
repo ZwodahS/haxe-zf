@@ -2,6 +2,10 @@ package zf.ui.builder.components;
 
 /**
 	Show the underlying object if a key in the context is false
+
+	# Attributes
+	- boolKey=String
+		get a bool from context. if it returns false, then the first element will be shown.
 **/
 class IfNot extends zf.ui.builder.Component {
 	public function new() {

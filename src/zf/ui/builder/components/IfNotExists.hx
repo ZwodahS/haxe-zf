@@ -1,5 +1,11 @@
 package zf.ui.builder.components;
 
+/**
+	Show the underlying object if a key in the context does not exists
+
+	# Attributes
+	- existsKey=String
+**/
 class IfNotExists extends zf.ui.builder.Component {
 	public function new() {
 		super("if-not-exists");

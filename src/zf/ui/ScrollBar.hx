@@ -36,7 +36,7 @@ class ScrollBar extends h2d.Object {
 		this.displayMask = mask;
 		// create the various component
 
-		this.scrollCursor = this.cursorFactory.make([Std.int(scrollCursorWidth), 100]);
+		this.scrollCursor = this.cursorFactory.make(Std.int(scrollCursorWidth), 100);
 		this.scrollCursor.x = (this.scrollBarWidth - this.scrollCursorWidth) / 2;
 		this.addChild(scrollCursor);
 

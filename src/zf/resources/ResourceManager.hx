@@ -480,7 +480,7 @@ class ResourceManager {
 	}
 
 	inline public function makeScaleGrid(id: String, width: Int, height: Int, color: Null<Color> = null) {
-		return this.gridFactories[id].make([width, height], color);
+		return this.gridFactories[id].make(width, height, color);
 	}
 }
 

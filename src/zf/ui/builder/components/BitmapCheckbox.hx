@@ -1,5 +1,13 @@
 package zf.ui.builder.components;
 
+/**
+	Create a bitmap checkbox
+
+	# Attributes
+	- bitmapId=String
+		index 0 to 4 will be used as [default, hover, toggled, toggledhovered, disabled]
+	- onToggle=(Bool -> Void)
+**/
 class BitmapCheckboxComponent extends zf.ui.builder.Component {
 	public function new() {
 		super("bitmap-checkbox");

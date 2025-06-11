@@ -1,5 +1,14 @@
 package zf.ui.builder.components;
 
+/**
+	Create a scroll area, wrapping around a object
+
+	# Attributes
+	- factoryId=String -> context.builder.getScaleGridFactory(factoryId)
+	- width=Int
+	- height=Int
+	- cursorColor=Color
+**/
 class ScrollArea extends zf.ui.builder.Component {
 	public var factories: Map<String, ScaleGridFactory>;
 
@@ -33,7 +42,7 @@ class ScrollArea extends zf.ui.builder.Component {
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
 		final conf = zf.Access.xml(element);
 		final factoryId = conf.getString("factoryId");
-		final factory = (factoryId == null || factories.exists(factoryId) == false) ? null : factories.get(factoryId);
+		final factory = this.factories.get(factoryId) ?? context.builder.getScaleGridFactory(factoryId);
 
 		final firstElement = element.firstElement();
 		var child: h2d.Object = null;

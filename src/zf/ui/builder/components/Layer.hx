@@ -1,5 +1,8 @@
 package zf.ui.builder.components;
 
+/**
+	Create a empty h2d.Layers
+**/
 class Layer extends zf.ui.builder.Component {
 	public function new() {
 		super("layer-empty");

@@ -3,17 +3,17 @@ package zf.ui.builder.components;
 typedef GridLayoutConf = {}
 
 /**
-	@stage:stable
+	Create a Fixed Size Grid Layout
 
-	attributes:
+	# Attributes:
 
-	size: Point2i (row / column) - default [1, 1]
+	- size=Point2i(row/column) (default 1,1)
 		- in XML, use sizeX, sizeY
 		- in Struct, use size: [x, y]
-	gridSize: Point2i (size of each grid) - default [0, 0]
+	- gridSize=Point2i (default 0,0)
 		- in XML, use gridSizeX, gridSizeY
 		- in Struct, use gridSize: [x, y]
-	spacing: Point2i - default [0, 0]
+	- spacing=Point2i (default 0,0)
 		- in XML, use spacingX, spacingY
 		- in Struct use spacing: [x, y]
 

@@ -18,7 +18,13 @@ class XmlComponentMacro {
 
 		var findChildVar: Array<{field: haxe.macro.Field, path: String}> = [];
 		var exposeContext: Array<{field: haxe.macro.Field, name: String}> = [];
+		var hasNew: Bool = false;
+		var hasSrc: Bool = false;
+		var hasPath: Bool = false;
 		for (f in fields) {
+			if (f.name == "SRC" && f.access.contains(AStatic) == true) hasSrc = true;
+			if (f.name == "PATH" && f.access.contains(AStatic) == true) hasPath = true;
+			if (f.name == "new") hasNew = true;
 			if (f.meta.length == 0) continue;
 			for (m in f.meta) {
 				if (m.name == "findChild" || m.name == ":findChild") {
@@ -85,6 +91,39 @@ class XmlComponentMacro {
 				doc: null,
 				meta: [],
 			});
+		}
+
+		// ---- Generate the 'new' function if it is not there ---- //
+		if (hasNew == false) {
+			var expr: Expr = null;
+			if (hasSrc == true) {
+				expr = macro {
+					super(SRC, XML);
+					initContext();
+					initComponent();
+				};
+			} else if (hasPath == true) {
+				expr = macro {
+					super(PATH, File);
+					initContext();
+					initComponent();
+				};
+			} else {
+				Context.fatalError('XMlComponent Error: new or SRC or PATH required.', Context.currentPos());
+			}
+			if (expr != null) {
+				fields.push({
+					name: "new",
+					pos: Context.currentPos(),
+					kind: FFun({
+						args: [],
+						expr: expr,
+					}),
+					access: [],
+					doc: null,
+					meta: [],
+				});
+			}
 		}
 
 		{ // ---- Bind Context ---- //
