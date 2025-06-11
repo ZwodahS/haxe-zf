@@ -15,4 +15,5 @@ class Language {
 	public static final Korean: LanguageConfig = {id: "ko", name: "한국어"};
 	public static final French: LanguageConfig = {id: "fr", name: "Français"};
 	public static final Italian: LanguageConfig = {id: "it", name: "Italiano"};
+	public static final Portuguese: LanguageConfig = {id: "pt", name: "Português"};
 }
