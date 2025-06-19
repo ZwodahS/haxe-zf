@@ -30,6 +30,18 @@ class Effect {
 		return zf.ef.Wait.alloc(duration);
 	}
 
+	inline public static function shake(duration: Float = 0, shakeInternal: Float = 0, offX: Float,
+			offY: Float): zf.ef.Shake {
+		final ef = zf.ef.Shake.alloc();
+		ef.duration = duration;
+		ef.shakeInterval = shakeInternal;
+		ef.shakeRangeXMin = -offX;
+		ef.shakeRangeXMax = offX;
+		ef.shakeRangeYMin = -offY;
+		ef.shakeRangeYMax = offY;
+		return ef;
+	}
+
 	// ---- Expose zf.ef.Loop ---- //
 	inline public static function loop(effect: zf.ef.Effect, loopCount: Int = -1): zf.ef.Effect {
 		return zf.ef.Loop.loop(effect, loopCount);

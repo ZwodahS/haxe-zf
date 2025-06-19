@@ -71,7 +71,7 @@ class Shake extends Effect {
 			if (this.repeat == true) {
 				this.repeatWait = Random.float(this.repeatIntervalMin, this.repeatIntervalMax);
 			} else {
-				return false;
+				return true;
 			}
 		} else if (this.shakeDelta >= this.shakeInterval) {
 			this.object.x -= this.offsetX;
