@@ -212,6 +212,21 @@ class Util {
 		return null;
 	}
 
+	public static function getDocOfField(type: haxe.macro.Type, fieldName: String): String {
+		switch (type) {
+			case TType(t, _):
+				return getDocOfField(t.get().type, fieldName);
+			case TAnonymous(t):
+				final aType = t.get();
+				for (f in aType.fields) {
+					if (f.name == fieldName) return f.doc;
+				}
+				return null;
+			default:
+		}
+		return null;
+	}
+
 	public static function getAllFields(type: haxe.macro.Type): Array<haxe.macro.Type.ClassField> {
 		switch (type) {
 			case TType(t, _):

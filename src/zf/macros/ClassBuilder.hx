@@ -57,7 +57,8 @@ class ClassBuilder {
 
 		final created: Map<String, Bool> = [];
 
-		inline function buildField(field: haxe.macro.Field, fieldType: haxe.macro.Type, innerFieldName: String) {
+		inline function buildField(field: haxe.macro.Field, fieldType: haxe.macro.Type, innerFieldName: String,
+				doc: String) {
 			final fieldType = Context.toComplexType(fieldType);
 			final fieldName = field.name;
 			fields.push(({
@@ -65,9 +66,8 @@ class ClassBuilder {
 				pos: Context.currentPos(),
 				kind: FProp("get", "never", fieldType, null),
 				access: [APublic],
+				doc: doc,
 			}: haxe.macro.Field));
-
-			// TODO: add doc from the child field ?
 
 			fields.push(({
 				name: 'get_${innerFieldName}',
@@ -80,6 +80,7 @@ class ClassBuilder {
 					ret: fieldType,
 				}),
 				access: [APublic, AInline],
+				doc: doc,
 			}: haxe.macro.Field));
 			created.set(innerFieldName, true);
 		}
@@ -94,7 +95,7 @@ class ClassBuilder {
 							if (created.exists(f.name) == true)
 								Context.fatalError('Duplicated forwarding for ${f.name}.', field.pos);
 
-							buildField(field, f.type, '${f.name}');
+							buildField(field, f.type, '${f.name}', f.doc);
 						}
 					} else {
 						for (f in cast(meta.params[0].getValue(), Array<Dynamic>)) {
@@ -102,7 +103,7 @@ class ClassBuilder {
 							if (ft == null) {
 								Context.fatalError('unable to forward ${field.name}.${f}', field.pos);
 							}
-							buildField(field, ft, '${f}');
+							buildField(field, ft, '${f}', Util.getDocOfField(t, '${f}'));
 						}
 					}
 				default:
