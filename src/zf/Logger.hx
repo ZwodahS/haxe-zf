@@ -152,7 +152,7 @@ class Logger {
 		var location = PositionTools.toLocation(Context.currentPos());
 		final tag = location.file + ":" + location.range.start.line;
 		return macro {
-			Logger.print(40, 'Debug: This code is deprecated');
+			Logger.print(40, 'Deprecation Warning: ' + $v{tag});
 		}
 	}
 
