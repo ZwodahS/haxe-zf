@@ -6,10 +6,14 @@ package zf.nav;
 class NavigationNode implements Disposable {
 	public var parent: NavigationNode;
 
+	// give this node a name for toString
+	public var name: String = null;
+
 	function new() {}
 
 	public function dispose() {
 		this.parent = null;
+		this.name = null;
 	}
 
 	/**
@@ -48,7 +52,15 @@ class NavigationNode implements Disposable {
 		if (currentNode == null) currentNode = this;
 
 		final node = getNodeInDirection(direction);
-		if (node != null) return node.getNodeFromDirection(this, direction.opposite);
+		if (node != null) {
+			final n = node.getNodeFromDirection(this, direction.opposite);
+			if (n != null) return n;
+
+			// this handles the case where a dynamic nav group returns null, and we need to navigate that group
+			final n = node.navigate(direction);
+			if (n != null) return n;
+		}
+
 		if (this.parent != null) {
 			final parentNode = this.parent.navigate(direction, currentNode);
 			return parentNode;
@@ -87,6 +99,10 @@ class NavigationNode implements Disposable {
 			_onExit: Void->Void = null, _onActivate: Void->Void = null): DynamicNavigationElement {
 		return DynamicNavigationElement.alloc(_getNodeInDirection, _getNodeFromDirection, _onEnter, _onExit,
 			_onActivate);
+	}
+
+	public function toString() {
+		return this.name ?? "Unknown Navigation Node";
 	}
 }
 
