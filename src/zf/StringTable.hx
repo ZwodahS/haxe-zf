@@ -20,7 +20,9 @@ class StringTable {
 
 		final table = langs[Default];
 #if debug
-		if (logError == true && table[id] == null) Logger.debug('- String not found in default lang: ${id}');
+		if (logError == true && table[id] == null) {
+			Logger.debug('- String not found in default lang: ${id}', '[StringTable]');
+		}
 #end
 		return table[id];
 	}
@@ -37,7 +39,9 @@ class StringTable {
 			final template = this.getTemplate(fId, lang, false);
 			if (template != null) return template.execute(context);
 		}
-		if (logError == true && fallback != null) Logger.debug('- String not found: ${id}, with fallback: ${fallback}');
+		if (logError == true && fallback != null) {
+			Logger.debug('- String not found: ${id}, with fallback: ${fallback}', '[StringTable]');
+		}
 		return "";
 	}
 
@@ -86,11 +90,11 @@ class StringTable {
 		if (this.langs.exists(lang) == false) this.langs.set(lang, []);
 		final langMap = this.langs[lang];
 		for (key => t in strings) {
-			if (langMap.exists(key) == true) Logger.debug('String replaced: ${key}');
+			if (langMap.exists(key) == true) Logger.debug('String replaced: ${key}', '[StringTable]');
 			try {
 				langMap.set(key, new haxe.Template(t));
 			} catch (e) {
-				Logger.error('Fail to parse string as template, id: ${key}');
+				Logger.error('Fail to parse string as template, id: ${key}', '[StringTable]');
 				Logger.exception(e);
 			}
 		}
