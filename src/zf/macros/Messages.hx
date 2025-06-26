@@ -10,48 +10,36 @@ import haxe.macro.TypeTools;
 using haxe.macro.Tools;
 
 /**
-	# Motivation
-	Previously in most classes that listen to messages, there is a pattern of handling it in 2 parts
+	Provide a simple way to listen to messages from MessageDispatcher
 
-	The first part is to listen the messages
-	```
-	function init(world) {
-		world.dispatcher.listen(Message.MessageType, (message: zf.Message) -> {
-			handleMessage(cast message);
-		}, 0);
-		...
-	}
-	```
+	See #Motivation below
 
-	The second part defines the message
-	```
-	function handleMessage(m: XMessage) {
-		// ...
-	}
-	```
+	# Usage
 
-	Writing this is tedious, and prone to bugs sometimes. It also makes the init function really long and hard to read.
-	This macro is to streamline that to
-
+	1. Single message to single function
 	@:handleMessage("XMessage", 0)
-	function handleMessage(m: XMessage) {
-		// ...
-	}
+	function X(m: XMessage) {}
 
-	and we can just call `setupMessages in init`
-
-	function init(world) {
-		setupMessages(world.dispatcher);
-	}
-
-	Sometimes we also perform the same logic for multiple different messages
-	For example, Recompute cache with something happen, often after different type of messages
-
-	In this case, most of the time we don't need the message object
-
-	To handle this we have
-
+	2. Multiple message to single function
 	@:handleMessages(["XMessage", "YMessage"], 0)
+	function X() {}
+
+	3. Calling setup
+	setupMessages(dispatcher);
+
+	4. Remove Listeners on dispose
+	removeListeners(dispatcher);
+
+	## dispose messages
+	removeListeners(world.dispatcher);
+
+	# Fields
+	The macro will build the following fields and methods
+
+	- __listeners__: Array<Int>
+	- setupMessages(d: MessageDispatcher)
+	- removeListeners(d: MessageDispatcher)
+
 **/
 class Messages {
 	public function new() {}
@@ -60,21 +48,20 @@ class Messages {
 		final fields = Context.getBuildFields();
 		final className = Context.getLocalClass();
 		final type = Context.getLocalType();
-
 		final localClass = type.getClass();
-		final typePath = {
-			name: localClass.name,
-			pack: localClass.pack
-		}
+		final typePath = {name: localClass.name, pack: localClass.pack};
 		final superClass = localClass.superClass == null ? null : localClass.superClass.t.get();
 
-		var parentHasSetup = false;
 		final parentHasSetup = (superClass != null && TypeTools.findField(superClass, "setupMessages") != null);
+		final parentHasListeners = (superClass != null && TypeTools.findField(superClass, "__listeners__") != null);
 
 		// collect all the handlers via @:handleMessage
 		var handlers: Array<{field: haxe.macro.Field, message: String, priority: Int}> = [];
 
 		for (f in fields) {
+			if (f.name == "__listeners__") {
+				Context.fatalError("[Error] __listeners__ cannot be defined by class.", f.pos);
+			}
 			if (f.meta.length == 0) continue;
 			for (m in f.meta) {
 				if (m.name == ":handleMessage") {
@@ -118,10 +105,27 @@ class Messages {
 		}
 
 		{ // set up all the listen
+			var init: Array<Expr> = [];
 			final exprs: Array<Expr> = [];
 			final access = [];
 			if (parentHasSetup == true) {
 				access.push(AOverride);
+			}
+
+			if (parentHasListeners == false) {
+				// build __listeners__
+				fields.push({
+					name: "__listeners__",
+					pos: Context.currentPos(),
+					kind: FVar(macro : Array<Int>, null),
+					access: [],
+					meta: [],
+					doc: null,
+				});
+
+				init.push(macro {
+					this.__listeners__ = [];
+				});
 			}
 
 			for (handler in handlers) {
@@ -131,15 +135,17 @@ class Messages {
 				final priority = handler.priority;
 				if (args.length == 1) {
 					exprs.push(macro {
-						dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
+						final id = dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
 							this.$field(cast message);
 						}, $v{priority});
+						this.__listeners__.push(id);
 					});
 				} else if (args.length == 0) {
 					exprs.push(macro {
-						dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
+						final id = dispatcher.listen($i{messageName}.MessageType, (message: zf.Message) -> {
 							this.$field();
 						}, $v{priority});
+						this.__listeners__.push(id);
 					});
 				} else {
 					Context.fatalError("Message handlers must have 0 or 1 argument", handler.field.pos);
@@ -150,10 +156,12 @@ class Messages {
 			if (parentHasSetup == true) {
 				expr = macro {
 					super.setupMessages(dispatcher);
-					$a{exprs}
+					$a{init} $a{exprs}
 				}
 			} else {
-				expr = macro $a{exprs};
+				expr = macro {
+					$a{init} $a{exprs}
+				}
 			}
 
 			fields.push({
@@ -162,6 +170,24 @@ class Messages {
 				kind: FFun({
 					args: [{name: "dispatcher", type: TPath({name: "MessageDispatcherI", pack: ["zf"]})}],
 					expr: expr,
+					ret: macro : Void,
+				}),
+				access: access,
+				doc: null,
+				meta: [],
+			});
+
+			fields.push({
+				name: "removeListeners",
+				pos: Context.currentPos(),
+				kind: FFun({
+					args: [{name: "dispatcher", type: TPath({name: "MessageDispatcherI", pack: ["zf"]})}],
+					expr: macro {
+						for (id in this.__listeners__) {
+							dispatcher.removeListener(id);
+						}
+						this.__listeners__.clear();
+					},
 					ret: macro : Void,
 				}),
 				access: access,
@@ -180,6 +206,52 @@ class Messages {
 #end
 
 /**
+	# Motivation
+	Previously in most classes that listen to messages, there is a pattern of handling it in 2 parts
+
+	The first part is to listen the messages
+	```
+	function init(world) {
+		world.dispatcher.listen(Message.MessageType, (message: zf.Message) -> {
+			handleMessage(cast message);
+		}, 0);
+		...
+	}
+	```
+
+	The second part defines the message
+	```
+	function handleMessage(m: XMessage) {
+		// ...
+	}
+	```
+
+	Writing this is tedious, and prone to bugs sometimes. It also makes the init function really long and hard to read.
+	This macro is to streamline that to
+
+	@:handleMessage("XMessage", 0)
+	function handleMessage(m: XMessage) {
+		// ...
+	}
+
+	and we can just call `setupMessages in init`
+
+	function init(world) {
+		setupMessages(world.dispatcher);
+	}
+
+	Sometimes we also perform the same logic for multiple different messages
+	For example, Recompute cache with something happen, often after different type of messages
+
+	In this case, most of the time we don't need the message object
+
+	To handle this we have
+
+	@:handleMessages(["XMessage", "YMessage"], 0)
+
 	Wed 14:34:40 21 Aug 2024
 	rename @handleMessage -> @:handleMessage, @handleMessages -> @:handleMessages
+
+	Thu 12:06:51 26 Jun 2025
+	store listener id and add removeListeners method.
 **/

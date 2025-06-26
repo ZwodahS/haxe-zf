@@ -54,6 +54,12 @@ class MessageListenersGroup implements MessageDispatcherI {
 		this.listeners.clear();
 	}
 
+	public function removeListener(id: Int) {
+		final listener = this.dispatcher.get(id);
+		this.dispatcher.removeListener(id);
+		this.listeners.remove(listener);
+	}
+
 	/**
 		Disable all the listeners in this group
 	**/

@@ -59,7 +59,7 @@ class OverlayMessages extends h2d.Object {
 
 	public function set_dispatcher(v: MessageDispatcher): MessageDispatcher {
 		if (this.dispatcher != null) {
-			this.dispatcher.remove(this.listenerId);
+			this.dispatcher.removeListener(this.listenerId);
 			this.listenerId = -1;
 		}
 		this.dispatcher = v;

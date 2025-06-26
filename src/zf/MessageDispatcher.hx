@@ -333,12 +333,17 @@ class MessageDispatcher implements MessageDispatcherI {
 		return this.listeners.get(id);
 	}
 
+	@:deprecated
+	inline public function remove(id: Int) {
+		removeListener(id);
+	}
+
 	/**
 		remove a listener from the dispatcher by id
 
 		@:param id the listener id provided when listen is called.
 	**/
-	public function remove(id: Int) {
+	public function removeListener(id: Int) {
 		final listener = this.listeners.get(id);
 		if (listener == null) return;
 
