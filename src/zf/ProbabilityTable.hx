@@ -64,8 +64,6 @@ class ProbabilityTableRandomIterator<T> {
 }
 
 /**
-	@stage:stable
-
 	The Readonly version of the table.
 	Doesn't not guaranteed immutability since the object can be casted
 **/
@@ -231,6 +229,11 @@ class ProbabilityTable<T> extends ReadOnlyProbabilityTable<T> {
 				return;
 			}
 		}
+	}
+
+	public function clear() {
+		this.chances.clear();
+		this.totalChance = 0;
 	}
 
 	public function updateChance(item: T, amount: Int) {
