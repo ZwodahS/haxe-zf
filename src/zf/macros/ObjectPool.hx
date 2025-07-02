@@ -268,7 +268,7 @@ class ObjectPool {
 								f.expr = macro {
 									if (this.__isDisposed__ == true) {
 										for (stackItem in haxe.CallStack.callStack()) {
-											trace(Debug.stackItemToString(stackItem));
+											trace(zf.Debug.stackItemToString(stackItem));
 										}
 										trace("   [ObjectPool] [Warn] Using function "
 											+ $v{fName} + " of disposed object " + $v{className} + ".");
