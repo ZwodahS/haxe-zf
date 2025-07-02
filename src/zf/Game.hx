@@ -12,8 +12,6 @@ enum GameScreenState {
 }
 
 /**
-	@stage:stable
-
 	Parent Game.hx
 **/
 class Game extends hxd.App {
@@ -50,7 +48,7 @@ class Game extends hxd.App {
 
 	var autoResize: Bool = true;
 
-	public var r: hxd.Rand;
+	public var r: zf.hxd.Rand;
 
 	/**
 		The main display layer
@@ -76,7 +74,7 @@ class Game extends hxd.App {
 	override function new(size: Point2i = null, pixelPerfect: Bool = false, autoResize: Bool = true) {
 		super();
 		this.updater = new zf.up.Updater();
-		this.r = new hxd.Rand(Random.int(0, zf.Constants.SeedMax));
+		this.r = zf.hxd.Rand.alloc();
 		if (size == null) size = [800, 600];
 		this.pixelPerfect = pixelPerfect;
 

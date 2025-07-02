@@ -69,7 +69,7 @@ class Shake extends Effect {
 			// if repeat, we restart
 			this.restart();
 			if (this.repeat == true) {
-				this.repeatWait = Random.float(this.repeatIntervalMin, this.repeatIntervalMax);
+				this.repeatWait = zf.hxd.Rand.r().randomFloat(this.repeatIntervalMin, this.repeatIntervalMax);
 			} else {
 				return true;
 			}
@@ -77,8 +77,8 @@ class Shake extends Effect {
 			this.object.x -= this.offsetX;
 			this.object.y -= this.offsetY;
 			this.shakeDelta -= this.shakeInterval;
-			this.offsetX = Random.float(this.shakeRangeXMin, this.shakeRangeXMax);
-			this.offsetY = Random.float(this.shakeRangeYMin, this.shakeRangeYMax);
+			this.offsetX = zf.hxd.Rand.r().randomFloat(this.shakeRangeXMin, this.shakeRangeXMax);
+			this.offsetY = zf.hxd.Rand.r().randomFloat(this.shakeRangeYMin, this.shakeRangeYMax);
 			this.object.x += this.offsetX;
 			this.object.y += this.offsetY;
 		} else {}

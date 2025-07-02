@@ -15,9 +15,7 @@ class ArrayExtensions {
 	**/
 	public static function shuffle<T>(array: Array<T>, r: hxd.Rand = null) {
 		if (array.length <= 1) return;
-		if (r == null) {
-			r = new hxd.Rand(Random.int(0, zf.Constants.MaxInt32));
-		}
+		if (r == null) r = zf.hxd.Rand.r();
 		var i = array.length - 1;
 		while (i >= 1) {
 			// Note: We need to include the index itself.
@@ -37,7 +35,7 @@ class ArrayExtensions {
 			return;
 		}
 
-		final index = r != null ? r.random(array.length + 1) : Random.int(0, array.length);
+		final index = r != null ? r.random(array.length + 1) : zf.hxd.Rand.r().randomInt(array.length);
 		array.insert(index, item);
 	}
 

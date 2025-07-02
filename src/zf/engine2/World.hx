@@ -39,14 +39,14 @@ class World {
 		If a stable number gen is needed and wants to be store, create a new separately.
 		This should ideally only be used for animations.
 	**/
-	public var r: hxd.Rand;
+	public var r: zf.hxd.Rand;
 
 	public function new() {
 		this.__systems__ = new List<System>();
 		this.__entities__ = new Entities<Entity>();
 		this.updater = new zf.up.Updater();
 		this.dispatcher = new MessageDispatcher();
-		this.r = new hxd.Rand(Random.int(0, zf.Constants.SeedMax));
+		this.r = zf.hxd.Rand.alloc();
 #if dispatchMessages
 		this.dispatcher.onAfterMessage = (m) -> {
 			Logger.debug('${m} ${m.delta} (${zf.StringUtils.formatFloat(m.delta / 0.016, 2)} frame)', "[Messages]");

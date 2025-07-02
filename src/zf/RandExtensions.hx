@@ -54,6 +54,13 @@ class RandExtensions {
 		return randomInt(r, diff) + min;
 	}
 
+	public static function randomFloat(r: hxd.Rand, min: Float, max: Float): Float {
+		if (max == min) return min;
+		final diff = max - min;
+		final x = r.rand();
+		return x * diff + min;
+	}
+
 	public static function randomChance(r: hxd.Rand, chance: Int, base: Int = 100): Bool {
 		if (chance >= base) return true;
 		if (chance == 0) return false;

@@ -9,7 +9,7 @@ typedef WorldStateSF = {
 }
 
 class WorldState implements Serialisable implements Identifiable implements EntityContainer {
-	public var r: hxd.Rand;
+	public var r: zf.hxd.Rand;
 
 	/**
 		Int counter for id generation
@@ -39,7 +39,7 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 
 	public function new(seed: Int = 0) {
 		this.intCounter = new zf.IntCounter.SimpleIntCounter();
-		this.r = new hxd.Rand(seed);
+		this.r = zf.hxd.Rand.alloc(seed);
 	}
 
 	public function collectEntities(entities: Entities<Entity>) {}

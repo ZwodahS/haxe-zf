@@ -187,7 +187,7 @@ class Level implements EntityContainer {
 		@return the tile that can be placed on
 	**/
 	public function getRandomPlaceablePosition(e: Entity, r: hxd.Rand = null, maxTries: Int = 10): Tile {
-		r = r == null ? new hxd.Rand(Random.int(0, Std.int(Math.pow(2, 16)))) : r;
+		r = r ?? zf.hxd.Rand.r();
 		var tries = 0;
 		final size = this.size;
 

@@ -2,17 +2,50 @@ package zf.hxd;
 
 import zf.serialise.*;
 
-#if !macro @:build(zf.macros.ObjectPool.build()) #end
 class Rand extends hxd.Rand implements Disposable implements zf.serialise.Serialisable {
+	/**
+		Can't use object pool macro here, because that previous extensions from using Rand, which I need.
+		Build the object pooling manually
+	**/
+	static var __pool__: Rand = null;
+
+	var __next__: Rand = null;
+
+	/**
+		A global rand to be used when we need a temporary one.
+	**/
+	static var _r: Rand;
+
+	public static function r(): Rand {
+		if (Rand._r == null) Rand._r = alloc();
+		return Rand._r;
+	}
+
 	function new() {
 		super(0);
 	}
 
 	public static function alloc(seed: Null<Int> = null): Rand {
+		final rand: Rand = __alloc__();
 		if (seed == null) seed = Std.random(0x7FFFFFFF);
-		final r = __alloc__();
-		r.init(seed);
-		return r;
+		rand.init(seed);
+		return rand;
+	}
+
+	static function __alloc__(): Rand {
+		if (__pool__ != null) {
+			final r = __pool__;
+			__pool__ = r.__next__;
+			r.__next__ = null;
+			return r;
+		} else {
+			return new Rand();
+		}
+	}
+
+	public function dispose() {
+		this.__next__ = __pool__;
+		__pool__ = this;
 	}
 
 	public function toStruct(context: SerialiseContext): Dynamic {

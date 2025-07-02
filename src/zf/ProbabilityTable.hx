@@ -144,13 +144,21 @@ class ReadOnlyProbabilityTable<T> {
 	**/
 	public function randomItem(?r: Rand, remove: Bool = false): Null<T> {
 		if (this.totalChance == 0) return null;
-		r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
+
+		var d = false;
+		if (r == null) {
+			d = true;
+			r = zf.hxd.Rand.alloc();
+		}
+
 		var ind = _random(this.chances, r, this.totalChance);
 		var c = this.chances[ind];
 		if (remove == true) {
 			this.chances.splice(ind, 1);
 			this.totalChance -= c.chance;
 		}
+		if (d == true) cast(r, Disposable).dispose();
+
 		return c.item;
 	}
 
@@ -158,7 +166,11 @@ class ReadOnlyProbabilityTable<T> {
 		Returns random items from the table
 	**/
 	public function randomItems(count: Int, ?r: Rand, allowDuplicate: Bool = false): Array<T> {
-		r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
+		var d = false;
+		if (r == null) {
+			r = zf.hxd.Rand.alloc();
+			d = true;
+		}
 		// make a copy of both
 		var totalChance = this.totalChance;
 		var items: Array<Chance<T>> = [for (c in this.chances) c];
@@ -174,6 +186,9 @@ class ReadOnlyProbabilityTable<T> {
 			totalChance -= item.chance;
 			if (items.length == 0) break;
 		}
+
+		if (d == true) cast(r, Disposable).dispose();
+
 		return out;
 	}
 
@@ -190,7 +205,7 @@ class ReadOnlyProbabilityTable<T> {
 		return a randomed Iterator of the item in this table
 	**/
 	public function randomList(?r: Rand): ProbabilityTableRandomIterator<T> {
-		r = r != null ? r : new Rand(Random.int(0, Constants.SeedMax));
+		r = r != null ? r : zf.hxd.Rand.alloc();
 		return new ProbabilityTableRandomIterator(this.chances, r);
 	}
 
