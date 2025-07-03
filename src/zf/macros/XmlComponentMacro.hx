@@ -17,6 +17,7 @@ class XmlComponentMacro {
 		final fields = Context.getBuildFields();
 
 		var findChildVar: Array<{field: haxe.macro.Field, path: String}> = [];
+		var findChildrenVar: Array<{field: haxe.macro.Field, path: String}> = [];
 		var exposeContext: Array<{field: haxe.macro.Field, name: String}> = [];
 		var hasNew: Bool = false;
 		var hasSrc: Bool = false;
@@ -35,6 +36,10 @@ class XmlComponentMacro {
 					if (m.name == "findChild") {
 						Context.info("[Deprecated] @findChild is deprecated, use @:findChild instead.", f.pos);
 					}
+				}
+				if (m.name == ":findChildren") {
+					final path = m.params.length > 0 ? m.params[0].getValue() : f.name;
+					findChildrenVar.push({field: f, path: path});
 				}
 				if (m.name == "exposeContext" || m.name == ":exposeContext") {
 					var name = f.name;
@@ -58,6 +63,14 @@ class XmlComponentMacro {
 #else
 				exprs.push(macro this.$field = cast getObjectByName($v{path}));
 #end
+			}
+
+			var findChildrenExprs: Array<Expr> = [];
+			for (v in findChildrenVar) {
+				final field = v.field.name;
+				final path = v.path;
+				findChildrenExprs.push(macro this.$field = cast zf.h2d.ObjectExtensions.getObjectsByName(this,
+					$v{path}));
 			}
 
 #if debug
@@ -84,7 +97,9 @@ class XmlComponentMacro {
 				pos: Context.currentPos(),
 				kind: FFun({
 					args: [],
-					expr: macro $a{exprs},
+					expr: macro {
+						$a{exprs} $a{findChildrenExprs}
+					},
 					ret: macro : Void,
 				}),
 				access: [AOverride],

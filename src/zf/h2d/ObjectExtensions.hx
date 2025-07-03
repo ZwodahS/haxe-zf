@@ -10,9 +10,6 @@ enum SetMode {
 	AlignCenter;
 }
 
-/**
-	@stage:stable
-**/
 class ObjectExtensions {
 	/**
 		Wrap a object around a object and center it
@@ -547,4 +544,19 @@ class ObjectExtensions {
 		return bytes;
 	}
 #end
+
+	/**
+		Search for all objects by name.
+	**/
+	public static function getObjectsByName(object: h2d.Object, name: String,
+			objects: Array<h2d.Object> = null): Array<h2d.Object> {
+		if (objects == null) objects = [];
+		if (object.name == name) objects.push(object);
+
+		@:privateAccess for (c in object.children) {
+			getObjectsByName(c, name, objects);
+		}
+
+		return objects;
+	}
 }

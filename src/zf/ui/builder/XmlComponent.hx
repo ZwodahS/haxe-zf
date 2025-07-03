@@ -17,6 +17,9 @@ enum ConfMode {
 	This will assign the variable to a object via h2d.Object.getObjectByName
 	if path is not provided, will use the variable name
 
+	@:findChildren or @:findChildren(path)
+	This will assign a list of h2d.Object via h2d.Object.getObjectsByName
+
 	@:exposeContext function funcName or @:exposeContext(name)
 	will expose the function to the builder context as name.
 	if name is not provided, will expose as funcName
