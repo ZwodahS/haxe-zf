@@ -4,7 +4,7 @@ package zf.ren.ext.messages;
 class MOnEntityHealthChanged extends zf.Message {
 	public static final MessageType = "MOnEntityHealthChanged";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 	@:dispose public var prev: Int = 0;
 	@:dispose public var next: Int = 0;
 

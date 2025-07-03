@@ -4,7 +4,7 @@ package zf.ren.ext.messages;
 class MOnEntityActiveTurn extends zf.Message {
 	public static final MessageType = "MOnEntityActiveTurn";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 	@:dispose public var repeat: Bool = false;
 
 	function new() {

@@ -4,7 +4,7 @@ package zf.ren.core.messages;
 class MOnEntityMoved extends zf.Message {
 	public static final MessageType = "MOnEntityMoved";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 	@:dispose public var oldLevel: Level = null;
 	@:dispose public var newLevel: Level = null;
 	@:dispose public var oldPosition: Point2i;

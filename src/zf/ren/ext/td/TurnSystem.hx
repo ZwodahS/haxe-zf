@@ -8,7 +8,7 @@ import zf.ren.ext.messages.MOnEntityTurnEnd;
 
 #if !macro @:build(zf.macros.ObjectPool.build()) #end
 class TurnSystemEntity {
-	@:dispose public var e: Entity = null;
+	@:dispose("set") public var e: Entity = null;
 	@:dispose("set") public var tc: TurnComponent = null;
 
 	function new() {}

@@ -9,7 +9,7 @@ package zf.engine2.messages;
 class MOnComponentAttached extends zf.Message {
 	public static final MessageType = "MOnComponentAttached";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 	@:dispose("set") public var component: Component = null;
 
 	function new() {

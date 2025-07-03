@@ -4,8 +4,8 @@ package zf.ren.ext.player;
 class MOnPlayerSet extends zf.Message {
 	public static final MessageType = "MOnPlayerSet";
 
-	@:dispose public var prev: Entity = null;
-	@:dispose public var next: Entity = null;
+	@:dispose("set") public var prev: Entity = null;
+	@:dispose("set") public var next: Entity = null;
 
 	function new() {
 		super(MessageType);

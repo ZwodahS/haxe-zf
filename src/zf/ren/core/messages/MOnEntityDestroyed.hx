@@ -4,7 +4,7 @@ package zf.ren.core.messages;
 class MOnEntityDestroyed extends zf.Message {
 	public static final MessageType = "MOnEntityDestroyed";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 	@:dispose public var tile: Tile = null;
 
 	function new() {

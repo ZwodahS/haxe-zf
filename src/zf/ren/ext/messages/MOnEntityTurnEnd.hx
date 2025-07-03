@@ -4,7 +4,7 @@ package zf.ren.ext.messages;
 class MOnEntityTurnEnd extends zf.Message {
 	public static final MessageType = "MOnEntityTurnEnd";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 
 	function new() {
 		super(MessageType);

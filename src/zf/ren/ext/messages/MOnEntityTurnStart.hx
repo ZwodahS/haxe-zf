@@ -4,7 +4,7 @@ package zf.ren.ext.messages;
 class MOnEntityTurnStart extends zf.Message.ResultMessage<Bool> {
 	public static final MessageType = "MOnEntityTurnStart";
 
-	@:dispose public var entity: Entity = null;
+	@:dispose("set") public var entity: Entity = null;
 
 	// Proxy disrupted to result
 	public var disrupted(get, set): Bool;
