@@ -9,7 +9,7 @@ using haxe.macro.Tools;
 using haxe.macro.TypeTools;
 
 /**
-	Object Pool is a macro-based object pool framework.
+	ObjectPool is a macro-based object pool library.
 
 	The following fields should not exists in the class.
 	- __pool__ will be created and used to store the pool
@@ -17,14 +17,18 @@ using haxe.macro.TypeTools;
 	- __poolCount__ will be created to store the number of object in pool.
 	- __poolCreated__ will be created to store the number of object created
 
-	- dispose or __dispose__
+	- dispose
 	dispose method will be added to return the object back to the pool.
-	if this method is defined by class, __dispose__ will be created instead
-	if this method is defined by parent but not current class, __dispose__ will be created,
-		a dispose method will also be created calling super.dispose and __dispose__.
+	if this method is defined by class, the dispose method will be modified and
+		additional exprs will be added it it.
+	if this method is defined by parent but not current class, a dispose method will also be created
+		it will call super.dispose and the additional statements will be added it.
 
 	- reset
-	if reset method is present (in parent or child), it will be called when the object is disposed.
+	if reset method is present, it will be called when the object is disposed after all the generated statements.
+	Note that if parent is built via this macro, and has `reset` and children is built using
+	this macro, and also has `reset` method, the `reset` method will be called twice.
+	Be careful when defining reset function because of this.
 
 	- alloc or __alloc__
 	alloc method to get an instance of the object.
@@ -32,9 +36,16 @@ using haxe.macro.TypeTools;
 	Call __alloc__ in the custom alloc method to get the object.
 
 	# Usage
+	```
 	#if !macro @:build(zf.macros.ObjectPool.build()) #end
 	class XXX {}
+	```
 
+	If you want to only generate the dispose method without generating the object pool (i.e. for parent class)
+	you can also use this macro by passing false
+	```
+	#if !macro @:build(zf.macros.ObjectPool.build(false)) #end
+	```
 	## Field metadata
 
 	### 1. @:dispose
@@ -91,11 +102,14 @@ using haxe.macro.TypeTools;
 	@:dispose public var arr: Array<Int> = null;
 
 	# Additional notes:
-	1. constructor of the object need to be empty.
-	2. object can still be created using new, and can still be dispose, not sure why we will do that.
-	3. ObjectPool object should not be extended.
-	4. Using @:dispose on object with dispose function but is not Disposable will not work.
+	1. constructor of the object need to be empty if we are building object pool
+	2. object can still be created using new, and can still be disposed.
+	3. ObjectPool object should not be extended. If intended to be extended, it is advisable to build
+		only the dispose method.
 
+	# dependencies
+	- zf.macros.Util.
+	- zf.Disposable
 **/
 class ObjectPool {
 	function new() {}
@@ -165,9 +179,12 @@ class ObjectPool {
 						generateSet(f, e);
 					} else { // dispose function exists
 						if (e != null && explicit == false) {
+							// with a default value, so we don't dispose
 							Context.info('[Warn] ${fieldName} is Disposable with a default value. Intended ?', f.pos);
+							generateSet(f, e);
+						} else {
+							generateDisposeSetNull(f, e);
 						}
-						generateDisposeSetNull(f, e);
 					}
 				default:
 					Context.fatalError('${f.name} cannot be disposed.', f.pos);
@@ -312,13 +329,10 @@ class ObjectPool {
 		});
 		var hasReset = false;
 
-		{ // Build Reset Function
+		{ // Check for reset method
 			if (resetFunc == null) {
 				if (superClass != null && TypeTools.findField(superClass, "reset") != null) {
-					// if parent has reset, we don't need to add it.
 					hasReset = true;
-				} else {
-					// reset method don't exists
 				}
 			} else {
 				hasReset = true;
@@ -333,30 +347,24 @@ class ObjectPool {
 				2. dispose function exists in parent(and ancestors) class but not in this class
 				3. dispose function does not exists anywhere
 
-				for 1. we will add a __dispose__ and be done with it
-				for 2. we will add a __dispose__ and also a dispose function that call super.dispose and __dispose__
-				for 3. we will add the function as dispose
-
-				Tue 13:58:32 09 Jul 2024
-				There is a better way to write this without duplicating code.
-				However, it also makes it harder to read, so don't change it
+				for 1. we will inject the code into dispose at the end of it.
+				for 2. we will override dispose, call super.dispose and inject the code
+				for 3. we will just add the function `dispose`
 			**/
 			final hasParentDispose = (superClass != null && TypeTools.findField(superClass, "dispose") != null);
 
+			// if reset function exists, we will call it after all the @:dispose statement
 			if (hasReset == true) {
 				resetExprs.push(macro {
 					this.reset();
 				});
 			}
+
 			if (disposeFunc != null) { // case 1
-				fields.push({
-					name: "__dispose__",
-					doc: null,
-					meta: [],
-					pos: Context.currentPos(),
-					kind: FFun({
-						args: [],
-						expr: macro {
+				switch (disposeFunc.kind) {
+					case FFun(f):
+						final expr = f.expr;
+						f.expr = macro {
 							if (this.__isDisposed__ == true) {
 #if debug
 								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
@@ -364,48 +372,21 @@ class ObjectPool {
 #end
 								return;
 							}
+							${f.expr};
 #if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
+							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ', ${this}.',
+								null);
 #end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
 							__pool__ = this;
 							__poolCount__ += 1;
-						},
-						ret: macro : Void
-					}),
-					access: [APublic, AInline],
-				});
+						}
+					default:
+						Context.fatalError("dispose is not method.", disposeFunc.pos);
+				}
 			} else if (hasParentDispose == true) { // case 2
-				fields.push({
-					name: "__dispose__",
-					doc: null,
-					meta: [],
-					pos: Context.currentPos(),
-					kind: FFun({
-						args: [],
-						expr: macro {
-							if (this.__isDisposed__ == true) {
-#if debug
-								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
-									+ $v{className} + ".", null);
-#end
-								return;
-							}
-#if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
-#end
-							$b{resetExprs};
-							this.__isDisposed__ = true;
-							this.__next__ = __pool__;
-							__pool__ = this;
-							__poolCount__ += 1;
-						},
-						ret: macro : Void
-					}),
-					access: [APublic, AInline],
-				});
 				fields.push({
 					name: "dispose",
 					doc: null,
@@ -414,8 +395,23 @@ class ObjectPool {
 					kind: FFun({
 						args: [],
 						expr: macro {
+							if (this.__isDisposed__ == true) {
+#if debug
+								haxe.Log.trace("   [ObjectPool] [Warn] Double disposing of object - "
+									+ $v{className} + ".", null);
+#end
+								return;
+							}
+#if (debug && objectpoolmessage)
+							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ', ${this}.',
+								null);
+#end
 							super.dispose();
-							__dispose__();
+							$b{resetExprs};
+							this.__isDisposed__ = true;
+							this.__next__ = __pool__;
+							__pool__ = this;
+							__poolCount__ += 1;
 						},
 						ret: macro : Void
 					}),
@@ -438,7 +434,8 @@ class ObjectPool {
 								return;
 							}
 #if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ".", null);
+							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ', ${this}.',
+								null);
 #end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
@@ -448,7 +445,7 @@ class ObjectPool {
 						},
 						ret: macro : Void
 					}),
-					access: [APublic, AInline],
+					access: [APublic],
 				});
 			}
 		}
@@ -475,7 +472,7 @@ class ObjectPool {
 					},
 					ret: Context.getLocalType().toComplexType(),
 				}),
-				access: [APublic, AStatic, AInline],
+				access: [APublic, AStatic],
 			});
 		}
 		{ // this field is here to prevent double dispose
@@ -489,20 +486,115 @@ class ObjectPool {
 		return fields;
 	}
 
-	public static function build() {
-		return new ObjectPool().setupObjectPool();
+	function setupDispose() {
+		final fields = Context.getBuildFields();
+		final localClass = Context.getLocalClass();
+		final className = '${localClass}';
+		final type = Context.getLocalType();
+		final localClass = type.getClass();
+		final typePath = {name: localClass.name, pack: localClass.pack};
+		final superClass = localClass.superClass == null ? null : localClass.superClass.t.get();
+
+		var resetFunc = null;
+		var disposeFunc = null;
+
+		for (f in fields) {
+			switch (f.name) {
+				case "reset":
+					resetFunc = f;
+				case "dispose":
+					disposeFunc = f;
+				default:
+			}
+		}
+
+		final resetExprs = generateResetExprs();
+
+		final hasReset = resetFunc != null || (superClass != null && TypeTools.findField(superClass, "reset") != null);
+
+		{ // Build Dispose Function
+			/**
+				Similar to the original object pool, there are 3 possibilities here.
+
+				1. dispose function exists in this class
+				2. dispose function exists in parent(and ancestors) class but not in this class
+				3. dispose function does not exists anywhere
+
+				for 1. we will inject the code into dispose at the end of it.
+				for 2. we will override dispose, call super.dispose and inject the code
+				for 3. we will just add the function `dispose`
+			**/
+			final hasParentDispose = (superClass != null && TypeTools.findField(superClass, "dispose") != null);
+
+			// if reset function exists, we will call it after all the @:dispose statement
+			if (hasReset == true) {
+				resetExprs.push(macro {
+					this.reset();
+				});
+			}
+
+			if (disposeFunc != null) { // case 1
+				switch (disposeFunc.kind) {
+					case FFun(f):
+						final expr = f.expr;
+						f.expr = macro {
+							${f.expr};
+							$b{resetExprs};
+						}
+					default:
+						Context.fatalError("dispose is not method.", disposeFunc.pos);
+				}
+			} else if (hasParentDispose == true) { // case 2
+				fields.push({
+					name: "dispose",
+					doc: null,
+					meta: [],
+					pos: Context.currentPos(),
+					kind: FFun({
+						args: [],
+						expr: macro {
+							super.dispose();
+							$b{resetExprs};
+						},
+						ret: macro : Void
+					}),
+					access: [APublic, AOverride],
+				});
+			} else { // case 3
+				fields.push({
+					name: "dispose",
+					doc: null,
+					meta: [],
+					pos: Context.currentPos(),
+					kind: FFun({
+						args: [],
+						expr: macro {
+							$b{resetExprs};
+						},
+						ret: macro : Void
+					}),
+					access: [APublic],
+				});
+			}
+		}
+
+		return fields;
+	}
+
+	public static function build(buildPool: Bool = true) {
+		if (buildPool == true) {
+			return new ObjectPool().setupObjectPool();
+		} else {
+			return new ObjectPool().setupDispose();
+		}
 	}
 }
 #end
 
-/**
-	Sun 14:39:14 05 May 2024
-	Added back zf.ObjectPool to handle a more simple way to handle object pool for objects
-	that I can't extend.
-	Another note, this does not have maxPoolSize. At the moment not sure if I need it.
-
+/** Changelog
 	Thu 17:06:08 25 Jul 2024
-	Added @dispose meta to dispose object
+	Initial Build
+
 	There is an argument to be made that we should automatically dispose object.
 	Honestly, that feels more correct but at the same time I think that it will break CR.
 	I also prefer explicit over implicit in this case, so let's just keep it this way for now.
@@ -511,9 +603,6 @@ class ObjectPool {
 		Adding to this note, I think we should not make it auto.
 		In UI objects, disposing usually does not means disposing them, so we should definitely not
 		auto dispose all the objects.
-
-	Fri 13:21:04 26 Jul 2024
-	Should I split "all" into "all" and "auto" ?
 
 	Fri 14:31:32 26 Jul 2024
 	Removed the generation of reset function if not exists.
@@ -527,11 +616,35 @@ class ObjectPool {
 	Rename @dispose -> @:dispose
 
 	Mon 13:16:18 02 Sep 2024
-	Considered allow this to be used to build @:dispose without building the object pool stuffs.
+	I considered changing this to allow the generation of `dispose` without building the pool.
 	This can be used by parent objects that need to dispose but cannot be alloc-ed.
+
 	However, it is not sure if we want to generate a __reset__ or a __dispose__.
 
 	On top of that, it might become tricky since generating reset means that the parent need to be
 	generated first before the child. Too many things to considered at the moment, so parent class
 	should really just handle this themselves at the moment.
+
+	Thu 13:11:55 03 Jul 2025
+	Adding to the above. I think there are some merit to it.
+	we can add a flag to object pool to do this.
+
+	Thu 13:56:07 03 Jul 2025
+	BREAKING CHANGES
+
+	__dispose__ method is no longer generated.
+	Instead, if dispose is present, the code will be added to after the dispose method
+	If order of disposing is important, it is better to dispose them manually.
+
+	This is necessary to add build(false) which allow us to build dispose method without building object pool
+
+	Another way to look at it is that
+	@:dispose will generate a bunch of statements.
+
+	If we need something to be done before these statements, create a `dispose` method and they will happen
+	before the @:dispose statements.
+	If we need something to be done after these statements, create a `reset` method and that method will be called
+	after the @:dispose statements.
+
+	The object pool code will always be after the reset statements
 **/

@@ -14,7 +14,6 @@ class Object3 implements Disposable {
 
 	// ---- Object pooling Methods ----
 	public function dispose() {
-		__dispose__();
 	}
 
 	public static function alloc(): Object3 {
