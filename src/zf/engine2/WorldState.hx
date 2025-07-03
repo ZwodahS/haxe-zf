@@ -6,6 +6,7 @@ import zf.serialise.SerialiseContext;
 typedef WorldStateSF = {
 	public var ?intCounter: Int;
 	public var ?entities: Array<Dynamic>;
+	public var ?r: Dynamic;
 }
 
 class WorldState implements Serialisable implements Identifiable implements EntityContainer {
@@ -60,7 +61,7 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 		final entitiesSF = [for (entity in entities) cast(entity, Entity).toStruct(context)];
 		stateSF.entities = entitiesSF;
 
-		// TODO: save/load seed/r
+		stateSF.r = r.toStruct(context);
 
 		return stateSF;
 	}
@@ -89,6 +90,9 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 		}
 
 		@:privateAccess this.intCounter.counter = stateSF.intCounter;
+
+		if (stateSF.r != null) this.r.loadStruct(context, stateSF.r);
+
 		return this;
 	}
 
