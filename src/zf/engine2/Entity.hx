@@ -5,9 +5,6 @@ import zf.engine2.messages.MOnComponentDetached;
 import zf.serialise.Serialisable;
 import zf.serialise.SerialiseContext;
 
-/**
-	@stage:stable
-**/
 @:autoBuild(zf.macros.Entity.build())
 class Entity implements Identifiable implements Disposable implements Serialisable implements EntityContainer {
 	// ---- Engine level fields ---- //
@@ -193,7 +190,6 @@ class Entity implements Identifiable implements Disposable implements Serialisab
 		}
 	}
 }
-
 /**
 	Mon 13:29:50 15 Jul 2024
 	Update this to implements

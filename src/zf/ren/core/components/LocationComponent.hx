@@ -6,9 +6,9 @@ package zf.ren.core.components;
 class LocationComponent extends zf.engine2.Component implements Serialisable implements EntityContainer {
 	public static final ComponentType = "LocationComponent";
 
-	@:dispose public var x: Null<Int> = null;
-	@:dispose public var y: Null<Int> = null;
-	@:dispose public var level: Level = null;
+	@:serialise @:dispose public var x: Null<Int> = null;
+	@:serialise @:dispose public var y: Null<Int> = null;
+	@:dispose("set") public var level: Level = null;
 
 	public var tile(get, never): zf.ren.core.Tile;
 

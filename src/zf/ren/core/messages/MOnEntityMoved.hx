@@ -5,8 +5,8 @@ class MOnEntityMoved extends zf.Message {
 	public static final MessageType = "MOnEntityMoved";
 
 	@:dispose("set") public var entity: Entity = null;
-	@:dispose public var oldLevel: Level = null;
-	@:dispose public var newLevel: Level = null;
+	@:dispose("set") public var oldLevel: Level = null;
+	@:dispose("set") public var newLevel: Level = null;
 	@:dispose public var oldPosition: Point2i;
 	@:dispose public var newPosition: Point2i;
 

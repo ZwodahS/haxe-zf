@@ -13,11 +13,12 @@ enum BlockType {
 /**
 	Level is a data container for a 2D finite floor.
 **/
-class Level implements EntityContainer {
+#if !macro @:build(zf.macros.Serialise.build()) #end
+class Level implements EntityContainer implements Serialisable implements Disposable {
 	/**
 		A string identifier for this level
 	**/
-	public var id(default, null): String = "";
+	@:serialise public var id(default, null): String = "";
 
 	/**
 		The readonly grid that can be used to get data
@@ -296,9 +297,38 @@ class Level implements EntityContainer {
 	public function collectEntities(entities: Entities<Entity>) {
 		for (e in this.entities) entities.add(e);
 	}
-}
 
-/**
-	TODO: implement Serialisable
-	TODO: implement Disposable (To make it possible to add ObjectPool to child)
-**/
+	public function dispose() {}
+
+	// ---- Save / Load ----
+	public function toStruct(context: SerialiseContext): Dynamic {
+		final sf = this.__toStruct__(context, {});
+		sf.width = this.tiles.width;
+		sf.height = this.tiles.height;
+
+		final tiles: Array<Dynamic> = [];
+
+		for (pt => tile in this.tiles.iterateYX()) {
+			final sf = tile.toStruct(context);
+			tiles.push(sf);
+		}
+		sf.tiles = tiles;
+
+		return sf;
+	}
+
+	public function loadStruct(context: SerialiseContext, sf: Dynamic): Level {
+		this.__loadStruct__(context, sf);
+
+		final tiles: Array<Dynamic> = sf.tiles;
+		Assert.assert(tiles.length == this.tiles.width * this.tiles.height);
+
+		var ind = 0;
+		for (pt => tile in this.tiles.iterateYX()) {
+			final tileSF = tiles[ind++];
+			tile.loadStruct(context, tileSF);
+		}
+
+		return this;
+	}
+}

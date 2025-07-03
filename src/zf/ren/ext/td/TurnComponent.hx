@@ -6,6 +6,7 @@ import zf.serialise.SerialiseContext;
 #if !macro @:build(zf.macros.ObjectPool.build()) #end
 #if !macro @:build(zf.macros.Serialise.build()) #end
 #if !macro @:build(zf.macros.Engine2.collectEntities()) #end
+@:allow(zf.ren.ext.td.TurnSystem)
 class TurnComponent extends zf.engine2.Component implements Serialisable implements EntityContainer {
 	public static final ComponentType = "TurnComponent";
 
@@ -26,20 +27,18 @@ class TurnComponent extends zf.engine2.Component implements Serialisable impleme
 	@:dispose @:serialise public var endTurn: Bool = false;
 
 	/**
-		Used internally by TurnSystem
+		Used internally by TurnSystem to track if the entity has taken action this cycle
 	**/
-	@:dispoe public var tookAction: Bool = false;
+	@:dispose var tookAction: Bool = false;
 
-	function new() {
-		super();
-	}
+	/**
+		Used internally by TurnSystem to track the entity position in the queue
+		This is only recorded when preSave is called.
+		This is used on load to populate the queue back to the state
+	**/
+	@:dispose @:serialise var queuePosition: Int = -1;
 
 	// ---- Object pooling Methods ----
-	public static function alloc(): TurnComponent {
-		final comp = TurnComponent.__alloc__();
-		return comp;
-	}
-
 	public static function empty(): TurnComponent {
 		return alloc();
 	}

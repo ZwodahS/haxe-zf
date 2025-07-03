@@ -123,15 +123,41 @@ class TurnQueue {
 		final n = this.insert(te);
 		this.map[te.e.id] = n;
 	}
+
+	/**
+		Add the queue position into the turn component.
+
+		the index is only updated when this method is called, and this method is only called when
+		the world is saving.
+	**/
+	public function updateQueuePosition() {
+		var ind = 0;
+		for (n in this.list) {
+			final tc = TurnComponent.get(n.e);
+			Assert.assert(tc != null, {typeId: n.e.typeId});
+			tc.queuePosition = ind++;
+		}
+	}
+
+	public function loadQueuePosition() {
+		final newList = [];
+		for (n in this.list) newList.push(n);
+
+		newList.sort((e1, e2) -> {
+			return zf.Compare.int(zf.Compare.Ascending, e1.tc.queuePosition, e2.tc.queuePosition);
+		});
+		this.list.clear();
+
+		for (n in newList) this.list.add(n);
+	}
 }
 
 /**
 	Time Delay Turn System
 
-	Entities are given a time delay, i.e. how many more time need to pass before it can perform
-	actions.
+	Entities are given a time delay, i.e. how many more time need to pass before it can perform action.
 
-	Each entity will have their own TurnComponent, which also define how much delay after each action..
+	Each entity will have their own TurnComponent, which also define how much delay after each action.
 
 	This uses ActionResult.
 
@@ -218,7 +244,6 @@ class TurnSystem extends zf.engine2.System {
 		final tc = TurnComponent.get(e);
 		if (tc == null) return false;
 		tc.timeunit += amt;
-		// HACK: Need to rethink this ?
 		/**
 			Tue 13:26:59 28 Jan 2025
 			If the entity is the current entity, we don't want to update the queue or shit will break
@@ -342,5 +367,16 @@ class TurnSystem extends zf.engine2.System {
 			// cache the entity that have taken turn
 			this.entitiesTakenTurn[current.e.id] = current.e;
 		}
+	}
+
+	override public function preSave() {
+		this.queue.updateQueuePosition();
+	}
+
+	override public function onLoad() {
+		this.queue.loadQueuePosition();
+		// prevent the activeTurnEvent from firing when loading.
+		// that increases the turn counter.
+		this.actualActiveEntity = this.queue.activeEntity;
 	}
 }

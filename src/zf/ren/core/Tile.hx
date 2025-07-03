@@ -1,73 +1,70 @@
 package zf.ren.core;
 
 import zf.ren.core.components.LocationComponent;
+import zf.serialise.*;
+
+typedef TileSF = {
+	public var entities: Array<String>;
+}
 
 /**
 	Tile is a data container for a grid on the map
 **/
-class Tile {
+#if !macro @:build(zf.macros.Serialise.build()) #end
+#if !macro @:build(zf.macros.ObjectPool.build(false)) #end
+class Tile implements Serialisable implements Disposable {
 	public static final MaxDistance = 0x10000000;
 
 	/**
 		The type representing the tile
 	**/
-	public var type(default, null): String;
+	@:dispose @:serialise public var type(default, null): String = null;
 
 	/**
 		The x position of the tile
 	**/
-	public var x(default, null): Int;
+	@:dispose public var x(default, null): Int = 0;
 
 	/**
 		The y position of the tile
 	**/
-	public var y(default, null): Int;
+	@:dispose public var y(default, null): Int = 0;
 
-	/**
-		Return a position.
-	**/
-	/**
-		public var position(get, never): Point2i;
-
-		inline public function get_position(): Point2i {
-			return [this.x, this.y];
-		}
-	**/
 	/**
 		Store all the entities on the Tile.
 		Do not modify directly
 	**/
-	public var entities: Entities<Entity>;
+	@:dispose("func", "clear") public var entities: Entities<Entity>;
 
 	/**
 		Store the level that the tile is in
 		Should only be set by Level
 	**/
-	public var level: Level;
+	@:dispose("set") public var level: Level = null;
 
 	/**
 		A metadata map to store anything.
 	**/
-	public var metadata: Map<String, Dynamic>;
+	@:dispose("func", "clear") public var metadata: Map<String, Dynamic>;
 
 	/**
-		Create a new tile object
+		Create a empty tile object
+	**/
+	public function new() {
+		this.entities = new Entities<Entity>();
+		this.metadata = new Map<String, Dynamic>();
+	}
 
+	/**
 		@param x the x position of this tile on the level
 		@parma y the y position of this tile on the level
 		@param type the type representing the tile
-		@param id the int to override the default id counter.
 	**/
-	public function new(x: Int, y: Int, type: String) {
-		this.entities = new Entities<Entity>();
+	function init(x: Int, y: Int, type: String) {
 		this.type = type;
 		this.x = x;
 		this.y = y;
-		this.metadata = new Map<String, Dynamic>();
-		init();
 	}
-
-	function init() {}
 
 	/**
 		Add Entity to the tile.
@@ -220,12 +217,34 @@ class Tile {
 
 		return distance;
 	}
+
+	public function toStruct(ctx: SerialiseContext): Dynamic {
+		final sf = this.__toStruct__(ctx, {});
+		final entities: Array<String> = [];
+		for (e in this.entities) {
+			entities.push(e.identifier());
+		}
+		sf.entities = entities;
+		return sf;
+	}
+
+	public function loadStruct(ctx: SerialiseContext, data: Dynamic): Dynamic {
+		this.__loadStruct__(ctx, data);
+		final sf: TileSF = cast data;
+		for (id in sf.entities) {
+			final entity = ctx.get(id);
+			Assert.assert(entity != null);
+			if (entity != null) {
+				internalAddEntity(cast entity);
+				final lc = LocationComponent.get(cast entity);
+				lc.level = this.level;
+				lc.level.entities.add(cast entity);
+			}
+		}
+		return this;
+	}
 }
-
 /**
-	TODO: implement Serialisable
-	TODO: implements Disposable (To make it possible to add ObjectPool to child)
-
 	Thu 14:39:01 14 Nov 2024
 	Imported from ren.core
 
