@@ -123,6 +123,9 @@ class Level implements EntityContainer implements Serialisable implements Dispos
 
 		final fromTile = lc.tile;
 
+		// moving to the same tile
+		if (fromTile == toTile) return false;
+
 		toTile.addEntity(entity);
 #if debug
 		/**
