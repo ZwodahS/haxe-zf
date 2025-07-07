@@ -30,6 +30,9 @@ using haxe.macro.Tools;
 	- @:serialise (key: [null], fromContext: [false])
 		key - the store key. if null will use the field name
 		fromContext - if true will get the object from context instead of serialising it.
+	- @:init (function: String)
+		function - the static function to call to init the object.
+		default to `alloc()` if not provided.
 	- @:fromContext (key: string)
 		this object is never saved, and it is always taken from context via key when loading.
 		this key is never saved.
@@ -44,7 +47,7 @@ using haxe.macro.Tools;
 	# Limitation
 	1. When a class is mark with this macro, all fields that are marked with @:serialise needs to be either
 			A.	A primitive (Int/Float/Bool/String),
-			B. 	A Serialisable with a empty() function
+			B. 	A Serialisable
 			C. 	A Identifiable
 			D. 	Is array and the containing type is A/B/C
 			E. 	Serialisable takes priority over identifier.
@@ -233,6 +236,10 @@ class Serialise {
 		final localType = Context.getLocalType();
 		final localClass = localType.getClass();
 		final fieldName = f.name;
+		final init = f.meta.findOne((m) -> {
+			m.name == ":init";
+		});
+		final initFuncName = (init == null || init.params.length == 0) ? "alloc" : init.params[0].getValue();
 
 		// Handle Primitive
 		inline function handlePrimitive() {
@@ -254,7 +261,7 @@ class Serialise {
 			});
 		}
 
-		// Handle Serialisable
+		// Handle Serialisable?
 		inline function handleSerialisable(classType: ClassType) {
 			if (Util.getType(classType.name) == null) {
 				Context.fatalError('${f.name} Type "${classType.name}" cannot be found', f.pos);
@@ -262,18 +269,16 @@ class Serialise {
 			this.toStructExprs.push(macro {
 				struct.$storeAs = this.$fieldName == null ? null : this.$fieldName.toStruct(context);
 			});
-			if (TypeTools.findField(classType, "empty", true) != null) {
+			if (init == null) {
 				this.loadStructExprs.push(macro {
-					if (struct.$storeAs != null) {
-						if (this.$fieldName == null) {
-							this.$fieldName = $i{classType.name}.empty();
-						}
+					if (struct.$storeAs != null && this.$fieldName != null) {
 						this.$fieldName.loadStruct(context, struct.$storeAs);
 					}
 				});
 			} else {
 				this.loadStructExprs.push(macro {
-					if (struct.$storeAs != null && this.$fieldName != null) {
+					if (struct.$storeAs != null) {
+						if (this.$fieldName == null) this.$fieldName = $i{classType.name}.$initFuncName();
 						this.$fieldName.loadStruct(context, struct.$storeAs);
 					}
 				});
@@ -330,7 +335,7 @@ class Serialise {
 				if (struct.$storeAs != null) {
 					this.$fieldName = [];
 					for (s in (struct.$storeAs: Array<Dynamic>)) {
-						final object = $i{classType.name}.empty();
+						final object = $i{classType.name}.$initFuncName();
 						object.loadStruct(context, s);
 						this.$fieldName.push(object);
 					}
@@ -372,7 +377,7 @@ class Serialise {
 				if (struct.$storeAs != null) {
 					this.$fieldName = [];
 					for (key => value in (struct.$storeAs: haxe.DynamicAccess<Dynamic>)) {
-						final object = $i{classType.name}.empty();
+						final object = $i{classType.name}.$initFuncName();
 						object.loadStruct(context, value);
 						this.$fieldName.set(cast key, object);
 					}
@@ -610,4 +615,11 @@ class Serialise {
 
 	Wed 20:05:35 04 Sep 2024
 	I can't use TypeTools to findField to ensure the existence of empty.
+
+	Mon 13:41:43 07 Jul 2025
+	Since I can't use TypeTools.findField to find empty, not sure why.
+	I going to not assume then.
+	I will be adding @:init. This will be used together with @:serialise to handle how objects are created.
+	@:init(function: String) - default to alloc(), previously I wanted to use empty but now that this is
+	explicit there is no need to do so.
 **/
