@@ -41,9 +41,6 @@ using haxe.macro.Tools;
 	In the case of @:fromContext, it is never serialise and the key is always taken from context.
 	@:serialise(null, true) will serialise the object into a key via .identifier().
 
-	then we can output a struct via toStruct or __toStruct__(context) if toStruct is defined
-	and load the struct via loadStruct or __loadStruct__(context, data) if loadStruct is defined
-
 	# Limitation
 	1. When a class is mark with this macro, all fields that are marked with @:serialise needs to be either
 			A.	A primitive (Int/Float/Bool/String),
@@ -61,9 +58,17 @@ using haxe.macro.Tools;
 	When loadStruct is defined in parent, super.loadStruct will automatically be called.
 	When loadStruct is defined in the class, a new loadStruct will be created with the existing loadStruct's Expr
 	added after the generated code.
-	To add code before the loadStruct, create a function preLoadStruct. This method must have the same method
-	signature. Note that in this case, `context` and `struct` is used as the variable name.
+	To add code before the loadStruct, create a function preLoadStruct. 
+	This method must have the same method signature.
 	Also note that there should not be a return statement in preLoadStruct
+
+	Similarly when toStruct is defined in parent, struct = super.toStruct will be added automatically.
+	When toStruct is defiend in the current class, the code for it will be added after the generated code.
+	It can be safely assumed that struct is defined then.
+	Unlike loadStruct, there is no preToStruct as there are no need for it.
+	toStruct need to return struct if it is defined in the current class
+
+	Note that in both loadStruct and toStruct, `context` and `struct` are used as the arguments.
 **/
 /**
 	Stores the field we want to serialise.
@@ -140,10 +145,10 @@ class Serialise {
 		final current = this.fieldsMap.get("loadStruct");
 		final preLoad = this.fieldsMap.get("preLoadStruct");
 
-		var superMethodExpr: Array<Expr> = [];
-		var preMethodExpr: Array<Expr> = [];
-		var postMethodExpr: Array<Expr> = [];
-		var returnExpr: Array<Expr> = [];
+		final superMethodExpr: Array<Expr> = [];
+		final preMethodExpr: Array<Expr> = [];
+		final postMethodExpr: Array<Expr> = [];
+		final returnExpr: Array<Expr> = [];
 
 		var access = [APublic];
 		if (superHasMethod == true) { // handle the case of parent class having the method
@@ -206,6 +211,62 @@ class Serialise {
 		final localClass = Context.getLocalType().getClass();
 		final superClass = localClass.superClass == null ? null : localClass.superClass.t.get();
 
+		final superHasMethod = superClass == null ? false : TypeTools.findField(superClass, "toStruct") != null;
+		final current = this.fieldsMap.get("toStruct");
+
+		final structConstructionExpr: Array<Expr> = [];
+		final postMethodExpr: Array<Expr> = [];
+		final returnExpr: Array<Expr> = [];
+
+		final args = [
+			{name: "context", type: macro : zf.serialise.SerialiseContext},
+			{name: "struct", type: macro : Dynamic, value: macro null},
+		];
+		final access = [APublic];
+
+		if (superHasMethod == true) {
+			access.push(AOverride);
+			structConstructionExpr.push(macro {
+				struct = super.toStruct(context, struct);
+			});
+		} else {
+			structConstructionExpr.push(macro {
+				if (struct == null) struct = {};
+			});
+		}
+
+		if (current != null) {
+			this.fields.remove(current);
+			this.fieldsMap.remove("toStruct");
+			final e = switch (current.kind) {
+				case FFun(func):
+					func.expr;
+				default:
+					Context.fatalError("toStruct is not a function", current.pos);
+			}
+			postMethodExpr.push(e);
+		} else {
+			returnExpr.push(macro {return struct;});
+		}
+
+		this.fields.push({
+			name: "toStruct",
+			pos: Context.currentPos(),
+			kind: FFun({
+				args: args,
+				expr: macro {
+					$b{structConstructionExpr};
+					$b{this.toStructExprs};
+					$b{postMethodExpr};
+					$b{returnExpr};
+				},
+				ret: macro : Dynamic,
+			}),
+			access: access,
+			doc: null,
+			meta: [],
+		});
+
 		var expr: Expr = macro {
 			final struct: Dynamic = {};
 			{
@@ -213,46 +274,6 @@ class Serialise {
 			};
 			return struct;
 		};
-		var target = "toStruct";
-		final access = [APublic];
-		final args = [{name: "context", type: macro : zf.serialise.SerialiseContext},];
-
-		if (this.fieldsMap.exists("toStruct") == true) {
-			args.push({name: "data", type: macro : Dynamic});
-			target = "__toStruct__";
-			if (superClass != null && TypeTools.findField(superClass, "__toStruct__") != null) {
-				access.push(AOverride);
-				expr = macro {
-					final struct: Dynamic = super.__toStruct__(context, data);
-					{
-						$a{toStructExprs}
-					};
-					return struct;
-				}
-			}
-		} else if (superClass != null && TypeTools.findField(superClass, "toStruct") != null) {
-			access.push(AOverride);
-			expr = macro {
-				final struct: Dynamic = super.toStruct(context);
-				{
-					$a{toStructExprs}
-				};
-				return struct;
-			};
-		} else {}
-
-		this.fields.push({
-			name: target,
-			pos: Context.currentPos(),
-			kind: FFun({
-				args: args,
-				expr: expr,
-				ret: macro : Dynamic,
-			}),
-			access: access,
-			doc: null,
-			meta: [],
-		});
 	}
 
 	function handleSerialise(f: haxe.macro.Field, m: haxe.macro.MetadataEntry) {
@@ -653,4 +674,8 @@ class Serialise {
 	Redo loadStruct to inline instead of using __loadStruct__.
 	This is due to the circular logic when __loadStruct__ is both defined in parent and current, which
 	causes __loadStruct__ is called multiple times.
+
+	Wed 14:25:56 09 Jul 2025
+	Redo toStruct to inline instead of using __toStruct__
+	Same reason as loadStruct, need to handle the cases where parent and child both uses the macros.
 **/

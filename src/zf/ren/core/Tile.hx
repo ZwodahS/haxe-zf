@@ -218,14 +218,13 @@ class Tile implements Serialisable implements Disposable {
 		return distance;
 	}
 
-	public function toStruct(ctx: SerialiseContext): Dynamic {
-		final sf = this.__toStruct__(ctx, {});
+	public function toStruct(ctx: SerialiseContext, struct: Dynamic = null): Dynamic {
 		final entities: Array<String> = [];
 		for (e in this.entities) {
 			entities.push(e.identifier());
 		}
-		sf.entities = entities;
-		return sf;
+		struct.entities = entities;
+		return struct;
 	}
 
 	public function loadStruct(context: SerialiseContext, struct: Dynamic): Dynamic {

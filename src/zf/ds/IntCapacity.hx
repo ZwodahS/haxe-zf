@@ -62,13 +62,12 @@ class IntCapacity implements Serialisable {
 		Convert to struct
 		@return the struct representing the object
 	**/
-	public function toStruct(context: SerialiseContext): Dynamic {
-		final sf: IntCapacitySF = {
-			min: this.min,
-			max: this.max,
-			current: this.current,
-		};
-		return sf;
+	public function toStruct(context: SerialiseContext, struct: Dynamic = null): Dynamic {
+		if (struct == null) struct = {};
+		struct.min = this.min;
+		struct.max = this.max;
+		struct.current = this.current;
+		return struct;
 	}
 
 	/**

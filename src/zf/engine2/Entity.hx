@@ -175,12 +175,12 @@ class Entity implements Identifiable implements Disposable implements Serialisab
 		for (component in this.__components__) component.onStateChanged();
 	}
 
-	public function toStruct(context: SerialiseContext): Dynamic {
-		return this.factory.toStruct(context, this);
+	public function toStruct(context: SerialiseContext, struct: Dynamic = null): Dynamic {
+		return this.factory.toStruct(context, this, struct);
 	}
 
-	public function loadStruct(context: SerialiseContext, data: Dynamic) {
-		return this.factory.loadStruct(context, this, data);
+	public function loadStruct(context: SerialiseContext, struct: Dynamic) {
+		return this.factory.loadStruct(context, this, struct);
 	}
 
 	public function collectEntities(entities: Entities<zf.engine2.Entity>) {

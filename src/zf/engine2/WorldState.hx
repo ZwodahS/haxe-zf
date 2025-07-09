@@ -45,25 +45,25 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 
 	public function collectEntities(entities: Entities<Entity>) {}
 
-	public function toStruct(context: SerialiseContext): Dynamic {
+	public function toStruct(context: SerialiseContext, struct: Dynamic = null): Dynamic {
+		if (struct == null) struct = {};
+
 		final entities: Entities<zf.engine2.Entity> = this.entities;
 		entities.sortedIterator = true;
 		context.add(entities);
 
 		collectEntities(entities);
 
-		final stateSF: WorldStateSF = {};
-
 		// store the id generators
-		@:privateAccess stateSF.intCounter = this.intCounter.counter;
+		@:privateAccess struct.intCounter = this.intCounter.counter;
 
 		// collect all the entities before this is called
 		final entitiesSF = [for (entity in entities) cast(entity, Entity).toStruct(context)];
-		stateSF.entities = entitiesSF;
+		struct.entities = entitiesSF;
 
-		stateSF.r = r.toStruct(context);
+		struct.r = r.toStruct(context);
 
-		return stateSF;
+		return struct;
 	}
 
 	public function loadStruct(context: SerialiseContext, data: Dynamic): WorldState {

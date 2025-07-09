@@ -48,12 +48,15 @@ class Rand extends hxd.Rand implements Disposable implements zf.serialise.Serial
 		__pool__ = this;
 	}
 
-	public function toStruct(context: SerialiseContext): Dynamic {
-		return {seed1: this.seed, seed2: this.seed2};
+	public function toStruct(context: SerialiseContext, struct: Dynamic = null): Dynamic {
+		if (struct == null) struct = {};
+		struct.seed1 = this.seed;
+		struct.seed2 = this.seed2;
+		return struct;
 	}
 
-	public function loadStruct(context: SerialiseContext, data: Dynamic) {
-		final d: DynamicAccess<Dynamic> = data;
+	public function loadStruct(context: SerialiseContext, struct: Dynamic) {
+		final d: DynamicAccess<Dynamic> = struct;
 		this.seed = d.get("seed1") ?? 0;
 		this.seed2 = d.get("seed2") ?? 0;
 		return this;

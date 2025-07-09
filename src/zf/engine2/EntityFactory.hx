@@ -4,8 +4,6 @@ import zf.serialise.Serialisable;
 import zf.serialise.SerialiseContext;
 
 /**
-	@stage:stable
-
 	A common EntityFactory.
 
 	Each project from templates also comes with a common EntityFactory.
@@ -21,22 +19,23 @@ class EntityFactory implements Identifiable {
 		this.typeId = typeId;
 	}
 
-	public function toStruct(context: SerialiseContext, entity: Entity): Dynamic {
+	public function toStruct(context: SerialiseContext, entity: Entity, struct: Dynamic = null): Dynamic {
+		if (struct == null) struct = {};
 		final components: DynamicAccess<Dynamic> = {};
 		@:privateAccess for (component in entity.__components__) {
 			if (Std.isOfType(component, Serialisable) == false) continue;
 			final sf = cast(component, Serialisable).toStruct(context);
 			components.set(component.typeId, sf);
 		}
-		final data: EntitySF = {
-			id: entity.id,
-			typeId: this.typeId,
-			components: components,
-		};
+		struct.id = entity.id;
+		struct.typeId = this.typeId;
+		struct.components = components;
+
 		if (context != null) {
 			context.add(entity);
 		}
-		return data;
+
+		return struct;
 	}
 
 	/**

@@ -300,10 +300,9 @@ class Level implements EntityContainer implements Serialisable implements Dispos
 	public function dispose() {}
 
 	// ---- Save / Load ----
-	public function toStruct(context: SerialiseContext): Dynamic {
-		final sf = this.__toStruct__(context, {});
-		sf.width = this.tiles.width;
-		sf.height = this.tiles.height;
+	public function toStruct(context: SerialiseContext, struct: Dynamic = null): Dynamic {
+		struct.width = this.tiles.width;
+		struct.height = this.tiles.height;
 
 		final tiles: Array<Dynamic> = [];
 
@@ -311,9 +310,9 @@ class Level implements EntityContainer implements Serialisable implements Dispos
 			final sf = tile.toStruct(context);
 			tiles.push(sf);
 		}
-		sf.tiles = tiles;
+		struct.tiles = tiles;
 
-		return sf;
+		return struct;
 	}
 
 	public function loadStruct(context: SerialiseContext, struct: Dynamic): Level {
