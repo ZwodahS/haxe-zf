@@ -36,6 +36,17 @@ class ObjectExtensions {
 		return newObject;
 	}
 
+	public static function unwrap(obj: h2d.Object): h2d.Object {
+		final parent = obj.parent;
+		if (parent.parent == null) return obj;
+		final bound = obj.getBounds(parent.parent);
+		parent.parent.addChild(obj);
+		obj.x = bound.x;
+		obj.y = bound.y;
+		parent.remove();
+		return obj;
+	}
+
 	/**
 		Put an object above another object
 
