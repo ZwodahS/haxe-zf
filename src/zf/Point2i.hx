@@ -64,7 +64,7 @@ class Point2iImpl implements Serialisable implements Disposable {
 		return Point2iImpl.alloc(this.x, this.y);
 	}
 
-	public static function alloc(x: Int, y: Int): Point2i {
+	public static function alloc(x: Int = 0, y: Int = 0): Point2i {
 		final pt = Point2iImpl.__alloc__();
 		pt.x = x;
 		pt.y = y;

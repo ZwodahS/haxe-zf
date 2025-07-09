@@ -228,11 +228,10 @@ class Tile implements Serialisable implements Disposable {
 		return sf;
 	}
 
-	public function loadStruct(ctx: SerialiseContext, data: Dynamic): Dynamic {
-		this.__loadStruct__(ctx, data);
-		final sf: TileSF = cast data;
+	public function loadStruct(context: SerialiseContext, struct: Dynamic): Dynamic {
+		final sf: TileSF = cast struct;
 		for (id in sf.entities) {
-			final entity = ctx.get(id);
+			final entity = context.get(id);
 			Assert.assert(entity != null);
 			if (entity != null) {
 				internalAddEntity(cast entity);

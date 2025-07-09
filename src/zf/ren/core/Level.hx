@@ -51,11 +51,7 @@ class Level implements EntityContainer implements Serialisable implements Dispos
 		this.tiles = new Vector2D<Tile>(width, height, null);
 		this.id = id;
 		this.entities = new Entities<Entity>();
-
-		init();
 	}
-
-	function init() {}
 
 	/**
 		place an entity into this position on this level
@@ -320,10 +316,8 @@ class Level implements EntityContainer implements Serialisable implements Dispos
 		return sf;
 	}
 
-	public function loadStruct(context: SerialiseContext, sf: Dynamic): Level {
-		this.__loadStruct__(context, sf);
-
-		final tiles: Array<Dynamic> = sf.tiles;
+	public function loadStruct(context: SerialiseContext, struct: Dynamic): Level {
+		final tiles: Array<Dynamic> = struct.tiles;
 		Assert.assert(tiles.length == this.tiles.width * this.tiles.height);
 
 		var ind = 0;

@@ -56,6 +56,14 @@ using haxe.macro.Tools;
 	2. Currently only serialise Serialisable/Primitive/Identifiable.
 
 	Since I don't think need to be super generic and more specific to how I do things, I don't need to over-engineer it.
+
+	# Additional Notes
+	When loadStruct is defined in parent, super.loadStruct will automatically be called.
+	When loadStruct is defined in the class, a new loadStruct will be created with the existing loadStruct's Expr
+	added after the generated code.
+	To add code before the loadStruct, create a function preLoadStruct. This method must have the same method
+	signature. Note that in this case, `context` and `struct` is used as the variable name.
+	Also note that there should not be a return statement in preLoadStruct
 **/
 /**
 	Stores the field we want to serialise.
@@ -128,47 +136,64 @@ class Serialise {
 		final localClass = localType.getClass();
 		final superClass = localClass.superClass == null ? null : localClass.superClass.t.get();
 
-		var expr: Expr = macro {
-			{
-				$a{this.loadStructExprs}
-			};
-			return this;
-		}
-		var target = "loadStruct";
+		final superHasMethod = superClass == null ? false : TypeTools.findField(superClass, "loadStruct") != null;
+		final current = this.fieldsMap.get("loadStruct");
+		final preLoad = this.fieldsMap.get("preLoadStruct");
+
+		var superMethodExpr: Array<Expr> = [];
+		var preMethodExpr: Array<Expr> = [];
+		var postMethodExpr: Array<Expr> = [];
+		var returnExpr: Array<Expr> = [];
+
 		var access = [APublic];
-
-		if (this.fieldsMap.exists("loadStruct") == true) {
-			target = "__loadStruct__";
-			if (superClass != null && TypeTools.findField(superClass, "__loadStruct__") != null) {
-				access.push(AOverride);
-				expr = macro {
-					super.__loadStruct__(context, struct);
-					{
-						$a{this.loadStructExprs}
-					};
-					return this;
-				}
-			}
-		} else if (superClass != null && TypeTools.findField(superClass, "loadStruct") != null) {
-			expr = macro {
+		if (superHasMethod == true) { // handle the case of parent class having the method
+			superMethodExpr.push(macro {
 				super.loadStruct(context, struct);
-				{
-					$a{this.loadStructExprs}
-				};
-				return this;
-			}
+			});
 			access.push(AOverride);
-		} else {}
+		}
 
-		this.fields.push({
-			name: target,
+		if (preLoad != null) { // handle preLoadStruct
+			this.fields.remove(preLoad);
+			this.fieldsMap.remove("preLoadStruct");
+			final e = switch (preLoad.kind) {
+				case FFun(func):
+					func.expr;
+				default:
+					Context.fatalError("preLoadStruct is not a function", preLoad.pos);
+			}
+			preMethodExpr.push(e);
+		}
+
+		if (current != null) { // handle current
+			this.fields.remove(current);
+			this.fieldsMap.remove("loadStruct");
+			final e = switch (current.kind) {
+				case FFun(func):
+					func.expr;
+				default:
+					Context.fatalError("loadStruct is not a function", current.pos);
+			}
+			postMethodExpr.push(e);
+		} else { // if there is no current, then we need to create the return statement
+			returnExpr.push(macro {return this;});
+		}
+
+		this.fields.push(cast {
+			name: "loadStruct",
 			pos: Context.currentPos(),
 			kind: FFun({
 				args: [
 					{name: "context", type: macro : zf.serialise.SerialiseContext},
 					{name: "struct", type: macro : Dynamic},
 				],
-				expr: expr,
+				expr: macro {
+					$b{superMethodExpr};
+					$b{preMethodExpr};
+					$b{this.loadStructExprs};
+					$b{postMethodExpr};
+					$b{returnExpr};
+				},
 				ret: localType.toComplexType(),
 			}),
 			access: access,
@@ -270,6 +295,7 @@ class Serialise {
 				struct.$storeAs = this.$fieldName == null ? null : this.$fieldName.toStruct(context);
 			});
 			if (init == null) {
+				Context.info("Serialisable without :init, intended ?", f.pos);
 				this.loadStructExprs.push(macro {
 					if (struct.$storeAs != null && this.$fieldName != null) {
 						this.$fieldName.loadStruct(context, struct.$storeAs);
@@ -622,4 +648,9 @@ class Serialise {
 	I will be adding @:init. This will be used together with @:serialise to handle how objects are created.
 	@:init(function: String) - default to alloc(), previously I wanted to use empty but now that this is
 	explicit there is no need to do so.
+
+	Wed 13:16:08 09 Jul 2025
+	Redo loadStruct to inline instead of using __loadStruct__.
+	This is due to the circular logic when __loadStruct__ is both defined in parent and current, which
+	causes __loadStruct__ is called multiple times.
 **/
