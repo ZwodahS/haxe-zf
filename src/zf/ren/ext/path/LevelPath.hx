@@ -203,7 +203,7 @@ class LevelPath {
 		this.graph.setCosts(graphCosts);
 	}
 
-	inline function getGraphArray(graphId: String, useDefault: Bool = true) {
+	function getGraphArray(graphId: String, useDefault: Bool = true) {
 		var ga = this.graphArray[graphId];
 		if (ga == null && useDefault) ga = this.graphArray[graphDefaultCostFunc];
 		Assert.assert(ga != null || useDefault == false);

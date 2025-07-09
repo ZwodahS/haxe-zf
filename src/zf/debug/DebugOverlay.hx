@@ -14,6 +14,7 @@ import hxd.Key;
 
 	- F1 (Console)
 	- F2 (Variable Inspector)
+	- F3 (Message Dispatcher)
 **/
 class DebugOverlay extends UIElement {
 	public var game: Game;
@@ -21,6 +22,8 @@ class DebugOverlay extends UIElement {
 	public var console: OverlayConsole;
 	public var inspector: OverlayInspector;
 	public var messages: OverlayMessages;
+
+	public var buttons: Array<UIElement>;
 
 	public var conf = {
 		alpha: 0.9,
@@ -66,6 +69,7 @@ class DebugOverlay extends UIElement {
 		this.game = game;
 
 		this.fonts = [];
+		this.buttons = [];
 		var font = hxd.res.DefaultFont.get().clone();
 		font.resizeTo(6);
 		this.fonts.push(font);
@@ -159,7 +163,7 @@ class DebugOverlay extends UIElement {
 
 	function initConsole() {
 		this.console = new OverlayConsole(this.fonts[0], this.game);
-		this.console.conf.width = this.displayAreaWidth;
+		this.console.conf.width = this.displayAreaWidth - 100;
 		this.console.conf.height = this.displayAreaHeight;
 		this.console.conf.alpha = this.conf.alpha;
 		this.console.conf.inputHeight = this.conf.console.inputHeight;
@@ -186,7 +190,7 @@ class DebugOverlay extends UIElement {
 
 	function initInspector() {
 		this.inspector = new OverlayInspector(this.fonts[0], this.game);
-		this.inspector.conf.width = this.displayAreaWidth;
+		this.inspector.conf.width = this.displayAreaWidth - 100;
 		this.inspector.conf.height = this.displayAreaHeight;
 		this.inspector.conf.alpha = this.conf.alpha;
 		this.inspector.conf.inputHeight = this.conf.inspector.inputHeight;
@@ -199,7 +203,7 @@ class DebugOverlay extends UIElement {
 
 	function initMessages() {
 		this.messages = new OverlayMessages(this.fonts, this.game);
-		this.messages.conf.width = this.displayAreaWidth;
+		this.messages.conf.width = this.displayAreaWidth - 100;
 		this.messages.conf.height = this.displayAreaHeight;
 		this.messages.conf.alpha = this.conf.alpha;
 		this.messages.x = this.conf.padding;
@@ -254,4 +258,33 @@ class DebugOverlay extends UIElement {
 	public function hideDebugRect() {
 		this.rect.remove();
 	}
+
+	function makeButton(text: String): Button {
+		final btn = Button.fromColor({
+			defaultColor: this.conf.button.bgColor[0],
+			hoverColor: this.conf.button.bgColor[1],
+			disabledColor: this.conf.button.bgColor[2],
+			selectedColor: this.conf.button.bgColor[3],
+			width: 100 - this.conf.spacing - this.conf.padding,
+			height: 20,
+			font: this.fonts[0],
+			textColor: this.conf.button.textColor,
+			text: text,
+		});
+		return btn;
+	}
+
+	public function addButton(text: String): Button {
+		final btn = makeButton(text);
+		btn.x = this.console.x + this.displayAreaWidth - 100 + this.conf.spacing;
+		btn.y = this.console.y;
+		this.buttons.push(btn);
+		this.addChild(btn);
+		return btn;
+	}
 }
+
+/**
+	Wed 21:20:12 09 Jul 2025
+	Add Buttons
+**/

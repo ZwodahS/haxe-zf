@@ -33,11 +33,6 @@ class RenderSystem extends zf.engine2.System {
 	**/
 	var drawLayer: h2d.Layers;
 
-	/**
-		Store all the draw layers
-	**/
-	var drawLayers: Map<String, h2d.Layers>;
-
 	var level: RenderedLevel;
 
 	var entities: Map<Int, {e: Entity, rc: RenderComponent}>;
@@ -180,7 +175,11 @@ class RenderSystem extends zf.engine2.System {
 	}
 
 	inline public function renderPriority(rc: RenderComponent, tileY: Int) {
-		return rc.priority + this.yIndexMultiplier * tileY;
+		return priority(rc.priority, tileY);
+	}
+
+	inline public function priority(p: Int, tileY: Int) {
+		return p + this.yIndexMultiplier * tileY;
 	}
 
 	override public function onEntityRemoved(e: Entity) {
