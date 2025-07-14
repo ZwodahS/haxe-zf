@@ -89,7 +89,7 @@ class LevelPath {
 		@param end the end position to search path to
 		@return Array of points to end, null if path not found
 	**/
-	public function pathTo(startX: Int, startY: Int, endX: Int, endY: Int, graphId: String): Array<Point2i> {
+	public function pathTo(startX: Int, startY: Int, endX: Int, endY: Int, graphId: String): zf.Point2i.ArrPoint2i {
 		final p1 = apos(startX, startY);
 		final p2 = apos(endX, endY);
 
