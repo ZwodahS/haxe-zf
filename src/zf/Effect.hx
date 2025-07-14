@@ -30,6 +30,10 @@ class Effect {
 		return zf.ef.Wait.alloc(duration);
 	}
 
+	inline public static function waitAnim(anim: h2d.Anim, frame: Null<Int> = null): zf.ef.WaitAnim {
+		return zf.ef.WaitAnim.alloc(anim, frame);
+	}
+
 	inline public static function shake(duration: Float = 0, shakeInternal: Float = 0, offX: Float,
 			offY: Float): zf.ef.Shake {
 		final ef = zf.ef.Shake.alloc();
