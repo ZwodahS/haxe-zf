@@ -58,7 +58,7 @@ using haxe.macro.Tools;
 	When loadStruct is defined in parent, super.loadStruct will automatically be called.
 	When loadStruct is defined in the class, a new loadStruct will be created with the existing loadStruct's Expr
 	added after the generated code.
-	To add code before the loadStruct, create a function preLoadStruct. 
+	To add code before the loadStruct, create a function preLoadStruct.
 	This method must have the same method signature.
 	Also note that there should not be a return statement in preLoadStruct
 

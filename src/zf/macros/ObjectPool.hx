@@ -106,6 +106,11 @@ using haxe.macro.TypeTools;
 	2. object can still be created using new, and can still be disposed.
 	3. ObjectPool object should not be extended. If intended to be extended, it is advisable to build
 		only the dispose method.
+	4. Reset vs Dispose
+		If we need something to be done before these statements, create a `dispose` method and they will happen
+		before the @:dispose statements.
+		If we need something to be done after these statements, create a `reset` method and that method will be called
+		after the @:dispose statements.
 
 	# dependencies
 	- zf.macros.Util.
