@@ -206,6 +206,16 @@ class Tile implements Serialisable implements Disposable {
 		return isAdjacent;
 	}
 
+	public function isAround(tile: Tile): Bool {
+		if (this.level != tile.level) return false;
+		final pt1 = Point2i.alloc(this.x, this.y);
+		final pt2 = Point2i.alloc(tile.x, tile.y);
+		final isAround = pt1.isAround(pt2);
+		pt1.dispose();
+		pt2.dispose();
+		return isAround;
+	}
+
 	public function distanceFrom(tile: Tile): Int {
 		if (tile.level != this.level) return MaxDistance;
 
