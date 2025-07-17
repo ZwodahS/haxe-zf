@@ -180,6 +180,14 @@ class Util {
 		return false;
 	}
 
+	public static function getRootParent(type: haxe.macro.Type.ClassType) {
+		var current = type;
+		while (current.superClass != null) {
+			current = current.superClass?.t.get();
+		}
+		return current;
+	}
+
 	public static function isChildOf(type: haxe.macro.Type.ClassType, parent: haxe.macro.Type.ClassType) {
 		var current = type;
 		while (current != null) {

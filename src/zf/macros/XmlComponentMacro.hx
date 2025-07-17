@@ -36,6 +36,20 @@ class XmlComponentMacro {
 					if (m.name == "findChild") {
 						Context.info("[Deprecated] @findChild is deprecated, use @:findChild instead.", f.pos);
 					}
+					switch (f.kind) {
+						case FVar(_.toType() => type, e):
+							switch (type) {
+								case TInst(_.get() => t, p):
+									final t = Util.getRootParent(t);
+									if (t.module != "h2d.Object") {
+										Context.error('@:findChild only works on children of h2d.Object', f.pos);
+									}
+								default:
+									Context.error('@:findChild does not work on non-variable', f.pos);
+							}
+						default:
+							Context.error('@:findChild does not work on non-variable', f.pos);
+					}
 				}
 				if (m.name == ":findChildren") {
 					final path = m.params.length > 0 ? m.params[0].getValue() : f.name;
