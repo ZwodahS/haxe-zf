@@ -123,6 +123,15 @@ class Messages {
 					doc: null,
 				});
 
+				fields.push({
+					name: "__setupMessages__",
+					pos: Context.currentPos(),
+					kind: FVar(macro : Bool, null),
+					access: [],
+					meta: [],
+					doc: null,
+				});
+
 				init.push(macro {
 					this.__listeners__ = [];
 				});
@@ -155,12 +164,20 @@ class Messages {
 			var expr = null;
 			if (parentHasSetup == true) {
 				expr = macro {
+					if (this.__setupMessages__ == true) {
+						trace('[Messages] Double calling setupMessages in ' + $v{className.toString()} + '.', null);
+						return;
+					}
 					super.setupMessages(dispatcher);
 					$a{init} $a{exprs}
 				}
 			} else {
 				expr = macro {
-					$a{init} $a{exprs}
+					if (this.__setupMessages__ == true) {
+						trace('[Messages] Double calling setupMessages in ' + $v{className.toString()} + '.', null);
+						return;
+					}
+					$a{init} $a{exprs} this.__setupMessages__ = true;
 				}
 			}
 
