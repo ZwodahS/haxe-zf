@@ -18,6 +18,8 @@ class WindowElement extends UIElement {
 	public var paddingTop: Int = 0;
 	public var paddingBottom: Int = 0;
 
+	public var resizeInteractive: Bool = false;
+
 	public function new(background: zf.h2d.ScaleGrid, object: h2d.Object) {
 		super();
 		this.background = background;
@@ -43,6 +45,11 @@ class WindowElement extends UIElement {
 		final bounds = this.object.getBounds();
 		this.background.width = Math.clampI(Std.int(bounds.width) + paddingLeft + paddingRight, minWidth, maxWidth);
 		this.background.height = Math.clampI(Std.int(bounds.height) + paddingTop + paddingBottom, minHeight, null);
+
+		if (this.resizeInteractive == true && this.interactive != null) {
+			this.interactive.width = this.background.width;
+			this.interactive.height = this.background.height;
+		}
 	}
 }
 

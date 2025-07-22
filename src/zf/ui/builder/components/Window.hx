@@ -66,6 +66,8 @@ class Window extends zf.ui.builder.Component {
 		final bgId = access.getString("background");
 		var bgFactory = this.bgFactories.get(bgId) ?? context.builder.getScaleGridFactory(bgId) ?? this.defaultBg;
 
+		final createInteractive = access.getBool("interactive");
+
 		final object = context.makeObjectFromXMLElement(item);
 
 		final window: WindowElement = cast wrap(object, bgFactory, paddings, minWidth, maxWidth, minHeight);
@@ -75,6 +77,14 @@ class Window extends zf.ui.builder.Component {
 			final color = context.getColor(colorId);
 			window.background.color = h3d.Vector4.fromColor(color);
 		}
+
+		if (createInteractive == true) {
+			window.resizeInteractive = true;
+			window.interactive = new zf.h2d.Interactive(10, 10);
+			window.addChild(window.interactive);
+		}
+		window.resizeBackground();
+
 		return window;
 	}
 
