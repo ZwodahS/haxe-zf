@@ -238,6 +238,7 @@ class TurnSystem extends zf.engine2.System {
 
 	function unregisterEntity(entity: Entity) {
 		this.queue.unregisterEntity(entity);
+		if (this.actualActiveEntity == entity) this.actualActiveEntity = null;
 	}
 
 	public function delayEntity(e: Entity, amt: Int) {
