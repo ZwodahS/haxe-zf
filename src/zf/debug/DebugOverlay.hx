@@ -277,7 +277,11 @@ class DebugOverlay extends UIElement {
 	public function addButton(text: String): Button {
 		final btn = makeButton(text);
 		btn.x = this.console.x + this.displayAreaWidth - 100 + this.conf.spacing;
-		btn.y = this.console.y;
+		if (this.buttons.length == 0) {
+			btn.y = this.console.y;
+		} else {
+			btn.y = this.buttons[this.buttons.length - 1].y + 25;
+		}
 		this.buttons.push(btn);
 		this.addChild(btn);
 		return btn;
