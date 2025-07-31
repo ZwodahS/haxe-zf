@@ -33,8 +33,17 @@ class ScaleGrid extends Component {
 		final id = conf.getString("factoryId");
 		final factory = this.factories.get(id) ?? context.builder.getScaleGridFactory(id) ?? this.defaultFactory;
 
-		final width = conf.getInt("width", 1);
-		final height = conf.getInt("height", 1);
+		function parseInt(v: Dynamic, defaultValue: Null<Int> = null): Null<Int> {
+			if (v == null) return defaultValue;
+			if (v is String) {
+				final i = context.get(cast v);
+				if (i is Int) return cast i;
+			}
+			return Std.parseInt(v);
+		}
+
+		final width = parseInt(conf.get("width"), 1);
+		final height = parseInt(conf.get("height"), 1);
 
 		var color: Null<Color> = null;
 		final colorString = conf.getString("color", null);
@@ -47,6 +56,9 @@ class ScaleGrid extends Component {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			obj.name = conf.get("name");
 		}
+
+		final alpha = conf.getFloat("alpha");
+		if (alpha != null) obj.alpha = alpha;
 
 		return obj;
 	}

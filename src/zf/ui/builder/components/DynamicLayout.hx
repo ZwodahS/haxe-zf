@@ -38,9 +38,15 @@ class DynamicLayout extends Component {
 			For object, we assume that each object will be added in order
 			and the position of each of the item will be set based on the attribute
 		**/
-		inline function parseInt(v: Dynamic, defaultValue: Null<Int> = null): Null<Int> {
+		function parseInt(v: Dynamic, defaultValue: Null<Int> = null): Null<Int> {
 			if (v == null) return defaultValue;
-			return Std.parseInt(v);
+
+			final parsed = Std.parseInt(v);
+			if (parsed != null) return parsed;
+
+			final i = context.get(cast v);
+			if (i is Int) return cast i;
+			return defaultValue;
 		}
 
 		final width = parseInt(element.get("width"), 0);
