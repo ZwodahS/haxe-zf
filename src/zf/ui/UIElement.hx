@@ -722,7 +722,6 @@ class UIElement extends h2d.Object {
 		this.onKeyDownListeners.clear();
 		this.onKeyUpListeners.clear();
 		this.onMoveListeners.clear();
-		if (this.uiEffects != null) this.uiEffects.clear();
 		updateRendering();
 	}
 
@@ -736,14 +735,6 @@ class UIElement extends h2d.Object {
 		}
 		if (this.tooltipWindow != null) this.tooltipWindow.remove();
 	}
-
-	// ---- For effects ---- //
-
-	/**
-		Store all the effects added to the element.
-		Do not add directly to this.
-	**/
-	public var uiEffects: Array<zf.ef.Effect>;
 
 	// ---- Other ---- //
 

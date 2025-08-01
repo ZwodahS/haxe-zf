@@ -195,8 +195,6 @@ class Effect implements Disposable {
 	**/
 	var ownerObject: h2d.Object = null;
 
-	var uiElement: UIElement = null;
-
 	/**
 		Effect is owned by another effect, i.e. Batch or Chain
 	**/
@@ -221,12 +219,6 @@ class Effect implements Disposable {
 	public function restart() {}
 
 	public function dispose() {
-		/**
-			if (this.uiElement != null) {
-				if (this.uiElement.uiEffects != null) this.uiElement.uiEffects.remove(this);
-				this.uiElement = null;
-			}
-		**/
 		if (this.effectWrap != null) {
 			this.effectWrap.dispose();
 			this.effectWrap = null;
@@ -300,11 +292,6 @@ class Effect implements Disposable {
 			this.effectWrap = EffectWrap.alloc(this);
 			this.ownerObject = object;
 			this.ownerObject.addChildAt(this.effectWrap, 0);
-			if (this.ownerObject is UIElement) {
-				this.uiElement = cast this.ownerObject;
-				if (this.uiElement.uiEffects == null) this.uiElement.uiEffects = [];
-				this.uiElement.uiEffects.push(this);
-			}
 		}
 		return this;
 	}
@@ -319,26 +306,12 @@ class Effect implements Disposable {
 		}
 
 		// In this case, we are trying to remove a cloned effect
-		if (object is UIElement && false) {
-			/**
-				final uie: UIElement = cast object;
-				if (uie.uiEffects == null) return;
-				for (effect in uie.uiEffects) {
-					if (effect.parent == this) {
-						effect.remove();
-						break;
-					}
-				}
-			**/
-		} else {
-			// sadly I will have to loop all children
-			@:privateAccess for (child in object.children) {
-				if (child is EffectWrap == false) continue;
-				final wrap: EffectWrap = cast child;
-				if (wrap.effect.parent == this) {
-					wrap.effect.remove();
-					break;
-				}
+		@:privateAccess for (child in object.children) {
+			if (child is EffectWrap == false) continue;
+			final wrap: EffectWrap = cast child;
+			if (wrap.effect.parent == this) {
+				wrap.effect.remove();
+				break;
 			}
 		}
 	}
