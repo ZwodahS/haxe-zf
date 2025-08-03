@@ -34,8 +34,20 @@ class Window extends zf.ui.builder.Component {
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
 		final access = zf.Access.xml(element);
 
-		final item = element.firstElement();
-		if (item == null) return null;
+		final children = [for (e in element.elements()) e];
+		if (children.length == 0) return null;
+
+		var inner = null;
+		if (children.length == 1) {
+			inner = context.makeObjectFromXMLElement(children[0]);
+		} else {
+			inner = new h2d.Object();
+			for (c in children) {
+				final obj = context.makeObjectFromXMLElement(c);
+				if (obj == null) continue;
+				inner.addChild(obj);
+			}
+		}
 
 		final minWidth = access.getInt("minWidth", null);
 		final maxWidth = access.getInt("maxWidth", null);
@@ -68,9 +80,7 @@ class Window extends zf.ui.builder.Component {
 
 		final createInteractive = access.getBool("interactive");
 
-		final object = context.makeObjectFromXMLElement(item);
-
-		final window: WindowElement = cast wrap(object, bgFactory, paddings, minWidth, maxWidth, minHeight);
+		final window: WindowElement = cast wrap(inner, bgFactory, paddings, minWidth, maxWidth, minHeight);
 
 		final colorId = access.getString("backgroundColor");
 		if (colorId != null) {

@@ -167,6 +167,7 @@ class UpdateWrap {
 
 @:allow(zf.ef.EffectWrap)
 @:allow(zf.ef.UpdateWrap)
+@:allow(zf.h2d.Object)
 class Effect implements Disposable {
 	var effectWrap: EffectWrap;
 
@@ -229,6 +230,11 @@ class Effect implements Disposable {
 			this.updateWrap = null;
 		}
 
+		if (this.ownerObject is zf.h2d.Object) {
+			final o: zf.h2d.Object = cast object;
+			o.removeEffect(this);
+		}
+
 		this.completed = false;
 		this.object = null;
 		this.ownerObject = null;
@@ -288,6 +294,10 @@ class Effect implements Disposable {
 			this.updateWrap = UpdateWrap.alloc(this);
 			this.ownerUpdater = updater;
 			updater.run(this.updateWrap);
+		} else if (object is zf.h2d.Object) {
+			this.ownerObject = object;
+			final o: zf.h2d.Object = cast object;
+			o.addEffect(this);
 		} else {
 			this.effectWrap = EffectWrap.alloc(this);
 			this.ownerObject = object;
@@ -300,18 +310,30 @@ class Effect implements Disposable {
 		Remove this effect from this object
 	**/
 	public function removeFrom(object: h2d.Object) {
+		// removing a non-cloned effect
 		if (this.object == object) {
 			this.remove();
 			return;
 		}
 
 		// In this case, we are trying to remove a cloned effect
-		@:privateAccess for (child in object.children) {
-			if (child is EffectWrap == false) continue;
-			final wrap: EffectWrap = cast child;
-			if (wrap.effect.parent == this) {
-				wrap.effect.remove();
-				break;
+
+		if (object is zf.h2d.Object) {
+			final o: zf.h2d.Object = cast object;
+			@:privateAccess for (ef in o.uiEffects) {
+				if (ef.parent == this) {
+					ef.remove();
+					break;
+				}
+			}
+		} else {
+			@:privateAccess for (child in object.children) {
+				if (child is EffectWrap == false) continue;
+				final wrap: EffectWrap = cast child;
+				if (wrap.effect.parent == this) {
+					wrap.effect.remove();
+					break;
+				}
 			}
 		}
 	}

@@ -4,8 +4,6 @@ import zf.ui.WindowRenderSystem.ShowWindowConf;
 import zf.h2d.Interactive;
 
 /**
-	@stage:stable
-
 	A generic tooltip helper
 **/
 class TooltipHelper {
@@ -21,41 +19,6 @@ class TooltipHelper {
 
 	public function new(windowRenderSystem: WindowRenderSystem) {
 		this.windowRenderSystem = windowRenderSystem;
-	}
-
-	// ---- Tooltip handling  ---- //
-	public function attachWindowTooltip(obj: h2d.Object, window: Window, conf: ShowWindowConf = null): Window {
-		final bound = obj.getSize();
-		final width = Std.int(bound.width);
-		final height = Std.int(bound.height);
-		var interactive = new Interactive(width, height, obj);
-
-		if (conf == null) conf = {overrideSpacing: 5};
-
-		interactive.onOver = function(e: hxd.Event) {
-			final bound = obj.getBounds();
-			window.onShow();
-			this.windowRenderSystem.showWindow(window, bound, conf);
-		}
-
-		interactive.onOut = function(e: hxd.Event) {
-			// need to check that we are still managed by windowRenderSystem before removing
-			if (window.parent != null && window.parent == windowRenderSystem.layer) {
-				windowRenderSystem.layer.removeChild(window);
-				window.onHide();
-			}
-		}
-
-		interactive.dyOnRemove = function() {
-			// need to check that we are still managed by windowRenderSystem before removing
-			if (window.parent != null && window.parent == windowRenderSystem.layer) {
-				windowRenderSystem.layer.removeChild(window);
-				window.onHide();
-			}
-		}
-		interactive.propagateEvents = true;
-
-		return window;
 	}
 
 	/**

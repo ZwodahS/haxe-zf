@@ -8,19 +8,11 @@ class Layer extends zf.ui.builder.Component {
 		super("layer-empty");
 	}
 
-	override public function makeFromStruct(s: Dynamic, context: BuilderContext): h2d.Object {
-		return make(zf.Access.struct(s), context);
-	}
-
 	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		return make(zf.Access.xml(element), context);
-	}
-
-	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
 		final component = new h2d.Layers();
-		if (conf.getString("name") != null) {
-			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
-			component.name = conf.getString("name");
+		for (child in element.elements()) {
+			final c = context.makeObjectFromXMLElement(child);
+			component.addChild(c);
 		}
 		return component;
 	}

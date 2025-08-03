@@ -1,6 +1,7 @@
 package zf.ui.builder;
 
 import zf.ui.UIElement;
+import zf.h2d.Container;
 
 enum ConfMode {
 	File; // treat confString as a filepath
@@ -27,7 +28,7 @@ enum ConfMode {
 	@see XmlComponentMacro for more information
 **/
 @:autoBuild(zf.macros.XmlComponentMacro.build())
-class XmlComponent extends UIElement {
+class XmlComponent extends zf.h2d.Container {
 	public static var Builder: zf.ui.builder.Builder;
 
 	final confString: String = null;
@@ -65,13 +66,8 @@ class XmlComponent extends UIElement {
 				this.addChild(this.display = XmlComponent.Builder.fromString(this.confString, getBuildContext()));
 		}
 
-		/**
-			Fri 14:38:04 19 Jul 2024
-			This is weird to be placed here, but I have no idea where else this can be done.
-			Might be considered as a hack ?
-		**/
-		if (this.display is UIElement && cast(this.display, UIElement).interactive != null) {
-			this.interactive = cast(this.display, UIElement).interactive;
+		if (this.display is Container && cast(this.display, Container).interactive != null) {
+			this.interactive = cast(this.display, Container).interactive;
 		}
 		_buildVariables();
 	}

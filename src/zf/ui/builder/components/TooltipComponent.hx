@@ -1,7 +1,7 @@
 package zf.ui.builder.components;
 
 import zf.ui.TooltipHelper;
-import zf.ui.UIElement.TooltipShowConf;
+import zf.h2d.Container.TooltipShowConf;
 
 /**
 	Create a Tooltip for the item

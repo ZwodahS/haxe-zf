@@ -16,7 +16,7 @@ import hxd.Key;
 	- F2 (Variable Inspector)
 	- F3 (Message Dispatcher)
 **/
-class DebugOverlay extends UIElement {
+class DebugOverlay extends zf.h2d.Container {
 	public var game: Game;
 
 	public var console: OverlayConsole;

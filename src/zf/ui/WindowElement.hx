@@ -5,7 +5,7 @@ package zf.ui;
 
 	@see zf.ui.components.Window
 **/
-class WindowElement extends UIElement {
+class WindowElement extends zf.h2d.Container {
 	public var background: zf.h2d.ScaleGrid;
 	public var object: h2d.Object;
 
@@ -19,6 +19,8 @@ class WindowElement extends UIElement {
 	public var paddingBottom: Int = 0;
 
 	public var resizeInteractive: Bool = false;
+
+	var resize: Bool = false;
 
 	public function new(background: zf.h2d.ScaleGrid, object: h2d.Object) {
 		super();
@@ -37,8 +39,16 @@ class WindowElement extends UIElement {
 	}
 
 	override public function contentChanged(object: h2d.Object) {
-		super.contentChanged(object);
-		resizeBackground();
+		this.resize = true;
+		onContentChanged();
+	}
+
+	override function sync(ctx: h2d.RenderContext) {
+		if (this.resize == true) {
+			resizeBackground();
+			this.resize = false;
+		}
+		super.sync(ctx);
 	}
 
 	public function resizeBackground() {
