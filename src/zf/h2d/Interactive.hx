@@ -29,4 +29,23 @@ class Interactive extends h2d.Interactive {
 		bounds.height = this.height;
 		return bounds;
 	}
+
+#if debug
+	public static var EventDebugMessage: Bool = false;
+#end
+
+	override public function handleEvent(e: hxd.Event) {
+		super.handleEvent(e);
+#if debug
+		if (Interactive.EventDebugMessage) {
+			// we ignore ECheck
+			switch (e.kind) {
+				case ECheck:
+				default:
+					// @formatter:off
+					Logger.debug('[${e} (Cancel: ${e.cancel})(Propagate: ${e.propagate})] in ${this.parent?.name}.${this.name}', "[Interactive]");
+			}
+		}
+#end
+	}
 }

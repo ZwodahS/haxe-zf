@@ -34,6 +34,7 @@ class DebugOverlay extends zf.h2d.Container {
 			bgColor: [0xff111012, 0xff8c7f5a, 0xfffff703, 0xff3f7082],
 			textColor: 0xfffffbe5,
 		},
+		buttonWidth: 150,
 		console: {
 			inputHeight: 10,
 		},
@@ -163,7 +164,7 @@ class DebugOverlay extends zf.h2d.Container {
 
 	function initConsole() {
 		this.console = new OverlayConsole(this.fonts[0], this.game);
-		this.console.conf.width = this.displayAreaWidth - 100;
+		this.console.conf.width = this.displayAreaWidth - this.conf.buttonWidth;
 		this.console.conf.height = this.displayAreaHeight;
 		this.console.conf.alpha = this.conf.alpha;
 		this.console.conf.inputHeight = this.conf.console.inputHeight;
@@ -185,12 +186,20 @@ class DebugOverlay extends zf.h2d.Container {
 		this.console.addCommand("framerate", "Show Framerate", [], function() {
 			@:privateAccess this.game.framerate.visible = !this.game.framerate.visible;
 		});
+		{
+			final btn: zf.ui.Button.ObjectsButton = cast this.addButton("Interactive Message (Disabled)");
+			btn.addOnLeftClickListener("DebugOverlay", (e) -> {
+				zf.h2d.Interactive.EventDebugMessage = !zf.h2d.Interactive.EventDebugMessage;
+				final enabled = zf.h2d.Interactive.EventDebugMessage;
+				btn.text = 'Interactive Message (${enabled ? "Enabled" : "Disabled"})';
+			});
+		}
 #end
 	}
 
 	function initInspector() {
 		this.inspector = new OverlayInspector(this.fonts[0], this.game);
-		this.inspector.conf.width = this.displayAreaWidth - 100;
+		this.inspector.conf.width = this.displayAreaWidth - this.conf.buttonWidth;
 		this.inspector.conf.height = this.displayAreaHeight;
 		this.inspector.conf.alpha = this.conf.alpha;
 		this.inspector.conf.inputHeight = this.conf.inspector.inputHeight;
@@ -203,7 +212,7 @@ class DebugOverlay extends zf.h2d.Container {
 
 	function initMessages() {
 		this.messages = new OverlayMessages(this.fonts, this.game);
-		this.messages.conf.width = this.displayAreaWidth - 100;
+		this.messages.conf.width = this.displayAreaWidth - this.conf.buttonWidth;
 		this.messages.conf.height = this.displayAreaHeight;
 		this.messages.conf.alpha = this.conf.alpha;
 		this.messages.x = this.conf.padding;
@@ -265,7 +274,7 @@ class DebugOverlay extends zf.h2d.Container {
 			hoverColor: this.conf.button.bgColor[1],
 			disabledColor: this.conf.button.bgColor[2],
 			selectedColor: this.conf.button.bgColor[3],
-			width: 100 - this.conf.spacing - this.conf.padding,
+			width: this.conf.buttonWidth - this.conf.spacing - this.conf.padding,
 			height: 20,
 			font: this.fonts[0],
 			textColor: this.conf.button.textColor,
@@ -276,7 +285,7 @@ class DebugOverlay extends zf.h2d.Container {
 
 	public function addButton(text: String): Button {
 		final btn = makeButton(text);
-		btn.x = this.console.x + this.displayAreaWidth - 100 + this.conf.spacing;
+		btn.x = this.console.x + this.displayAreaWidth - this.conf.buttonWidth + this.conf.spacing;
 		if (this.buttons.length == 0) {
 			btn.y = this.console.y;
 		} else {
