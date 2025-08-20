@@ -44,15 +44,15 @@ class WindowElement extends zf.h2d.Container {
 	}
 
 	override function sync(ctx: h2d.RenderContext) {
+		super.sync(ctx);
 		if (this.resize == true) {
 			resizeBackground();
 			this.resize = false;
 		}
-		super.sync(ctx);
 	}
 
 	public function resizeBackground() {
-		final bounds = this.object.getBounds();
+		final bounds = this.object.getSize();
 		this.background.width = Math.clampI(Std.int(bounds.width) + paddingLeft + paddingRight, minWidth, maxWidth);
 		this.background.height = Math.clampI(Std.int(bounds.height) + paddingTop + paddingBottom, minHeight, null);
 

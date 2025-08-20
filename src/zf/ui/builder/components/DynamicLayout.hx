@@ -81,6 +81,8 @@ class DynamicLayout extends Component {
 				default: Absolute(x, y);
 			}
 
+			if (conf.getBool("frozen") == true) prop.frozen = true;
+
 			@:privateAccess prop.layout = layout;
 		}
 
