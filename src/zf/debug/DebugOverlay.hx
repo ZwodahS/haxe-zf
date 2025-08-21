@@ -193,6 +193,13 @@ class DebugOverlay extends zf.h2d.Container {
 				final enabled = zf.h2d.Interactive.EventDebugMessage;
 				btn.text = 'Interactive Message (${enabled ? "Enabled" : "Disabled"})';
 			});
+		} {
+			final btn: zf.ui.Button.ObjectsButton = cast this.addButton("Dispatch Message (Disabled)");
+			btn.addOnLeftClickListener("DebugOverlay", (e) -> {
+				zf.engine2.World.DispatchMessage = !zf.engine2.World.DispatchMessage;
+				final enabled = zf.engine2.World.DispatchMessage;
+				btn.text = 'Dispatch Message (${enabled ? "Enabled" : "Disabled"})';
+			});
 		}
 #end
 	}

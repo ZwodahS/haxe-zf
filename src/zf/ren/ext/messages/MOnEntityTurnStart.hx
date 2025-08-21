@@ -27,4 +27,8 @@ class MOnEntityTurnStart extends zf.Message.ResultMessage<Bool> {
 
 		return m;
 	}
+
+	override public function toString() {
+		return '[m:${this.type}| (${this.entity?.id}, ${this.entity?.typeId})]';
+	}
 }

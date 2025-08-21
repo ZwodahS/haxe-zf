@@ -3,6 +3,10 @@ package zf.engine2;
 import zf.MessageDispatcher;
 
 class World {
+#if debug
+	public static var DispatchMessage = false;
+#end
+
 	public var isDisposing: Bool = false;
 
 	/**
@@ -47,9 +51,11 @@ class World {
 		this.updater = new zf.up.Updater();
 		this.dispatcher = new MessageDispatcher();
 		this.r = zf.hxd.Rand.alloc();
-#if dispatchMessages
+#if debug
 		this.dispatcher.onAfterMessage = (m) -> {
-			Logger.debug('${m} ${m.delta} (${zf.StringUtils.formatFloat(m.delta / 0.016, 2)} frame)', "[Messages]");
+			if (World.DispatchMessage == true) {
+				Logger.debug('${m} ${m.delta} (${zf.StringUtils.formatFloat(m.delta / 0.016, 2)} frame)', "[Messages]");
+			}
 		}
 #end
 	}
