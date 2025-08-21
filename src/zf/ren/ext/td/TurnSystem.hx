@@ -147,8 +147,12 @@ class TurnQueue {
 			return zf.Compare.int(zf.Compare.Ascending, e1.tc.queuePosition, e2.tc.queuePosition);
 		});
 		this.list.clear();
+		this.map.clear();
 
-		for (n in newList) this.list.add(n);
+		for (n in newList) {
+			final node = this.list.add(n);
+			this.map.set(n.e.id, node);
+		}
 	}
 }
 
