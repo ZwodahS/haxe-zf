@@ -47,8 +47,12 @@ class WindowElement extends zf.h2d.Container {
 		super.sync(ctx);
 		if (this.resize == true) {
 			resizeBackground();
-			this.resize = false;
 		}
+	}
+
+	override function getBoundsRec(relativeTo: h2d.Object, out: h2d.col.Bounds, forSize: Bool) {
+		if (this.resize == true) resizeBackground();
+		return super.getBoundsRec(relativeTo, out, forSize);
 	}
 
 	public function resizeBackground() {
@@ -60,6 +64,7 @@ class WindowElement extends zf.h2d.Container {
 			this.interactive.width = this.background.width;
 			this.interactive.height = this.background.height;
 		}
+		this.resize = false;
 	}
 }
 
