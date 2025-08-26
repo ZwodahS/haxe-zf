@@ -414,6 +414,26 @@ class ResourceManager {
 	}
 
 	// ---- Static Loader ---- //
+
+	/**
+		Resolve all paths that exist with this path.
+		This assumes that there is a single '*' in path.
+
+		Assumption:
+		path is assumed to be /<dir>/<to>/*.<ext>
+	**/
+	public function resolvePaths(pathString: String): Array<String> {
+		final path = new haxe.io.Path(pathString);
+		final found = [];
+
+		final dir = hxd.Res.loader.dir(path.dir);
+		for (file in dir) {
+			found.push(file.name);
+		}
+
+		return found;
+	}
+
 	public function getStringFromPath(path: String, source: ResourceSource = Pak, exception: Bool = true): String {
 		try {
 			var text: String = null;
