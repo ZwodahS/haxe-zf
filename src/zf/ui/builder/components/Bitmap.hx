@@ -27,6 +27,13 @@ class Bitmap extends Component {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			bm.name = conf.get("name");
 		}
+
+		if (conf.get("outline") != null) {
+			final colorString = conf.getString("outline");
+			final color = context.getColor(colorString);
+			bm.filter = new zf.filters.PixelOutline(color);
+		}
+
 		if (conf.get("scale") != null) {
 			final s = conf.getInt("scale");
 			bm.scaleX = s;
