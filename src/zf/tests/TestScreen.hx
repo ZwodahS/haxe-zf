@@ -11,8 +11,6 @@ using zf.HtmlUtils;
 using StringTools;
 
 /**
-	@stage:stable
-
 	Provide a common TestScreen that can be used across all games to run test cases.
 	The test cases can be a normal test case or even simulation of worlds.
 **/

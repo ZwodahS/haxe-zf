@@ -12,9 +12,18 @@ private typedef TestStep = {
 }
 
 /**
-	@stage:unstable
-
 	Generic TestCase class, parent of all the test cases.
+
+	This TestCase works with zf.tests.TestScreen
+
+	# Usage
+	1. Extends TestCase
+	2. Set up the steps by calling run(), wait() and waitFor()
+	3. setup() will be called to set up the test before the test case
+
+	Each steps in steps will be run in order.
+	overriding shouldRunNext to decide when to run next.
+	always call super.shouldRunNext to check when overriding.
 **/
 class TestCase {
 	/**

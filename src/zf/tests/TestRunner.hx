@@ -3,8 +3,6 @@ package zf.tests;
 import zf.exceptions.AssertionFail;
 
 /**
-	@stage:unstable
-
 	A generic test runner for test cases
 **/
 class TestRunner {
