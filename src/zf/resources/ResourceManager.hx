@@ -427,8 +427,13 @@ class ResourceManager {
 		final found = [];
 
 		final dir = hxd.Res.loader.dir(path.dir);
+		/**
+			Wed 12:54:40 03 Sep 2025
+			This works, but probably is too hackish. Probably need to extend this if needed.
+		**/
+		final regex: EReg = new EReg(path.file.replace("*", ".*") + "\\." + path.ext, "i");
 		for (file in dir) {
-			found.push(file.name);
+			if (regex.match(file.name)) found.push(file.name);
 		}
 
 		return found;
