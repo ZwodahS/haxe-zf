@@ -83,8 +83,11 @@ class XmlComponentMacro {
 			for (v in findChildrenVar) {
 				final field = v.field.name;
 				final path = v.path;
-				findChildrenExprs.push(macro this.$field = cast zf.h2d.ObjectExtensions.getObjectsByName(this,
-					$v{path}));
+				final expr: Expr = macro {
+					this.$field = [for (o in zf.h2d.ObjectExtensions.getObjectsByName(this, $v{path})) cast o];
+					true == true; // Not sure why I need this here. FIXME: try to fix this later
+				};
+				findChildrenExprs.push(expr);
 			}
 
 #if debug
