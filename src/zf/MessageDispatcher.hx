@@ -52,6 +52,11 @@ class MessageDispatcher implements MessageDispatcherI {
 	var queuedMessage: List<Message>;
 	var dispatchStack: List<Message>;
 
+	public var isDispatching(get, never): Bool;
+	inline public function get_isDispatching(): Bool {
+		return this.dispatchStack.isEmpty() == false;
+	}
+
 	/**
 		Store a flag to ensure that we will not be clearing the queue while we are clearing the queue
 	**/
