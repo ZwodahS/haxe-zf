@@ -42,31 +42,26 @@ class World extends zf.engine2.World {
 		this.loadedLevels.set(level.id, level);
 	}
 
-	/**
-		Unload a level
-		This will unload all entities
-		If level is not loaded, nothing happens
-
-		@param level level to unload.
-	**/
-	public function unloadLevel(level: Level) {
-		if (this.loadedLevels.exists(level.id) == false) return;
-		for (xy => tile in level.tiles.iterateYX()) {
-			if (tile == null) continue;
-			for (e in tile.entities) {
-				this.unregisterEntity(e);
-			}
-		}
-		this.loadedLevels.remove(level.id);
-	}
-
 	inline public function isLoaded(level: Level): Bool {
 		return this.loadedLevels.exists(level.id);
+	}
+
+	public var delayEntityDestroy(get, never): Bool;
+	public function get_delayEntityDestroy(): Bool {
+		return this.dispatcher.isDispatching == true || this.updater.count > 0;
 	}
 
 	public function new() {
 		super();
 		this.loadedLevels = [];
+	}
+
+	override public function update(dt: Float) {
+		super.update(dt);
+		if (this.hasEntityToDestroy == true && this.delayEntityDestroy != true) {
+			for (e in this.markedForDestroy) _destroyEntity(e);
+			this.markedForDestroy.clear();
+		}
 	}
 
 	// ---- Entity movement code ---- //
@@ -139,9 +134,9 @@ class World extends zf.engine2.World {
 
 		Entity is still kept around and needs to be unregistered
 	**/
-	public function removeEntityFromLevel(entity: Entity): Bool {
+	public function removeEntityFromLevel(entity: Entity, dispatchMessage: Bool = true): Bool {
 		final lc = LocationComponent.get(entity);
-		if (lc == null || lc.level == null) return false;
+		if (lc?.level == null) return false;
 
 		final prevLevel = lc.level;
 		final prevX = lc.x;
@@ -149,32 +144,48 @@ class World extends zf.engine2.World {
 
 		prevLevel.removeEntity(entity, lc);
 
-		if (this.isDisposing == false) {
+		if (dispatchMessage == true) {
 			this.dispatcher.dispatch(MOnEntityMoved.alloc(entity, prevLevel, prevX, prevY, null, null, null)).dispose();
 		}
 
 		return true;
 	}
 
+	public final markedForDestroy: Map<Int, Entity> = [];
+	var hasEntityToDestroy: Bool = false;
+
 	/**
 		Destroy the entity.
 	**/
 	public function destroyEntity(entity: Entity) {
-		final lc = LocationComponent.get(entity);
-		final tile = lc?.tile;
-		if (tile != null) {
-			removeEntityFromLevel(entity);
-			this.dispatcher.dispatch(MOnEntityDestroyed.alloc(entity, tile));
+		if (this.delayEntityDestroy == true) {
+			_markForDestroy(entity);
+		} else {
+			_destroyEntity(entity);
 		}
-		this.unregisterEntity(entity);
+	}
+
+	inline function _markForDestroy(entity: Entity) {
+		this.markedForDestroy[entity.id] = entity;
+		this.hasEntityToDestroy = true;
 	}
 
 	/**
-		Overried unregister entity to completely remove it from level just in case
+		Remove the entity from the level without triggering destroy
+		Note that this does not delay the destruction and is meant to be used to immediately remove from the game.
 	**/
-	override public function unregisterEntity(e: zf.engine2.Entity) {
-		removeEntityFromLevel(e);
-		super.unregisterEntity(e);
+	public function removeEntity(entity: Entity) {
+		removeEntityFromLevel(entity);
+		this.unregisterEntity(entity);
+		entity.dispose();
+	}
+
+	function _destroyEntity(entity: Entity) {
+		final lc = LocationComponent.get(entity);
+		this.dispatcher.dispatch(MOnEntityDestroyed.alloc(entity, lc?.tile));
+		removeEntityFromLevel(entity);
+		this.unregisterEntity(entity);
+		entity.dispose();
 	}
 
 	/**

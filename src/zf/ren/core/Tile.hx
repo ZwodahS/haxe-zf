@@ -110,6 +110,13 @@ class Tile implements Serialisable implements Disposable {
 		return this.level.placeEntity(e, this.x, this.y);
 	}
 
+	public function hasEntityTypeId(typeId: String): Bool {
+		for (entity in this.entities) {
+			if (entity.typeId == typeId) return true;
+		}
+		return false;
+	}
+
 	/**
 		Remove Entity from the tile
 

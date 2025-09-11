@@ -40,4 +40,11 @@ class MOnEntityMoved extends zf.Message {
 
 		return m;
 	}
+
+	override public function toString() {
+		return '[
+			MOnEntityMoved: ${this.entity}
+			${this.oldTile} -> ${this.newTile}
+		]';
+	}
 }
