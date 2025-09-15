@@ -42,6 +42,16 @@ using haxe.macro.TypeTools;
 	In the second case, only the field that is specified is forward.
 
 	If 2 field forward the same getter/setting, then it will error
+
+	## Chain
+	@:chain public var field: <Type>;
+
+	will generate 1 method to set the field and returning the object
+
+	inline public function _field(v: <Type>): <ClassType> {
+		this.field = v;
+		return this;
+	}
 **/
 class ClassBuilder {
 	public function new() {}
@@ -57,8 +67,8 @@ class ClassBuilder {
 
 		final created: Map<String, Bool> = [];
 
-		inline function buildField(field: haxe.macro.Field, fieldType: haxe.macro.Type, innerFieldName: String,
-				doc: String) {
+		inline function buildDelegateField(field: haxe.macro.Field, fieldType: haxe.macro.Type,
+				innerFieldName: String, doc: String) {
 			final fieldType = Context.toComplexType(fieldType);
 			final fieldName = field.name;
 			fields.push(({
@@ -95,7 +105,7 @@ class ClassBuilder {
 							if (created.exists(f.name) == true)
 								Context.fatalError('Duplicated forwarding for ${f.name}.', field.pos);
 
-							buildField(field, f.type, '${f.name}', f.doc);
+							buildDelegateField(field, f.type, '${f.name}', f.doc);
 						}
 					} else {
 						for (f in cast(meta.params[0].getValue(), Array<Dynamic>)) {
@@ -103,25 +113,58 @@ class ClassBuilder {
 							if (ft == null) {
 								Context.fatalError('unable to forward ${field.name}.${f}', field.pos);
 							}
-							buildField(field, ft, '${f}', Util.getDocOfField(t, '${f}'));
+							buildDelegateField(field, ft, '${f}', Util.getDocOfField(t, '${f}'));
 						}
 					}
 				default:
 			}
 		}
 
-		final toBuild: Array<{field: haxe.macro.Field, meta: MetadataEntry}> = [];
-
-		for (field in fields) {
-			final m = Util.getMeta(field.meta, ":forward");
-			if (m == null) continue;
-			toBuild.push({field: field, meta: m});
+		function buildChain(field: haxe.macro.Field, meta: haxe.macro.Expr.MetadataEntry) {
+			switch (field.kind) {
+				case FVar(_.toType() => t, e), FProp(_, _, _.toType() => t, e):
+					final fieldName = field.name;
+					fields.push({
+						name: '_${field.name}',
+						pos: Context.currentPos(),
+						kind: FFun({
+							args: [{name: "v", type: t.toComplexType()}],
+							expr: macro {
+								this.$fieldName = v;
+								return this;
+							}
+						}),
+						access: [APublic, AInline],
+					});
+				default:
+					Context.fatalError('unable to build chain for field ${field.name} - Not a field', field.pos);
+			}
 		}
 
-		if (toBuild.length == 0) return null;
+		final toBuildDelegate: Array<{field: haxe.macro.Field, meta: MetadataEntry}> = [];
+		final toBuildChain: Array<{field: haxe.macro.Field, meta: MetadataEntry}> = [];
 
-		for (f in toBuild) {
+		for (field in fields) {
+			final forwardMeta = Util.getMeta(field.meta, ":forward");
+			if (forwardMeta != null) {
+				toBuildDelegate.push({field: field, meta: forwardMeta});
+			}
+
+			final chainMeta = Util.getMeta(field.meta, ":chain");
+			if (chainMeta != null) {
+				if (forwardMeta != null) {
+					Context.fatalError('@:chain does not work with @:forward: ${field.name}', field.pos);
+				}
+				toBuildChain.push({field: field, meta: chainMeta});
+			}
+		}
+
+		for (f in toBuildDelegate) {
 			buildDelegate(f.field, f.meta);
+		}
+
+		for (f in toBuildChain) {
+			buildChain(f.field, f.meta);
 		}
 
 		return fields;
