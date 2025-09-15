@@ -12,6 +12,9 @@ package zf.ren.core;
 	Non-blocking animations should not use this updater.
 **/
 class World extends zf.engine2.World {
+#if debug
+	public static var DebugDisposeMessage: Bool = false;
+#end
 	public var isAnimating(get, never): Bool;
 
 	inline public function get_isAnimating(): Bool {
@@ -166,6 +169,11 @@ class World extends zf.engine2.World {
 	}
 
 	inline function _markForDestroy(entity: Entity) {
+#if debug
+		if (World.DebugDisposeMessage == true) {
+			Logger.debug('Marked For Destroy: ${entity}', "[ren.core.World]");
+		}
+#end
 		this.markedForDestroy[entity.id] = entity;
 		this.hasEntityToDestroy = true;
 	}
@@ -177,6 +185,11 @@ class World extends zf.engine2.World {
 	public function removeEntity(entity: Entity) {
 		removeEntityFromLevel(entity);
 		this.unregisterEntity(entity);
+#if debug
+		if (World.DebugDisposeMessage == true) {
+			Logger.debug('Disposing entity(removed): ${entity}', "[ren.core.World]");
+		}
+#end
 		entity.dispose();
 	}
 
@@ -185,6 +198,11 @@ class World extends zf.engine2.World {
 		this.dispatcher.dispatch(MOnEntityDestroyed.alloc(entity, lc?.tile));
 		removeEntityFromLevel(entity);
 		this.unregisterEntity(entity);
+#if debug
+		if (World.DebugDisposeMessage == true) {
+			Logger.debug('Disposing entity(destroyed): ${entity}', "[ren.core.World]");
+		}
+#end
 		entity.dispose();
 	}
 
