@@ -62,8 +62,10 @@ class World extends zf.engine2.World {
 	override public function update(dt: Float) {
 		super.update(dt);
 		if (this.hasEntityToDestroy == true && this.delayEntityDestroy != true) {
-			for (e in this.markedForDestroy) _destroyEntity(e);
+			for (e in this.markedForDestroyList) _destroyEntity(e);
 			this.markedForDestroy.clear();
+			this.markedForDestroyList.clear();
+			this.hasEntityToDestroy = false;
 		}
 	}
 
@@ -144,6 +146,7 @@ class World extends zf.engine2.World {
 		final prevLevel = lc.level;
 		final prevX = lc.x;
 		final prevY = lc.y;
+		final tile = lc.tile;
 
 		prevLevel.removeEntity(entity, lc);
 
@@ -155,12 +158,18 @@ class World extends zf.engine2.World {
 	}
 
 	public final markedForDestroy: Map<Int, Entity> = [];
+	public final markedForDestroyList: Array<Entity> = [];
 	var hasEntityToDestroy: Bool = false;
 
 	/**
 		Destroy the entity.
 	**/
 	public function destroyEntity(entity: Entity) {
+#if debug
+		if (World.DebugDisposeMessage == true) {
+			Logger.debug('Destroying Entity: ${entity}, Delayed: ${this.delayEntityDestroy}', "[ren.core.World]");
+		}
+#end
 		if (this.delayEntityDestroy == true) {
 			_markForDestroy(entity);
 		} else {
@@ -174,6 +183,8 @@ class World extends zf.engine2.World {
 			Logger.debug('Marked For Destroy: ${entity}', "[ren.core.World]");
 		}
 #end
+		if (this.markedForDestroy.exists(entity.id) == true) return;
+		this.markedForDestroyList.push(entity);
 		this.markedForDestroy[entity.id] = entity;
 		this.hasEntityToDestroy = true;
 	}
