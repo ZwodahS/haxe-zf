@@ -47,6 +47,11 @@ class TurnQueue {
 		return this.list.first();
 	}
 
+	public var count(get, never): Int;
+	inline public function get_count(): Int {
+		return this.list.length;
+	}
+
 	public function new() {
 		this.list = new List<TurnSystemEntity>();
 		this.map = new Map<Int, ListNode<TurnSystemEntity>>();
@@ -189,6 +194,11 @@ class TurnSystem extends zf.engine2.System {
 		return this.actualActiveEntity;
 	}
 
+	public var count(get, never): Int;
+	inline public function get_count(): Int {
+		return this.queue.count;
+	}
+
 	/**
 		if true, turn selection will wait until all animations is completed.
 		setting to false may have weird effects if not handled properly.
@@ -317,9 +327,10 @@ class TurnSystem extends zf.engine2.System {
 		// this is useful for when entity is out of sight and we are not animating.
 		this.entitiesTakenTurn.clear();
 		while (true) {
-			// if the world is animating and we want to block turn from simulating
-			// when there is a blocking animator, we don't do anything.
+			// this handles the case where a turn result in animations that needs to be completed.
 			if (this.blockedByAnimator && this.world.isAnimating) return;
+			// if there are entities to destroy, we will need to wait until they are destroyed.
+			if (this.world.hasEntityToDestroy == true) return;
 			// when there is 0 item and nothing is current active, we just exit the loop
 			if (this.actualActiveEntity == null && this.queue.current == null) return;
 			// if the current entity is null, and the first entity timeunit is not 0, we will subtract
@@ -344,7 +355,13 @@ class TurnSystem extends zf.engine2.System {
 			// this also handles the case where entityactive finishes and there is nothing in the queue,
 			// i.e. the last entity died as part of the action;
 			if (this.queue.current == null || this.actualActiveEntity != this.queue.current.e) {
-				// we should fire the entity turn end here as well
+				/**
+					Fri 12:15:05 19 Sep 2025
+					There might be a problem here when we dispose the entity after it die
+					FIXME: Probably want to fix this later.
+				**/
+
+				// we should fire the entity turn end here as well - Fri 12:15:54 19 Sep 2025 maybe we don't
 				this.dispatcher.dispatch(MOnEntityTurnEnd.alloc(this.actualActiveEntity)).dispose();
 				// we also need to set the actualActiveEntity to null and restart the loop
 				this.actualActiveEntity = null;

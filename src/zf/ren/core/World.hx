@@ -62,10 +62,12 @@ class World extends zf.engine2.World {
 	override public function update(dt: Float) {
 		super.update(dt);
 		if (this.hasEntityToDestroy == true && this.delayEntityDestroy != true) {
-			for (e in this.markedForDestroyList) _destroyEntity(e);
+			// make a copy, because sometimes while destroying things might get destroyed.
+			final copy = this.markedForDestroyList.copy();
 			this.markedForDestroy.clear();
 			this.markedForDestroyList.clear();
 			this.hasEntityToDestroy = false;
+			for (e in copy) _destroyEntity(e);
 		}
 	}
 
@@ -159,18 +161,18 @@ class World extends zf.engine2.World {
 
 	public final markedForDestroy: Map<Int, Entity> = [];
 	public final markedForDestroyList: Array<Entity> = [];
-	var hasEntityToDestroy: Bool = false;
+	public var hasEntityToDestroy(default, null): Bool = false;
 
 	/**
 		Destroy the entity.
 	**/
-	public function destroyEntity(entity: Entity) {
+	public function destroyEntity(entity: Entity, noDelay: Bool = false) {
 #if debug
 		if (World.DebugDisposeMessage == true) {
 			Logger.debug('Destroying Entity: ${entity}, Delayed: ${this.delayEntityDestroy}', "[ren.core.World]");
 		}
 #end
-		if (this.delayEntityDestroy == true) {
+		if (noDelay == false && this.delayEntityDestroy == true) {
 			_markForDestroy(entity);
 		} else {
 			_destroyEntity(entity);
