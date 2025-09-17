@@ -177,6 +177,7 @@ class TurnSystem extends zf.engine2.System {
 
 	public var activeEntity(get, never): Entity;
 	public var pause: Bool = false;
+	public var delay: Float = 0.0;
 
 	public var world(get, never): zf.ren.core.World;
 
@@ -185,7 +186,7 @@ class TurnSystem extends zf.engine2.System {
 	}
 
 	public inline function get_activeEntity(): Entity {
-		return this.queue.activeEntity;
+		return this.actualActiveEntity;
 	}
 
 	/**
@@ -292,6 +293,7 @@ class TurnSystem extends zf.engine2.System {
 			then it is better to simulate them all in a single frame.
 		**/
 
+		if (this.delay >= 0) this.delay -= dt;
 		if (this.pause) return;
 
 		inline function endCurrentEntityTurn() {
@@ -325,6 +327,7 @@ class TurnSystem extends zf.engine2.System {
 			if (this.actualActiveEntity == null && this.queue.current.tc.timeunit != 0) this.queue.advance();
 			// if the current entity is null, we treat the queue current as the new current and fire the event.
 			if (this.actualActiveEntity == null) {
+				if (this.delay > 0) return;
 				this.actualActiveEntity = this.queue.current.e;
 
 				final disrupted = this.dispatcher.getResult(MOnEntityTurnStart.alloc(this.actualActiveEntity));
