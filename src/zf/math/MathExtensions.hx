@@ -141,7 +141,6 @@ function percentile(cls: Class<Math>, arr: Array<Int>, p: Int): Float {
 	var left = position % 1;
 	var right = 1 - left;
 	var p = Std.int(position);
-	trace(position, p, left, right);
 	if (left == 0) {
 		return arr[p];
 	}
