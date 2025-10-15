@@ -117,6 +117,13 @@ class Tile implements Serialisable implements Disposable {
 		return false;
 	}
 
+	public function hasEntityTypeTag(typeTag: String): Bool {
+		for (entity in this.entities) {
+			if (entity.isTypeTag(typeTag) == true) return true;
+		}
+		return false;
+	}
+
 	/**
 		Remove Entity from the tile
 

@@ -139,6 +139,11 @@ class Entity implements Identifiable implements Disposable implements Serialisab
 		return cast this.__components__.get(typeId);
 	}
 
+	public function isTypeTag(tag: String): Bool {
+		if (this.factory == null) return false;
+		return this.factory.isTypeTag(tag);
+	}
+
 	// ---- Dispose method ---- //
 
 	/**
@@ -207,4 +212,9 @@ class Entity implements Identifiable implements Disposable implements Serialisab
 	Fri 12:49:05 08 Nov 2024
 	Move entity kind from template to engine2.
 	EntityKind is now a String
+
+	Wed 14:36:32 15 Oct 2025
+	Adding typeTags to Entity.
+	These are strings and can be used to tag entity and be used as logic.
+	The calls are delegated to factory.
 **/

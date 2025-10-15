@@ -11,12 +11,18 @@ import zf.serialise.SerialiseContext;
 class EntityFactory implements Identifiable {
 	public var typeId(default, null): String;
 
+	public var typeTags: Map<String, Bool>;
+
 	inline public function identifier(): String {
 		return this.typeId;
 	}
 
-	public function new(typeId: String) {
+	public function new(typeId: String, typeTags: Array<String> = null) {
 		this.typeId = typeId;
+		this.typeTags = [];
+		if (typeTags != null) {
+			for (t in typeTags) addTag(t);
+		}
 	}
 
 	public function toStruct(context: SerialiseContext, entity: Entity, struct: Dynamic = null): Dynamic {
@@ -36,6 +42,18 @@ class EntityFactory implements Identifiable {
 		}
 
 		return struct;
+	}
+
+	public function isTypeTag(tag: String): Bool {
+		return this.typeTags.get(tag) == true;
+	}
+
+	public function addTag(tag: String) {
+		this.typeTags[tag] = true;
+	}
+
+	public function removeTag(tag: String) {
+		this.typeTags.remove(tag);
 	}
 
 	/**
