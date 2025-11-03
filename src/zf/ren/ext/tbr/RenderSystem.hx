@@ -206,12 +206,12 @@ class RenderSystem extends zf.engine2.System {
 		obj.y = positionY * this.gridSizeY + offsetY;
 	}
 
-	inline public function gridXToPosX(x: Int): Float {
-		return x * this.gridSizeX;
+	inline public function gridXToPosX(x: Int, center: Bool = false): Float {
+		return x * this.gridSizeX + (center == true ? this.gridSizeX / 2 : 0);
 	}
 
-	inline public function gridYToPosY(y: Int): Float {
-		return y * this.gridSizeY;
+	inline public function gridYToPosY(y: Int, center: Bool = false): Float {
+		return y * this.gridSizeY + (center == true ? this.gridSizeY / 2 : 0);
 	}
 
 	public function loadLevel(level: Level) {
@@ -305,17 +305,47 @@ class RenderSystem extends zf.engine2.System {
 
 	public function animateProjectile(projectile: h2d.Object, sourceX: Int, sourceY: Int, destinationX: Int,
 			destinationY: Int, ?onFinish: Void->Void, animationDuration: Float = 1.0, drawLayer: Int = 15,
-			blocking: Bool = true, offsetX: Int = 0, offsetY: Int = 0) {
-		projectile.x = (sourceX * this.gridSizeX) + (this.gridSizeX / 2) + offsetX;
-		projectile.y = (sourceY * this.gridSizeY) + (this.gridSizeY / 2) + offsetY;
+			blocking: Bool = true, offsetX: Float = 0, offsetY: Float = 0) {
+		projectile.x = gridXToPosX(sourceX, true) + offsetX;
+		projectile.y = gridYToPosY(sourceY, true) + offsetY;
 		this.level.get("entity").add(projectile, drawLayer);
 
-		final endX = (destinationX * this.gridSizeX) + (this.gridSizeX / 2) + offsetX;
-		final endY = (destinationY * this.gridSizeY) + (this.gridSizeY / 2) + offsetY;
+		final endX = gridXToPosX(destinationX, true) + offsetX;
+		final endY = gridYToPosY(destinationY, true) + offsetY;
 		final animator = blocking ? this.__world__.updater : null;
 
 		E.moveTo(endX, endY, animationDuration).applyTo(projectile, animator, () -> {
 			projectile.remove();
+			if (onFinish != null) onFinish();
+		});
+	}
+
+	public function animateParabolic(object: h2d.Object, sourceX: Int, sourceY: Int, destinationX: Int,
+			destinationY: Int, ?onFinish: Void->Void, animationDuration: Float = 1.0, drawLayer: Int = 15,
+			blocking: Bool = true, offsetX: Float = 0, offsetY: Float = 0) {
+		final startX = gridXToPosX(sourceX, true) + offsetX;
+		final startY = gridYToPosY(sourceY, true) + offsetY;
+		this.level.get("entity").add(object, drawLayer);
+
+		object.x = startX;
+		object.y = startY;
+
+		final endX = gridXToPosX(destinationX, true) + offsetX;
+		final endY = gridYToPosY(destinationY, true) + offsetY;
+		final animator = blocking ? this.__world__.updater : null;
+
+		final moveX = endX - startX;
+		final moveY = endY - startY;
+
+		function parabolicFunc(dt: Float, pt: Point2f): Point2f {
+			pt.x = (dt / animationDuration) * moveX;
+			pt.y = (1.5 * -this.gridSizeY * Math.sin(dt / animationDuration * Math.PI))
+				+ (dt / animationDuration) * moveY;
+			return pt;
+		}
+
+		E.moveByFunc(parabolicFunc, animationDuration).applyTo(object, animator, () -> {
+			object.remove();
 			if (onFinish != null) onFinish();
 		});
 	}
