@@ -310,7 +310,8 @@ class TurnSystem extends zf.engine2.System {
 			// reset the state of the current entity
 			final current = this.queue.current;
 			current.tc.endTurn = false;
-			current.tc.timeunit += current.tc.delay;
+			final delay = this.dispatcher.getResult(MGetEntityTurnDelay.alloc(current.e, current.tc.delay));
+			current.tc.timeunit += Math.clampI(delay, 1, null);
 			current.tc.tookAction = false;
 			final entity = current.e;
 			// move the queue
