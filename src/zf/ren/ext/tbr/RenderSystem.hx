@@ -344,7 +344,34 @@ class RenderSystem extends zf.engine2.System {
 			return pt;
 		}
 
-		E.moveByFunc(parabolicFunc, animationDuration).applyTo(object, animator, () -> {
+		E.batch([
+			E.scaleTo(animationDuration / 2, 1.2, 1.2),
+			E.scaleTo(animationDuration / 2, 1, 1)
+		]).with(E.moveByFunc(parabolicFunc, animationDuration)).applyTo(object, animator, () -> {
+			object.remove();
+			if (onFinish != null) onFinish();
+		});
+	}
+
+	public function animateFalling(object: h2d.Object, tileX: Int, tileY: Int, ?onFinish: Void->Void,
+			duration: Float = 1.0, drawLayer: Int = 15, blocking: Bool = true, offsetX: Float = 0, offsetY: Float = 0) {
+		final startX = gridXToPosX(tileX, true) + offsetX;
+		final startY = gridYToPosY(tileY, true) + offsetY - 40;
+		this.level.get("entity").add(object, drawLayer);
+
+		object.x = startX;
+		object.y = startY;
+		object.alpha = 0;
+
+		final endX = gridXToPosX(tileX, true) + offsetX;
+		final endY = gridYToPosY(tileY, true) + offsetY;
+
+		final animator = blocking ? this.__world__.updater : null;
+
+		final moveX = endX - startX;
+		final moveY = endY - startY;
+
+		E.moveTo(endX, endY, duration).with(E.alphaTo(1, duration / 2)).applyTo(object, animator, () -> {
 			object.remove();
 			if (onFinish != null) onFinish();
 		});
