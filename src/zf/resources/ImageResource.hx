@@ -46,7 +46,7 @@ class ImageResource {
 	}
 
 	public function getAnim(speed: Float = 1.0, sort: (h2d.Tile, h2d.Tile) -> Int = null, start: Int = 0,
-			end: Int = -1): h2d.Anim {
+			end: Int = -1, reversed: Bool = false): h2d.Anim {
 		if (end == -1) {
 			end = this.tiles.length;
 		}
@@ -57,6 +57,10 @@ class ImageResource {
 		}
 		if (sort != null) {
 			frames.sort(sort);
+		}
+
+		if (reversed == true) {
+			frames.reverse();
 		}
 
 		var anim = new h2d.Anim(frames, speed);

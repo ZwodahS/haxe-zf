@@ -267,9 +267,9 @@ class ResourceManager {
 		return asset == null ? null : asset.getBitmaps(start, end);
 	}
 
-	public function getAnim(id: String, start: Int = 0, end: Int = -1): h2d.Anim {
+	public function getAnim(id: String, start: Int = 0, end: Int = -1, reversed: Bool = false): h2d.Anim {
 		final asset = getImageResource(id);
-		return asset == null ? null : asset.getAnim(1, null, start, end);
+		return asset == null ? null : asset.getAnim(1, null, start, end, reversed);
 	}
 
 	// ---- Fonts ---- //
