@@ -298,7 +298,12 @@ class RenderSystem extends zf.engine2.System {
 
 		final animator = blocking ? this.__world__.updater : null;
 		E.moveTo(targetPositionX, targetPositionY, duration).applyTo(rc.ro, animator, () -> {
-			this.level.get(rc.layer).add(rc.ro, priority);
+			/**
+				Tue 13:59:24 25 Nov 2025
+				This is bugged if 2 ice is on the same tiles.
+				Adding a check to be safe.
+			**/
+			if (rc.ro != null) this.level.get(rc.layer).add(rc.ro, priority);
 			if (onFinish != null) onFinish();
 		});
 	}

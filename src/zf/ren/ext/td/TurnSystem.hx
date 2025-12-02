@@ -268,6 +268,18 @@ class TurnSystem extends zf.engine2.System {
 		return true;
 	}
 
+	public function setEntityTurn(e: Entity, amt: Int) {
+		final tc = TurnComponent.get(e);
+		if (tc == null) return false;
+		tc.timeunit = amt;
+		/**
+			Tue 13:26:59 28 Jan 2025
+			If the entity is the current entity, we don't want to update the queue or shit will break
+		**/
+		if (e != this.activeEntity) this.queue.shiftEntity(e);
+		return true;
+	}
+
 	var actualActiveEntity: Entity = null;
 	var entitiesTakenTurn: Map<Int, Entity> = new Map<Int, Entity>();
 
