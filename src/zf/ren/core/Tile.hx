@@ -177,12 +177,16 @@ class Tile implements Serialisable implements Disposable {
 		return '(Tile:${this.x},${this.y})';
 	}
 
-	public function getTileInDirection(direction: Direction, range: Int = 1): Tile {
+	public function getTileInDirection(direction: Direction, range: Int = 1, blockFilter: (Tile) -> Bool = null): Tile {
 		if (this.level == null) return null;
 
 		final targetPosition: Point2i = [this.x, this.y];
-		for (_ in 0...range) {
+		for (i in 0...range) {
 			targetPosition += direction;
+			final tile = this.level.getTile(targetPosition.x, targetPosition.y);
+			// make sure that we don't check the final tile
+			if (i != range - 1) break;
+			if (blockFilter != null && blockFilter(tile) == true) return null;
 		}
 		final tile = this.level.getTile(targetPosition.x, targetPosition.y);
 		targetPosition.dispose();
