@@ -49,6 +49,12 @@ class MapExtensions {
 		return ArrayExtensions.randomItem(keys, r);
 	}
 
+	public static function randomItem<K, V>(map: Map<K, V>, r: hxd.Rand): Null<V> {
+		final key = randomKey(map, r);
+		if (key == null) return null;
+		return map.get(key);
+	}
+
 	/**
 		Convert a intmap to dynamic
 	**/
