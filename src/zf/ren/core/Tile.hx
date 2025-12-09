@@ -185,7 +185,7 @@ class Tile implements Serialisable implements Disposable {
 			targetPosition += direction;
 			final tile = this.level.getTile(targetPosition.x, targetPosition.y);
 			// make sure that we don't check the final tile
-			if (i != range - 1) break;
+			if (tile == null || i == range - 1) break;
 			if (blockFilter != null && blockFilter(tile) == true) return null;
 		}
 		final tile = this.level.getTile(targetPosition.x, targetPosition.y);
