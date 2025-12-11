@@ -25,10 +25,10 @@ enum ConfMode {
 	will expose the function to the builder context as name.
 	if name is not provided, will expose as funcName
 
-	@see XmlComponentMacro for more information
+	@see XmlContainerMacro for more information
 **/
-@:autoBuild(zf.macros.XmlComponentMacro.build())
-class XmlComponent extends zf.h2d.Container {
+@:autoBuild(zf.macros.XmlContainerMacro.build())
+class XmlContainer extends zf.h2d.Container {
 	public static var Builder: zf.ui.builder.Builder;
 
 	final confString: String = null;
@@ -58,12 +58,12 @@ class XmlComponent extends zf.h2d.Container {
 		call from child to init this xml component
 	**/
 	function initComponent() {
-		if (XmlComponent.Builder == null) throw new haxe.Exception("UIBuilder not set");
+		if (XmlContainer.Builder == null) throw new haxe.Exception("UIBuilder not set");
 		switch (mode) {
 			case File:
-				this.addChild(this.display = XmlComponent.Builder.fromFile(this.confString, getBuildContext()));
+				this.addChild(this.display = XmlContainer.Builder.fromFile(this.confString, getBuildContext()));
 			case XML:
-				this.addChild(this.display = XmlComponent.Builder.fromString(this.confString, getBuildContext()));
+				this.addChild(this.display = XmlContainer.Builder.fromString(this.confString, getBuildContext()));
 		}
 
 		if (this.display is Container && cast(this.display, Container).interactive != null) {

@@ -8,9 +8,9 @@ using haxe.macro.ExprTools;
 using haxe.macro.Tools;
 
 /**
-	See zf.ui.builder.XmlComponent
+	See zf.ui.builder.XmlContainer
 **/
-class XmlComponentMacro {
+class XmlContainerMacro {
 	public function new() {}
 
 	public function buildClass() {
@@ -184,7 +184,7 @@ class XmlComponentMacro {
 	}
 
 	public static function build() {
-		return new XmlComponentMacro().buildClass();
+		return new XmlContainerMacro().buildClass();
 	}
 }
 #end

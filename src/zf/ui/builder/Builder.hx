@@ -3,9 +3,32 @@ package zf.ui.builder;
 import zf.resources.ResourceManager;
 
 /**
-	UI Builder
+	# Motivation
+	Creating UI is tedious, and it is easier if it is easy to do it via XML.
 
-	Components can be build using structs or xml
+	This is similar to domkit but it was not created to replace domkit, at least not initially.
+	It just grew to become similar.
+
+	# How it works.
+	Builder need register all the Components that can be build.
+	@see zf.ui.builder.Component
+
+	The default components in zf.ui.builder.components are automatically loaded.
+	These component are used to create heaps object, like h2d.Flow, h2d.Text etc.
+
+	Custom components can be registered by extending zf.ui.builder.Component and registering them in the Builder.
+
+	Once this is done, h2d.Object can be created by calling `make`.
+
+	## XmlContainer
+	The second way that this can be used is to create a XmlContainer.
+	@see zf.ui.builder.XmlContainer for more details.
+
+	By extending from XmlContainer, an object can be created using SRC variable or from file.
+	The macro then provide access to the different inner object.
+
+	XmlContainer is not registered with the builder, and can only be created with alloc.
+	However, we can create a custom Component that help us make XmlContainer.
 **/
 class Builder {
 	/**
@@ -212,4 +235,7 @@ class Builder {
 	It is more likely than not, moving forward we will be using XML over struct.
 	So many of the features that are available in the components will only be implemented in XML
 	if it needs to be handled separately.
+
+	Thu 13:42:51 11 Dec 2025
+	Rename XmlComponent to XmlContainer
 **/
