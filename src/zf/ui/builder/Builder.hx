@@ -29,6 +29,12 @@ import zf.resources.ResourceManager;
 
 	XmlContainer is not registered with the builder, and can only be created with alloc.
 	However, we can create a custom Component that help us make XmlContainer.
+
+	## Navigation Nodes
+	@see zf.nav
+	In a game that is controller based, we need to know how to navigate between different UI element.
+	This can be done using zf.nav.
+	The Builder can also build the navigation graph using xml.
 **/
 class Builder {
 	/**
@@ -69,73 +75,61 @@ class Builder {
 	// ---- Various building method  ---- //
 
 	/**
-		Overloaded make method
+		The main make function.
+		This function is overloaded to accept any type of input
+
+		@param data - the data used to build the object. Accept xmlString or Xml element
+		@param context - the context for building the object, BuilderContext or a struct
 	**/
-	public function make(xmlString: String = null, element: Xml = null, struct: ComponentConf = null,
-			context: BuilderContext = null): h2d.Object {
-		if (xmlString != null) {
-			return makeObjectFromXMLString(xmlString, context);
-		} else if (element != null) {
-			return makeObjectFromXMLElement(element, context);
-		} else if (struct != null) {
-			return makeObjectFromStruct(struct, context);
+	public function build(data: Dynamic, context: Dynamic = null): ComponentObject {
+		var element: Xml = null;
+		if (data is String) {
+			try {
+				element = Xml.parse(cast data);
+				element = element.firstElement();
+			} catch (e) {
+				Logger.exception(e);
+				return null;
+			}
+		} else if (data is Xml) {
+			element = cast data;
+		} else {
+			throw new zf.exceptions.NotImplemented();
 		}
-		return null;
-	}
-
-	/**
-		Make object from a XML String.
-	**/
-	public function makeObjectFromXMLString(xmlString: String, context: BuilderContext = null): h2d.Object {
-		if (xmlString == null) return null;
-		final xml = Xml.parse(xmlString);
-		final element = xml.firstElement();
-		return makeObjectFromXMLElement(element, context);
-	}
-
-	/**
-		Make object from XML element
-	**/
-	public function makeObjectFromXMLElement(element: Xml, context: BuilderContext = null): h2d.Object {
-		if (element == null) return null;
-		// create context if not exists
-		if (context == null) context = {};
-		// set builder
-		context.builder = this;
 
 		if (element.nodeType != Element) return null;
-		final comp = this.components[element.nodeName];
-		if (comp == null) return null;
-		var obj = comp.makeFromXML(element, context);
-		if (obj != null && element.get("id") != null) obj.name = element.get("id");
-		return obj;
-	}
+		final component = this.components[element.nodeName];
+		if (component == null) return null;
 
-	/**
-		Make object from component struct
-	**/
-	public function makeObjectFromStruct(conf: ComponentConf, context: BuilderContext = null): h2d.Object {
-		if (conf == null) return null;
-		// create context if not exists
-		if (context == null) context = {};
-		// set builder
-		context.builder = this;
+		var ctx: BuilderContext = null;
+		if (context is BuilderContext) {
+			ctx = cast context;
+		} else {
+			try {
+				ctx = new BuilderContext(context);
+				ctx.builder = this;
+			} catch (e) {
+				Logger.exception(e);
+				return null;
+			}
+		}
 
-		final comp = this.components[conf.type];
-		if (comp == null) return null;
-		final object = comp.makeFromStruct(conf.conf, context);
-		if (conf.id != null) object.name = conf.id;
+		Assert.assert(element != null);
+		Assert.assert(ctx != null);
+
+		final object = component.build(element, ctx);
+		if (object?.object != null && element.get("id") != null) object.object.name = element.get("id");
+
 		return object;
 	}
 
-	public function fromFile(path: String, context: Dynamic): h2d.Object {
+	public function fromFile(path: String, context: Dynamic): ComponentObject {
 		/**
 			Quick way to create object from file
 		**/
 		try {
 			final xml = this.res.getStringFromPath(path);
-			final builderContext = Std.isOfType(context, BuilderContext) ? cast context : new BuilderContext(context);
-			final object = make(xml, builderContext);
+			final object = build(xml, context);
 			return object;
 		} catch (e) {
 			zf.Logger.error(path);
@@ -144,10 +138,9 @@ class Builder {
 		}
 	}
 
-	public function fromString(string: String, context: Dynamic): h2d.Object {
+	public function fromString(string: String, context: Dynamic): ComponentObject {
 		try {
-			final builderContext = context is BuilderContext ? cast context : new BuilderContext(context);
-			final object = make(string, builderContext);
+			final object = build(string, context);
 			return object;
 		} catch (e) {
 			zf.Logger.error(string);
@@ -210,7 +203,14 @@ class Builder {
 	dynamic public function getAnim(conf: zf.Access): h2d.Anim {
 		if (this.res == null) return null;
 		final path = conf.getString("path");
-		return this.res.getAnim(path);
+
+		final anim = this.res.getAnim(path);
+		if (anim == null) return anim;
+
+		final speed = conf.getFloat("speed");
+		anim.speed = speed;
+
+		return anim;
 	}
 
 	/**
@@ -238,4 +238,7 @@ class Builder {
 
 	Thu 13:42:51 11 Dec 2025
 	Rename XmlComponent to XmlContainer
+
+	Mon 12:06:05 15 Dec 2025
+	Rework builder to also build navigation nodes
 **/

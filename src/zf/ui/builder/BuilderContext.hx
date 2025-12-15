@@ -1,8 +1,5 @@
 package zf.ui.builder;
 
-/**
-	@stage:stable
-**/
 @:structInit
 class BuilderContext {
 	public var builder: Builder;
@@ -38,19 +35,9 @@ class BuilderContext {
 		return ctx;
 	}
 
-	public function makeObjectFromXMLString(xmlString: String, context: BuilderContext = null): h2d.Object {
+	inline public function build(data: Dynamic, context: BuilderContext = null): ComponentObject {
 		if (context == null) context = this;
-		return this.builder.makeObjectFromXMLString(xmlString, context);
-	}
-
-	public function makeObjectFromXMLElement(element: Xml, context: BuilderContext = null): h2d.Object {
-		if (context == null) context = this;
-		return this.builder.makeObjectFromXMLElement(element, context);
-	}
-
-	public function makeObjectFromStruct(conf: ComponentConf, context: BuilderContext = null): h2d.Object {
-		if (context == null) context = this;
-		return this.builder.makeObjectFromStruct(conf, context);
+		return this.builder.build(data, context);
 	}
 
 	public function getBitmap(conf: zf.Access): h2d.Object {

@@ -15,17 +15,12 @@ class Object extends Component {
 		super("object");
 	}
 
-	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
-		final conf: ObjectConf = c;
-		return conf.object;
-	}
-
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
 		final objectKey = conf.getString("object");
 		try {
 			final object: h2d.Object = cast context.data.get(objectKey);
-			return object;
+			return {object: object};
 		} catch (e) {
 			return null;
 		}

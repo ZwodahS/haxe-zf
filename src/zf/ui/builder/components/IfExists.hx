@@ -6,12 +6,12 @@ package zf.ui.builder.components;
 	# Attributes
 	- existsKey=String
 **/
-class IfExists extends zf.ui.builder.Component {
+class IfExists extends Component {
 	public function new() {
 		super("if-exists");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
 		final existsKey = conf.getString("existsKey");
 		if (existsKey == null) return null;
@@ -20,8 +20,8 @@ class IfExists extends zf.ui.builder.Component {
 			final item = context.data.get(existsKey);
 			if (item == null) return null;
 			final item = element.firstElement();
-			final object = context.makeObjectFromXMLElement(item);
-			// propagates all the attributes upward
+			final object = context.build(item);
+			// propagates all the attributes upward, necessary for layout.
 			for (attr in item.attributes()) {
 				element.set(attr, item.get(attr));
 			}
@@ -31,10 +31,3 @@ class IfExists extends zf.ui.builder.Component {
 		}
 	}
 }
-
-/**
-	Tue 13:20:57 30 May 2023
-	Struct is not implemented.
-	Honestly, there might not be any need to implement it for struct, since we can already do it via code
-	if we are using struct.
-**/

@@ -14,20 +14,13 @@ package zf.ui.builder.components;
 	- onClick=(hxd.Event)->Void -> button.addOnLeftClickListener
 
 **/
-class BitmapButton extends zf.ui.builder.Component {
+class BitmapButton extends Component {
 	public function new() {
 		super("bitmap-button");
 	}
 
-	override public function makeFromStruct(s: Dynamic, context: BuilderContext): h2d.Object {
-		return make(zf.Access.struct(s), context);
-	}
-
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		return make(zf.Access.xml(element), context);
-	}
-
-	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
+		final conf = zf.Access.xml(element);
 		final path = conf.getString("bitmapId");
 		final objects: Array<h2d.Object> = [];
 		final defaultBitmap = context.getBitmap(zf.Access.struct({path: path, index: 0}));
@@ -72,7 +65,7 @@ class BitmapButton extends zf.ui.builder.Component {
 			} catch (e) {}
 		}
 
-		return component;
+		return {object: component};
 	}
 }
 

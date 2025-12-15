@@ -21,15 +21,8 @@ class ScaleGrid extends Component {
 		this.factories = new Map<String, ScaleGridFactory>();
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		return make(zf.Access.xml(element), context);
-	}
-
-	override public function makeFromStruct(c: Dynamic, context: BuilderContext) {
-		return make(zf.Access.struct(c), context);
-	}
-
-	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
+		final conf = zf.Access.xml(element);
 		final id = conf.getString("factoryId");
 		final factory = this.factories.get(id) ?? context.builder.getScaleGridFactory(id) ?? this.defaultFactory;
 
@@ -60,7 +53,7 @@ class ScaleGrid extends Component {
 		final alpha = conf.getFloat("alpha");
 		if (alpha != null) obj.alpha = alpha;
 
-		return obj;
+		return {object: obj};
 	}
 }
 

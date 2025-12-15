@@ -7,12 +7,12 @@ package zf.ui.builder.components;
 	- boolKey=String
 		get a bool from context. if it returns true, then the first element will be shown.
 **/
-class If extends zf.ui.builder.Component {
+class If extends Component {
 	public function new() {
 		super("if");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
 		final boolKey = conf.getString("boolKey");
 		if (boolKey == null) return null;
@@ -21,8 +21,8 @@ class If extends zf.ui.builder.Component {
 			final shouldShow: Bool = cast context.data.get(boolKey);
 			if (shouldShow == false) return null;
 			final item = element.firstElement();
-			final object = context.makeObjectFromXMLElement(item);
-			// propagates all the attributes upward
+			final object = context.build(item);
+			// propagates all the attributes upward, necessary for layout.
 			for (attr in item.attributes()) {
 				element.set(attr, item.get(attr));
 			}
@@ -32,10 +32,3 @@ class If extends zf.ui.builder.Component {
 		}
 	}
 }
-
-/**
-	Tue 13:20:57 30 May 2023
-	Struct is not implemented.
-	Honestly, there might not be any need to implement it for struct, since we can already do it via code
-	if we are using struct.
-**/

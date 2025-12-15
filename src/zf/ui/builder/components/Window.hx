@@ -31,7 +31,7 @@ class Window extends zf.ui.builder.Component {
 		this.bgFactories = new Map<String, ScaleGridFactory>();
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final access = zf.Access.xml(element);
 
 		final children = [for (e in element.elements()) e];
@@ -39,13 +39,13 @@ class Window extends zf.ui.builder.Component {
 
 		var inner = null;
 		if (children.length == 1) {
-			inner = context.makeObjectFromXMLElement(children[0]);
+			inner = context.build(children[0]).object;
 		} else {
 			inner = new h2d.Object();
 			for (c in children) {
-				final obj = context.makeObjectFromXMLElement(c);
+				final obj = context.build(c);
 				if (obj == null) continue;
-				inner.addChild(obj);
+				inner.addChild(obj.object);
 			}
 		}
 
@@ -95,24 +95,7 @@ class Window extends zf.ui.builder.Component {
 		}
 		window.resizeBackground();
 
-		return window;
-	}
-
-	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
-		final access = zf.Access.struct(c);
-
-		var bgFactory: zf.ui.ScaleGridFactory = access.get("bgFactory");
-		if (bgFactory == null) bgFactory = this.defaultBg;
-
-		final item = context.makeObjectFromStruct(access.get("item"));
-		if (item == null) return null;
-
-		final minWidth = access.getInt("minWidth", null);
-		final maxWidth = access.getInt("maxWidth", null);
-		final minHeight = access.getInt("minHeight", null);
-		final paddings = access.getArray("paddings", defaultPadding);
-
-		return wrap(item, bgFactory, paddings, minWidth, maxWidth, minHeight);
+		return {object: window};
 	}
 
 	// @formatter:off

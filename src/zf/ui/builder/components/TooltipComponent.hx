@@ -29,17 +29,12 @@ import zf.h2d.Container.TooltipShowConf;
 	- titleId=String
 	- titleContextKey=String
 **/
-class TooltipComponent extends zf.ui.builder.Component {
+class TooltipComponent extends Component {
 	public function new() {
 		super("tooltip");
 	}
 
-	override public function makeFromStruct(s: Dynamic, context: BuilderContext): h2d.Object {
-		// We will not implement the non-xml version since it is quite pointless
-		throw new zf.exceptions.NotImplemented();
-	}
-
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		function parseFloat(v: Dynamic): Null<Float> {
 			try {
 				final p = Std.parseFloat(v);
@@ -76,17 +71,17 @@ class TooltipComponent extends zf.ui.builder.Component {
 		}
 
 		final childElement = element.firstElement();
-		final child = if (childElement != null) context.makeObjectFromXMLElement(childElement) else null;
+		final child = if (childElement != null) context.build(childElement) else null;
 
 		if (tooltipHelper == null) return child;
 
 		if (width == 0 || height == 0) {
 			if (child != null) {
-				if (Std.isOfType(child, UIElement)) {
+				if (Std.isOfType(child.object, UIElement)) {
 					final e: UIElement = cast child;
 					if (width == 0) width = e.width;
 					if (height == 0) height = e.height;
-				} else if (Std.isOfType(child, h2d.Object)) {
+				} else if (Std.isOfType(child.object, h2d.Object)) {
 					final o: h2d.Object = cast child;
 					final size = o.getSize();
 					if (width == 0) width = size.width;
@@ -123,11 +118,11 @@ class TooltipComponent extends zf.ui.builder.Component {
 
 		if (child != null) {
 			// If this wrap a child, add it to the child and return the child
-			child.addChild(uiElement);
+			child.object.addChild(uiElement);
 			return child;
 		} else {
 			// If doesn't wrap a child, just return the interactive
-			return uiElement;
+			return {object: uiElement};
 		}
 	}
 

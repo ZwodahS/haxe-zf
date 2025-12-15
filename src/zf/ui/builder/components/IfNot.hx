@@ -7,12 +7,12 @@ package zf.ui.builder.components;
 	- boolKey=String
 		get a bool from context. if it returns false, then the first element will be shown.
 **/
-class IfNot extends zf.ui.builder.Component {
+class IfNot extends Component {
 	public function new() {
 		super("if-not");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
 		final boolKey = conf.getString("boolKey");
 		if (boolKey == null) return null;
@@ -21,8 +21,8 @@ class IfNot extends zf.ui.builder.Component {
 			final shouldShow: Bool = cast context.data.get(boolKey);
 			if (shouldShow != false) return null;
 			final item = element.firstElement();
-			final object = context.makeObjectFromXMLElement(item);
-			// propagates all the attributes upward
+			final object = context.build(item);
+			// propagates all the attributes upward, necessary for layout.
 			for (attr in item.attributes()) {
 				element.set(attr, item.get(attr));
 			}

@@ -61,9 +61,11 @@ class XmlContainer extends zf.h2d.Container {
 		if (XmlContainer.Builder == null) throw new haxe.Exception("UIBuilder not set");
 		switch (mode) {
 			case File:
-				this.addChild(this.display = XmlContainer.Builder.fromFile(this.confString, getBuildContext()));
+				final cObject = XmlContainer.Builder.fromFile(this.confString, getBuildContext());
+				this.addChild(this.display = cObject.object);
 			case XML:
-				this.addChild(this.display = XmlContainer.Builder.fromString(this.confString, getBuildContext()));
+				final cObject = XmlContainer.Builder.fromString(this.confString, getBuildContext());
+				this.addChild(this.display = cObject.object);
 		}
 
 		if (this.display is Container && cast(this.display, Container).interactive != null) {

@@ -25,7 +25,7 @@ class DynamicLayout extends Component {
 		super("layout-dynamic");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		/**
 			For object, we assume that each object will be added in order
 			and the position of each of the item will be set based on the attribute
@@ -54,7 +54,7 @@ class DynamicLayout extends Component {
 		}
 
 		for (child in element.elements()) {
-			final c = context.makeObjectFromXMLElement(child);
+			final c = context.build(child)?.object;
 			if (c == null) continue;
 
 			layout.addChild(c);
@@ -94,6 +94,6 @@ class DynamicLayout extends Component {
 
 		@:privateAccess layout.repositionAll = true;
 
-		return layout;
+		return {object: layout};
 	}
 }

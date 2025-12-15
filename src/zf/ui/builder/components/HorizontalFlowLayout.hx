@@ -1,22 +1,5 @@
 package zf.ui.builder.components;
 
-typedef HorizontalFlowLayoutConf = {
-	/**
-		All item in this horizontal
-	**/
-	public var ?items: Array<ComponentConf>;
-
-	/**
-		x spacing between each object
-	**/
-	public var ?spacing: Int;
-
-	/**
-		Max Horizontal width
-	**/
-	public var ?maxWidth: Int;
-}
-
 /**
 	Create a h2d.Flow with layout = horizontal
 
@@ -34,50 +17,9 @@ class HorizontalFlowLayout extends Component {
 		super("layout-hflow");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
-		final flow = make(conf, context);
 
-		inline function addElement(e: Xml, newContext: BuilderContext) {
-			final c = newContext.makeObjectFromXMLElement(e);
-			if (c == null) return;
-			flow.addChild(c);
-		}
-
-		final loopKey: String = conf.getString("loopData");
-		final childrenKey: String = conf.getString("children");
-		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
-		final children: Array<Dynamic> = if (childrenKey == null) null else context.data.get(childrenKey);
-		if (loopData != null) {
-			for (data in loopData) {
-				final ctx = context.expandTemplateContext(data);
-				for (e in element.elements()) addElement(e, ctx);
-			}
-		} else if (children != null) {
-			// if children key is not null, we will assume that each element inside is a h2d.Object
-			for (c in children) {
-				if (c is h2d.Object) flow.addChild(cast(c, h2d.Object));
-			}
-		} else {
-			for (e in element.elements()) addElement(e, context);
-		}
-		return flow;
-	}
-
-	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
-		final conf: HorizontalFlowLayoutConf = c;
-		final flow = make(zf.Access.struct(c), context);
-		if (conf.items != null) {
-			for (item in conf.items) {
-				final c = context.makeObjectFromStruct(item);
-				if (c == null) continue;
-				flow.addChild(c);
-			}
-		}
-		return flow;
-	}
-
-	function make(conf: zf.Access, context: BuilderContext): h2d.Flow {
 		final flow = new h2d.Flow();
 		flow.layout = Horizontal;
 		flow.verticalAlign = switch (conf.getString("align")) {
@@ -119,11 +61,31 @@ class HorizontalFlowLayout extends Component {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			flow.name = conf.get("name");
 		}
-		return flow;
+
+		inline function addElement(e: Xml, newContext: BuilderContext) {
+			final c = newContext.build(e)?.object;
+			if (c == null) return;
+			flow.addChild(c);
+		}
+
+		final loopKey: String = conf.getString("loopData");
+		final childrenKey: String = conf.getString("children");
+		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
+		final children: Array<Dynamic> = if (childrenKey == null) null else context.data.get(childrenKey);
+		if (loopData != null) {
+			for (data in loopData) {
+				final ctx = context.expandTemplateContext(data);
+				for (e in element.elements()) addElement(e, ctx);
+			}
+		} else if (children != null) {
+			// if children key is not null, we will assume that each element inside is a h2d.Object
+			for (c in children) {
+				if (c is h2d.Object) flow.addChild(cast(c, h2d.Object));
+			}
+		} else {
+			for (e in element.elements()) addElement(e, context);
+		}
+
+		return {object: flow};
 	}
 }
-
-/**
-	Sun 11:38:21 15 Jun 2025
-	Features are implemented on a need basis
-**/

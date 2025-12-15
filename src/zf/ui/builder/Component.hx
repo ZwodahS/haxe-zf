@@ -1,7 +1,7 @@
 package zf.ui.builder;
 
 /**
-	@stage:stable
+	A component that can be built by Builder.
 **/
 class Component {
 	public var type: String;
@@ -10,11 +10,7 @@ class Component {
 		this.type = type;
 	}
 
-	public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		throw new zf.exceptions.NotSupported();
-	}
-
-	public function makeFromStruct(struct: Dynamic, context: BuilderContext): h2d.Object {
+	public function build(element: Xml, context: BuilderContext): ComponentObject {
 		throw new zf.exceptions.NotSupported();
 	}
 }

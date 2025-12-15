@@ -1,9 +1,10 @@
 package zf.ui.builder.components;
 
 /**
-	Display a bitmap
+	Create a Bitmap
+	Wrap builder.getBitmap
 
-	# Attributes
+	# Additional Attributes
 	- scale=Int -> set bm.scaleX/bm.scaleY
 	- path=String -> context.getBitmap()
 	- index=Int -> context.getBitmap()
@@ -13,20 +14,9 @@ class Bitmap extends Component {
 		super("bitmap");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
-		return make(zf.Access.xml(element), context);
-	}
-
-	override public function makeFromStruct(c: Dynamic, context: BuilderContext) {
-		return make(zf.Access.struct(c), context);
-	}
-
-	function make(conf: zf.Access, context: BuilderContext): h2d.Object {
+	override function build(element: Xml, context: BuilderContext): ComponentObject {
+		final conf = zf.Access.xml(element);
 		final bm = context.getBitmap(conf);
-		if (conf.get("name") != null) {
-			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
-			bm.name = conf.get("name");
-		}
 
 		if (conf.get("outline") != null) {
 			final colorString = conf.getString("outline");
@@ -39,6 +29,7 @@ class Bitmap extends Component {
 			bm.scaleX = s;
 			bm.scaleY = s;
 		}
-		return bm;
+
+		return {object: bm};
 	}
 }

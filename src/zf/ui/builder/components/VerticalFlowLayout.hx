@@ -1,31 +1,5 @@
 package zf.ui.builder.components;
 
-private typedef LayoutConf = {
-	public var ?paddingTop: Int;
-}
-
-typedef VerticalFlowLayoutConf = {
-	/**
-		All item in this flow layout
-	**/
-	public var ?items: Array<ComponentConf>;
-
-	/**
-		y spacing between each object
-	**/
-	public var ?spacing: Int;
-
-	/**
-		set flow.maxWidth
-	**/
-	public var ?maxWidth: Int;
-
-	/**
-		Take items from builder context instead.
-	**/
-	public var ?itemsKey: String;
-}
-
 /**
 	Create a h2d.Flow with layout = vertical
 
@@ -53,67 +27,9 @@ class VerticalFlowLayout extends Component {
 		super("layout-vflow");
 	}
 
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
-		final flow = make(conf, context);
 
-		inline function addElement(e: Xml, newContext: BuilderContext) {
-			final c = newContext.makeObjectFromXMLElement(e);
-			if (c == null) return null;
-
-			flow.addChild(c);
-			// modify the position of the child
-			final conf = zf.Access.xml(e);
-
-			final overrideAlign = e.get("flowAlign");
-			if (overrideAlign != null) {
-				final prop = flow.getProperties(c);
-				prop.horizontalAlign = switch (overrideAlign) {
-					case "center": Middle;
-					case "left": Left;
-					case "right": Right;
-					default: null;
-				}
-			}
-
-			return c;
-		}
-
-		final loopKey: String = conf.getString("loopData");
-		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
-		if (loopData != null) {
-			for (data in loopData) {
-				final ctx = context.expandTemplateContext(data);
-				for (e in element.elements()) addElement(e, ctx);
-			}
-		} else {
-			for (e in element.elements()) addElement(e, context);
-		}
-		return flow;
-	}
-
-	override public function makeFromStruct(c: Dynamic, context: BuilderContext): h2d.Object {
-		final conf: VerticalFlowLayoutConf = c;
-		final flow = make(zf.Access.struct(conf), context);
-
-		if (conf.items != null) {
-			for (item in conf.items) {
-				final c = context.makeObjectFromStruct(item);
-				if (c == null) continue;
-				flow.addChild(c);
-				if (item.layout != null) {
-					final layout: LayoutConf = item.layout;
-					if (layout.paddingTop != null) {
-						final properties = flow.getProperties(c);
-						properties.paddingTop = layout.paddingTop;
-					}
-				}
-			}
-		}
-		return flow;
-	}
-
-	function make(conf: zf.Access, context: BuilderContext): h2d.Flow {
 		final flow = new h2d.Flow();
 		flow.layout = Vertical;
 		flow.horizontalAlign = switch (conf.getString("align")) {
@@ -145,11 +61,39 @@ class VerticalFlowLayout extends Component {
 			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
 			flow.name = conf.get("name");
 		}
-		return flow;
+
+		inline function addElement(e: Xml, newContext: BuilderContext) {
+			final c = newContext.build(e)?.object;
+			if (c == null) return null;
+
+			flow.addChild(c);
+			// modify the position of the child
+			final conf = zf.Access.xml(e);
+
+			final overrideAlign = e.get("flowAlign");
+			if (overrideAlign != null) {
+				final prop = flow.getProperties(c);
+				prop.horizontalAlign = switch (overrideAlign) {
+					case "center": Middle;
+					case "left": Left;
+					case "right": Right;
+					default: null;
+				}
+			}
+
+			return c;
+		}
+
+		final loopKey: String = conf.getString("loopData");
+		final loopData: Array<Dynamic> = if (loopKey == null) null else context.data.get(loopKey);
+		if (loopData != null) {
+			for (data in loopData) {
+				final ctx = context.expandTemplateContext(data);
+				for (e in element.elements()) addElement(e, ctx);
+			}
+		} else {
+			for (e in element.elements()) addElement(e, context);
+		}
+		return {object: flow};
 	}
 }
-
-/**
-	Fri 14:19:44 13 Jun 2025
-	Features are implemented on a need basis
-**/

@@ -9,7 +9,7 @@ package zf.ui.builder.components;
 	- height=Int
 	- cursorColor=Color
 **/
-class ScrollArea extends zf.ui.builder.Component {
+class ScrollArea extends Component {
 	public var factories: Map<String, ScaleGridFactory>;
 
 	public function new() {
@@ -17,45 +17,20 @@ class ScrollArea extends zf.ui.builder.Component {
 		this.factories = new Map<String, ScaleGridFactory>();
 	}
 
-	override public function makeFromStruct(s: Dynamic, context: BuilderContext): h2d.Object {
-		final conf = zf.Access.struct(s);
-		final factoryId = conf.getString("factoryId");
-
-		var factory: ScaleGridFactory = null;
-
-		if (factory == null && conf.get("factory") != null) {
-			try {
-				factory = conf.get("factory");
-			} catch (e) {}
-		}
-
-		final item = conf.get("item");
-		var child: h2d.Object = null;
-		if (item != null) {
-			child = context.makeObjectFromStruct(item);
-			if (child == null) return null;
-		}
-
-		return make(conf, context, factory, child);
-	}
-
-	override public function makeFromXML(element: Xml, context: BuilderContext): h2d.Object {
+	override public function build(element: Xml, context: BuilderContext): ComponentObject {
 		final conf = zf.Access.xml(element);
-		final factoryId = conf.getString("factoryId");
-		final factory = this.factories.get(factoryId) ?? context.builder.getScaleGridFactory(factoryId);
-
 		final firstElement = element.firstElement();
+
+		final factoryId = conf.getString("factoryId");
+		final cursorFactory = this.factories.get(factoryId) ?? context.builder.getScaleGridFactory(factoryId);
+
 		var child: h2d.Object = null;
 		if (firstElement != null) {
-			child = context.makeObjectFromXMLElement(firstElement);
+			child = context.build(firstElement)?.object;
+			// Mon 14:52:27 15 Dec 2025 Not sure why this is in this block, might need to be outside.
 			if (child == null) return null;
 		}
 
-		return make(conf, context, factory, child);
-	}
-
-	function make(conf: zf.Access, context: BuilderContext, cursorFactory: zf.ui.ScaleGridFactory,
-			child: h2d.Object): h2d.Object {
 		final width = conf.getInt("width", 0);
 		final height = conf.getInt("height", 0);
 		final color: Color = conf.getInt("cursorColor", 0xffffffff);
@@ -67,11 +42,6 @@ class ScrollArea extends zf.ui.builder.Component {
 			cursorFactory: cursorFactory
 		});
 
-		if (conf.getString("name") != null) {
-			Logger.debug("[Deprecated] name is deprecated for component, use id instead");
-			component.name = conf.getString("name");
-		}
-
-		return component;
+		return {object: component};
 	}
 }
