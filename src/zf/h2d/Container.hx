@@ -680,6 +680,5 @@ class Container extends Object {
 
 /**
 	Sat 15:41:26 02 Aug 2025
-	Refactored Container into Container.
-	Container will be deprecated.
+	Refactored some parts of DynamicLayout into a Container.
 **/
