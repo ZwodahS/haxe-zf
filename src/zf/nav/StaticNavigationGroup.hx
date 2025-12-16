@@ -32,18 +32,24 @@ class StaticNavigationGroup extends StaticNavigationNode {
 	}
 
 	override function getNodeFromDirection(curr: NavigationNode, direction: Direction): NavigationNode {
-		switch (direction) {
+		final node = switch (direction) {
 			case Left:
-				return this.fromLeft ?? this.children.item(0);
+				this.fromLeft ?? this.children.item(0);
 			case Right:
-				return this.fromRight ?? this.children.item(0);
+				this.fromRight ?? this.children.item(0);
 			case Up:
-				return this.fromTop ?? this.children.item(0);
+				this.fromTop ?? this.children.item(0);
 			case Down:
-				return this.fromBottom ?? this.children.item(0);
+				this.fromBottom ?? this.children.item(0);
 			default:
-				return null;
+				/**
+					Tue 15:46:52 16 Dec 2025
+					Previously this is null. I need this to be a default value when this group is the default node.
+					Not sure if this will break anything.
+				**/
+				this.fromTop;
 		}
+		return node == null ? null : node.getNodeFromDirection(curr, direction);
 	}
 
 	public function reset() {

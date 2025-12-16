@@ -68,13 +68,21 @@ class NavigationGraph {
 		If currentNode is null, navigation will fail.
 	**/
 	public function navigate(direction: Direction): NavigationNode {
-		if (this.currentNode == null) return null;
-
-		final node = this.currentNode.navigate(direction);
-		if (node != null) {
-			this.currentNode.onExit();
-			this.currentNode = node;
-			this.currentNode.onEnter();
+		if (this.currentNode == null) {
+			if (this.defaultNode != null) {
+				final node = this.defaultNode.getNodeFromDirection(null, direction.opposite);
+				if (node != null) {
+					this.currentNode = node;
+					this.currentNode.onEnter();
+				}
+			}
+		} else {
+			final node = this.currentNode.navigate(direction);
+			if (node != null) {
+				this.currentNode.onExit();
+				this.currentNode = node;
+				this.currentNode.onEnter();
+			}
 		}
 
 		return this.currentNode;

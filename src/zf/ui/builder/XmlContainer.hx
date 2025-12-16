@@ -33,6 +33,8 @@ class XmlContainer extends zf.h2d.Container {
 
 	final confString: String = null;
 
+	var navigationNode: zf.nav.NavigationNode = null;
+
 	final mode: ConfMode = File;
 
 	var display: h2d.Object = null;
@@ -59,14 +61,12 @@ class XmlContainer extends zf.h2d.Container {
 	**/
 	function initComponent() {
 		if (XmlContainer.Builder == null) throw new haxe.Exception("UIBuilder not set");
-		switch (mode) {
-			case File:
-				final cObject = XmlContainer.Builder.fromFile(this.confString, getBuildContext());
-				this.addChild(this.display = cObject.object);
-			case XML:
-				final cObject = XmlContainer.Builder.fromString(this.confString, getBuildContext());
-				this.addChild(this.display = cObject.object);
+		final cObject = switch (mode) {
+			case File: XmlContainer.Builder.fromFile(this.confString, getBuildContext());
+			case XML: XmlContainer.Builder.fromString(this.confString, getBuildContext());
 		}
+		this.addChild(this.display = cObject.object);
+		this.navigationNode = cObject.navNode;
 
 		if (this.display is Container && cast(this.display, Container).interactive != null) {
 			this.interactive = cast(this.display, Container).interactive;

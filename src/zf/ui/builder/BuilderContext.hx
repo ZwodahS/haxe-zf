@@ -19,6 +19,7 @@ class BuilderContext {
 	}
 
 	public function get(key: String): Dynamic {
+		if (key == null) return null;
 		var value = data.get(key);
 		// if we already found the value, we will just return it.
 		if (value != null) return value;

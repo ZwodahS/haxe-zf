@@ -35,6 +35,10 @@ import zf.resources.ResourceManager;
 	In a game that is controller based, we need to know how to navigate between different UI element.
 	This can be done using zf.nav.
 	The Builder can also build the navigation graph using xml.
+
+	Each component need to handle the creation and how they are linked.
+	Each component also need to provide their own onToggle handling
+
 **/
 class Builder {
 	/**
