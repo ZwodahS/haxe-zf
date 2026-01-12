@@ -27,11 +27,13 @@ class InputSystem {
 
 	public function update(dt: Float) {
 		if (this.connectedPad != null) {
-			// Perhaps we need to watch any button press to switch to controller but that's
-			// a bit too much, so we will listen to 2 specific key (A) or (Start)
-			if (this.connectedPad.isPressed(this.connectedPad.config.A) == true
-				|| this.connectedPad.isPressed(this.connectedPad.config.start) == true) {
-				switchToController();
+			if (this.inputMode == KBM) {
+				for (b in this.connectedPad.buttons) {
+					if (b == true) {
+						switchToController();
+						break;
+					}
+				}
 			}
 		}
 	}
