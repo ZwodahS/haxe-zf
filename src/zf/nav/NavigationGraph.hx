@@ -89,6 +89,31 @@ class NavigationGraph {
 	}
 
 	/**
+		Secondary function for navigation
+		Instead of navigating from current node, we navigate from the parent.
+
+		This will call onExit and onEnter on the various nodes and return the current node.
+
+		If the navigation fail, the selection will remain at the current node.
+		If currentNode is null, navigation will fail.
+
+		Mon 23:32:46 12 Jan 2026
+	**/
+	public function navigateParent(direction: Direction): NavigationNode {
+		if (this.currentNode == null) return null;
+		if (this.currentNode.parent == null) return null;
+
+		final node = this.currentNode.parent.navigate(direction);
+		if (node != null) {
+			this.currentNode.onExit();
+			this.currentNode = node;
+			this.currentNode.onEnter();
+		}
+
+		return this.currentNode;
+	}
+
+	/**
 		Add a node to the navigation map for tracking.
 
 		It is not necessary to add every node that is created for tracking.
