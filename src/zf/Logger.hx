@@ -6,7 +6,7 @@ import haxe.macro.Context;
 import zf.exceptions.AssertionFail;
 
 interface LoggerInf {
-	public function print(logLevel: Int, message: String): Void;
+	public function print(logLevel: Int, logPrefix: String, location: String, message: String): Void;
 	public function dispose(): Void;
 }
 
@@ -16,10 +16,20 @@ class ConsoleLogger implements LoggerInf {
 
 	public function new() {}
 
-	public function print(logLevel: Int, message: String) {
+	public function print(logLevel: Int, logPrefix: String, location: String, message: String) {
 		if (this.minLogLevel != null && logLevel < this.minLogLevel) return;
 		if (this.maxLogLevel != null && logLevel > this.maxLogLevel) return;
-		haxe.Log.trace(message, null);
+		location = location == null ? "" : ' \033[38;5;245m${location}\033[m ';
+		var logColor = if (logLevel == 0) {
+			'\033[1;36m';
+		} else if (logLevel < 30) {
+			'\033[1;32m';
+		} else if (logLevel < 60) {
+			'\033[1;33m';
+		} else {
+			'\033[1;31m';
+		}
+		haxe.Log.trace('${logColor}[${logPrefix}]\033[m${location}' + message, null);
 	}
 
 	public function dispose() {}
@@ -46,11 +56,12 @@ class FileLogger implements LoggerInf {
 		}
 	}
 
-	public function print(logLevel: Int, message: String) {
+	public function print(logLevel: Int, logPrefix: String, location: String, message: String) {
 		if (this.file == null) return;
 		if (this.minLogLevel != null && logLevel < this.minLogLevel) return;
 		if (this.maxLogLevel != null && logLevel > this.maxLogLevel) return;
-		this.file.writeString(message + "\n");
+		location = location == null ? "" : ' [${location}]';
+		this.file.writeString('[${logPrefix}]${location}' + message + "\n");
 		this.file.flush();
 	}
 
@@ -97,9 +108,9 @@ class Logger {
 		for (l in Logger.loggers) l.dispose();
 	}
 
-	public static function print(level: Int, message: String) {
+	public static function print(level: Int, logPrefix: String, location: String, message: String) {
 		if (Logger.loggers == null) return;
-		for (l in Logger.loggers) l.print(level, message);
+		for (l in Logger.loggers) l.print(level, logPrefix, location, message);
 	}
 
 	/**
@@ -112,7 +123,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			Logger.print(100, StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' [Error] ' + $e{msg});
+			Logger.print(100, "Error", $v{tag}, $e{msg});
 		}
 	}
 
@@ -126,7 +137,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			Logger.print(50, StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' [Warn] ' + $e{msg});
+			Logger.print(50, "Warn", $v{tag}, $e{msg});
 		}
 	}
 
@@ -140,7 +151,7 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			Logger.print(25, StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' [Info] ' + $e{msg});
+			Logger.print(25, "Info", $v{tag}, $e{msg});
 		}
 	}
 
@@ -152,7 +163,7 @@ class Logger {
 		var location = PositionTools.toLocation(Context.currentPos());
 		final tag = location.file + ":" + location.range.start.line;
 		return macro {
-			Logger.print(40, 'Deprecation Warning: ' + $v{tag});
+			Logger.print(0, 'Debug', $v{tag}, ' - Deprecated');
 		}
 	}
 
@@ -166,22 +177,22 @@ class Logger {
 			tag = location.file + ":" + location.range.start.line;
 		}
 		return macro {
-			Logger.print(0, StringTools.lpad($v{tag}, " ", Logger.PadLength) + ' [Debug] ' + $e{msg});
+			Logger.print(0, "Debug", $v{tag}, $e{msg});
 		}
 	}
 
 	inline public static function exception(e: haxe.Exception, stackItems: Array<haxe.CallStack.StackItem> = null) {
 		if (Std.isOfType(e, AssertionFail)) {
-			Logger.print(100, 'Exception: ' + e.message);
+			Logger.print(100, "Exception", null, 'Exception: ' + e.message);
 		} else {
 			for (es in haxe.CallStack.exceptionStack()) trace(es);
-			Logger.print(100, 'Exception: ' + e);
+			Logger.print(100, "Exception", null, 'Exception: ' + e);
 			if (stackItems != null) {
 				for (s in stackItems) {
-					Logger.print(100, 'Called from ${stackItemToString(s)}');
+					Logger.print(100, "Exception", null, 'Called from ${stackItemToString(s)}');
 				}
 			} else {
-				Logger.print(100, e.stack.toString());
+				Logger.print(100, "Exception", null, e.stack.toString());
 			}
 		}
 	}
