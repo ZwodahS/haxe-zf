@@ -124,6 +124,29 @@ class Tile implements Serialisable implements Disposable {
 		return false;
 	}
 
+	public function hasAdjacentEntityTypeTag(tag: String, includingSelf: Bool = false): Bool {
+		if (includingSelf == true) {
+			if (this.hasEntityTypeTag(tag) == true) return true;
+		}
+
+		final adjacentTiles = this.getAdjacentTiles();
+		for (t in adjacentTiles) {
+			if (t.hasEntityTypeTag(tag) == true) return true;
+		}
+		return false;
+	}
+
+	public function hasAdjacentEntity(typeId: String): Bool {
+		final adjacentTiles = this.getAdjacentTiles();
+		for (t in adjacentTiles) {
+			final entities = t.entities;
+			for (e in entities) {
+				if (e.typeId == typeId) return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 		Remove Entity from the tile
 
