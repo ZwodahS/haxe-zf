@@ -144,7 +144,14 @@ class RenderSystem extends zf.engine2.System {
 		for (e in tile.entities) {
 			final rc = RenderComponent.get(e);
 			if (rc == null || rc.ro == null) continue;
-			rc.ro.visible = true;
+			/**
+				Thu 00:20:16 22 Jan 2026
+				Not sure why i need to set this to be visible.
+				I think I need to be able to set them to be invisible, and forcing them to be visible here
+				created some animation bug.
+				Let's remove this for now and see what breaks.
+			**/
+			// rc.ro.visible = true;
 			alignEntity(e);
 		}
 	}
