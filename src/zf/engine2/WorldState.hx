@@ -4,12 +4,14 @@ import zf.serialise.Serialisable;
 import zf.serialise.SerialiseContext;
 
 typedef WorldStateSF = {
+	public var ?seed: Int;
 	public var ?intCounter: Int;
 	public var ?entities: Array<Dynamic>;
 	public var ?r: Dynamic;
 }
 
 class WorldState implements Serialisable implements Identifiable implements EntityContainer {
+	public var seed: Int;
 	public var r: zf.hxd.Rand;
 
 	/**
@@ -41,6 +43,7 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 	public function new(seed: Int = 0) {
 		this.intCounter = new zf.IntCounter.SimpleIntCounter();
 		this.r = zf.hxd.Rand.alloc(seed);
+		this.seed = seed;
 	}
 
 	public function collectEntities(entities: Entities<Entity>) {}
@@ -62,6 +65,7 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 		struct.entities = entitiesSF;
 
 		struct.r = r.toStruct(context);
+		struct.seed = this.seed;
 
 		return struct;
 	}
@@ -91,6 +95,7 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 
 		@:privateAccess this.intCounter.counter = stateSF.intCounter;
 
+		this.seed = data.seed ?? 1;
 		if (stateSF.r != null) this.r.loadStruct(context, stateSF.r);
 
 		return this;
