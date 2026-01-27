@@ -34,7 +34,12 @@ class Object extends h2d.Object {
 		super.sync(ctx);
 		if (this.uiEffects != null && this.uiEffects.length > 0) {
 			var i = 0;
-			while (i < this.uiEffects.length) {
+			/**
+				Tue 13:46:54 27 Jan 2026
+				Sometimes uiEffects will dispose the object and set uiEffects to null,
+				so we need to handle this.
+			**/
+			while (this.uiEffects != null && i < this.uiEffects.length) {
 				final ef = this.uiEffects[i];
 				final done = ef.update(ctx.elapsedTime) == true;
 				if (done == true) {

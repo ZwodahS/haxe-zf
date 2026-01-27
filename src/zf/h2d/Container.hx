@@ -675,6 +675,7 @@ class Container extends Object {
 		this.onKeyUpListeners.clear();
 		this.onMoveListeners.clear();
 		updateRendering();
+		super.reset();
 	}
 }
 
