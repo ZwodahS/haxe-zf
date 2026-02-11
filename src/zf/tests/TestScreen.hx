@@ -552,7 +552,7 @@ class TestScreen extends zf.Screen {
 		this.selectedTest.isSelected = true;
 		renderLogs(rtc.test);
 		final ro = this.selectedTest.test.renderLayers;
-		if (ro != null) this.gameLayers.addChild(ro);
+		ro.visible = true;
 		onTestCaseSelected(this.selectedTest.test);
 	}
 
@@ -586,7 +586,7 @@ class TestScreen extends zf.Screen {
 		this.selectedTest.isSelected = false;
 		// @todo remove rendering if any
 		this.selectedTest = null;
-		this.gameLayers.removeChildren();
+		this.selectedTest.test.renderLayers.visible = false;
 		this.logsText.text = '';
 		this.onTextUpdated();
 	}
@@ -620,6 +620,8 @@ class TestScreen extends zf.Screen {
 		Assert.assert(runner.current == null);
 		this.running.push(tc.test);
 		runner.runTest(tc.test);
+		this.gameLayers.addChild(tc.test.renderLayers);
+		tc.test.renderLayers.visible = false;
 		updateTestHeader();
 	}
 
