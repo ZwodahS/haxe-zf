@@ -272,6 +272,17 @@ class ResourceManager {
 		return asset == null ? null : asset.getAnim(1, null, start, end, reversed);
 	}
 
+	public function getAnimFromFrames(ids: Array<{id: String, ?index: Int}>, speed: Float,
+			reversed: Bool = false): h2d.Anim {
+		final frames = [];
+		for (id in ids) {
+			frames.push(getTile(id.id, id.index));
+		}
+		if (reversed == true) frames.reverse();
+		final anim = new h2d.Anim(frames, speed);
+		return anim;
+	}
+
 	// ---- Fonts ---- //
 	function loadFonts(path: String, source: ResourceSource = Pak, exception: Bool = true) {
 		try {
