@@ -93,7 +93,7 @@ class Explode2 extends Update {
 				if (this.conf.emitAngle != null) {
 					final diff = this.conf.emitAngle.max - conf.emitAngle.min;
 					final rad = this.conf.emitAngle.min + (diff == 0 ? 0 : rand() * diff);
-					final pt = Utils.point2f;
+					final pt = Point2f.alloc();
 					pt.rad = rad;
 					pt.normalize();
 					final diff = this.conf.moveSpeed.diff;
