@@ -57,6 +57,20 @@ class EntityFactory implements Identifiable {
 	}
 
 	/**
+		Make factory
+	**/
+	public function make(id: Int, worldState: WorldState, conf: Dynamic = null): Entity {
+		throw new zf.exceptions.NotImplemented();
+	}
+
+	/**
+		Copy the entity. This should set the id to -1
+	**/
+	public function copy(entity: Entity, worldState: WorldState): Entity {
+		throw new zf.exceptions.NotImplemented();
+	}
+
+	/**
 		Load the data into the entity
 	**/
 	public function loadStruct(context: SerialiseContext, entity: Entity, data: Dynamic): Entity {
