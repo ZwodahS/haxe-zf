@@ -323,12 +323,24 @@ class Serialise {
 					}
 				});
 			} else {
-				this.loadStructExprs.push(macro {
-					if (struct.$storeAs != null) {
-						if (this.$fieldName == null) this.$fieldName = $i{classType.name}.$initFuncName();
-						this.$fieldName.loadStruct(context, struct.$storeAs);
-					}
-				});
+				if (initFuncName == null) {
+					this.loadStructExprs.push(macro {
+						if (struct.$storeAs != null) {
+							if (this.$fieldName != null) {
+								this.$fieldName.loadStruct(context, struct.$storeAs);
+							} else {
+								haxe.Log.trace("[Warn] " + $v{fieldName} + " is not initialised");
+							}
+						}
+					});
+				} else {
+					this.loadStructExprs.push(macro {
+						if (struct.$storeAs != null) {
+							if (this.$fieldName == null) this.$fieldName = $i{classType.name}.$initFuncName();
+							this.$fieldName.loadStruct(context, struct.$storeAs);
+						}
+					});
+				}
 			}
 		}
 
@@ -378,16 +390,28 @@ class Serialise {
 					}
 				}
 			});
-			this.loadStructExprs.push(macro {
-				if (struct.$storeAs != null) {
-					this.$fieldName = [];
-					for (s in (struct.$storeAs: Array<Dynamic>)) {
-						final object = $i{classType.name}.$initFuncName();
-						object.loadStruct(context, s);
-						this.$fieldName.push(object);
+			if (init == null || initFuncName == null) {
+				if (init == null) Context.info("Array of Serialisable without :init, intended ?", f.pos);
+				this.loadStructExprs.push(macro {
+					if (struct.$storeAs != null) {
+						for (ind => s in (struct.$storeAs: Array<Dynamic>)) {
+							final object = this.$fieldName[ind];
+							object.loadStruct(context, s);
+						}
 					}
-				}
-			});
+				});
+			} else {
+				this.loadStructExprs.push(macro {
+					if (struct.$storeAs != null) {
+						this.$fieldName = [];
+						for (s in (struct.$storeAs: Array<Dynamic>)) {
+							final object = $i{classType.name}.$initFuncName();
+							object.loadStruct(context, s);
+							this.$fieldName.push(object);
+						}
+					}
+				});
+			}
 		}
 
 		inline function handleMapPrimitive() {

@@ -19,6 +19,7 @@ class SerialiseContext {
 		Add an identifiable to the context
 	**/
 	public function add(i: Identifiable): String {
+		if (i == null) return null;
 		final id = i.identifier();
 		this.objects[id] = i;
 		return id;
