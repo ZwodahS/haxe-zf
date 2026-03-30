@@ -73,6 +73,13 @@ class RandExtensions {
 	}
 
 	/**
+		Return -1 or 1
+	**/
+	inline public static function randomSign(r: hxd.Rand): Int {
+		return r.randomInt(1) == 0 ? -1 : 1;
+	}
+
+	/**
 		This is the same as r.random, except that it does checks for max == 0.
 		In JS x%0 is undefined, while in hl x%0 == 0
 	**/
