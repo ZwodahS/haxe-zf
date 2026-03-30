@@ -36,6 +36,11 @@ typedef DragHandler = {
 		Called when the object is moved
 	**/
 	public var ?onMove: (h2d.Object, hxd.Event) -> Void;
+
+	/**
+		Register the state of dragging
+	**/
+	public var ?isDragged: Bool;
 }
 
 typedef TooltipShowConf = {
@@ -255,9 +260,14 @@ class Container extends Object {
 		/**
 			If the dragHandler is not null, then we don't have set up anymore
 		**/
+		/**
+			Tue 13:53:30 17 Mar 2026
+			I think we need a form of "dragState" that can be pass around the various handlers.
+		**/
 		final old = this.dragHandler;
 
 		this.dragHandler = v;
+		this.dragHandler.isDragged = false;
 		if (old == null && this.dragHandler != null) {
 			this.addOnPushListener("Container.dragHandler", (e) -> {
 				if (e.button != 0 && this.dragHandler.allowRightClick != true) return;
@@ -269,16 +279,19 @@ class Container extends Object {
 				var offsetX = bounds.width / 2;
 				var offsetY = bounds.height / 2;
 
+				this.dragHandler.isDragged = true;
 				scene.startCapture((e) -> {
 					switch (e.kind) {
 						case ERelease:
 							if (this.dragHandler != null && this.dragHandler.onRelease != null) {
 								this.dragHandler.onRelease(dragObject, e);
+								this.dragHandler.isDragged = false;
 							}
 							scene.stopCapture();
 						case EReleaseOutside:
 							if (this.dragHandler != null && this.dragHandler.onReleaseOutside != null) {
 								this.dragHandler.onReleaseOutside(dragObject, e);
+								this.dragHandler.isDragged = false;
 							}
 							scene.stopCapture();
 						case EPush:
@@ -364,7 +377,9 @@ class Container extends Object {
 	}
 
 	function handleDelayHover(dt: Float) {
+		// if we are dragging, we will not handle hover.
 		if (this.isOver == true && this.hoverDelay > 0 && this.hoverDelayEvent != null) {
+			if (this.dragHandler?.isDragged == true) return;
 			this.hoverDelayDelta += dt;
 			if (this.hoverDelayDelta > this.hoverDelay) {
 				final e = this.hoverDelayEvent;
