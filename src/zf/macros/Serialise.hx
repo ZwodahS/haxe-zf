@@ -27,9 +27,10 @@ using haxe.macro.Tools;
 	multiple levels of inheritance.
 
 	Available metadata
-	- @:serialise (key: [null], fromContext: [false])
+	- @:serialise (key: [null], fromContext: [false], loadPriority: [0])
 		key - the store key. if null will use the field name
 		fromContext - if true will get the object from context instead of serialising it.
+		loadPriority - default 0, lower number will be loaded first.
 	- @:init (function: String)
 		function - the static function to call to init the object.
 		default to `alloc()` if not provided.
@@ -117,13 +118,17 @@ class Serialise {
 			Context.fatalError('${localClass.name} is not Serialisable', localClass.pos);
 		}
 
+		var toSerialise = [];
+
 		for (f in this.fields) {
 			this.fieldsMap.set(f.name, f);
 			var hasSerialise = false;
 			var hasFromContext = false;
 			for (m in f.meta) {
 				if (m.name == ":serialise") {
-					handleSerialise(f, m);
+					// handle serialise separately, since I need to handle load priority
+					final priority: Int = (m.params.length < 3) ? 0 : m.params[2].getValue();
+					toSerialise.push({f: f, m: m, p: priority});
 					hasSerialise = true;
 				} else if (m.name == ":fromContext") {
 					handleFromContext(f, m);
@@ -134,6 +139,10 @@ class Serialise {
 				}
 			}
 		}
+
+		toSerialise.sort((d1, d2) -> zf.Compare.int(1, d1.p, d2.p));
+
+		for (d in toSerialise) handleSerialise(d.f, d.m);
 	}
 
 	function constructLoadStructMethod() {
