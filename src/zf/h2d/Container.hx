@@ -267,7 +267,7 @@ class Container extends Object {
 		final old = this.dragHandler;
 
 		this.dragHandler = v;
-		this.dragHandler.isDragged = false;
+		if (this.dragHandler != null) this.dragHandler.isDragged = false;
 		if (old == null && this.dragHandler != null) {
 			this.addOnPushListener("Container.dragHandler", (e) -> {
 				if (e.button != 0 && this.dragHandler.allowRightClick != true) return;
@@ -283,17 +283,25 @@ class Container extends Object {
 				scene.startCapture((e) -> {
 					switch (e.kind) {
 						case ERelease:
+							scene.stopCapture();
 							if (this.dragHandler != null && this.dragHandler.onRelease != null) {
+								/**
+									Wed 13:21:16 08 Apr 2026
+									Some notes on onRelease, onReleaseOutside
+									this container might be disposed after onRelease/onReleaseOutside is called.
+									This means that dragHandler might also be disposed.
+
+									All clean up need to be done before onRelease/onReleaseOutside is called.
+								**/
+								this.dragHandler.isDragged = false;
 								this.dragHandler.onRelease(dragObject, e);
-								this.dragHandler.isDragged = false;
 							}
-							scene.stopCapture();
 						case EReleaseOutside:
-							if (this.dragHandler != null && this.dragHandler.onReleaseOutside != null) {
-								this.dragHandler.onReleaseOutside(dragObject, e);
-								this.dragHandler.isDragged = false;
-							}
 							scene.stopCapture();
+							if (this.dragHandler != null && this.dragHandler.onReleaseOutside != null) {
+								this.dragHandler.isDragged = false;
+								this.dragHandler.onReleaseOutside(dragObject, e);
+							}
 						case EPush:
 							if (this.dragHandler != null && this.dragHandler.onPush != null) {
 								this.dragHandler.onPush(dragObject, e);
@@ -335,7 +343,10 @@ class Container extends Object {
 
 	public function addOnOutListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onOutListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onOutListeners.push(new Pair(id, func));
 		return true;
@@ -391,7 +402,10 @@ class Container extends Object {
 
 	public function addOnOverListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onOverListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onOverListeners.push(new Pair(id, func));
 		return true;
@@ -416,7 +430,10 @@ class Container extends Object {
 
 	public function addOnClickListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onClickListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onClickListeners.push(new Pair(id, func));
 		return true;
@@ -441,7 +458,10 @@ class Container extends Object {
 
 	public function addOnLeftClickListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onLeftClickListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onLeftClickListeners.push(new Pair(id, func));
 		return true;
@@ -466,7 +486,10 @@ class Container extends Object {
 
 	public function addOnRightClickListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onRightClickListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onRightClickListeners.push(new Pair(id, func));
 		return true;
@@ -491,7 +514,10 @@ class Container extends Object {
 
 	public function addOnPushListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onPushListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onPushListeners.push(new Pair(id, func));
 		return true;
@@ -516,7 +542,10 @@ class Container extends Object {
 
 	public function addOnReleaseListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onReleaseListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onReleaseListeners.push(new Pair(id, func));
 		return true;
@@ -541,7 +570,10 @@ class Container extends Object {
 
 	public function addOnWheelListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onWheelListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onWheelListeners.push(new Pair(id, func));
 		return true;
@@ -566,7 +598,10 @@ class Container extends Object {
 
 	public function addOnRemoveListener(id: String, func: Void->Void): Bool {
 		for (o in this.onRemoveListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onRemoveListeners.push(new Pair(id, func));
 		return true;
@@ -591,7 +626,10 @@ class Container extends Object {
 
 	public function addOnKeyDownListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onKeyDownListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onKeyDownListeners.push(new Pair(id, func));
 		return true;
@@ -616,7 +654,10 @@ class Container extends Object {
 
 	public function addOnKeyUpListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onKeyUpListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onKeyUpListeners.push(new Pair(id, func));
 		return true;
@@ -641,7 +682,10 @@ class Container extends Object {
 
 	public function addOnMoveListener(id: String, func: hxd.Event->Void): Bool {
 		for (o in this.onMoveListeners) {
-			if (o.first == id) return false;
+			if (o.first == id) {
+				Logger.debug('Attempt to add duplicated listener id: ${id} to ${this}');
+				return false;
+			}
 		}
 		this.onMoveListeners.push(new Pair(id, func));
 		return true;
@@ -674,6 +718,7 @@ class Container extends Object {
 
 	override public function reset() {
 		this.isOver = false;
+		this.dragHandler = null;
 		this.tooltipHelper = null;
 		this.tooltipShowConf = null;
 		this.tooltipWindow = null;
