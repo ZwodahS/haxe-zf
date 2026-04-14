@@ -168,6 +168,12 @@ class ResourceManager {
 
 				if (config.scalegrids != null) {
 					for (c in config.scalegrids) {
+						final tile = getTile(c.assetId);
+						if (tile == null) {
+							Logger.warn('Unable to load Scalegrid: ${c.id}, path - ${c.assetId} not found.',
+								"[ResourceManager]");
+							continue;
+						}
 						this.gridFactories[c.id] = new ScaleGridFactory(getTile(c.assetId), c.borderL, c.borderT,
 							c.borderR, c.borderB, c.color);
 					}

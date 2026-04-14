@@ -25,6 +25,7 @@ class ScaleGrid extends Component {
 		final conf = zf.Access.xml(element);
 		final id = conf.getString("factoryId");
 		final factory = this.factories.get(id) ?? context.builder.getScaleGridFactory(id) ?? this.defaultFactory;
+		Assert.assert(factory != null);
 
 		function parseInt(v: Dynamic, defaultValue: Null<Int> = null): Null<Int> {
 			if (v == null) return defaultValue;
