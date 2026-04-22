@@ -111,6 +111,8 @@ using haxe.macro.TypeTools;
 		before the @:dispose statements.
 		If we need something to be done after these statements, create a `reset` method and that method will be called
 		after the @:dispose statements.
+	5. Hx.expr also allow you to put a @:dispose meta data to any variable.
+		This will dispose the object after the block ends.
 
 	# dependencies
 	- zf.macros.Util.
@@ -378,10 +380,6 @@ class ObjectPool {
 								return;
 							}
 							${f.expr};
-#if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ', ${this}.',
-								null);
-#end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
@@ -407,10 +405,6 @@ class ObjectPool {
 #end
 								return;
 							}
-#if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ', ${this}.',
-								null);
-#end
 							super.dispose();
 							$b{resetExprs};
 							this.__isDisposed__ = true;
@@ -438,10 +432,6 @@ class ObjectPool {
 #end
 								return;
 							}
-#if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] Dispose Object - " + $v{className} + ', ${this}.',
-								null);
-#end
 							$b{resetExprs};
 							this.__isDisposed__ = true;
 							this.__next__ = __pool__;
@@ -463,7 +453,7 @@ class ObjectPool {
 					expr: macro {
 						if (__pool__ == null) {
 #if (debug && objectpoolmessage)
-							haxe.Log.trace("   [ObjectPool] [Debug] New object created - " + $v{className} + ".", null);
+							haxe.Log.trace("[ObjectPool] [Debug] New object created - " + $v{className} + ".", null);
 #end
 							__poolCreated__ += 1;
 							return new $typePath();

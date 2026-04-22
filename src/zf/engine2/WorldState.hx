@@ -10,7 +10,7 @@ typedef WorldStateSF = {
 	public var ?r: Dynamic;
 }
 
-class WorldState implements Serialisable implements Identifiable implements EntityContainer {
+class WorldState implements Serialisable implements Identifiable implements EntityContainer implements Disposable {
 	public var seed: Int;
 	public var r: zf.hxd.Rand;
 
@@ -103,5 +103,11 @@ class WorldState implements Serialisable implements Identifiable implements Enti
 
 	public function getEntityFactory(typeId: String): EntityFactory {
 		return null;
+	}
+
+	public function dispose() {
+		for (e in this.entities) {
+			e.dispose();
+		}
 	}
 }

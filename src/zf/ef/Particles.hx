@@ -147,16 +147,17 @@ class Particles extends Effect {
 		}
 
 		if (this.emitAngle != null) {
-			final diff = this.emitAngle.max - this.emitAngle.min;
-			final rad = this.emitAngle.min + (diff == 0 ? 0 : rand() * diff);
-			final pt = Point2f.alloc(1, 0);
-			pt.rad = rad;
-			pt.normalize();
-			final diff = this.moveSpeed.diff;
-			final moveSpeed = this.moveSpeed.min + (diff == 0 ? 0 : rand() * diff);
-			particle.velocityX = pt.x * moveSpeed;
-			particle.velocityY = pt.y * moveSpeed;
-			pt.dispose();
+			Hx.expr({
+				final diff = this.emitAngle.max - this.emitAngle.min;
+				final rad = this.emitAngle.min + (diff == 0 ? 0 : rand() * diff);
+				@:dispose final pt = Point2f.alloc(1, 0);
+				pt.rad = rad;
+				pt.normalize();
+				final diff = this.moveSpeed.diff;
+				final moveSpeed = this.moveSpeed.min + (diff == 0 ? 0 : rand() * diff);
+				particle.velocityX = pt.x * moveSpeed;
+				particle.velocityY = pt.y * moveSpeed;
+			});
 		}
 
 		{

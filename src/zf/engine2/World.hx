@@ -92,7 +92,6 @@ class World {
 	**/
 	public function dispose() {
 		this.isDisposing = true;
-		for (e in this.__entities__) e.dispose();
 		for (s in this.__systems__) s.dispose();
 	}
 

@@ -153,10 +153,14 @@ class UpdateWrap {
 	}
 
 	public function onFinish() {
-		if (this.effect != null) this.effect.onEffectCompleted();
+		if (this.effect != null) {
+			this.effect.onEffectCompleted();
+		}
 	}
 
-	public function onRemoved() {}
+	public function onRemoved() {
+		this.effect.remove();
+	}
 
 	public static function alloc(effect: Effect): UpdateWrap {
 		final object = UpdateWrap.__alloc__();
