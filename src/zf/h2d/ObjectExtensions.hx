@@ -1,5 +1,7 @@
 package zf.h2d;
 
+import zf.h2d.col.Bounds;
+
 enum SetMode {
 	Set;
 	AnchorLeft;
@@ -51,44 +53,51 @@ class ObjectExtensions {
 		Put an object above another object
 
 		@param obj the object to be placed
-		@param relativeTo the object to placed relative to
-		@param offset additional offset, default null
+		@param relativeTo the object to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
 		@param overrideX the value to override the X value instead of using the x value of the target
 
 		Note: this is the same as putAboveBound(obj, relativeTo.getBounds(relativeTo.parent);
 		@return the object being set
 	**/
-	public static function putAbove(obj: h2d.Object, relativeTo: h2d.Object, offset: Point2f = null,
+	public static function putAbove(obj: h2d.Object, relativeTo: h2d.Object, offsetX: Float = 0, offsetY: Float = 0,
 			overrideX: Null<Int> = null): h2d.Object {
-		final bounds = relativeTo == null ? null : relativeTo.getBounds(relativeTo.parent);
-		return putAboveBound(obj, bounds, offset, overrideX);
+		Hx.expr({
+			@:dispose final bounds = relativeTo == null ? null : relativeTo.getBounds(relativeTo.parent,
+				Bounds.alloc());
+			putAboveBound(obj, bounds, offsetX, offsetY, overrideX);
+		});
+		return obj;
 	}
 
 	/**
 		Put an object above a bound
 
 		@param obj the object to be placed
-		@param bounds the bounds to placed relative to
-		@param offset additional offset, default null
+		@param bounds the bounds to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
 		@param overrideX the value to override the X value instead of using the x value of the target
 
 		@return the object being set
 	**/
-	public static function putAboveBound(obj: h2d.Object, bounds: h2d.col.Bounds, offset: Point2f = null,
-			overrideX: Null<Int> = null): h2d.Object {
+	public static function putAboveBound(obj: h2d.Object, bounds: h2d.col.Bounds, offsetX: Float = 0,
+			offsetY: Float = 0, overrideX: Null<Int> = null): h2d.Object {
 		if (bounds == null) {
 			obj.x = 0;
 			obj.y = 0;
 			return obj;
 		}
-		if (offset == null) offset = [0, 0];
-		final objSize = obj.getSize();
-		if (overrideX == null) {
-			obj.x = bounds.xMin + offset.x;
-		} else {
-			obj.x = overrideX;
-		}
-		obj.y = bounds.yMin - objSize.height - offset.y;
+		Hx.expr({
+			@:dispose final objSize = obj.getBounds(Bounds.alloc());
+			if (overrideX == null) {
+				obj.x = bounds.xMin + offsetX;
+			} else {
+				obj.x = overrideX;
+			}
+			obj.y = bounds.yMin - objSize.height - offsetY;
+		});
 		return obj;
 	}
 
@@ -96,43 +105,48 @@ class ObjectExtensions {
 		Put an object below another object
 
 		@param obj the object to be placed
-		@param relativeTo the object to placed relative to
-		@param offset additional offset, default null
+		@param relativeTo the object to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
 		@param overrideX the value to override the X value instead of using the x value of the target
 
 		Note: this is the same as putBelowBound(obj, relativeTo.getBounds(relativeTo.parent);
 		@return the object being set
 	**/
-	public static function putBelow(obj: h2d.Object, relativeTo: h2d.Object, offset: Point2f = null,
+	public static function putBelow(obj: h2d.Object, relativeTo: h2d.Object, offsetX: Float = 0, offsetY: Float = 0,
 			overrideX: Null<Int> = null): h2d.Object {
-		final bounds = relativeTo == null ? null : relativeTo.getBounds(relativeTo.parent);
-		return putBelowBound(obj, bounds, offset, overrideX);
+		Hx.expr({
+			@:dispose final bounds = relativeTo == null ? null : relativeTo.getBounds(relativeTo.parent,
+				Bounds.alloc());
+			return putBelowBound(obj, bounds, offsetX, offsetY, overrideX);
+		});
+		return obj;
 	}
 
 	/**
 		Put an object below a bound
 
 		@param obj the object to be placed
-		@param bounds the bounds to placed relative to
-		@param offset additional offset, default null
+		@param bounds the bounds to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
 		@param overrideX the value to override the X value instead of using the x value of the target
 
 		@return the object being set
 	**/
-	public static function putBelowBound(obj: h2d.Object, bounds: h2d.col.Bounds, offset: Point2f = null,
-			overrideX: Null<Int> = null): h2d.Object {
+	public static function putBelowBound(obj: h2d.Object, bounds: h2d.col.Bounds, offsetX: Float = 0,
+			offsetY: Float = 0, overrideX: Null<Int> = null): h2d.Object {
 		if (bounds == null) {
 			obj.x = 0;
 			obj.y = 0;
 			return obj;
 		}
-		if (offset == null) offset = [0, 0];
 		if (overrideX == null) {
-			obj.x = bounds.xMin + offset.x;
+			obj.x = bounds.xMin + offsetX;
 		} else {
 			obj.x = overrideX;
 		}
-		obj.y = bounds.yMax + offset.y;
+		obj.y = bounds.yMax + offsetY;
 		return obj;
 	}
 
@@ -140,27 +154,51 @@ class ObjectExtensions {
 		Put an object on the left of another object
 
 		@param obj the object to be placed
-		@param relativeTo the object to placed relative to
-		@param offset additional offset, default null
+		@param relativeTo the object to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
+		@param overrideY the value to override the Y value instead of using the y value of the target
+
+		Note: this is the same as putOnLeftOfBound(obj, relativeTo.getBounds(relativeTo.parent);
+		@return the object being set
+	**/
+	public static function putOnLeft(obj: h2d.Object, relativeTo: h2d.Object, offsetX: Float = 0, offsetY: Float = 0,
+			overrideY: Null<Float> = null): h2d.Object {
+		Hx.expr({
+			@:dispose final bounds = relativeTo == null ? null : relativeTo.getBounds(relativeTo.parent,
+				Bounds.alloc());
+			putOnLeftOfBound(obj, bounds, offsetX, offsetY, overrideY);
+		});
+		return obj;
+	}
+
+	/**
+		Put an object on the left of a bound
+
+		@param obj the object to be placed
+		@param bounds the bounds to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
 		@param overrideY the value to override the Y value instead of using the y value of the target
 
 		@return the object being set
 	**/
-	public static function putOnLeft(obj: h2d.Object, relativeTo: h2d.Object, offset: Point2f = null,
-			overrideY: Null<Float> = null): h2d.Object {
-		if (relativeTo == null) {
+	public static function putOnLeftOfBound(obj: h2d.Object, bounds: h2d.col.Bounds, offsetX: Float = 0,
+			offsetY: Float = 0, overrideY: Null<Float> = null): h2d.Object {
+		if (bounds == null) {
 			obj.x = 0;
 			obj.y = 0;
 			return obj;
 		}
-		if (offset == null) offset = [0, 0];
-		var objSize = obj.getSize();
-		obj.x = relativeTo.x - objSize.width - offset.x;
-		if (overrideY == null) {
-			obj.y = relativeTo.y + offset.y;
-		} else {
-			obj.y = overrideY;
-		}
+		Hx.expr({
+			@:dispose final objSize = obj.getBounds(Bounds.alloc());
+			obj.x = bounds.xMin - objSize.width - offsetX;
+			if (overrideY == null) {
+				obj.y = bounds.yMin + offsetY;
+			} else {
+				obj.y = overrideY;
+			}
+		});
 		return obj;
 	}
 
@@ -169,27 +207,49 @@ class ObjectExtensions {
 
 		@param obj the object to be placed
 		@param relativeTo the object to placed relative to
-		@param offset additional offset, default null
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
+		@param overrideY the value to override the Y value instead of using the y value of the target
+
+		Note: this is the same as putOnRightOfBound(obj, relativeTo.getBounds(relativeTo.parent);
+		@return the object being set
+	**/
+	public static function putOnRight(obj: h2d.Object, relativeTo: h2d.Object, offsetX: Float = 0, offsetY: Float = 0,
+			overrideY: Null<Float> = null): h2d.Object {
+		Hx.expr({
+			@:dispose final bounds = relativeTo == null ? null : relativeTo.getBounds(relativeTo.parent,
+				Bounds.alloc());
+			return putOnRightOfBound(obj, bounds, offsetX, offsetY, overrideY);
+		});
+	}
+
+	/**
+		Put an object on the right of a bound
+
+		@param obj the object to be placed
+		@param bounds the bounds to place relative to
+		@param offsetX additional offset, default 0
+		@param offsetY additional offset, default 0
 		@param overrideY the value to override the Y value instead of using the y value of the target
 
 		@return the object being set
 	**/
-	public static function putOnRight(obj: h2d.Object, component: h2d.Object, offset: Point2f = null,
-			overrideY: Null<Float> = null): h2d.Object {
-		if (component == null) {
+	public static function putOnRightOfBound(obj: h2d.Object, bounds: h2d.col.Bounds, offsetX: Float = 0,
+			offsetY: Float = 0, overrideY: Null<Float> = null): h2d.Object {
+		if (bounds == null) {
 			obj.x = 0;
 			obj.y = 0;
 			return obj;
 		}
-		if (offset == null) offset = [0, 0];
-		var componentSize = component.getSize();
-		obj.x = component.x + componentSize.width + offset.x;
-		if (overrideY == null) {
-			obj.y = component.y + offset.y;
-		} else {
-			obj.y = overrideY;
-		}
-		return obj;
+		Hx.expr({
+			obj.x = bounds.xMax + offsetX;
+			if (overrideY == null) {
+				obj.y = bounds.yMin + offsetY;
+			} else {
+				obj.y = overrideY;
+			}
+			return obj;
+		});
 	}
 
 	@:deprecated("renamed to centerXWithin(obj, component)")
@@ -571,3 +631,9 @@ class ObjectExtensions {
 		return objects;
 	}
 }
+/**
+	Wed 20:44:05 22 Apr 2026
+
+	Updated all functions from putAbove(offset:Point2f) -> putAbove(offsetX, offsetY)
+	to reduce the number of object constructions.
+**/

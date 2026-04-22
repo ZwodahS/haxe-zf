@@ -175,7 +175,7 @@ class Game extends hxd.App {
 		this.s2d.add(this.drawCalls = new HtmlText(font), 151);
 		this.drawCalls.textAlign = Left;
 		this.drawCalls.text = '0';
-		this.drawCalls.putBelow(this.framerate, [0, 2]);
+		this.drawCalls.putBelow(this.framerate, 0, 2);
 		this.drawCalls.visible = false;
 	}
 #end
