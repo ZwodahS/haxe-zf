@@ -201,6 +201,10 @@ class Particles extends Effect {
 		this.particles.spriteBatch.remove();
 	}
 
+	public function reset() {
+		this.particles.spriteBatch.remove();
+	}
+
 	public function setEmitDelay(delay: Float): Particles {
 		this.emitDelay = delay;
 		return this;

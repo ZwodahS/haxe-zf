@@ -41,7 +41,9 @@ class UIElement extends zf.h2d.Container {
 	**/
 	public function onHide() {}
 
-	override public function reset() {}
+	override public function reset() {
+		super.reset();
+	}
 
 	// ---- Other ---- //
 	override function onRemove() {
@@ -61,13 +63,13 @@ class UIElement extends zf.h2d.Container {
 	public function addCustomCursors(defaultCursor: Cursor, downCursor: Cursor, toggledCursor: Cursor = null,
 			disabledCursor: Cursor = null, onDown: Void->Void = null) {
 		if (this.interactive != null) this.interactive.cursor = defaultCursor;
-		this.addOnPushListener("Container", (e) -> {
+		this.addOnPushListener("UIElement", (e) -> {
 			if (this.disabled == true || this.toggled == true) return;
 			hxd.System.setCursor(downCursor);
 			if (onDown != null) onDown();
 		});
 
-		this.addOnReleaseListener("Container", (e) -> {
+		this.addOnReleaseListener("UIElement", (e) -> {
 			// Bug: If release outside, it will trigger. Need to fix this.... probably
 			hxd.System.setCursor(this.interactive.cursor);
 		});

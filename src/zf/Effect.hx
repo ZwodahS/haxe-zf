@@ -127,4 +127,24 @@ class Effect {
 	inline public static function particles(tile: h2d.Tile): zf.ef.Particles {
 		return zf.ef.Particles.alloc(tile);
 	}
+
+	/**
+		Force remove all effects from this object.
+		This will cause unexpected issues when not handled.
+		Use this for only cleaning up
+	**/
+	public static function removeAllEffects(obj: h2d.Object) {
+		if (obj is zf.h2d.Object) {
+			cast(obj, zf.h2d.Object).resetUIEffects();
+		} else {
+			@:privateAccess
+			final children = [for (o in obj.children) o];
+			for (o in children) {
+				if (o is zf.ef.Effect.EffectWrap) {
+					o.remove();
+					cast(o, zf.ef.Effect.EffectWrap).dispose();
+				}
+			}
+		}
+	}
 }

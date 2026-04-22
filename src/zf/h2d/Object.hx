@@ -24,6 +24,10 @@ class Object extends h2d.Object {
 	}
 
 	public function reset() {
+		resetUIEffects();
+	}
+
+	public function resetUIEffects() {
 		if (this.uiEffects != null) {
 			for (e in this.uiEffects) e.dispose();
 			this.uiEffects = null;
