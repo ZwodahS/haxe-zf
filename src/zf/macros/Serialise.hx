@@ -342,6 +342,17 @@ class Serialise {
 							}
 						}
 					});
+				} else if (initFuncName == "new") {
+					final typePath: haxe.macro.TypePath = {
+						pack: classType.pack,
+						name: classType.name
+					}
+					this.loadStructExprs.push(macro {
+						if (struct.$storeAs != null) {
+							if (this.$fieldName == null) this.$fieldName = new $typePath();
+							this.$fieldName.loadStruct(context, struct.$storeAs);
+						}
+					});
 				} else {
 					this.loadStructExprs.push(macro {
 						if (struct.$storeAs != null) {
