@@ -11,6 +11,7 @@ typedef ScaleGridConf = {
 	public var ?borderR: Int;
 	public var ?borderB: Int;
 	public var ?color: Int;
+	public var ?tiling: Bool;
 }
 
 typedef PathConf = {

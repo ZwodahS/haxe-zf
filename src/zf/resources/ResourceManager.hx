@@ -174,8 +174,10 @@ class ResourceManager {
 								"[ResourceManager]");
 							continue;
 						}
-						this.gridFactories[c.id] = new ScaleGridFactory(getTile(c.assetId), c.borderL, c.borderT,
-							c.borderR, c.borderB, c.color);
+						final factory = new ScaleGridFactory(getTile(c.assetId), c.borderL, c.borderT, c.borderR,
+							c.borderB, c.color);
+						if (c.tiling == true) factory.tiling = true;
+						this.gridFactories[c.id] = factory;
 					}
 				}
 
